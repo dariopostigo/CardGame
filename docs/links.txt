@@ -1,0 +1,39 @@
+Electric border (Efecto brutal para cartas importantes)
+----------------
+https://codepen.io/BalintFerenczy/pen/KwdoyEN
+
+Fanned cards with hover (Baraja con hover y animacion avanzada)
+-----------------------
+https://codepen.io/cbolson/pen/dPXMRWG
+
+Fanning cards (Baraja normal simple)
+-------------
+https://codepen.io/schwiiiii/pen/GgJPQvr
+
+Movie card: Pulp Fiction (Diseño interesante para ficha de personajes, enemigos, etc)
+------------------------
+https://codepen.io/GemmaCroad/pen/wBBPpPZ
+
+Hearthstone Card CSS 3D Click/Drag (Movimiento perfecto cartas como en el Hearthstone)
+---------------------------------
+https://codepen.io/jackrugile/pen/zqJdXM
+
+lapisCordis | a greco-roman mythological card game (Baraja con click para ver detalle de la carta)
+--------------------------------------------------
+https://codepen.io/delvignefred/pen/abMmXwg
+
+Pick a Card (Para darle la vuelta a la carta)
+-----------
+https://codepen.io/HejChristian/pen/RNwXexO
+
+RPG Character Card Flippable (Carta de mago seleccionable interiormente, abre estadisticas de personaje)
+-------------------
+https://codepen.io/Gustav-Wahlbom-Andersson/pen/MYayBoX
+
+Card Game UI/UX Gwent (Cartas animadas + Menu de cartas)
+---------------------------------
+https://codepen.io/RodenKerthin/pen/oNbXNxo
+
+Otros
+-----
+https://codepen.io/OfigenusMaximus/pen/gOjGoPV
