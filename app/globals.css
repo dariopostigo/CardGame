@@ -1,26 +1,210 @@
+@layer theme, base, primereact, components, utilities;
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ==========================================================================
+   Skins (estilos visuales) — variables por [data-skin], con variante .dark
+   El usuario elige el skin en vivo; los colores se aplican a todo el chrome
+   y a la tipografía (prose) mediante estas variables.
+   ========================================================================== */
+
+/* --- Pergamino / fantasía --- */
+[data-skin="pergamino"] {
+  --wiki-bg: #f6efe0;
+  --wiki-surface: #fbf6ea;
+  --wiki-surface-2: #efe6d2;
+  --wiki-text: #3b2e1e;
+  --wiki-muted: #7a6a52;
+  --wiki-accent: #b4802a;
+  --wiki-accent-soft: #e9d9b3;
+  --wiki-border: #e3d7bd;
+  --wiki-callout-bg: #f3e8cf;
+  --wiki-callout-border: #b4802a;
+  --wiki-code-bg: #efe6d2;
+}
+.dark[data-skin="pergamino"] {
+  --wiki-bg: #221b12;
+  --wiki-surface: #2b2117;
+  --wiki-surface-2: #342a1d;
+  --wiki-text: #ece0c9;
+  --wiki-muted: #b8a888;
+  --wiki-accent: #e0a94a;
+  --wiki-accent-soft: #4a3c28;
+  --wiki-border: #4a3c28;
+  --wiki-callout-bg: #2f2517;
+  --wiki-callout-border: #e0a94a;
+  --wiki-code-bg: #1b150e;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* --- Limpio / moderno (por defecto) --- */
+:root,
+[data-skin="moderno"] {
+  --wiki-bg: #ffffff;
+  --wiki-surface: #f8fafc;
+  --wiki-surface-2: #f1f5f9;
+  --wiki-text: #0f172a;
+  --wiki-muted: #64748b;
+  --wiki-accent: #4f46e5;
+  --wiki-accent-soft: #e0e7ff;
+  --wiki-border: #e2e8f0;
+  --wiki-callout-bg: #eef2ff;
+  --wiki-callout-border: #4f46e5;
+  --wiki-code-bg: #f1f5f9;
 }
+.dark,
+.dark[data-skin="moderno"] {
+  --wiki-bg: #0b1020;
+  --wiki-surface: #111827;
+  --wiki-surface-2: #1f2937;
+  --wiki-text: #e5e7eb;
+  --wiki-muted: #94a3b8;
+  --wiki-accent: #818cf8;
+  --wiki-accent-soft: #1e2340;
+  --wiki-border: #263041;
+  --wiki-callout-bg: #1e2340;
+  --wiki-callout-border: #818cf8;
+  --wiki-code-bg: #0f1526;
+}
+
+/* --- Oscuro / gamer --- */
+[data-skin="gamer"] {
+  --wiki-bg: #f2f4f5;
+  --wiki-surface: #e9edf0;
+  --wiki-surface-2: #dfe5e9;
+  --wiki-text: #10151c;
+  --wiki-muted: #55636b;
+  --wiki-accent: #059669;
+  --wiki-accent-soft: #d1fae5;
+  --wiki-border: #d0d7dd;
+  --wiki-callout-bg: #dcfce7;
+  --wiki-callout-border: #059669;
+  --wiki-code-bg: #dfe5e9;
+}
+.dark[data-skin="gamer"] {
+  --wiki-bg: #0a0e0f;
+  --wiki-surface: #12181a;
+  --wiki-surface-2: #18211f;
+  --wiki-text: #e6f1ec;
+  --wiki-muted: #8aa79b;
+  --wiki-accent: #34d399;
+  --wiki-accent-soft: #10201a;
+  --wiki-border: #1f2b28;
+  --wiki-callout-bg: #10201a;
+  --wiki-callout-border: #34d399;
+  --wiki-code-bg: #0a1512;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+body {
+  background: var(--wiki-bg);
+  color: var(--wiki-text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--wiki-border) transparent;
+}
+
+/* ==========================================================================
+   Tipografía del contenido (prose) mapeada a las variables del skin
+   ========================================================================== */
+.wiki-prose {
+  max-width: none;
+  --tw-prose-body: var(--wiki-text);
+  --tw-prose-headings: var(--wiki-text);
+  --tw-prose-lead: var(--wiki-muted);
+  --tw-prose-links: var(--wiki-accent);
+  --tw-prose-bold: var(--wiki-text);
+  --tw-prose-counters: var(--wiki-muted);
+  --tw-prose-bullets: var(--wiki-accent);
+  --tw-prose-hr: var(--wiki-border);
+  --tw-prose-quotes: var(--wiki-text);
+  --tw-prose-quote-borders: var(--wiki-callout-border);
+  --tw-prose-captions: var(--wiki-muted);
+  --tw-prose-code: var(--wiki-text);
+  --tw-prose-pre-code: var(--wiki-text);
+  --tw-prose-pre-bg: var(--wiki-code-bg);
+  --tw-prose-th-borders: var(--wiki-border);
+  --tw-prose-td-borders: var(--wiki-border);
+}
+
+/* Encabezados con ancla (rehype-autolink-headings, behavior: wrap) */
+.wiki-prose :is(h1, h2, h3, h4, h5, h6) a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+.wiki-prose :is(h1, h2, h3, h4) {
+  scroll-margin-top: 5rem;
+}
+
+/* Tablas */
+.wiki-prose table {
+  font-size: 0.9rem;
+}
+.wiki-prose thead {
+  background: var(--wiki-surface-2);
+}
+.wiki-prose tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--wiki-surface-2) 45%, transparent);
+}
+.wiki-prose th,
+.wiki-prose td {
+  padding: 0.5rem 0.75rem;
+}
+
+/* Código en línea */
+.wiki-prose :not(pre) > code {
+  background: var(--wiki-code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 0.35rem;
+  font-weight: 500;
+  font-size: 0.85em;
+}
+.wiki-prose :not(pre) > code::before,
+.wiki-prose :not(pre) > code::after {
+  content: "";
+}
+.wiki-prose pre {
+  border: 1px solid var(--wiki-border);
+  border-radius: 0.6rem;
+}
+
+/* Callouts (blockquote) */
+.wiki-callout {
+  background: var(--wiki-callout-bg);
+  border-left: 4px solid var(--wiki-callout-border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin: 1.25rem 0;
+  font-style: normal;
+}
+.wiki-callout > :first-child { margin-top: 0; }
+.wiki-callout > :last-child { margin-bottom: 0; }
+.wiki-callout p::before,
+.wiki-callout p::after { content: ""; }
+
+/* Checkboxes de listas de tareas (solo lectura) */
+.wiki-prose input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.4rem;
+  accent-color: var(--wiki-accent);
+  vertical-align: -0.1em;
+}
+.wiki-prose li:has(> input[type="checkbox"]) {
+  list-style: none;
+  margin-left: -1.25rem;
+}
+
+/* Utilidades de chrome */
+.wiki-surface { background: var(--wiki-surface); }
