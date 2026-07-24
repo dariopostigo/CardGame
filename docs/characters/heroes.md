@@ -65,7 +65,7 @@ Ese mismo dado son los **Dados de Vida (DV)** que se gastan al acampar para cura
 
 - [x] Definir método y valores de las 6 estadísticas base de cada héroe (§2b — array estándar de D&D repartido por rol).
 - [x] Definir Movimiento y Dado de Vida de cada héroe (§2c).
-- [ ] Reducir/confirmar el roster a 2-3 héroes para el prototipo (el de 4 de arriba es punto de partida, no cerrado).
+- [x] Roster del **prototipo** = **Guerrero + Mago** *(decidido)*: máximo contraste (melee/tanque 14 PV vs. distancia/frágil 8 PV). Pícaro y Clérigo entran justo después; el catálogo de los 4 sigue en [`../cards/class.md`](../cards/class.md).
 - [x] Diseñar las primeras Cartas Básicas de Clase (`../game-design.md` §3) para cada héroe → hechas para los **4 héroes** (Guerrero, Mago, Pícaro, Clérigo), cada uno con 3 Básicas + 1 Especial, en [`cards/class.md`](../cards/class.md). Falta balancear.
 - [x] Decidir si el jugador controla un héroe fijo por partida, o un grupo → **un solo héroe por partida** (decidido para el prototipo: simplifica combate, turno e iniciativa). El "grupo" queda como idea futura para Modo Campaña.
 - [ ] Cuando quieras, ir añadiendo héroes de la lista de candidatos (§2) o nuevos, uno a uno.

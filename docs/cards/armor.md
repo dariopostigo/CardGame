@@ -1,6 +1,6 @@
 # CardGame — Cartas: Armaduras
 
-Catálogo de cartas de **Armadura** (tipo/icono en [`../game-design.md`](../game-design.md) §3.2, Rareza en §3.3; solo 1 equipada a la vez, §2.4; peso 🥼/👕/🧥, significado de todos los iconos en [`../glossary.md`](../glossary.md)). Índice de cartas en [`README.md`](README.md). Valores = **primer pase sin balancear**, base D&D.
+Catálogo de cartas de **Armadura** (tipo/icono en [`../game-design.md`](../game-design.md) §3.2, Rareza en §3.3; solo 1 equipada a la vez, §2.4; peso 🥼/👕/🧥, significado de todos los iconos en [`../glossary.md`](../glossary.md)). Índice de cartas en [`README.md`](README.md). Valores = **primer pase sin balancear**, base D&D. Las armaduras son **equipo** (1 equipada a la vez), **aparte del Mazo** y sin límite de colección (`../game-design.md` §4a).
 
 ## 1. Fórmula de CA por peso *(decidido — resuelve la duda de `../game-design.md` §2)*
 

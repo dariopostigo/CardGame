@@ -1,5 +1,6 @@
-// Paleta de rareza compartida entre el lab de cartas (components/design/card-design.css
-// §2) y la mini-carta de rareza de la wiki (components/wiki/RarityChip.tsx).
+// Paleta de rareza compartida entre el lab de cartas y la mini-carta de rareza
+// de la wiki (components/wiki/RarityChip.tsx). Espejo de $rarity en
+// styles/settings/_colors.scss: si cambia una, cambia la otra.
 export type RarityLevel = "comun" | "poco-comun" | "raro" | "epico" | "legendario";
 
 // Etiqueta de tabla (game-design.md §3.3) -> nivel. Incluye ambos géneros

@@ -1,0 +1,7 @@
+@use "../abstracts" as *;
+
+body {
+  background: skin("bg");
+  color: skin("text");
+  font-family: $font-sans;
+}

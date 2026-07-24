@@ -37,7 +37,8 @@ function useHidePrimeUILicenseBanner() {
 
 // Preset de PrimeReact basado en Aura con acento ámbar/oro (coherente con el
 // juego de cartas de fantasía). El grueso de la identidad visual vive en las
-// variables CSS de globals.css; esto solo tiñe los componentes de PrimeReact.
+// variables del skin (styles/settings/_colors.scss); esto solo tiñe los
+// componentes de PrimeReact.
 const WikiPreset = definePreset(Aura, {
   semantic: {
     primary: {

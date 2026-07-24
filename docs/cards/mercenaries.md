@@ -1,12 +1,12 @@
 # CardGame — Cartas: Mercenarios
 
-Carta de **Acción** que representa a una compañía de mercenarios a tu servicio. Tiene **origen propio** (ni carta de clase ni equipo drafteado): se **recluta** superando una prueba en una ficha del tablero, o se **compra** por oro a un NPC. Sistema de cartas en [`../game-design.md`](../game-design.md) §3, economía de acción de combate en §4b.3. NPCs en [`../characters/npcs.md`](../characters/npcs.md). Índice de cartas en [`README.md`](README.md). Valores = **primer pase sin balancear**.
+Carta de **Acción** que representa a una compañía de mercenarios a tu servicio. Tiene **origen propio** (ni carta de clase ni equipo conseguido jugando): se **recluta** superando una prueba en una ficha del tablero, o se **compra** por oro a un NPC. Sistema de cartas en [`../game-design.md`](../game-design.md) §3, economía de acción de combate en §4b.3. NPCs en [`../characters/npcs.md`](../characters/npcs.md). Índice de cartas en [`README.md`](README.md). Valores = **primer pase sin balancear**.
 
 ## 1. Concepto
 
 - **Todo es una carta:** en vez de simular un segundo personaje con estadísticas y mazo propios, un mercenario es una **carta de tipo Acción** que va a tu mazo personal. Con un solo héroe en el prototipo ([`../characters/heroes.md`](../characters/heroes.md)), te da "acciones de aliado" sin la complejidad de un compañero completo.
 - **Reutilizable, cuesta la Acción:** jugar la carta gasta tu **Acción** principal del turno ([`../game-design.md`](../game-design.md) §4b.3). Como cualquier carta del mazo personal, **no se consume** al jugarla (§4): vuelve a estar disponible. Es, en la práctica, un aliado al que "das la orden" una vez por turno.
-- **Cuenta para el máximo del mazo:** ocupa un hueco del mazo personal como el equipo (`../game-design.md` §4). Se puede **vender por oro** (desagüe del exceso de mazo, §6b.4) igual que el equipo — a diferencia de una Maldición ([`curses.md`](curses.md)), que no se puede vender.
+- **Cuenta para el máximo del mazo:** ocupa un hueco del mazo personal como cualquier carta del Mazo (`../game-design.md` §4). Se puede **vender por oro** (desagüe del exceso de mazo, §6b.4) igual que el equipo — a diferencia de una Maldición ([`curses.md`](curses.md)), que no se puede vender.
 - **Usa Rareza:** (`../game-design.md` §3.3) marca su potencia; a mayor rareza, más fuerte el efecto.
 
 ## 2. Cómo se consiguen
@@ -26,7 +26,7 @@ Dos vías, con el mismo trade-off que el resto del juego (gratis-pero-arriesgado
 
 ## 3. Catálogo (boceto)
 
-| Mercenario | Coste | Efecto | Rareza |
+| Mercenario | Tipo | Efecto | Rareza |
 |---|---|---|---|
 | Mercenarios de las Llanuras | Acción | Un mercenario ataca a un enemigo adyacente: **1d6+2 🗡️** | Común |
 | Arquero a sueldo | Acción | Disparo a distancia (alcance 4 hex): **1d6 🏹** | Común |

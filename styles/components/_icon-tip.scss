@@ -1,0 +1,23 @@
+@use "../abstracts" as *;
+
+// Icono con globo de ayuda: manos de arma y tipos de daño en glossary.md.
+// Ver components/wiki/IconTip.tsx.
+.wiki-icon-tip {
+  cursor: help;
+  border-radius: radius("xs");
+  outline-offset: 2px;
+}
+
+// Globo invertido (fondo = color de texto) para que destaque sobre la prosa.
+.wiki-icon-tip-popup {
+  background: skin("text");
+  color: skin("surface");
+  padding: 0.3rem 0.6rem;
+  border-radius: radius("md");
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: $shadow-tooltip;
+  z-index: z("tooltip");
+}

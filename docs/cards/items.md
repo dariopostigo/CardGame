@@ -9,6 +9,7 @@ Primer pase de efectos, sin balancear. La **Antorcha** ya es una carta de Arma (
 | Objeto | Efecto | Rareza |
 |---|---|---|
 | Mochila | **+1 hueco** en el máximo del mazo personal (`../game-design.md` §4) | Común |
+| Catalejo | Mientras esté **en juego**, al **Otear** revelas **3 cartas y eliges 2** (en vez de 2 y 1): preparas cartas el doble de rápido (`../game-design.md` §4) | Poco común |
 | Saco / bolsa | Sin efecto mecánico — almacenamiento de sabor, se vende por poco oro | Común |
 | Saco de dormir | Al jugar la Hoguera (§4b), recuperas **+1 Dado de Vida** extra | Común |
 | Manta | Ignora el **−1 de movimiento** de Nieve/Tundra este turno (`../board/board-map.md` §3) | Común |
@@ -58,7 +59,7 @@ Solo se **encuentran** (loot de Élite/Jefe, cofres de alta rareza); los Legenda
 
 Pociones (efecto instantáneo: curación, buff temporal), Pergaminos (lanzan un hechizo concreto — sostienen el modelo de hechizos-como-cartas, sin maná, de `../game-design.md` §4b.7). Se usan normalmente como **Acción rápida** en combate (`../game-design.md` §4b.3). Como cualquier carta del mazo personal, vuelven a estar disponibles después de jugarlas (`../game-design.md` §4).
 
-| Consumible | Coste | Efecto | Rareza |
+| Consumible | Tipo | Efecto | Rareza |
 |---|---|---|---|
 | Poción de vida | Acción rápida | Recuperas PV al instante (ej. 2d4+2) | Común |
 | Antídoto | Acción rápida | Retira el estado **Envenenado** ([`../effects.md`](../effects.md)) | Común |
@@ -68,7 +69,7 @@ Pociones (efecto instantáneo: curación, buff temporal), Pergaminos (lanzan un 
 
 Cartas ligadas al sistema de **Descanso y recuperación** (`../game-design.md` §4c). A diferencia de las pociones (se juegan en cualquier momento, incluido combate), la Hoguera solo se juega fuera de combate, arriesga una emboscada, y no puedes volver a jugarla hasta que ocurra algo (§4c.2).
 
-| Carta | Coste | Efecto | Rareza |
+| Carta | Tipo | Efecto | Rareza |
 |---|---|---|---|
 | **Hoguera / Campamento** | Fuera de combate | **Descanso corto:** gastas Dados de Vida para curarte y reseteas habilidades 1/descanso. Acampar en terreno inseguro **arriesga una emboscada** (roba del [`encounter.md`](encounter.md)); Bosque es seguro. No re-acampable hasta que ocurra algo (`../game-design.md` §4c.2). | Común |
 
@@ -78,7 +79,7 @@ Cartas ligadas al sistema de **Descanso y recuperación** (`../game-design.md` �
 
 Subtipo de Item que se juega para ganar **movimiento extra** ese turno, por encima del estándar de 2 (`../game-design.md` §2.2). Se usan como Acción rápida.
 
-| Carta | Coste | Efecto | Rareza |
+| Carta | Tipo | Efecto | Rareza |
 |---|---|---|---|
 | Bota veloz | Acción rápida | +2 de movimiento este turno | Común |
 | Atajo del pícaro | Acción rápida | +1 de movimiento e ignoras el coste extra de terreno difícil (Pantano) este turno | Poco común |

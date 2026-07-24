@@ -1,0 +1,5 @@
+// Barril de las capas 1 (settings) y 2 (tools) de ITCSS: las dos únicas que no
+// emiten CSS, por lo que cualquier parcial puede hacer `@use "../abstracts" as *;`
+// sin duplicar reglas en la salida.
+@forward "settings";
+@forward "tools";

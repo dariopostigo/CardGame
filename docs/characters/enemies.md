@@ -74,7 +74,7 @@ Eje **independiente** de la Categoría (§3, que mide dificultad/CR): la **Natur
 | Sombrío *(entidad de oscuridad/corrupción, no un cadáver animado)* | 🗡️, 🏹 | ☀️ | Sombra que Devora (jefe final, §5b.4) |
 
 - **Resistente** = mitad de daño; **Vulnerable** = daño doble; **Inmune** (0 daño) queda reservado, sin uso todavía (`../game-design.md` §4b.10).
-- **Pendiente de decidir:** el Heraldo Ceniciento (jefe de capítulo, §5b.4) invoca No-muertos y usa daño 💀 (Necrótico), pero no se le ha asignado Naturaleza propia — ¿es un No-muerto de alto rango o un Humanoide corrompido con poder 💀? Ver checklist (§6).
+- **Heraldo Ceniciento *(decidido)*:** es un **No-muerto de alto rango** (jefe de capítulo, §5b.4): invoca No-muertos y usa daño 💀 (Necrótico). Como No-muerto hereda las resistencias/vulnerabilidades por defecto (resistente a 🏹, **vulnerable a 🔨 y ☀️**) — su vulnerabilidad radiante le da un papel claro al Clérigo.
 - Naturalezas nuevas (Elemental, Constructo...) se añaden a esta tabla conforme el bestiario las necesite — no hace falta agotar la lista de antemano.
 
 ## 4. De la ficha al combate
@@ -156,7 +156,7 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 
 ### 5b.4 Jefes (con Bono de jefe +2 ya incluido)
 
-**Jefe de capítulo — "El Heraldo Ceniciento"** (9 DV)
+**Jefe de capítulo — "El Heraldo Ceniciento"** (9 DV) — Naturaleza **No-muerto de alto rango** (§3b): resistente a 🏹, vulnerable a 🔨 y ☀️
 - **PV** 72 · **CA** 16 · **Vel** 2 · **Det** 2
 - **Ataque:** Guadaña cenicienta +5 / 2d6+3 💀 / alcance 2
 - **Habilidades:** (1) *Aura de corrupción* — al empezar el combate y cada 3 turnos, el héroe salva SAB CD 14 o queda **Asustado** ([`../effects.md`](../effects.md)); (2) *Invocar* — cada 2 turnos aparece 1 Esqueleto errante.
@@ -240,10 +240,10 @@ El balance fino (cuántos a la vez, con qué stats exactas) se ajusta al testear
 - [x] Poner stats básicas (sin balancear) a los enemigos del boceto de arriba (normales, élite y jefes — §5).
 - [x] Definir **bloques de combate jugables** (PV, CA, ataque, daño, velocidad, detección, habilidad) para los 10 enemigos de ejemplo — §5b. Falta balancear.
 - [x] Definir la **IA de combate** (bucle de decisión turno a turno) → §5b.6: árbol de prioridades **determinista**, patrón único, huida por prueba enfrentada de DES, disparadores de habilidad unificados. Los arquetipos de comportamiento quedan como evolución futura (`../ideas.md`).
-- [ ] Definir el enemigo élite/boss de la **Partida rápida** en detalle (vínculo con la localización "Guarida" de `../board/board-map.md` §3b) — probablemente uno de los 3 Élite de arriba.
+- [x] Boss de la **Partida rápida** = **uno de los 3 Élite, elegido al azar** al generar el mapa *(decidido)*; habita la Guarida y derrotarlo cierra la partida (`../board/board-map.md` §2b, §3b). Pendiente (balance): si el Élite-boss recibe algún refuerzo extra sobre su bloque normal (§5b).
 - [x] Definir cómo escala la dificultad según profundidad del mapa / nivel del personaje → §5c (qué categorías aparecen por zona en **Partida rápida** y por nivel/capítulo en Campaña). Falta balancear cantidades.
 - [ ] Decidir si los nombres/historia de los jefes de capítulo y final son estos provisionales o se rediseñan al escribir la Campaña de verdad.
 - [ ] Cuando quieras, ir añadiendo más enemigos al bestiario de §5 (normales, élite, o nuevos jefes).
 - [x] Formalizar el sistema de tipos de daño y resistencias → **Naturaleza de criatura** (§3b) con resistencias/vulnerabilidades por defecto; multiplicadores y lista de tipos en `../game-design.md` §4b.10. Falta balancear (¿son los multiplicadores correctos? ¿demasiados/pocos tipos?).
-- [ ] Decidir la Naturaleza del Heraldo Ceniciento (§3b, §5b.4) — ¿No-muerto de alto rango o Humanoide corrompido con poder 💀 (necrótico)?
+- [x] Naturaleza del Heraldo Ceniciento = **No-muerto de alto rango** *(decidido)*: hereda resistente 🏹 / vulnerable 🔨,☀️ (§3b, §5b.4).
 - [ ] Asignar Naturaleza (§3b) a cualquier enemigo nuevo que se añada al bestiario.

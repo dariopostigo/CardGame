@@ -1,0 +1,16 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Skin: publicación de los tokens de settings/_colors.scss como custom
+// properties. Es el único sitio donde se escriben los --wiki-*; el resto del
+// CSS los pide con skin("...") y el TSX con var(--wiki-...) dentro de clases
+// arbitrarias de Tailwind.
+// -------------------------------------------------------------------------
+
+:root {
+  @include skin-vars($skin-light);
+}
+
+.dark {
+  @include skin-vars($skin-dark);
+}

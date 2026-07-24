@@ -13,7 +13,7 @@ const LABEL: Record<RarityLevel, string> = {
 
 // Mini-carta de color que sustituye al texto de rareza en las tablas de la
 // wiki (`lib/remark-rarity-chip.ts` la inserta) — misma paleta que el lab de
-// cartas (card-design.css §2). Sin texto visible, así que el nombre solo vive
+// cartas (styles/settings/_colors.scss). Sin texto visible, así que el nombre solo vive
 // en el tooltip real al pasar el ratón (igual que el resto de iconos, IconTip.tsx).
 export default function RarityChip({ level }: { level: RarityLevel }) {
   const label = LABEL[level] ?? level;

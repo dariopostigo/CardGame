@@ -1,0 +1,78 @@
+// -------------------------------------------------------------------------
+// Funciones de acceso a los tokens
+//
+// Regla de la casa: en los parciales NO se escriben colores, radios ni
+// z-index literales; se piden por nombre a estas funciones. Si el nombre no
+// existe el build falla, que es justo lo que se busca (una errata en un
+// var(--foo) suelto, en cambio, se descubre mirando la pantalla).
+// -------------------------------------------------------------------------
+
+@use "sass:map";
+@use "sass:math";
+@use "../settings" as *;
+
+// Token del skin de la wiki → referencia a la custom property, para que siga
+// conmutando claro/oscuro en runtime: skin("text") → var(--wiki-text)
+@function skin($name) {
+  @if not map.has-key($skin-light, $name) {
+    @error "skin(): no existe el token '#{$name}'. Disponibles: #{map.keys($skin-light)}.";
+  }
+  @return var(--wiki-#{$name});
+}
+
+@function z($name) {
+  @if not map.has-key($z, $name) {
+    @error "z(): no existe el plano '#{$name}'. Disponibles: #{map.keys($z)}.";
+  }
+  @return map.get($z, $name);
+}
+
+@function radius($name) {
+  @if not map.has-key($radius, $name) {
+    @error "radius(): no existe el radio '#{$name}'. Disponibles: #{map.keys($radius)}.";
+  }
+  @return map.get($radius, $name);
+}
+
+@function depth($name) {
+  @if not map.has-key($depth, $name) {
+    @error "depth(): no existe la profundidad '#{$name}'. Disponibles: #{map.keys($depth)}.";
+  }
+  @return map.get($depth, $name);
+}
+
+// Color de rareza. $key: "base" (filete) | "soft" (halo translúcido).
+@function rarity($name, $key: "base") {
+  @if not map.has-key($rarity, $name) {
+    @error "rarity(): no existe la rareza '#{$name}'. Disponibles: #{map.keys($rarity)}.";
+  }
+  @return map.get($rarity, $name, $key);
+}
+
+// Color de severidad de Maldición. Mismas claves que rarity().
+@function severity($name, $key: "base") {
+  @if not map.has-key($severity, $name) {
+    @error "severity(): no existe la severidad '#{$name}'. Disponibles: #{map.keys($severity)}.";
+  }
+  @return map.get($severity, $name, $key);
+}
+
+@function card-font($name) {
+  @if not map.has-key($card-font, $name) {
+    @error "card-font(): no existe el tamaño '#{$name}'. Disponibles: #{map.keys($card-font)}.";
+  }
+  @return map.get($card-font, $name);
+}
+
+// Escalón de ajuste del texto de la carta (1 | 2 | 3).
+@function card-fit($step, $key) {
+  @if not map.has-key($card-fit, $step) {
+    @error "card-fit(): no existe el escalón '#{$step}'. Disponibles: #{map.keys($card-fit)}.";
+  }
+  @return map.get($card-fit, $step, $key);
+}
+
+// left que centra una sub-ficha en el mismo eje vertical que el badge.
+@function chip-center-left($size, $badge-size: $chip-size, $inset: $chip-inset) {
+  @return $inset + math.div($badge-size - $size, 2);
+}

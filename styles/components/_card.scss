@@ -1,0 +1,321 @@
+@use "../abstracts" as *;
+
+// =========================================================================
+// Carta — esqueleto neutro
+//
+// Todo va acotado bajo .card-lab para no colisionar con la wiki (nada toca
+// <body>) y sin @layer, así que gana a las utilidades de Tailwind.
+//
+// Este archivo define solo la ESTRUCTURA: zonas, apilado y efectos. La piel
+// (colores, texturas, tipografía) la ponen los temas de card-themes/, que
+// van después en la cascada. Añadir un tema = un parcial nuevo allí + su
+// entrada en THEMES de CardDesignLab.tsx.
+// =========================================================================
+
+// Brillo especular del tilt: blanco puro que se disipa a 45% del radio.
+$gloss-tint: rgba(255, 255, 255, 0.35);
+$gloss-fade: rgba(255, 255, 255, 0);
+
+// Apilado de fichas: el badge arriba y las sub-fichas colgando de su eje.
+$hands-top: $chip-inset + $chip-size + $chip-gap;
+$damage-top: $hands-top + $chip-sub-size + $chip-gap;
+$sub-chip-left: chip-center-left($chip-sub-size);
+
+// Ángulo del gradiente del marco legendario. Se registra como <angle> para
+// poder animarlo: es el ÁNGULO lo que gira, no el elemento.
+@property --lg-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.card-lab {
+  // --- Geometría (cada tema la puede pisar a nivel de .card) --------------
+  --card-w: #{$card-width};
+  --card-h: #{$card-height};
+  --art-h: #{$card-art-height};
+  --card-radius: #{$card-radius};
+  --perspective: #{$card-perspective};
+
+  // --- Estado del tilt: lo escribe CardDesignLab.tsx en el style inline ---
+  --rx: 0deg;
+  --ry: 0deg;
+  --gloss-x: 50%;
+  --gloss-y: 50%;
+
+  // Raíl de color por defecto; cada carta lo redefine con su data-rarity.
+  @include rarity-vars("comun");
+
+  // --- Raíl de color por rareza/categoría --------------------------------
+  @each $name, $tokens in $rarity {
+    [data-rarity="#{$name}"] {
+      @include rarity-vars($name);
+    }
+  }
+
+  // ----------------------------------------------------- Esqueleto de zonas
+  .card {
+    position: relative;
+    width: var(--card-w);
+    height: var(--card-h);
+    border-radius: var(--card-radius);
+    display: grid;
+    grid-template-rows: var(--art-h) auto minmax(0, 1fr) auto;
+    grid-template-areas: "art" "name" "text" "footer";
+    overflow: hidden;
+    isolation: isolate;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition:
+      transform $duration-fast $ease,
+      box-shadow $duration-fast $ease;
+    user-select: none;
+
+    // Filete de rareza por encima del contenido, sin capturar el puntero.
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: var(--card-radius);
+      border: 2px solid var(--rarity);
+      z-index: z("frame");
+      pointer-events: none;
+    }
+  }
+
+  // --- Arte ---------------------------------------------------------------
+  .card__art {
+    grid-area: art;
+    position: relative;
+    display: grid;
+    place-items: center;
+    font-size: card-font("art");
+    line-height: 1;
+    height: var(--art-h);
+    overflow: hidden;
+    filter: saturate(1.05);
+
+    // Se despega del lienzo para dar paralaje al inclinar.
+    .emoji {
+      transform: translateZ(depth("art"));
+    }
+  }
+
+  // --- Fichas flotantes ---------------------------------------------------
+  .card__badge {
+    @include card-chip($chip-size, card-font("badge"));
+    top: $chip-inset;
+    left: $chip-inset;
+  }
+
+  .card__hands {
+    @include card-chip($chip-sub-size, card-font("sub-badge"));
+    top: $hands-top;
+    left: $sub-chip-left;
+  }
+
+  .card__damage-type {
+    @include card-chip($chip-sub-size, card-font("sub-badge"));
+    top: $damage-top;
+    left: $sub-chip-left;
+  }
+
+  // Coste: pastilla, no ficha circular, y en la esquina opuesta al badge.
+  .card__cost {
+    position: absolute;
+    top: $chip-inset;
+    right: $chip-inset;
+    z-index: z("chip");
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    display: grid;
+    place-items: center;
+    border-radius: radius("pill");
+    font-size: card-font("footer");
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transform: translateZ(depth("chip"));
+  }
+
+  // --- Nombre -------------------------------------------------------------
+  .card__name {
+    grid-area: name;
+    z-index: z("content");
+    text-align: center;
+    font-size: card-font("name");
+    font-weight: 700;
+    margin: 0;
+    padding: 8px 12px;
+    letter-spacing: 0.01em;
+  }
+
+  // --- Descripción --------------------------------------------------------
+  .card__text {
+    grid-area: text;
+    z-index: z("content");
+    margin: 0;
+    padding: 8px 14px;
+    font-size: card-fit(1, "size");
+    line-height: card-fit(1, "leading");
+    text-align: center;
+    @include line-clamp(card-fit(1, "lines"));
+
+    b {
+      font-weight: 700;
+    }
+  }
+
+  // Línea de coste/activación dentro de la descripción. Oculta por defecto:
+  // cada tema decide si la usa (otro podría preferir el pill .card__cost).
+  .card__cost-line {
+    display: none;
+  }
+
+  // Escalones de ajuste según longitud del texto (fitStep en
+  // CardDesignLab.tsx): se reduce el cuerpo y se permite una línea más.
+  @each $step in (2, 3) {
+    .card[data-fit="#{$step}"] .card__text {
+      font-size: card-fit($step, "size");
+      line-height: card-fit($step, "leading");
+      @include line-clamp-lines(card-fit($step, "lines"));
+    }
+
+    .card[data-fit="#{$step}"] .card__name {
+      font-size: card-font("name-fit");
+      padding: 6px 12px;
+    }
+  }
+
+  // --- Pie de stats -------------------------------------------------------
+  .card__footer {
+    grid-area: footer;
+    z-index: z("content");
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 10px 12px;
+    font-size: card-font("footer");
+    max-height: 56px;
+    overflow: hidden;
+  }
+
+  .stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .stat__k {
+    opacity: 0.7;
+    font-weight: 600;
+  }
+
+  .stat__v {
+    font-weight: 800;
+  }
+
+  // ------------------------------------------------------------- Efectos
+  // Tilt 3D: los ángulos vienen del puntero (CardDesignLab.tsx).
+  .card--tilt {
+    transform: perspective(var(--perspective)) rotateX(var(--rx)) rotateY(var(--ry));
+
+    &:hover {
+      box-shadow: $shadow-card-hover;
+    }
+  }
+
+  // Brillo especular que sigue al puntero.
+  .card__gloss {
+    position: absolute;
+    inset: 0;
+    z-index: z("gloss");
+    pointer-events: none;
+    border-radius: var(--card-radius);
+    opacity: 0;
+    transition: opacity $duration-base $ease;
+    background: radial-gradient(
+      circle at var(--gloss-x) var(--gloss-y),
+      $gloss-tint,
+      $gloss-fade 45%
+    );
+    mix-blend-mode: soft-light;
+  }
+
+  .card:hover .card__gloss {
+    opacity: 1;
+  }
+
+  // Marco dorado animado de las legendarias. Va por debajo del contenido
+  // (plano "legendary-frame") y se recorta con máscara para que solo se vea
+  // el reborde de 2px.
+  .card--legendary::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: z("legendary-frame");
+    border-radius: calc(var(--card-radius) + 2px);
+    padding: 2px;
+    background: conic-gradient(
+      from var(--lg-angle),
+      $gold-dark,
+      $gold,
+      $gold-light,
+      $gold,
+      $gold-dark,
+      $gold,
+      $gold-light,
+      $gold-dark
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    filter: drop-shadow(0 0 5px $gold-glow);
+    animation:
+      lg-sweep $legendary-sweep linear infinite,
+      lg-glow $legendary-glow ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  // Sin @property animable no hay barrido; queda solo el latido del halo.
+  @supports not (background: conic-gradient(from var(--lg-angle), red, blue)) {
+    .card--legendary::after {
+      animation: lg-glow $legendary-glow ease-in-out infinite;
+    }
+  }
+
+  @include reduced-motion {
+    .card--legendary::after {
+      animation: none;
+    }
+
+    .card--tilt {
+      transform: none;
+    }
+  }
+}
+
+@keyframes lg-sweep {
+  to {
+    --lg-angle: 360deg;
+  }
+}
+
+@keyframes lg-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 4px $gold-glow-soft);
+  }
+  50% {
+    filter: drop-shadow(0 0 10px $gold-glow-hot);
+  }
+}

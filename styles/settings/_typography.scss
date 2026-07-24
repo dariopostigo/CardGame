@@ -1,0 +1,37 @@
+// -------------------------------------------------------------------------
+// Tipografía
+//
+// Las familias llegan como custom properties de next/font (--font-geist-sans
+// en layout.tsx, --font-cormorant y --font-eb-garamond en CardDesignLab.tsx),
+// así que aquí solo se fijan las pilas de reserva.
+// -------------------------------------------------------------------------
+
+$font-sans: var(--font-sans), system-ui, sans-serif;
+
+// Serif de titulación del tema Pergamino (nombre en banda).
+$font-serif-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
+
+// Serif de lectura del tema Pergamino (cuerpo sobre pergamino).
+$font-serif-body: var(--font-eb-garamond), Georgia, serif;
+
+// --- Escala de la carta ---------------------------------------------------
+// Tamaños en rem propios de la carta: no siguen la escala de la wiki porque
+// la carta es un lienzo de tamaño fijo (260×364px) y aquí manda que el texto
+// entre en su caja. Los tres escalones "fit" los elige CardDesignLab.tsx
+// según la longitud real de la descripción.
+$card-font: (
+  "name": 1.12rem,
+  "name-fit": 1.02rem,
+  "text": 0.82rem,
+  "footer": 0.72rem,
+  "badge": 1.25rem,
+  "sub-badge": 0.78rem,
+  "art": 4.6rem,
+);
+
+// Escalones de ajuste: tamaño de cuerpo, interlineado y nº de líneas.
+$card-fit: (
+  1: ("size": 0.82rem, "leading": 1.32, "lines": 5),
+  2: ("size": 0.74rem, "leading": 1.22, "lines": 6),
+  3: ("size": 0.68rem, "leading": 1.16, "lines": 7),
+);

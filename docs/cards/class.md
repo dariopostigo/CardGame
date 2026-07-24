@@ -1,6 +1,6 @@
 # CardGame — Cartas: de Clase
 
-Catálogo de **Cartas Básicas y Especiales de Clase** (sistema en [`../game-design.md`](../game-design.md) §3.1, economía de acción de combate en §4b.3). Salen de la clase del héroe, no se draftean ni llevan Rareza (§3.3). Héroes y stats en [`../characters/heroes.md`](../characters/heroes.md). Índice de cartas en [`README.md`](README.md).
+Catálogo de **Cartas Básicas y Especiales de Clase** (sistema en [`../game-design.md`](../game-design.md) §3.1, economía de acción de combate en §4b.3). Salen de la clase del héroe, no son cartas de equipo ni llevan Rareza (§3.3). Héroes y stats en [`../characters/heroes.md`](../characters/heroes.md). Índice de cartas en [`README.md`](README.md).
 
 > **Roster completo (4 héroes):** Guerrero (§2), Mago (§3), Pícaro (§4) y Clérigo (§5) — los 4 arquetipos de `../characters/heroes.md`. Cada uno tiene 3 Básicas + 1 Especial de ejemplo. Los valores (dados, bonos, CD) son un punto de partida **sin balancear**.
 
@@ -10,12 +10,12 @@ Cada carta se define por estos campos, enganchados a la economía de acción de 
 
 | Campo | Valores posibles |
 |---|---|
-| **Coste** | `Acción` (la principal del turno) · `Acción rápida` (1/turno) · `Modificador` (enganchada a una tirada, ≤1 por tirada, no gasta la Acción) · `Pasiva` (siempre activa mientras esté en el mazo) |
+| **Tipo** | `Acción` (la principal del turno) · `Acción rápida` (1/turno) · `Modificador` (enganchada a una tirada, ≤1 por tirada, no gasta la Acción) · `Pasiva` (siempre activa mientras esté en el mazo) |
 | **Uso** | **Básica:** ilimitado (reutilizable cada turno; el límite real es la economía de acción). **Especial:** limitado — `1/combate` o `1/descanso`. |
 | **Efecto** | Qué hace, con sus tiradas/dados. |
 
-- **Por qué las Básicas son reutilizables:** no hay barajar ni robar (`../game-design.md` §4), así que una carta que tienes en el mazo es una opción siempre disponible. Lo que impide spamear "Golpe firme" cada turno es que **cuesta la Acción principal**, no un límite de usos. Las Especiales sí llevan límite porque son mucho más potentes.
-- **Cuentan para el máximo del mazo — decidido:** las cartas de clase **sí ocupan hueco** en el máximo del mazo personal (junto al equipo drafteado; ver [`README.md`](README.md)). Habrá una explicación in-fiction por desarrollar; si el límite queda demasiado ajustado al ganar Especiales por nivel, se podrá subir más adelante.
+- **Por qué las Básicas son reutilizables:** no hay barajar ni robar una mano (`../game-design.md` §4), así que una carta que tienes **en juego** es una opción siempre disponible. Lo que impide spamear "Golpe firme" cada turno es que **cuesta la Acción principal**, no un límite de usos. Las Especiales sí llevan límite porque son mucho más potentes.
+- **Cuentan para el Mazo y para "en juego" — decidido:** las cartas de clase **ocupan hueco** tanto en el Mazo (≤20) como en la zona **"en juego" (≤10)**, compitiendo con los items y mercenarios por esos huecos y por lo que preparas con el Oteo (ver [`README.md`](README.md) y [`../game-design.md`](../game-design.md) §4). Habrá una explicación in-fiction por desarrollar; si el límite queda demasiado ajustado al ganar Especiales por nivel, se podrá subir más adelante.
 
 ## 2. Guerrero *(Fighter — FUE 15/+2, CON 14/+2, d10, PV 14 — `../characters/heroes.md` §2b-2c)*
 
@@ -23,7 +23,7 @@ Rol: tanque melee fiable. Sus cartas premian **impactar con seguridad**, **aguan
 
 ### Básicas (nivel 1)
 
-| Carta | Coste | Efecto |
+| Carta | Tipo | Efecto |
 |---|---|---|
 | **Golpe firme** | Acción | Ataque cuerpo a cuerpo a un enemigo adyacente **con ventaja** (2d20, coges el mejor). El guerrero rara vez falla. |
 | **Postura defensiva** | Acción rápida | Hasta tu próximo turno, **+2 a tu Defensa/CA**. No puedes combinarla con Embestida el mismo turno (te plantas, no cargas). |
@@ -31,7 +31,7 @@ Rol: tanque melee fiable. Sus cartas premian **impactar con seguridad**, **aguan
 
 ### Especial (ejemplo)
 
-| Carta | Coste | Uso | Efecto |
+| Carta | Tipo | Uso | Efecto |
 |---|---|---|---|
 | **Segundo aliento** | Acción rápida | 1/descanso | Recuperas **1d10 + nivel** PV. (Toca también el sistema de descanso — ver checklist de `../game-design.md`.) |
 
@@ -41,7 +41,7 @@ Rol: daño a distancia y control, el más frágil (PV 8). Sus cartas premian **p
 
 ### Básicas (nivel 1)
 
-| Carta | Coste | Efecto |
+| Carta | Tipo | Efecto |
 |---|---|---|
 | **Descarga arcana** | Acción | Ataque a distancia (alcance **4 hex**): `1d20 + mod INT` vs Defensa; si impacta, **1d8 de daño 🔮 (arcano)**. Es el ataque a distancia fiable del mago (sus armas cuerpo a cuerpo son flojas). |
 | **Escudo arcano** | Acción rápida | Hasta tu próximo turno, **+3 a tu Defensa/CA**. La red de seguridad del mago frágil. |
@@ -49,7 +49,7 @@ Rol: daño a distancia y control, el más frágil (PV 8). Sus cartas premian **p
 
 ### Especial (ejemplo)
 
-| Carta | Coste | Uso | Efecto |
+| Carta | Tipo | Uso | Efecto |
 |---|---|---|---|
 | **Bola de fuego** | Acción | 1/combate | Explosión a distancia (alcance 4 hex): daño **3d6 de fuego** al enemigo objetivo y a los adyacentes a él. Cada afectado hace una salvación de Destreza (`1d20 + mod DES` vs CD) para recibir la mitad. |
 
@@ -59,7 +59,7 @@ Rol: sigilo, daño furtivo y exploración. Sus cartas premian **atacar desde la 
 
 ### Básicas (nivel 1)
 
-| Carta | Coste | Efecto |
+| Carta | Tipo | Efecto |
 |---|---|---|
 | **Ataque furtivo** | Acción | Ataque con arma ligera o a distancia. Si estás **Oculto** ([`../effects.md`](../effects.md)) o atacas con ventaja, **+2d6 de daño**. El pan de cada día del pícaro. |
 | **Escabullirse** | Acción rápida | Te mueves 1 hex sin arriesgar golpe de oportunidad y ganas **+2 para evitar detección** (prueba de sigilo, [`../characters/enemies.md`](../characters/enemies.md) §2b) hasta tu próximo turno; si terminas en Bosque u otro terreno de ocultación, quedas **Oculto**. |
@@ -67,7 +67,7 @@ Rol: sigilo, daño furtivo y exploración. Sus cartas premian **atacar desde la 
 
 ### Especial (ejemplo)
 
-| Carta | Coste | Uso | Efecto |
+| Carta | Tipo | Uso | Efecto |
 |---|---|---|---|
 | **Desaparecer** | Acción rápida | 1/combate | Quedas **Oculto** aunque estés a la vista (los enemigos pierden tu rastro) hasta que ataques o interactúes. Prepara un Ataque furtivo demoledor o una huida. |
 
@@ -77,7 +77,7 @@ Rol: curación, soporte y algo de daño divino. Sus cartas premian **mantenerte 
 
 ### Básicas (nivel 1)
 
-| Carta | Coste | Efecto |
+| Carta | Tipo | Efecto |
 |---|---|---|
 | **Palabra sanadora** | Acción rápida | Recuperas tú (o un aliado adyacente) **1d8 + mod SAB** PV. Curación fiable y repetible. |
 | **Llama sagrada** | Acción | Ataque divino a distancia (alcance 3 hex): `1d20 + mod SAB` vs Defensa; **1d8 de daño ☀️ (radiante)**, especialmente efectivo vs no-muertos (`../characters/enemies.md` §5). |
@@ -85,7 +85,7 @@ Rol: curación, soporte y algo de daño divino. Sus cartas premian **mantenerte 
 
 ### Especial (ejemplo)
 
-| Carta | Coste | Uso | Efecto |
+| Carta | Tipo | Uso | Efecto |
 |---|---|---|---|
 | **Bendición** | Acción | 1/combate | Durante 3 turnos ganas **Bendecido** ([`../effects.md`](../effects.md)): +1d4 a tus tiradas de ataque y de salvación. |
 

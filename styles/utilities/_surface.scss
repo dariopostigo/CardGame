@@ -1,0 +1,6 @@
+@use "../abstracts" as *;
+
+// Chrome de la wiki (barra lateral, cabecera): fondo de superficie del skin.
+.wiki-surface {
+  background: skin("surface");
+}

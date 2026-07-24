@@ -1,0 +1,16 @@
+// -------------------------------------------------------------------------
+// Movimiento
+//
+// Todo lo que anima respeta prefers-reduced-motion (mixin reduced-motion en
+// tools/_mixins.scss).
+// -------------------------------------------------------------------------
+
+$duration-fast: 0.18s;   // tilt y sombra de la carta
+$duration-base: 0.2s;    // aparición del brillo
+$duration-slow: 0.3s;    // cambio de fondo del escenario
+
+$ease: ease;
+
+// Marco dorado de legendaria: barrido del ángulo + latido del halo.
+$legendary-sweep: 6s;
+$legendary-glow: 2.4s;

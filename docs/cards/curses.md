@@ -6,7 +6,7 @@ Carta de **efecto negativo persistente** que **ocupa un hueco del mazo personal*
 
 - **Penaliza doble:** aplica su efecto negativo **y** te roba un hueco del mazo.
 - **No se puede descartar ni vender** voluntariamente (a diferencia del equipo): hay que **limpiarla** (§4).
-- **Presión sobre el máximo del mazo:** una Maldición se añade aunque estés en el máximo (`../game-design.md` §4), empujándote **por encima del tope**. Mientras estés por encima **no puedes draftear ni comprar cartas nuevas** — así la Maldición no solo estorba, congela tu progreso hasta que la limpies (o vendas equipo para hacer hueco a tu crecimiento futuro, pero el hueco maldito solo se libera limpiándola).
+- **Presión sobre el máximo del mazo:** una Maldición se añade aunque estés en el máximo (`../game-design.md` §4), empujándote **por encima del tope**. Mientras estés por encima **no puedes incorporar ni comprar cartas nuevas para el Mazo** — así la Maldición no solo estorba, congela tu progreso hasta que la limpies (o vendas equipo para hacer hueco a tu crecimiento futuro, pero el hueco maldito solo se libera limpiándola).
 - **Severidad, no Rareza:** las Maldiciones **no** usan el sistema de Rareza de las cartas buenas (`../game-design.md` §3.3). Usan **severidad**, que determina lo dañinas que son y lo caro/difícil que es quitarlas — coste de limpieza **por defecto** según severidad (cada Maldición puede tener su propio coste individual, §2):
 
   | Severidad | Coste de limpieza por defecto (Templo) | Prueba alternativa (gratis, arriesgada) |
@@ -14,7 +14,7 @@ Carta de **efecto negativo persistente** que **ocupa un hueco del mazo personal*
   | **Leve** | 30 oro | 1d20 + mod SAB o CON vs CD 12 |
   | **Grave** | 60 oro | 1d20 + mod SAB o CON vs CD 14 |
 
-  *(Una tercera categoría "Nefasta", ligada a jefes, queda como posible ampliación futura.)*
+  *(Se descarta una tercera categoría "Nefasta" en la v1 —bastan Leve/Grave—; queda como posible ampliación futura si el balance lo pide.)*
 
 ## 2. Catálogo (boceto)
 
@@ -22,7 +22,7 @@ Carta de **efecto negativo persistente** que **ocupa un hueco del mazo personal*
 |---|---|---|---|
 | Peso maldito | −1 Movimiento por turno | 30 oro | Leve |
 | Herida infectada | 1 de daño al inicio de tu turno cada 2 turnos en combate | 30 oro | Leve |
-| Velo de sombras | Oteas solo 1 carta en vez de 2 en el drafting (`../game-design.md` §4) | 30 oro | Leve |
+| Velo de sombras | −1 al rango de visión en el mapa (`../game-design.md` §2.3) | 30 oro | Leve |
 | Mano temblorosa | **Desventaja** ([`../effects.md`](../effects.md)) en tu primera tirada de cada combate | 30 oro | Leve |
 | Marca del cazador | Los enemigos te detectan +1 hex más lejos (`../characters/enemies.md` §2b) → más combates | 60 oro | Grave |
 | Sangre lenta | Toda curación que recibes se reduce a la mitad (pociones, acampar, Palabra sanadora) | 60 oro | Grave |
@@ -47,7 +47,7 @@ Carta de **efecto negativo persistente** que **ocupa un hueco del mazo personal*
 
 - [ ] Balancear costes de limpieza y frecuencia con la que aparecen.
 - [ ] Definir qué jefes/enemigos concretos imponen qué Maldición Grave (enlazar con sus bloques en `../characters/enemies.md`).
-- [ ] Decidir si existe la categoría "Nefasta" (§1) y para qué jefes.
+- [x] Categoría "Nefasta" **descartada en la v1** *(decidido)*: solo Leve/Grave; se revisará si hace falta (§1).
 - [ ] Cuando quieras, ampliar el catálogo de §2.
 - [x] Convertir la agrupación Leves/Graves del catálogo en columna **Severidad** explícita, igual que Rareza en las demás cartas.
 - [x] Plegar §Severidad dentro de §1 Concepto, y añadir columna **Coste de limpieza** por maldición (§2) para poder personalizarlo por carta en el futuro.

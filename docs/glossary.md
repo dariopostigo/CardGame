@@ -15,8 +15,10 @@ Términos transversales usados en todos los documentos de `docs/`. Se amplía co
 | Explorado | Estado de niebla: el personaje ha entrado en al menos 1 hexágono del grupo; a partir de ahí el rango de visión revela el contenido según su posición (`board/board-map.md` §4) |
 | Rango de visión | Cuántos hexágonos ve el personaje desde su posición; base gobernada por Sabiduría, +1 por cada +2 de modificador (`game-design.md` §2.3) |
 | Ficha (token) | Marcador visible sobre un hexágono. 6 tipos: Exploración, Amenaza, Tesoro, Terreno, Personaje, Enemigo (`board/board-map.md` §4) |
-| Otear / Draft | Mecanismo de construcción del mazo de equipo: cada turno se muestran 2 cartas de equipo y el jugador elige 1 para añadirla de forma permanente (`game-design.md` §4) |
-| Mazo personal | Mazo del jugador: cartas de clase + equipo obtenido. No se baraja ni se roba mano; se juega cualquier carta que ya se tenga (`game-design.md` §4) |
+| Otear | Al empezar el turno, revelar **2 cartas al azar del Mazo** y elegir **1** (o ninguna) para ponerla **en juego** (la otra vuelve al Mazo); así se van preparando cartas. No adquiere equipo nuevo (eso es botín/tesoro/compra) (`game-design.md` §4) |
+| En juego | Las cartas **preparadas** (hasta 10) que puedes jugar cuando quieras; se llenan con el Oteo (~1/turno) y **clase y equipo compiten** por esos huecos (`game-design.md` §4) |
+| Mazo personal | Cartas del jugador: **clase + items + mercenarios** (y maldiciones), **hasta 20** (tope duro, swap 1-por-1). Cada turno oteas 2 y preparas 1 en la zona "en juego" (≤10). **Armas y armaduras van aparte** (equipo, `game-design.md` §4, §4a) |
+| Equipo (armas y armaduras) | Sistema **aparte del Mazo**: se **equipan** (hasta llenar 2 manos + 1 armadura), no se otean ni ocupan hueco del Mazo. Colección **ilimitada**; se cambia antes del capítulo y en sitios seguros (`game-design.md` §4a) |
 | Mazo de encuentro | Mazo gestionado por el sistema (no por el jugador), con cartas cortas de acción que se roban al activar una ficha o entrar en combate (`board/board-map.md` §5) |
 | Maldición | Carta de efecto negativo persistente que **ocupa un hueco del mazo personal** (distinta de un Estado temporal de combate) (`game-design.md` §3.2) |
 | Mercenario | Carta de Acción que representa una compañía a sueldo; se recluta con una prueba de Carisma en una ficha ambigua (fallarla la convierte en enemigo) o se compra por oro; va al mazo personal (`game-design.md` §3, `cards/mercenaries.md`) |

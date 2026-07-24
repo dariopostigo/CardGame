@@ -1,0 +1,24 @@
+// -------------------------------------------------------------------------
+// Geometría de la carta
+//
+// Se publican como custom properties en .card-lab (components/_card.scss)
+// porque cada tema las puede sobrescribir a nivel de .card y porque el tilt
+// de CardDesignLab.tsx escribe --rx/--ry/--gloss-* en el estilo inline.
+// -------------------------------------------------------------------------
+
+$card-width: 260px;                // ratio ~63×88mm (carta de juego estándar)
+$card-height: 364px;
+$card-art-height: 150px;
+$card-radius: 16px;
+$card-perspective: 900px;
+
+// --- Fichas flotantes sobre el arte ---------------------------------------
+// El badge de categoría manda: las sub-fichas (manos, tipo de daño, peso,
+// severidad) se apilan bajo él centradas en su mismo eje vertical. Con estas
+// cuatro medidas se calculan todas las posiciones, así que cambiar el tamaño
+// del badge no obliga a recolocar nada a mano.
+$chip-size: 38px;
+$chip-sub-size: 26px;
+$chip-inset: 10px;                 // separación al borde de la carta
+$chip-gap: 4px;                    // aire entre fichas apiladas
+$chip-border: 2px;

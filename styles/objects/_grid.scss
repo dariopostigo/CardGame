@@ -1,0 +1,9 @@
+// Rejilla fluida de cartas: fila que envuelve y centra, alineada arriba para
+// que las cartas de distinta altura no se descoloquen.
+.card-lab__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+  align-items: flex-start;
+}

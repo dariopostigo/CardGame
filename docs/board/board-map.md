@@ -47,7 +47,7 @@ Para el **primer prototipo**, generación **hexágono-a-hexágono con pesos** (l
 1. Elegir tamaño (ej. 12×12 para partidas cortas) y semilla.
 2. Rellenar cada hex por **peso de terreno** (tabla A).
 3. Garantizar **conectividad**: debe existir camino transitable de la entrada al resto. La Montaña ya es transitable aunque muy costosa (§3a); aun así conviene que no encierre zonas tras un coste casi prohibitivo.
-4. Colocar el **boss élite** en el hex transitable más lejano a la entrada, o en una **Guarida** (§3b) — Partida rápida.
+4. Colocar el **boss élite** —**uno de los 3 Élite elegido al azar** (`../characters/enemies.md` §5b)— en el hex transitable más lejano a la entrada, o en una **Guarida** (§3b) — Partida rápida.
 5. Sembrar **fichas** según densidad y distribución (tabla B).
 
 **Tabla A — Pesos de terreno (prototipo):**
@@ -169,7 +169,7 @@ Ciertos hexágonos (dentro de un grupo ya "Explorado") tienen una **ficha** visi
 
 La referencia muestra cartas cortas de acción durante la exploración/combate en el mapa ("Captura", "Abatimiento") distintas de las cartas de loot. Propuesta:
 - **Mazo de encuentro/exploración**: cartas cortas que se roban al activar una ficha de evento o al entrar en combate sobre el mapa, con efectos puntuales de esa situación concreta (ej. "el enemigo intenta huir", "emboscada", "terreno se derrumba").
-- Distinto del **mazo personal** de `../game-design.md` (clase + objetos equipados), que el jugador construye y controla. El mazo de encuentro es "del mapa/la partida", compartido o gestionado por el sistema, no por el jugador.
+- Distinto del **mazo personal** de `../game-design.md` (clase + items + mercenarios), que el jugador construye y controla. El mazo de encuentro es "del mapa/la partida", compartido o gestionado por el sistema, no por el jugador.
 
 ## 6. Recompensas ligadas al mapa
 

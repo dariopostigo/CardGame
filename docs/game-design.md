@@ -4,7 +4,7 @@ Mezcla de mecánicas de **D&D** (personajes, estadísticas, progresión, identid
 
 ## 1. Concepto central
 
-Cada jugador controla un personaje con estadísticas de tipo D&D. Construye y baraja un **mazo personal** (clase + objetos equipados) que representa tanto sus capacidades como la suerte de cada turno. Las cartas de objeto (armas, armaduras, pociones, hechizos) se juegan desde la mano para modificar estadísticas propias, de aliados o de enemigos, o para aplicar ventaja/desventaja.
+Cada jugador controla un personaje con estadísticas de tipo D&D. Tiene un **mazo personal** (clase + items + mercenarios) del que cada turno **otea** 2 cartas al azar y prepara 1 para jugarla cuando quiera (§4) —ahí está la suerte de cada turno—, más un **equipo** de armas y armaduras que lleva puesto, aparte del mazo (§4a). Las cartas se juegan para modificar estadísticas propias, de aliados o de enemigos, aplicar ventaja/desventaja, curarse, invocar mercenarios, etc.
 
 ## 2. Personaje y estadísticas
 
@@ -42,7 +42,7 @@ Rango de visión base = 1 hexágono (el actual + vecinos inmediatos, según `boa
 
 - Cada personaje tiene **2 manos**. Las armas ocupan 1 o 2 manos (ver [`cards/weapons.md`](cards/weapons.md) para el listado con su icono ✋/🤲, ver [`glossary.md`](glossary.md)) — se pueden llevar hasta 2 armas de ✋ (una mano), o 1 arma de 🤲 (dos manos), nunca combinando ambas a la vez si no caben en las 2 manos disponibles.
 - Cada personaje lleva **1 sola armadura** equipada (no se acumulan varias).
-- Al principio de la aventura, el jugador elige con qué armas y armadura equiparse (partiendo del catálogo inicial de [`cards/`](cards/README.md)).
+- Al principio de la aventura (y luego antes de cada capítulo y en sitios seguros, §4a), el jugador elige con qué armas y armadura equiparse (partiendo del catálogo inicial de [`cards/`](cards/README.md)).
 
 ## 3. Tipos de carta
 
@@ -52,7 +52,7 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 
 1. **Cartas Básicas de Clase** — inspiradas en las cartas "Básica 1/2/3" de Viajes. Cada clase tiene un set fijo de cartas genéricas disponibles desde el nivel 1 (p. ej. Guerrero: "Golpe firme", "Postura defensiva"). Catálogo en [`cards/class.md`](cards/class.md).
 2. **Cartas Especiales de Clase** — se desbloquean por nivel/hito, igual que las subclases de D&D. Más potentes, uso limitado (una vez por combate/descanso). Ver [`cards/class.md`](cards/class.md).
-3. **Cartas de equipo** — armas, armaduras e items obtenidos jugando (ver §3.2 y [`cards/`](cards/README.md) para el catálogo), se incorporan al mazo mediante el drafting de §4.
+3. **Cartas de equipo** — armas, armaduras e items conseguidos jugando (botín, tesoro, recompensas, compra; ver §3.2 y [`cards/`](cards/README.md)). Las **armas y armaduras** se **equipan** aparte (§4a); los **items** entran al **Mazo** (§4). Nada de esto se consigue con el Oteo.
 4. **Cartas de Mercenario** — compañías a sueldo que se **reclutan** superando una prueba de Carisma en una ficha del tablero (fallarla la convierte en enemigo) o se **compran** por oro; van al mazo como cartas de Acción reutilizables. Catálogo en [`cards/mercenaries.md`](cards/mercenaries.md).
 
 ### 3.2 Por tipo (icono diferenciador)
@@ -63,7 +63,9 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 | **Armadura** | Escudo/coraza | Suma a la Defensa/CA; puede restar Destreza si es pesada | Solo 1 equipada a la vez (§2.4) |
 | **Item** | Bolsa | Categoría amplia: pociones (efecto instantáneo), hechizos (Cartas Especiales o Pergaminos), objetos de aventura/herramientas/objetos mágicos raros — ver [`cards/items.md`](cards/items.md) | El más variado de los 4 tipos |
 | **Mercenario** | 🪖 Casco/estandarte | Carta de Acción: das la orden a una compañía a sueldo (atacar, curarte, etc.); reutilizable, cuesta tu Acción | Origen (reclutar/comprar) y catálogo en [`cards/mercenaries.md`](cards/mercenaries.md) |
-| **Maldición** | Calavera/nube negra | Efecto negativo persistente que **ocupa un hueco del mazo** (a diferencia de un Efecto/Estado temporal de combate) — ej. -1 movimiento, 1 de daño cada 2 turnos, otear solo 1 carta en vez de 2 | Definida en [`cards/curses.md`](cards/curses.md) (severidad Leve/Grave, fuentes, limpieza); da incentivo a "limpiar" el mazo |
+| **Maldición** | Calavera/nube negra | Efecto negativo persistente que **ocupa un hueco del mazo** (a diferencia de un Efecto/Estado temporal de combate) — ej. -1 movimiento, 1 de daño cada 2 turnos, −1 al rango de visión | Definida en [`cards/curses.md`](cards/curses.md) (severidad Leve/Grave, fuentes, limpieza); da incentivo a "limpiar" el mazo |
+
+> **Dónde vive cada tipo:** **armas** y **armaduras** son el **sistema de equipo** (§4a) — se equipan, no ocupan hueco del Mazo ni pasan por el Oteo. **Items**, **mercenarios** y **maldiciones** sí viven en el **Mazo** (§4).
 
 Además siguen existiendo las **Cartas de Efecto/Estado** (ventaja, desventaja, aturdido, envenenado) que se aplican de forma *temporal* durante una prueba/combate sobre un personaje (propio, aliado o enemigo) — no ocupan hueco de mazo como la Maldición, son más bien un modificador puntual de una carta de Arma/Item/hechizo al jugarse.
 
@@ -85,15 +87,29 @@ Aplica a cartas de Arma/Armadura/Item (y previsiblemente Maldición). Las cartas
 
 ## 4. Mazo y turno
 
-- El mazo de cada jugador = cartas básicas de clase + cartas especiales desbloqueadas + cartas de equipo (§3.2) obtenidas jugando.
-- **Mazo — dos topes (idea inicial, decidido):**
-  - **Mazo de partida:** antes de cada capítulo construyes un mazo de **hasta 20 cartas** (cartas de clase + equipo que decidas llevar de tu colección).
-  - **Botín drafteado:** durante el capítulo, cada turno "oteas" 2 cartas de equipo y eliges 1 para añadirla de forma permanente; ese botín se **acumula hasta 10**, aparte de las 20 de construcción.
+- El mazo de cada jugador = cartas de clase (básicas + especiales) + **items y mercenarios** obtenidos jugando (§3.2). Las **armas y armaduras van aparte**, en el sistema de equipo (§4a).
+- **Mazo — dos zonas: el Mazo y "en juego" *(decidido)*:**
+  - **Mazo del capítulo — hasta 20 cartas:** tu baraja personal = **cartas de clase + items + mercenarios** (más las **maldiciones** que te caigan). **Las armas y armaduras NO cuentan aquí** — van en el sistema de equipo aparte (§4a). Es un **tope duro**: los items/mercenarios nuevos entran jugando (botín, Tesoro, recompensas, compra, §6b), **no** con el Oteo; al llegar a 20, incorporar uno nuevo obliga a **cambiar una carta por otra** (swap 1-por-1).
+  - **En juego — hasta 10 cartas:** tu zona de cartas **preparadas**, las únicas que puedes jugar. Empieza **vacía** al comenzar el capítulo y se llena poco a poco con el Oteo. **Clase, items y mercenarios compiten** por esos 10 huecos (más de un tipo preparado = menos hueco para los demás).
+  - **Otear *(decidido)*:** al **empezar tu turno**, antes de mover o actuar, revelas **2 cartas al azar de tu Mazo** y **eliges 1** para ponerla **en juego**; la otra **vuelve al Mazo**. Así "en juego" crece ~1 carta por turno (1/10, 2/10…). Las cartas en juego las usas **cuando quieras** (una poción, un mercenario, una carta de acción…), dentro de la economía de acción (§4b.3); no caducan si no las usas.
 
-  Sustituye el "tope único de 10 que contaba todas las cartas" anterior. *(Interpretación de partida: las ≤10 drafteadas van **aparte** de las ≤20 construidas —hasta ~30 cartas en juego—; si prefieres que las drafteadas cuenten dentro de las 20, es un cambio de una línea.)* Detalle en [`cards/README.md`](cards/README.md).
-- **Sin barajar ni robar mano:** al no haber mazo-que-se-baraja-y-roba, el jugador puede jugar en cualquier momento **cualquiera** de las cartas que ya tiene en su mazo (dentro del recurso de acción disponible ese turno) para realizar su acción (curarse, ayudar en la aventura, aumentar estadísticas, atacar, etc.).
-- **Ninguna carta se pierde al jugarla *(decidido)*:** jugar una carta del mazo personal (equipo, clase, item) cuesta el recurso de turno que le corresponda (Movimiento/Acción/Acción rápida/Carta de Efecto, §4b.3), pero la carta **vuelve a estar disponible** para jugarla otra vez más adelante — no hay descarte permanente ni cartas de "un solo uso" dentro del mazo personal. Textos como "un uso" o "se consume" en cartas de equipo/item **no aplican** y son restos de una idea descartada. El único límite real de repetición son las etiquetas explícitas **1/combate** o **1/descanso** de las Cartas Especiales de Clase (§3.1).
-- **Resolución de pruebas — decidido:** al no haber "carta robada al azar", las pruebas y ataques se resuelven con **1d20 + modificador** de la estadística relevante contra una CD/Defensa. Las **cartas actúan como modificadores** de esa tirada (bonus, daño extra, ventaja/desventaja, estados), coherente con el §6 y con "juega cualquier carta cuando quieras". El detalle paso a paso del combate se define en la sección de combate (checklist).
+  Sustituye la idea anterior de "20 construidas + 10 drafteadas aparte (~30 en juego)". Detalle en [`cards/README.md`](cards/README.md).
+
+  > **Reglas del Oteo *(decidido)*:** de las 2 cartas puedes elegir **1** o **ninguna** (si no te convence ninguna, las rechazas y las dos vuelven al Mazo). Con "en juego" **lleno (10/10)**, para quedarte una nueva **sustituyes** una carta que ya tengas en juego (la sustituida vuelve al Mazo). Al **jugar** una carta también vuelve al Mazo y puede reaparecer en un Oteo posterior — nada se pierde.
+  >
+  > **El Oteo reparte al azar *(decidido)*:** las 2 cartas que muestra salen **al azar** de tu Mazo (como robar de una baraja); de ellas eliges 1 o ninguna. Hay un componente de **suerte**, así que **cómo compones tu Mazo de 20 importa**: cuanto mejor sea la mezcla, mejores serán las 2 que te ofrezca cada turno.
+- **Sin "mano" clásica:** no se roba y descarta una **mano completa** cada turno como en un juego de cartas al uso; el Oteo solo saca **2 al azar**, preparas 1 y lo que preparas **se queda en juego** hasta que lo juegas. Una vez una carta está **en juego**, es una opción **siempre disponible** hasta que la juegues (dentro del recurso de acción del turno, §4b.3): curarte, ayudar en la aventura, subir estadísticas, atacar, etc.
+- **Ninguna carta se pierde al jugarla *(decidido)*:** jugar una carta del mazo personal (equipo, clase, item) cuesta el recurso de turno que le corresponda (Movimiento/Acción/Acción rápida/Carta de Efecto, §4b.3), pero la carta **vuelve al Mazo** (§4) y puede volver a prepararse con el Oteo más adelante — **hoy** no hay descarte permanente ni cartas de "un solo uso" en el mazo personal (podría añadirse como excepción puntual en el futuro; de momento ninguna carta lo lleva). Textos como "un uso" o "se consume" en cartas de equipo/item **no aplican** y son restos de una idea descartada. El único límite real de repetición son las etiquetas explícitas **1/combate** o **1/descanso** de las Cartas Especiales de Clase (§3.1).
+- **Resolución de pruebas — decidido:** las pruebas y ataques **no** se resuelven robando una carta al azar, sino con **1d20 + modificador** de la estadística relevante contra una CD/Defensa. Las **cartas actúan como modificadores** de esa tirada (bonus, daño extra, ventaja/desventaja, estados), coherente con el §6 y con "juega cualquier carta cuando quieras". El detalle paso a paso del combate se define en la sección de combate (checklist).
+
+## 4a. Equipo: armas y armaduras (fuera del Mazo) *(decidido)*
+
+Las **armas** ([`cards/weapons.md`](cards/weapons.md)) y **armaduras** ([`cards/armor.md`](cards/armor.md)) **no forman parte del Mazo** (§4) ni pasan por el Oteo: son un **sistema de equipo aparte**, al estilo RPG clásico (van "puestas", no se roban ni se juegan como carta).
+
+- **Colección ilimitada:** no hay tope de cuántas armas/armaduras posees. Se consiguen como el resto de equipo —botín, fichas de Tesoro, recompensas y **compra en el Herrero** (`characters/npcs.md`, §6b)— y se guardan **sin ocupar hueco del Mazo**.
+- **Lo que llevas equipado:** hasta **llenar tus 2 manos** —un arma a **2 manos**, o **dos a 1 mano**, o **1 mano + escudo** (§2.4)— y **1 armadura**. Eso es lo activo; el resto de tu colección queda guardado.
+- **Cuándo se cambia:** equipas/desequipas **antes del capítulo** y en **localizaciones seguras** (Pueblo/Taberna/Templo, durante el descanso largo, §4c.3). **No** puedes cambiar de equipo en mitad del combate o la exploración.
+- **En combate:** atacas con el arma equipada (siempre disponible, sin otearla) y tu Defensa/CA usa la armadura equipada (§4b.4, §2.4). Las cartas de clase, items y mercenarios del Mazo **modifican** o complementan esos ataques.
 
 ## 4b. Combate (borrador)
 
@@ -135,6 +151,8 @@ Las **Cartas Especiales de Clase** son potentes y de uso limitado: **1 vez por c
 6. **Ventaja/Desventaja:** tira 2d20 y coge el mejor (ventaja) o el peor (desventaja). La aportan cartas de Efecto, estados o el terreno del hex (emboscada desde Bosque = ventaja; atacar cruzando Llanura/Camino a la vista = posible desventaja — `board/board-map.md` §4).
 7. Restar el daño de los PV del objetivo. A 0 PV → derrotado.
 
+> **Precisión global — decidido:** de momento **no** se añade ningún `+2` global al ataque en ninguno de los dos bandos (no hay bono de competencia). La precisión resultante (~55 %) se revisa **jugando el prototipo**, no sobre el papel.
+
 ### 4b.5 Movimiento de enemigos: activación por detección *(decidido)*
 
 Los enemigos **sí se mueven**, pero solo tras **detectar al héroe**. Modelo de tres estados (detalle de comportamiento en `characters/enemies.md` §2):
@@ -155,7 +173,9 @@ Resuelve el cross-reference pendiente entre §4 (solo hablaba del mazo personal)
 
 ### 4b.7 Hechizos (sin recurso de puntos)
 
-En el prototipo los hechizos son simplemente **Cartas**: Especiales de Clase con límite 1/combate o descanso, o Items (Pergamino). **No hay maná ni espacios de conjuro** — ninguna reserva de puntos que gestionar. La granularidad de caster (tipos de magia, debilidades elementales, subclases de mago con sus cartas de clase) queda como desarrollo posterior.
+En el prototipo los hechizos son simplemente **Cartas de clase** (Especiales 1/combate o 1/descanso, y Básicas de ataque mágico como *Descarga arcana* o *Llama sagrada*) o **Pergaminos** (Item). Viven en el Mazo y se **preparan con el Oteo** como cualquier otra carta (§4): **no hay un subsistema de "preparar hechizos" aparte**, ni maná, ni espacios de conjuro. Se lanzan gastando la Acción que indique la carta y se resuelven con `1d20 + INT/SAB` vs CD/Defensa (§4b.4).
+
+**Foco *(decidido)*:** el **Libro de hechizos** (Mago) y el **Símbolo sagrado** (Clérigo) son **armas equipadas** (§4a, [`cards/weapons.md`](cards/weapons.md) §3) que dan **+1 a las tiradas y CD de tus hechizos** mientras las empuñas —como el Bastón del poder—; potencian, no son requisito para lanzar. La granularidad de caster (tipos de magia, debilidades elementales, subclases de mago) queda como desarrollo posterior.
 
 ### 4b.8 Huir, victoria y derrota
 
@@ -216,7 +236,7 @@ Quién es resistente/vulnerable a qué **no se decide arma por arma ni enemigo p
 
 - Subir de nivel por hitos de historia (como D&D 5e "milestone leveling"), no por XP acumulada — encaja mejor con partidas cortas de cartas.
 - Cada nivel: PV extra (dado de vida de la clase + mod CON, §2), posible mejora de estadística, y desbloqueo de 1 carta especial de clase nueva que se añade al mazo personal.
-- El equipo (armas/armaduras/items) se consigue jugando mediante el drafting de §4 (otear 2, elegir 1), no por nivel — dos ejes de progresión en paralelo (personaje vs. mazo de equipo), igual que en Viajes (colección de cartas de Objeto) combinado con el nivel de personaje de D&D.
+- El equipo se consigue jugando —botín, tesoro, compra (§6b)—, no por nivel: **armas y armaduras** se equipan aparte (§4a) y los **items/mercenarios** entran al Mazo (§4). Dos ejes de progresión en paralelo (personaje vs. equipo/mazo), igual que en Viajes (colección de cartas de Objeto) combinado con el nivel de personaje de D&D.
 
 ## 6. Ventajas/Desventajas y objetivo de las cartas
 
@@ -232,6 +252,8 @@ Esto es clave para que el "deckbuilding" tenga sentido táctico: no solo mejoras
 **Recurso: Oro.** Moneda única, un **contador en la hoja de personaje** (no una carta — como los PV o los Dados de Vida, §4c.4). Simple y de sabor D&D; gemas/tesoros de alto valor podrían añadirse como variante futura. Resuelve la duda de economía que bloqueaba a `characters/npcs.md`, al descanso largo (§4c.3) y a la limpieza de Maldiciones ([`cards/curses.md`](cards/curses.md)).
 
 **Persistencia:** en **Modo Campaña** el oro persiste entre mapas (como el nivel y el mazo); en **Partida rápida** se reinicia por partida.
+
+**Oro inicial — 0 *(decidido)*:** todos los héroes **empiezan sin oro** (tanto en Partida rápida como al comenzar la Campaña). No hay colchón de salida: el oro se gana enteramente jugando (§6b.1), así que las primeras compras dependen de explorar y combatir antes.
 
 ### 6b.1 De dónde sale (fuentes)
 
@@ -266,12 +288,12 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
 | Legendario (dorado) | 400 | 160 |
 
 - Los **Legendarios** normalmente **no se venden en tiendas** (solo se encuentran); el mercado llega hasta Épico.
-- Las tiendas tienen **stock limitado/rotatorio** (no un catálogo infinito), para que explorar y draftear sigan importando y comprar no eclipse la exploración.
+- Las tiendas tienen **stock limitado/rotatorio** (no un catálogo infinito), para que explorar y encontrar botín sigan importando y comprar no eclipse la exploración.
 
-### 6b.4 Cómo encaja con el mazo y el drafting
+### 6b.4 Cómo encaja con el mazo
 
-- Comprar una carta la añade al mazo → **cuenta para el máximo** (§4). El oro da *elección*, pero el tamaño del mazo sigue siendo el límite real: la economía no rompe el equilibrio del mazo.
-- **Vender** es el sumidero natural del exceso de cartas: como el mazo tiene tope, cambias equipo que ya no usas por oro para comprar algo mejor. Esto cierra el bucle drafting → tesoro → tienda que antes inflaba el mazo sin salida.
+- Comprar una carta la añade al Mazo → **cuenta para el máximo** (§4) — esto vale para **items y mercenarios**; las **armas/armaduras** compradas al Herrero **no cuentan** para el Mazo (colección ilimitada, §4a). El oro da *elección*, pero el tamaño del Mazo sigue siendo el límite real de las cartas que sí lo ocupan.
+- **Vender** es el sumidero natural del exceso de cartas: como el Mazo tiene tope, cambias equipo que ya no usas por oro para comprar algo mejor. Esto cierra el bucle botín/tesoro → tienda → Mazo que antes lo inflaba sin salida.
 
 ## 6c. Nivel de Amenaza (reloj de capítulo)
 
@@ -282,7 +304,7 @@ Reloj de presión que impide que un capítulo (o una Partida rápida) se eternic
 ### 6c.1 El reloj
 
 - Barra **por capítulo** de **0 → 100**, se **reinicia** al empezar cada capítulo/mapa (en **Partida rápida**, el único mapa es "el capítulo").
-- **+5 al final de cada ronda** (cuando todos los héroes terminan su turno; en el prototipo de 1 héroe, cada turno).
+- **+1 al final de cada turno de héroe *(decidido, primer pase)*.** *(Sustituye el "+5 por ronda" anterior. Con este ritmo mucho más lento, el tope 100, los umbrales 25/50/75 y las demás fuentes de abajo quedan **pendientes de reajustar a esta nueva base** — "de momento +1 por turno y ya iremos afinando".)*
 - **No se pausa nunca *(decidido)*:** sigue corriendo igual dentro de una localización especial/sub-mapa (Mazmorra, Mina... `board/board-map.md` §3b) que dentro del mapa principal — entrar en un sub-mapa no es un respiro para el reloj.
 - **Visible siempre** en pantalla, como los PV — la tensión solo funciona si se ve subir.
 
@@ -292,7 +314,7 @@ Sube más rápido con acciones "lentas" o ruidosas y se frena avanzando — ahí
 
 | Sube la Amenaza | |
 |---|---|
-| Fin de ronda (base) | +5 |
+| Fin de turno (base) | +1 |
 | Acampar / descanso corto (§4c.2) | **+10** *(propuesta: el doble de una ronda, para que curarte/resetear habilidades tenga un coste de tiempo real — refuerza el anti-abuso de acampar ya existente)* |
 | Fallar una prueba de sigilo y alertar una zona (`characters/enemies.md` §2b) | **+8** *(propuesta)* |
 | Huir de un combate (`characters/enemies.md` §5b.6) | **+8** *(propuesta, mismo peso que alertar — ambos son "un contratiempo", no una elección deliberada como acampar)* |
@@ -303,7 +325,7 @@ Sube más rápido con acciones "lentas" o ruidosas y se frena avanzando — ahí
 | Derrotar al boss/objetivo del capítulo (Élite de Guarida en **Partida rápida**, objetivo de la historia en Campaña) | *(no aplica un −W: la victoria ya resetea la barra a 0 directamente, §6c.4 — esta fila queda solo como referencia de qué acción es "la" que cierra el capítulo)* |
 | **Tabernero**, pagando oro — **decidido:** ya no es el Pueblo el que baja la Amenaza automáticamente; es una acción de pago del NPC Tabernero (`characters/npcs.md` §2), usable **1 vez por partida/capítulo** | **−25 por 50 oro** *(propuesta: ratio 2 oro por punto, en línea con el precio de un objeto Raro, §6b.3)* |
 
-*(Cifras = primer pase, a afinar jugando.)*
+*(Cifras = primer pase, a afinar jugando. **Aviso:** con la base recién bajada a +1/turno (§6c.1), las subidas de golpe de esta tabla —+10, +8, +15— quedan desproporcionadas y hay que reescalarlas junto con el tope y los umbrales.)*
 
 ### 6c.3 Umbrales (escalado **mixto**: suave → duro)
 

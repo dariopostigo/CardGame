@@ -1,0 +1,11 @@
+// Reset de caja acotado al lab de cartas: toda su geometría (fichas, marcos,
+// filetes) está calculada contando el borde dentro del tamaño. Fuera de
+// .card-lab manda el preflight de Tailwind.
+.card-lab {
+  &,
+  & *,
+  & *::before,
+  & *::after {
+    box-sizing: border-box;
+  }
+}

@@ -1,0 +1,83 @@
+// -------------------------------------------------------------------------
+// Color
+//
+// Dos sistemas distintos y deliberadamente separados:
+//
+//   · SKIN de la wiki  → mapas claro/oscuro que se publican como custom
+//     properties --wiki-* en elements/_root.scss. Se conmutan en runtime
+//     (clase .dark en <html>), así que TIENEN que ser custom properties;
+//     también las consume el TSX vía Tailwind arbitrario: bg-[var(--wiki-bg)].
+//
+//   · RAREZA y SEVERIDAD → constantes de diseño del juego. Fuente única para
+//     la carta del lab (components/_card.scss) y para las mini-cartas de las
+//     tablas de la wiki (components/_chip.scss). Espejo de lib/rarity.ts y
+//     lib/severity.ts, que las necesitan del lado de TS.
+// -------------------------------------------------------------------------
+
+// --- Skin: tema claro (por defecto) --------------------------------------
+$skin-light: (
+  "bg": #ffffff,
+  "surface": #f8fafc,
+  "surface-2": #f1f5f9,
+  "text": #0f172a,
+  "muted": #64748b,
+  "accent": #4f46e5,
+  "accent-soft": #e0e7ff,
+  "border": #e2e8f0,
+  "callout-bg": #eef2ff,
+  "callout-border": #4f46e5,
+  "code-bg": #f1f5f9,
+);
+
+// --- Skin: tema oscuro ----------------------------------------------------
+// Mismas claves que $skin-light; si falta alguna, el build falla (ver el
+// mixin skin-vars en tools/_mixins.scss).
+$skin-dark: (
+  "bg": #0b1020,
+  "surface": #111827,
+  "surface-2": #1f2937,
+  "text": #e5e7eb,
+  "muted": #94a3b8,
+  "accent": #818cf8,
+  "accent-soft": #1e2340,
+  "border": #263041,
+  "callout-bg": #1e2340,
+  "callout-border": #818cf8,
+  "code-bg": #0f1526,
+);
+
+// --- Rareza (game-design.md §3.3) -----------------------------------------
+// "base" pinta filetes y bordes; "soft" es la misma tinta translúcida para
+// halos y rellenos. Las tres últimas claves no son rareza: son categorías de
+// carta que reutilizan el mismo raíl de color (data-rarity en el lab).
+$rarity: (
+  "comun": ("base": #9aa0a6, "soft": rgba(154, 160, 166, 0.35)),
+  "poco-comun": ("base": #3fae5a, "soft": rgba(63, 174, 90, 0.35)),
+  "raro": ("base": #3b82f6, "soft": rgba(59, 130, 246, 0.35)),
+  "epico": ("base": #a855f7, "soft": rgba(168, 85, 247, 0.38)),
+  "legendario": ("base": #e2b53c, "soft": rgba(226, 181, 60, 0.45)),
+  "clase": ("base": #d9c8a3, "soft": rgba(217, 200, 163, 0.35)),
+  "maldicion": ("base": #7a2340, "soft": rgba(122, 35, 64, 0.45)),
+  "enemigo": ("base": #b23b2e, "soft": rgba(178, 59, 46, 0.4)),
+);
+
+// Niveles de rareza propiamente dichos: los que salen como mini-carta en las
+// tablas de la wiki (RarityChip.tsx). Orden = progresión de calidad.
+$rarity-levels: ("comun", "poco-comun", "raro", "epico", "legendario");
+
+// --- Severidad de Maldiciones (cards/curses.md §2) ------------------------
+// Paleta propia, no la de rareza: mide peligro, no calidad, y confundirlas
+// haría ilegibles las tablas (SeverityChip.tsx).
+$severity: (
+  "leve": ("base": #d97706, "soft": rgba(217, 119, 6, 0.35)),
+  "grave": ("base": #b91c1c, "soft": rgba(185, 28, 28, 0.4)),
+);
+
+// --- Marco dorado de legendaria -------------------------------------------
+// Paradas del gradiente cónico animado: bronce → oro → luz.
+$gold-dark: #7a5c14;
+$gold: #e2b53c;
+$gold-light: #fff3b0;
+$gold-glow: rgba(226, 181, 60, 0.7);
+$gold-glow-soft: rgba(226, 181, 60, 0.55);
+$gold-glow-hot: rgba(255, 230, 128, 0.9);

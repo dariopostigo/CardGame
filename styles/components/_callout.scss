@@ -1,0 +1,25 @@
+@use "../abstracts" as *;
+
+// Callout: blockquote de los docs reetiquetado por components/Markdown.tsx.
+// Sin cursiva ni comillas decorativas — aquí son avisos, no citas.
+.wiki-callout {
+  background: skin("callout-bg");
+  border-left: 4px solid skin("callout-border");
+  border-radius: radius("lg");
+  padding: 0.5rem 1rem;
+  margin: 1.25rem 0;
+  font-style: normal;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  p::before,
+  p::after {
+    content: "";
+  }
+}

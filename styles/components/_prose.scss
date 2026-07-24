@@ -1,0 +1,97 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Prosa de la wiki
+//
+// El contenido lo genera react-markdown desde docs/*.md, así que no hay
+// clases donde agarrarse: se estiliza por elemento bajo .wiki-prose. El
+// puente con @tailwindcss/typography son las variables --tw-prose-*, que se
+// remapean al skin para que el plugin herede el tema claro/oscuro solo.
+// -------------------------------------------------------------------------
+
+.wiki-prose {
+  max-width: none;
+
+  --tw-prose-body: #{skin("text")};
+  --tw-prose-headings: #{skin("text")};
+  --tw-prose-lead: #{skin("muted")};
+  --tw-prose-links: #{skin("accent")};
+  --tw-prose-bold: #{skin("text")};
+  --tw-prose-counters: #{skin("muted")};
+  --tw-prose-bullets: #{skin("accent")};
+  --tw-prose-hr: #{skin("border")};
+  --tw-prose-quotes: #{skin("text")};
+  --tw-prose-quote-borders: #{skin("callout-border")};
+  --tw-prose-captions: #{skin("muted")};
+  --tw-prose-code: #{skin("text")};
+  --tw-prose-pre-code: #{skin("text")};
+  --tw-prose-pre-bg: #{skin("code-bg")};
+  --tw-prose-th-borders: #{skin("border")};
+  --tw-prose-td-borders: #{skin("border")};
+
+  // Encabezados con ancla (rehype-autolink-headings, behavior: wrap): el
+  // enlace envuelve todo el título, así que no debe verse como enlace.
+  :is(h1, h2, h3, h4, h5, h6) a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: inherit;
+  }
+
+  // Hueco para la cabecera fija al saltar a un ancla.
+  :is(h1, h2, h3, h4) {
+    scroll-margin-top: 5rem;
+  }
+
+  // --- Tablas (los docs son mayoritariamente tablas) ----------------------
+  table {
+    font-size: 0.9rem;
+  }
+
+  thead {
+    background: skin("surface-2");
+  }
+
+  tbody tr:nth-child(even) {
+    background: color-mix(in srgb, #{skin("surface-2")} 45%, transparent);
+  }
+
+  th,
+  td {
+    padding: 0.5rem 0.75rem;
+  }
+
+  // --- Código -------------------------------------------------------------
+  // Solo el código en línea: los bloques ya los pinta el plugin typography.
+  :not(pre) > code {
+    background: skin("code-bg");
+    padding: 0.15em 0.4em;
+    border-radius: radius("sm");
+    font-weight: 500;
+    font-size: 0.85em;
+
+    // typography añade backticks decorativos; sobran.
+    &::before,
+    &::after {
+      content: "";
+    }
+  }
+
+  pre {
+    border: 1px solid skin("border");
+    border-radius: radius("xl");
+  }
+
+  // --- Listas de tareas (remark-gfm, solo lectura) ------------------------
+  input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.4rem;
+    accent-color: skin("accent");
+    vertical-align: -0.1em;
+  }
+
+  li:has(> input[type="checkbox"]) {
+    list-style: none;
+    margin-left: -1.25rem;
+  }
+}

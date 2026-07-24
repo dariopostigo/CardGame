@@ -1,39 +1,48 @@
-Electric border (Efecto brutal para cartas importantes)
-----------------
-https://codepen.io/BalintFerenczy/pen/KwdoyEN
-
-Fanned cards with hover (Baraja con hover y animacion avanzada)
------------------------
+---------------------------
+---- SISTEMA DE BARAJA ---- 
+---------------------------
 https://codepen.io/cbolson/pen/dPXMRWG
-
-Fanning cards (Baraja normal simple)
--------------
 https://codepen.io/schwiiiii/pen/GgJPQvr
-
-Movie card: Pulp Fiction (Diseño interesante para ficha de personajes, enemigos, etc)
-------------------------
-https://codepen.io/GemmaCroad/pen/wBBPpPZ
-
-Hearthstone Card CSS 3D Click/Drag (Movimiento perfecto cartas como en el Hearthstone)
----------------------------------
-https://codepen.io/jackrugile/pen/zqJdXM
-
-lapisCordis | a greco-roman mythological card game (Baraja con click para ver detalle de la carta)
---------------------------------------------------
 https://codepen.io/delvignefred/pen/abMmXwg
-
-Pick a Card (Para darle la vuelta a la carta)
------------
 https://codepen.io/HejChristian/pen/RNwXexO
 
-RPG Character Card Flippable (Carta de mago seleccionable interiormente, abre estadisticas de personaje)
--------------------
+-------------------------
+---- DISEÑO DE CARTA ----
+-------------------------
+https://codepen.io/BalintFerenczy/pen/KwdoyEN
 https://codepen.io/Gustav-Wahlbom-Andersson/pen/MYayBoX
-
-Card Game UI/UX Gwent (Cartas animadas + Menu de cartas)
----------------------------------
-https://codepen.io/RodenKerthin/pen/oNbXNxo
-
-Otros
------
 https://codepen.io/OfigenusMaximus/pen/gOjGoPV
+
+-------------------------
+---- DISEÑO DE HEROE ----
+-------------------------
+https://codepen.io/GemmaCroad/pen/wBBPpPZ
+
+-----------------------------
+---- MOVIMIENTO DE CARTA ----
+-----------------------------
+https://codepen.io/jackrugile/pen/zqJdXM
+https://codepen.io/jay-khatri-dev/pen/JojjKwM
+https://codepen.io/Philip-Walsh/pen/qEBzGmM
+
+
+
+---------------
+---- Otros ----
+---------------
+https://codepen.io/RodenKerthin/pen/oNbXNxo
+Niebla
+https://codepen.io/Sofia-Naruto/pen/qEOGboJ
+https://codepen.io/ykob/pen/YewoRz
+https://codepen.io/dburrell/pen/RNpgRg
+
+Tormenta
+https://codepen.io/davidlyons/pen/KyXvjp
+
+----------------
+---- Musica ----
+----------------
+https://www.youtube.com/watch?v=CkOfFh01RW8&list=RDCkOfFh01RW8&index=1
+https://www.youtube.com/watch?v=NPnCfolm5NY&list=RDCkOfFh01RW8&index=2
+https://www.youtube.com/watch?v=m2xnPSRSSzU&list=RDCkOfFh01RW8&index=3
+

@@ -1,0 +1,27 @@
+// =========================================================================
+// CardGame — hoja de estilos raíz (ITCSS)
+//
+// Único punto de entrada: lo importa app/layout.tsx. El orden de las capas
+// va de lo genérico/poco específico a lo concreto/muy específico y NO se
+// debe reordenar: es lo que hace que la cascada sea predecible sin recurrir
+// a !important ni a selectores cada vez más largos.
+//
+//   0. vendor      Tailwind y sus @layer (única capa de terceros)
+//   1. settings    variables Sass: paletas, tipografías, escalas   (sin CSS)
+//   2. tools       funciones y mixins                              (sin CSS)
+//   3. generic     resets de bajo nivel
+//   4. elements    HTML desnudo (:root, body) — sin clases
+//   5. objects     patrones de layout sin cosmética (stage, grid)
+//   6. components  piezas con identidad visual (carta, prosa, chips…)
+//   7. utilities   ayudas de una sola cosa, ganan a todo lo anterior
+//
+// settings y tools no emiten CSS, así que cada parcial los carga por su
+// cuenta con `@use "../abstracts" as *;` (barril en styles/_abstracts.scss).
+// =========================================================================
+
+@use "vendor/tailwind";
+@use "generic";
+@use "elements";
+@use "objects";
+@use "components";
+@use "utilities";

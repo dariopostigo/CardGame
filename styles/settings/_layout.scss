@@ -1,0 +1,37 @@
+// -------------------------------------------------------------------------
+// Layout: radios, planos (z-index), profundidad 3D y sombras
+// -------------------------------------------------------------------------
+
+// --- Radios ---------------------------------------------------------------
+$radius: (
+  "xs": 0.25rem,
+  "sm": 0.35rem,
+  "md": 0.4rem,
+  "lg": 0.5rem,
+  "xl": 0.6rem,
+  "pill": 999px,
+);
+
+// --- Planos de apilado ----------------------------------------------------
+// Una sola escala para toda la carta: así se ve de un vistazo qué tapa a qué
+// y no hay que ir buscando z-index sueltos por el archivo.
+$z: (
+  "legendary-frame": 3,  // marco dorado, por DEBAJO del contenido
+  "content": 4,          // nombre, descripción, pie
+  "frame": 5,            // filete de rareza (.card::before)
+  "chip": 6,             // fichas flotantes y banda de nombre solapada
+  "gloss": 7,            // brillo especular, siempre encima
+  "tooltip": 50,         // globos de ayuda de la wiki
+);
+
+// --- Profundidad 3D -------------------------------------------------------
+// translateZ de los elementos que deben "despegarse" del lienzo al inclinar
+// la carta (efecto tilt). Sin escala fija no hay paralaje coherente.
+$depth: (
+  "art": 30px,
+  "chip": 40px,
+);
+
+// --- Sombras --------------------------------------------------------------
+$shadow-tooltip: 0 4px 12px rgba(0, 0, 0, 0.25);
+$shadow-card-hover: 0 22px 40px -18px rgba(0, 0, 0, 0.65);

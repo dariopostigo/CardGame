@@ -1,24 +1,28 @@
 "use client";
 
 import { isValidElement, useMemo, useState, type PointerEvent, type ReactNode } from "react";
-import { EB_Garamond, Metamorphous } from "next/font/google";
-import "./card-design.css";
+import { EB_Garamond, Cormorant } from "next/font/google";
 import { CARDS, CATEGORIES, type Category, type CardData } from "./cards-data";
+
+// Los estilos viven en el árbol ITCSS, no aquí: el esqueleto en
+// styles/components/_card.scss y cada pestaña en styles/components/card-themes/.
 
 /* Laboratorio de diseño de carta integrado en la wiki.
    Mismo esqueleto y datos (docs/cards/*, game-design.md §3) con estilos
    conmutables por pestaña. Sin flip ni otras interacciones (solo tilt al hover). */
 
-// Tipografía del tema Grimorio, escapada a .card-lab (no afecta al resto de la wiki).
-const metamorphous = Metamorphous({ weight: "400", subsets: ["latin"], variable: "--font-metamorphous" });
+// Tipografía del tema Pergamino (estilo "Tierra Media"): serif de libro (Cormorant)
+// para el nombre en banda y EB Garamond para el cuerpo en pergamino. Escapadas a
+// .card-lab (no afectan al resto de la wiki).
+const cormorant = Cormorant({ weight: ["500", "600", "700"], subsets: ["latin"], variable: "--font-cormorant" });
 const ebGaramond = EB_Garamond({ weight: ["400", "500", "600", "700"], subsets: ["latin"], variable: "--font-eb-garamond" });
 
-type Theme = "grimorio";
+type Theme = "pergamino";
 
 // Pestañas de diseño. Se van añadiendo aquí a medida que se crean nuevos
-// templates de carta (cada uno como [data-theme] en card-design.css).
+// templates de carta (cada uno un parcial de styles/components/card-themes/).
 const THEMES: { key: Theme; label: string }[] = [
-  { key: "grimorio", label: "Grimorio" },
+  { key: "pergamino", label: "Pergamino" },
 ];
 
 // Iconos de tipo de daño (game-design.md §4b.10). Sin entrada = la carta no hace daño.
@@ -55,6 +59,19 @@ const RARITIES: { rarity: string; tag: string; legendary?: boolean }[] = [
 
 const MAX_TILT = 10;
 
+// Icono principal (card__badge), por categoría. Las cartas de CLASE llevan todas
+// el mismo (antes cambiaba por clase: 🛡️/🔮/🗡️/✨, redundante con la clase que ya
+// aparece en el pie); el resto de categorías conserva su icono propio.
+const CLASS_BADGE = "🙂";
+const CATEGORY_BADGE: Record<Category, string> = {
+  clase: CLASS_BADGE,
+  arma: "⚔️",
+  armadura: "🛡️",
+  item: "🎒",
+  maldicion: "☠️",
+  mercenario: "👹",
+};
+
 // Nivel de ajuste (1/2/3) según longitud real del texto — deriva del dato
 // ya autorado en cards-data.tsx, así que se recalcula solo si la copia cambia.
 function textLength(node: ReactNode): number {
@@ -67,6 +84,13 @@ function textLength(node: ReactNode): number {
 function fitStep(node: ReactNode): 1 | 2 | 3 {
   const len = textLength(node);
   return len > 160 ? 3 : len > 100 ? 2 : 1;
+}
+
+// El sufijo "(1 mano)"/"(2 manos)" del nombre es redundante: el icono card__hands
+// ya lo indica. Se quita solo en el título mostrado (el dato queda intacto, así
+// no se rompe la identidad/key ni la sincronía 1:1 con docs/cards/weapons.md).
+function displayName(name: string): string {
+  return name.replace(/\s*\((?:una|dos|1|2)\s*manos?\)\s*$/i, "");
 }
 
 function LabCard({ data, tilt }: { data: CardData; tilt: boolean }) {
@@ -94,7 +118,7 @@ function LabCard({ data, tilt }: { data: CardData; tilt: boolean }) {
       onPointerMove={onMove}
       onPointerLeave={onLeave}
     >
-      <span className="card__badge">{data.badge}</span>
+      <span className="card__badge" aria-hidden="true">{CATEGORY_BADGE[data.category]}</span>
       {data.hands && (
         <span className="card__hands" title={data.hands === "2h" ? "Arma a dos manos" : "Arma a una mano"}>
           {data.hands === "2h" ? "🤲" : "✋"}
@@ -119,8 +143,11 @@ function LabCard({ data, tilt }: { data: CardData; tilt: boolean }) {
       <div className="card__art">
         <span className="emoji">{data.emoji}</span>
       </div>
-      <h3 className="card__name">{data.name}</h3>
-      <p className="card__text">{data.text}</p>
+      <h3 className="card__name">{displayName(data.name)}</h3>
+      <p className="card__text">
+        {data.cost && <span className="card__cost-line">{data.cost}</span>}
+        {data.text}
+      </p>
       <footer className="card__footer">
         {data.stats.map((s, i) => (
           <span className="stat" key={i}>
@@ -136,7 +163,7 @@ function LabCard({ data, tilt }: { data: CardData; tilt: boolean }) {
 }
 
 export default function CardDesignLab() {
-  const [theme, setTheme] = useState<Theme>("grimorio");
+  const [theme, setTheme] = useState<Theme>("pergamino");
   const [tilt, setTilt] = useState(true);
   const [view, setView] = useState<"cards" | "rarities">("cards");
   const [category, setCategory] = useState<Category | "todas">("todas");
@@ -154,7 +181,7 @@ export default function CardDesignLab() {
     }`;
 
   return (
-    <div className={`card-lab ${metamorphous.variable} ${ebGaramond.variable}`} data-theme={theme}>
+    <div className={`card-lab ${cormorant.variable} ${ebGaramond.variable}`} data-theme={theme}>
       <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">Diseño de cartas</h1>
       <p className="mb-5 text-sm text-[var(--wiki-muted)]">
         Galería de estilos del esqueleto de carta. Cambia de diseño con las pestañas. Datos de{" "}
@@ -208,7 +235,6 @@ export default function CardDesignLab() {
                   data={{
                     category: "arma",
                     rarity: r.rarity,
-                    badge: "⚔️",
                     emoji: "🗡️",
                     name: "Espada",
                     text: <>Ejemplo de rareza.</>,

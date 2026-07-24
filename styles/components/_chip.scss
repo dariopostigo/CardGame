@@ -1,0 +1,36 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Mini-carta de color en las tablas de la wiki: Rareza (game-design.md §3.3,
+// RarityChip.tsx) y Severidad de Maldiciones (cards/curses.md §2,
+// SeverityChip.tsx). Misma forma para las dos, paletas distintas para no
+// confundirlas (calidad vs. peligro).
+//
+// Las variantes se generan desde los mapas de settings/_colors.scss: añadir
+// una rareza allí basta para que aparezca aquí y en la carta del lab.
+// -------------------------------------------------------------------------
+
+.wiki-rarity-chip,
+.wiki-severity-chip {
+  cursor: help;
+  display: inline-block;
+  width: 11px;
+  height: 15px;
+  margin-right: 0.4em;
+  vertical-align: -2px;
+  border-radius: 3px;
+  border: 1.5px solid var(--chip-color);
+  background: radial-gradient(120% 120% at 30% 20%, var(--chip-soft), transparent 70%);
+}
+
+@each $level in $rarity-levels {
+  .wiki-rarity-chip--#{$level} {
+    @include chip-vars(rarity($level, "base"), rarity($level, "soft"));
+  }
+}
+
+@each $level, $tokens in $severity {
+  .wiki-severity-chip--#{$level} {
+    @include chip-vars(severity($level, "base"), severity($level, "soft"));
+  }
+}

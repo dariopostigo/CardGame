@@ -1,0 +1,10 @@
+@use "../abstracts" as *;
+
+// Escenario del lab: caja neutra donde se exponen las cartas. El fondo lo
+// pinta cada tema (components/card-themes/), de ahí la transición.
+.card-lab__stage {
+  border: 1px solid skin("border");
+  border-radius: $card-radius;
+  padding: 30px 20px;
+  transition: background $duration-slow $ease;
+}

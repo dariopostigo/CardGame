@@ -1,0 +1,94 @@
+// -------------------------------------------------------------------------
+// Mixins
+//
+// Nota Sass: en un valor de custom property no se evalúa SassScript, hay que
+// interpolar → `--x: #{$valor};`. Todos los mixins de aquí ya lo hacen.
+// -------------------------------------------------------------------------
+
+@use "sass:map";
+@use "sass:math";
+@use "../settings" as *;
+@use "functions" as *;
+
+// --- Publicación de tokens como custom properties -------------------------
+
+// Skin de la wiki → --wiki-*. Recorre las claves de $skin-light, así que un
+// tema al que le falte un token rompe el build en vez de heredar el del otro.
+@mixin skin-vars($map) {
+  @each $name, $light in $skin-light {
+    @if not map.has-key($map, $name) {
+      @error "skin-vars(): al tema le falta el token '#{$name}'.";
+    }
+    --wiki-#{$name}: #{map.get($map, $name)};
+  }
+}
+
+// Raíl de color de la carta: lo leen filetes, halos y fichas.
+@mixin rarity-vars($name) {
+  --rarity: #{rarity($name, "base")};
+  --rarity-soft: #{rarity($name, "soft")};
+}
+
+// Mini-carta de las tablas de la wiki (rareza y severidad comparten forma).
+@mixin chip-vars($base, $soft) {
+  --chip-color: #{$base};
+  --chip-soft: #{$soft};
+}
+
+// Volcado genérico de un mapa plano a custom properties con prefijo.
+@mixin css-vars($map, $prefix: "") {
+  @each $name, $value in $map {
+    --#{$prefix}#{$name}: #{$value};
+  }
+}
+
+// --- Utilidades de composición -------------------------------------------
+
+// Recorte a un número exacto de líneas. -webkit-box sigue siendo la única
+// forma con soporte real; line-clamp va detrás para cuando lo sea.
+@mixin line-clamp($lines) {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  @include line-clamp-lines($lines);
+}
+
+// Solo el número de líneas, sin tocar `display`. Es lo que necesitan las
+// variantes: un tema puede pasar el bloque a display:block (y perder el
+// recorte a propósito), y reafirmar aquí -webkit-box lo desharía por tener
+// más especificidad.
+@mixin line-clamp-lines($lines) {
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
+}
+
+// Ficha circular flotante sobre el arte (badge de categoría y sub-fichas).
+// $top/$left los pone quien la llama porque dependen del apilado del tema.
+@mixin card-chip($size, $font-size) {
+  position: absolute;
+  z-index: z("chip");
+  display: grid;
+  place-items: center;
+  width: $size;
+  height: $size;
+  border: $chip-border solid var(--rarity);
+  border-radius: 50%;
+  font-size: $font-size;
+  transform: translateZ(depth("chip"));
+}
+
+// --- Condicionales --------------------------------------------------------
+
+// Variante oscura de una regla. La clase .dark la pone el script antiFOUC de
+// layout.tsx sobre <html>, no el sistema operativo.
+@mixin dark {
+  .dark & {
+    @content;
+  }
+}
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}

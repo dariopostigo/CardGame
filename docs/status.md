@@ -15,21 +15,21 @@ Foto única y honesta de qué está definido y qué no, para no perderse entre l
 | Combate (turno, iniciativa, adyacencia, ataque, estados) | ✅ | `game-design.md` §4b |
 | Detección / comportamiento de enemigo | ✅ | Modelo latente→activo + rango de detección (2 + SAB), leash (2 turnos) y reducción por terreno resueltos (`characters/enemies.md` §2); **fase de aproximación + prueba de sigilo** (§2b); **IA de combate** = árbol de prioridades determinista, patrón único (`characters/enemies.md` §5b.6) |
 | Descanso y recuperación | ✅ | `game-design.md` §4c |
-| Economía / oro | ✅ | `game-design.md` §6b (sin balancear) |
-| Nivel de Amenaza (reloj de capítulo) | ✅ | Barra por capítulo, umbrales mixtos (25/50/75/100), ganar/perder capítulo; obligatorio en ambos modos (`game-design.md` §6c). Falta balancear |
-| Mazo, drafting y máximo | ✅ | `game-design.md` §4 |
+| Economía / oro | ✅ | `game-design.md` §6b (sin balancear). **Oro inicial = 0** (decidido) |
+| Nivel de Amenaza (reloj de capítulo) | ✅ | Barra por capítulo, umbrales mixtos (25/50/75/100), ganar/perder capítulo; obligatorio en ambos modos (`game-design.md` §6c). Base **+1/turno** (decidido); tope, umbrales y demás fuentes **pendientes de reajustar** a esa base |
+| Mazo, Oteo y máximo | ✅ | `game-design.md` §4. Dos zonas (decidido): **Mazo ≤20** (clase + items + mercenarios; swap 1-por-1) + **"en juego" ≤10** preparadas. Cada turno **oteas 2 al azar / preparas 1**. **Armas y armaduras van aparte** (equipo, §4a) |
 | **Progresión / subida de nivel** | ⭕ | **Aparcada por decisión del usuario.** Solo enunciado (milestone, +1 PV, 1 Especial/nivel). Concepto propuesto sin escribir: "level-up draft" (ver memoria) |
 
 ## 2. Contenido — el "con qué se juega"
 
 | Contenido | Estado | Nota |
 |---|---|---|
-| Héroes (identidad + stats + DV) | ✅ | 4 héroes (`characters/heroes.md`). Abierto: ¿el prototipo arranca con 2-3 o los 4? |
+| Héroes (identidad + stats + DV) | ✅ | 4 héroes (`characters/heroes.md`). Prototipo arranca con **Guerrero + Mago** (decidido); Pícaro/Clérigo después |
 | Cartas de clase — **nivel 1** | ✅ | 3 Básicas + 1 Especial por héroe (`cards/class.md`) |
 | Cartas de clase — **niveles 2+** | ⭕ | Nada más allá de nivel 1; ligado a la progresión (§1) |
 | Cartas y objetos de exploración (clase + ítems + NPC) | ✅ | Set inicial listado (Ojo avizor —clase—, Mapa del cartógrafo —ítem—, Antorcha —arma soporte—, Informante —NPC—, Vista lejana —futura—) en `board/board-map.md` §8 |
-| Armas | ✅ | Valores de 1er pase (`cards/weapons.md`) |
-| Armaduras | ✅ | Valores de 1er pase + fórmula de CA (`cards/armor.md`) |
+| Armas | ✅ | Valores de 1er pase (`cards/weapons.md`); **sistema de equipo** (llenan tus 2 manos), aparte del Mazo y sin límite de colección (`game-design.md` §4a) |
+| Armaduras | ✅ | Valores de 1er pase + fórmula de CA (`cards/armor.md`); equipo aparte (1 equipada, §4a) |
 | Items | ✅ | Lista + consumibles + Hoguera + efectos de objetos mágicos + cartas de movimiento (`cards/items.md`). Falta balancear |
 | Mercenarios | ✅ | Sistema (reclutar por prueba / comprar por oro) + catálogo de 6 (`cards/mercenaries.md`). Falta balancear |
 | Efectos / estados | ✅ | 11 estados (incl. **Miedo**) con efecto/duración/fuentes/cura + reglas generales (representación, CD 12, timing, stacking) en `effects.md`. Falta balancear |

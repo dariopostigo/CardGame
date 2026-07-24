@@ -4,7 +4,7 @@ Carpeta dedicada a **todos los tipos de carta** del juego, uno por documento. El
 
 ## Los dos ejes de una carta (`../game-design.md` §3)
 
-- **Por origen:** de la **clase** del héroe (innatas) o de **equipo** encontrado jugando (drafting).
+- **Por origen:** de la **clase** del héroe (innatas) o de **equipo** conseguido jugando (botín/tesoro/compra).
 - **Por tipo/icono:** Arma, Armadura, Item, Maldición, más las cartas del mazo de encuentro.
 
 ## Tipos de carta (un md cada uno)
@@ -23,9 +23,11 @@ Carpeta dedicada a **todos los tipos de carta** del juego, uno por documento. El
 
 ## Reglas de mazo (resumen, `../game-design.md` §4)
 
-- **Mazo personal** = cartas de clase (innatas) + cartas de equipo (drafteadas). No se baraja ni se roba: juegas cualquier carta que tengas, dentro de la economía de acción (§4b.3).
-- **Drafting:** cada turno "oteas" 2 cartas de equipo y eliges 1 para añadirla permanentemente.
-- **Máximo del mazo — dos topes (idea inicial):** un **mazo de partida de hasta 20 cartas** (clase + equipo que llevas, construido antes del capítulo) y un **botín drafteado que se acumula hasta 10** durante el capítulo (oteando 2 / eligiendo 1 cada turno), aparte de las 20. Sustituye el "tope único de 10" anterior (`../game-design.md` §4).
+- **Mazo personal** = cartas de clase (innatas) + **items y mercenarios** (conseguidos jugando) + maldiciones. No se roba una "mano": juegas cualquier carta que tengas **en juego**, dentro de la economía de acción (§4b.3).
+- **Adquirir:** los items/mercenarios nuevos entran jugando —botín, fichas de Tesoro, recompensas y compra—; el Oteo **no** adquiere cartas (`../game-design.md` §4, §6b).
+- **Oteo:** al empezar el turno revelas **2 cartas al azar del Mazo** y eliges **1** (o ninguna) para ponerla **en juego** (la otra vuelve al Mazo); así vas preparando cartas para usarlas cuando quieras.
+- **Máximo — dos zonas (decidido):** un **Mazo de hasta 20 cartas** (clase + items + mercenarios; tope duro, swap 1-por-1 al llegar a 20) y una zona **"en juego" de hasta 10** cartas preparadas —clase, items y mercenarios compiten por esos huecos—. Sustituye la idea anterior de "20 + 10 drafteadas aparte (~30)" (`../game-design.md` §4).
+- **Armas y armaduras — equipo aparte:** **no** van en el Mazo ni se otean; se **equipan** (hasta 2 manos + 1 armadura) y su colección es **ilimitada**. Se cambian antes del capítulo y en sitios seguros (`../game-design.md` §4a).
 - **Mazo de encuentro** ([`encounter.md`](encounter.md)) = aparte, gestionado por el sistema, no por el jugador.
 - **Rareza** (Común → Legendario) aplica a Arma/Armadura/Item/Mercenario/Maldición, no a las cartas de clase (`../game-design.md` §3.3).
 - **Comprar/vender:** las cartas de equipo se compran y venden por **oro** según su Rareza (`../game-design.md` §6b.3). Vender es el desagüe del exceso de mazo cuando llegas al máximo.

@@ -1,0 +1,5 @@
+// 5. OBJECTS — patrones de layout reutilizables, sin cosmética propia. La
+// piel de cada tema (fondos, texturas) la ponen los componentes, que van
+// después en la cascada.
+@use "stage";
+@use "grid";

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "primeicons/primeicons.css";
-import "./globals.css";
+// Única hoja de estilos de la app: Tailwind + las capas ITCSS (ver styles/main.scss).
+import "../styles/main.scss";
 import Providers from "./providers";
 
 const geistSans = Geist({

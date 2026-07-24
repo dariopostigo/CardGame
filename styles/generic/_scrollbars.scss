@@ -1,0 +1,7 @@
+@use "../abstracts" as *;
+
+// Barras de scroll finas y teñidas con el skin en toda la wiki.
+* {
+  scrollbar-width: thin;
+  scrollbar-color: skin("border") transparent;
+}

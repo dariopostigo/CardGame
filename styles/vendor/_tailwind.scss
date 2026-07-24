@@ -1,0 +1,23 @@
+// =========================================================================
+// 0. VENDOR — Tailwind v4
+//
+// Va primero para que sus @layer queden declarados antes que cualquier regla
+// nuestra: todo lo que escribimos en styles/ va SIN @layer, así que gana a
+// las utilidades de Tailwind sin necesidad de !important.
+//
+// El import se escribe "tailwindcss/index.css" (y no "tailwindcss"): con la
+// extensión .css Sass lo deja pasar tal cual en lugar de intentar resolverlo
+// como módulo Sass, y ya lo inlinea el plugin PostCSS de Tailwind.
+// =========================================================================
+
+@layer theme, base, primereact, components, utilities;
+@import "tailwindcss/index.css";
+@plugin "@tailwindcss/typography";
+
+// La clase .dark la pone el script antiFOUC de app/layout.tsx sobre <html>.
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
