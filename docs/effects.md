@@ -18,14 +18,17 @@ Modificadores **temporales** aplicados durante una prueba/combate. **No ocupan h
 |---|---|---|---|---|
 | **Ventaja** | Tiras 2d20 y coges el **mejor** | 1 tirada | Golpe firme (Guerrero), emboscada desde Bosque (`board/board-map.md` §3a), atacar estando Oculto, Golpe de las sombras ([`cards/encounter.md`](cards/encounter.md)) | Se consume sola |
 | **Desventaja** | Tiras 2d20 y coges el **peor** | 1 tirada | Terreno expuesto, Niebla ([`cards/encounter.md`](cards/encounter.md)), disparar a bocajarro ([`cards/weapons.md`](cards/weapons.md)) | Se consume sola |
-| **Aturdido** | Pierdes tu turno entero (sin Acción, Acción rápida ni Movimiento) | 1 turno | Golpes fuertes de enemigos élite/jefe | Automático al pasar el turno (sin salvación) |
+| **Aturdido** | Pierdes tu Acción y tu Acción rápida (no atacas ni usas habilidades/objetos); **conservas el Movimiento** (puedes moverte) | 1 turno | Golpes fuertes de enemigos élite/jefe | Automático al pasar el turno (sin salvación) |
 | **Envenenado** | 1d4 de daño al inicio de tu turno | Salvación **CON** al final de cada turno; máx. 3 turnos | Trasgo, Araña(s) (`characters/enemies.md` §5b), cruzar Pantano (`board/board-map.md` §3a) | Salvación CON, o **Antídoto** ([`cards/items.md`](cards/items.md)) lo quita ya |
 | **Inmovilizado** | No puedes usar Movimiento | Salvación **DES** al final del turno (o 1 turno) | Enredo gélido (Mago), Telaraña (Arañas) | Salvación DES |
 | **Ralentizado** | Movimiento reducido a 1 hex | 1 turno | Terreno, Clima adverso / Terreno traicionero ([`cards/encounter.md`](cards/encounter.md)) | Automático, o salir de la zona |
 | **Asustado** | Desventaja en tus ataques mientras la fuente esté a la vista; no puedes acercarte a ella voluntariamente | Salvación **SAB** al final del turno | Auras de jefe (ej. el Heraldo Ceniciento, `characters/enemies.md` §5b) | Salvación SAB, o perder de vista la fuente |
-| **Oculto** | Los enemigos no te detectan aunque estés en su rango (`characters/enemies.md` §2) | Hasta atacar/interactuar o ser descubierto | Escabullirse / Desaparecer (Pícaro, [`cards/class.md`](cards/class.md)), terminar en Bosque | Se rompe al actuar |
+| **Oculto** | Los enemigos no te detectan aunque estés en su rango (salta la prueba de sigilo, `characters/enemies.md` §2b) | Hasta atacar/interactuar o ser descubierto | Escabullirse / Desaparecer (Pícaro, [`cards/class.md`](cards/class.md)), terminar en Bosque | Se rompe al actuar |
 | **Bendecido** | +1d4 a tus tiradas de ataque y de salvación | 3 turnos | Bendición (Clérigo) | Automático al expirar |
 | **Escudado** | +X a la CA (según la carta) | Hasta tu próximo turno | Postura defensiva (Guerrero), Escudo arcano (Mago), Escudo de fe (Clérigo) | Automático al expirar |
+| **Miedo** | **−1d4** a tus tiradas de ataque y de salvación (el reverso de Bendecido) | Hasta el próximo **descanso largo** (no se quita con una salvación normal) | Umbrales altos del **Nivel de Amenaza** (`game-design.md` §6c.3), auras de jefe, Sucesos ([`cards/encounter.md`](cards/encounter.md)) | Descanso largo en localización segura (`game-design.md` §4c.3), o carta/habilidad de Clérigo |
+
+> **Miedo ≠ Asustado:** *Asustado* es un susto **táctico** ligado a una fuente a la vista (desventaja mientras la veas, se cura con salvación SAB). *Miedo* es una **moral minada persistente**, sin fuente concreta, que te lastra hasta que descansas a salvo — la cara "blanda" de una Maldición, pero **sin ocupar hueco de mazo**.
 
 ## 3. Próximos pasos
 

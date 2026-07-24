@@ -11,15 +11,15 @@ Primer pase de efectos, sin balancear. La **Antorcha** ya es una carta de Arma (
 | Mochila | **+1 hueco** en el máximo del mazo personal (`../game-design.md` §4) | Común |
 | Saco / bolsa | Sin efecto mecánico — almacenamiento de sabor, se vende por poco oro | Común |
 | Saco de dormir | Al jugar la Hoguera (§4b), recuperas **+1 Dado de Vida** extra | Común |
-| Manta | Ignora el **−1 de movimiento** de Nieve/Tundra este turno (`../board-map.md` §3) | Común |
+| Manta | Ignora el **−1 de movimiento** de Nieve/Tundra este turno (`../board/board-map.md` §3) | Común |
 | Cuerda de cáñamo | Acción rápida: cruzas un hexágono de Río/Lago sin la penalización de nadar | Común |
 | Yesca y pedernal | Enciendes la Antorcha o la Hoguera sin gastar tu Acción rápida ese turno | Común |
 | Linterna (sorda o de aceite) | Como la Antorcha, pero puedes apagarla/encenderla como Acción rápida sin jugar otra carta — control de iluminación para el sigilo | Poco común |
-| Odre / cantimplora | Ignora el consumo extra de recursos en Desierto/Erial (`../board-map.md` §3) | Común |
+| Odre / cantimplora | Ignora el consumo extra de recursos en Desierto/Erial (`../board/board-map.md` §3) | Común |
 | Raciones de viaje | **+1 PV** al curarte en el próximo Descanso corto | Común |
-| Kit de escalada | Ignora el coste extra de movimiento en Montaña este turno | Común |
+| Kit de escalada | Reduce a 1 el coste de movimiento de la Montaña este turno: te permite cruzarla sin necesitar movimiento extra (`../board/board-map.md` §3a) | Común |
 | Ganzúas | Acción: prueba de Destreza para abrir una cerradura sin forzarla (evita ruido/alarma) | Común |
-| Espejo de acero pequeño | Acción rápida: miras el interior de un grupo vecino sin entrar (como quedar Detectado al instante) | Poco común |
+| Espejo de acero pequeño | Acción rápida: miras el interior de un grupo vecino sin entrar (como quedar Detectado al instante). *(Grupos: **inactivo en el prototipo**, `../board/board-map.md` §2c.)* | Poco común |
 | Cadena | Sin efecto mecánico — atar a un enemigo rendido/derrotado (Modo Campaña) | Común |
 | Estacas de hierro | Acción rápida: bloqueas un paso; el primer enemigo que te persiga pierde 1 turno | Poco común |
 | Martillo | Ventaja en pruebas de Fuerza para forzar puertas u objetos atrancados | Común |
@@ -36,8 +36,8 @@ Primer pase de efectos, sin balancear.
 | Kit de disfraz | **+2** para evitar detección al cruzar una localización poblada, o ventaja en Carisma para hacerte pasar por otro | Poco común |
 | Kit de falsificación | Sin efecto mecánico — documentos falsos/salvoconductos (Modo Campaña) | Común |
 | Kit de venenos | Acción rápida: tu próximo impacto con arma aplica **Envenenado** ([`../effects.md`](../effects.md)) | Poco común |
-| Herramientas de navegante | **+1 rango de visión** al entrar en un grupo nuevo (Modo Prueba) | Común |
-| Herramientas de cartógrafo | Los grupos adyacentes a uno Explorado pasan directamente a Detectado | Poco común |
+| Herramientas de navegante | **+1 rango de visión** al entrar en un grupo nuevo (Partida rápida) | Común |
+| Mapa del cartógrafo | Revela (*Detectado*) los grupos vecinos al usarlo. *(Requiere el sistema de grupos/tiles — **inactivo en el prototipo** de niebla simple, `../board/board-map.md` §2c y §8.)* | Poco común |
 | Juego de dados / cartas | Sin efecto mecánico — sabor de Taberna, candidato a minijuego futuro | Común |
 | Trampa para osos | Acción: colocas una trampa en un hex adyacente; el primer enemigo que entra queda **Inmovilizado** y recibe 1d6 contundente | Poco común |
 | Grilletes | Sin efecto mecánico — capturar vivo a un enemigo derrotado en vez de matarlo (Modo Campaña) | Común |
@@ -56,7 +56,7 @@ Solo se **encuentran** (loot de Élite/Jefe, cofres de alta rareza); los Legenda
 
 ## 4. Consumibles
 
-Pociones (efecto instantáneo: curación, buff temporal), Pergaminos (lanzan un hechizo concreto — sostienen el modelo sin-maná de `../game-design.md` §4b.7). Se usan normalmente como **Acción rápida** en combate (`../game-design.md` §4b.3). Como cualquier carta del mazo personal, vuelven a estar disponibles después de jugarlas (`../game-design.md` §4).
+Pociones (efecto instantáneo: curación, buff temporal), Pergaminos (lanzan un hechizo concreto — sostienen el modelo de hechizos-como-cartas, sin maná, de `../game-design.md` §4b.7). Se usan normalmente como **Acción rápida** en combate (`../game-design.md` §4b.3). Como cualquier carta del mazo personal, vuelven a estar disponibles después de jugarlas (`../game-design.md` §4).
 
 | Consumible | Coste | Efecto | Rareza |
 |---|---|---|---|
@@ -72,7 +72,7 @@ Cartas ligadas al sistema de **Descanso y recuperación** (`../game-design.md` �
 |---|---|---|---|
 | **Hoguera / Campamento** | Fuera de combate | **Descanso corto:** gastas Dados de Vida para curarte y reseteas habilidades 1/descanso. Acampar en terreno inseguro **arriesga una emboscada** (roba del [`encounter.md`](encounter.md)); Bosque es seguro. No re-acampable hasta que ocurra algo (`../game-design.md` §4c.2). | Común |
 
-> El **descanso largo** (cura total, recupera Dados de Vida, retira estados) no es una carta: ocurre en localizaciones seguras — Pueblo/Taberna/Templo (`../board-map.md` §3b, `../npcs.md`, `../game-design.md` §4c.3).
+> El **descanso largo** (cura total, recupera Dados de Vida, retira estados) no es una carta: ocurre en localizaciones seguras — Pueblo/Taberna/Templo (`../board/board-map.md` §3b, `../characters/npcs.md`, `../game-design.md` §4c.3).
 
 ## 5. Cartas de movimiento
 

@@ -1,6 +1,6 @@
 # CardGame — Tablero y mapa (borrador)
 
-Documento dedicado exclusivamente al tablero/mapa. El resto de sistemas (personaje, cartas, progresión) vive en [`game-design.md`](../game-design.md), con los héroes jugables en [`heroes.md`](../characters/heroes.md). Los detalles técnicos de implementación (modelo de datos, algoritmos) viven aparte en [`board-map-dev.md`](board-map-dev.md). Todo lo relativo a enemigos (tipos, comportamiento, jefes) vive en [`enemies.md`](../characters/enemies.md), y los NPCs no hostiles en [`npcs.md`](../characters/npcs.md). Términos transversales en [`glossary.md`](../glossary.md).
+Documento dedicado exclusivamente al tablero/mapa. El resto de sistemas (personaje, cartas, progresión) vive en [`../game-design.md`](../game-design.md), con los héroes jugables en [`../characters/heroes.md`](../characters/heroes.md). Los detalles técnicos de implementación (modelo de datos, algoritmos) viven aparte en [`board-map-dev.md`](board-map-dev.md). Todo lo relativo a enemigos (tipos, comportamiento, jefes) vive en [`../characters/enemies.md`](../characters/enemies.md), y los NPCs no hostiles en [`../characters/npcs.md`](../characters/npcs.md). Términos transversales en [`../glossary.md`](../glossary.md).
 
 > Referencia visual confirmada: `public/assets/viajesporlatierramedia_tablero.jpg` (tablero real de *Journeys in Middle-earth*). Detalles que se ven en la imagen y que ya están incorporados a este documento: fichas modulares formadas por **varios hexágonos agrupados** (no hexágonos sueltos), terrenos claramente diferenciados por color/arte (bosque oscuro vs. pradera con caminos y aldeas), una pieza de río serpenteante independiente, **fichas circulares de amenaza/evento** colocadas sobre hexágonos concretos, monstruos/estructuras grandes (mûmak, torre de asedio) que ocupan varios hexágonos a la vez, y un mazo de **cartas de encuentro** ("Captura", "Abatimiento") separado del mazo de objetos/loot.
 
@@ -11,18 +11,19 @@ Mapa de **hexágonos**, inspirado en los tableros modulares de juegos de mesa de
 ## 2. Generación del mapa
 
 - **Por "tiles" (recomendado, como el tablero real):** en vez de generar hexágono a hexágono, se generan **grupos pre-diseñados de varios hexágonos** ("tiles" de 4-8 hexágonos con un terreno y arte coherente, igual que las piezas de la foto de referencia) y se van encajando aleatoriamente hasta cubrir el tamaño de mapa elegido, garantizando que los bordes de cada tile conecten bien con el vecino (como piezas de puzle). Esto da variedad visual real y evita mapas "ruido" hexágono-por-hexágono.
+- **Agrupaciones temáticas dentro de un tile (con el sistema de tiles):** un tile puede reservar **sub-zonas** donde se concentran fichas con lógica espacial, en vez de sembrarlas sueltas — p. ej. un **campamento enemigo** en una esquina de una Llanura (varias fichas de Enemigo + alguna de Amenaza), **salas** con enemigos repartidos dentro de una mazmorra, o una ficha de Exploración en un Pueblo que resulta ser un borracho hostil. Es la vía natural para colocar los enemigos (que **no reaparecen**, `../characters/enemies.md` §2): se ubican al generar el mapa. Las proporciones concretas se diseñan con el set de tiles.
 - **Aleatorio hexágono-a-hexágono (alternativa más simple):** se define tamaño → se rellena con terrenos por peso/probabilidad (ej. más llanos que pantanos) → se garantiza conectividad (ningún hexágono aislado sin camino) → se colocan puntos de interés con una densidad configurable. Más fácil de programar al inicio, pero visualmente menos rico que el sistema de tiles.
 - **Preset/histórico (futuro):** mapas fijos diseñados a mano, con eventos y narrativa scriptada (una "campaña" o escenario concreto), igual que los escenarios de un juego de tablero tipo LOTR.
 - Parámetros configurables antes de empezar: tamaño del mapa, densidad de fichas de evento, densidad de enemigos ocultos, semilla aleatoria (para poder repetir/compartir un mapa concreto).
 
-## 2b. Modos de juego: Prueba vs. Campaña
+## 2b. Modos de juego: Partida rápida vs. Campaña
 
 Con esto queda **validada la generación de mapa** para los dos modos que necesitamos:
 
-### Modo Prueba (sandbox/skirmish)
+### Partida rápida *(nombre de diseño anterior: "Modo Prueba")* (sandbox/skirmish)
 - Mapa **100% aleatorio** (por tiles o hexágono-a-hexágono, sección 2), sin narrativa ni eventos escritos a mano.
-- Configuración mínima: tamaño de mapa + una opción de **"boss final"**: al generar el mapa, se coloca un enemigo de tipo elite/jefe en el punto más alejado del punto de entrada, o en una zona marcada como "guarida".
-- **Condición de victoria:** derrotar al **boss élite de la Guarida**. **Derrota:** si el héroe cae (0 PV, `../game-design.md` §4b.8) → fin de partida.
+- Configuración mínima: tamaño de mapa. **Siempre se coloca un boss** (enemigo élite/jefe) al generar el mapa, en el punto más alejado del punto de entrada o en una zona marcada como "guarida" — derrotarlo es la condición de victoria (obligatorio, no opcional).
+- **Condición de victoria:** derrotar al **boss élite de la Guarida**. **Derrota:** si el héroe cae (0 PV, `../game-design.md` §4b.8), o si el **Nivel de Amenaza** llega al 100 % antes (`../game-design.md` §6c) → fin de partida (reinicias el mapa). Sin **bonus de eficiencia** al ganar (`../game-design.md` §6c.4) — al ser una partida suelta de un solo mapa, no hay "siguiente capítulo" que premiar.
 - Objetivo de este modo: jugar partidas rápidas y sueltas para probar equilibrio de combate, progresión de mazo y sensación general de exploración, sin depender de tener contenido narrativo terminado.
 - Es el modo que se implementa primero — desbloquea poder testear todo lo demás (personaje, cartas, combate) sin escribir ni una línea de historia.
 
@@ -31,9 +32,10 @@ Con esto queda **validada la generación de mapa** para los dos modos que necesi
 - Los mapas se completan **en orden**: terminar el objetivo de un mapa (que puede incluir o no un jefe de capítulo) desbloquea el siguiente, como un recorrido — igual que ir de escenario en escenario en la trilogía de El Señor de los Anillos (Bolsón Cerrado → Bree → Rivendel → Moria → ... → destino final), sin que tenga que ser literalmente esos lugares, solo la misma sensación de "viaje con arcos narrativos encadenados".
 - El **último mapa de la campaña** cierra el arco principal (el "gran final"), con su propio jefe/evento climático, más grande o narrativamente relevante que los de capítulos intermedios.
 - **Condición de victoria de la campaña:** completar el objetivo del **último capítulo** (derrotar al **Jefe final**, `../characters/enemies.md` §5b). Cada capítulo intermedio se "gana" al cumplir su objetivo, lo que desbloquea el siguiente.
+- **Reloj de Amenaza por capítulo:** cada capítulo tiene su propio **Nivel de Amenaza** (`../game-design.md` §6c); si llega al 100 % pierdes ese capítulo (lo reintentas). Mete prisa para que la campaña no se eternice y premia dejar la barra baja al ganar.
 - El personaje y el mazo del jugador **persisten entre mapas** de una misma campaña (no se resetea nivel ni cartas conseguidas al pasar de capítulo), reforzando la sensación de progreso continuo a lo largo del viaje.
-- Este modo depende del Modo Prueba para poder testear mecánicas antes de invertir tiempo en escribir/diseñar los capítulos — por eso se plantea como fase posterior.
-- El tamaño de mapa afecta directamente la duración de partida: mapas pequeños para el Modo Prueba (partidas rápidas y sueltas), mapas grandes o varios capítulos encadenados para el Modo Campaña (partidas tipo "campaña corta").
+- Este modo depende de la **Partida rápida** para poder testear mecánicas antes de invertir tiempo en escribir/diseñar los capítulos — por eso se plantea como fase posterior.
+- El tamaño de mapa afecta directamente la duración de partida: mapas pequeños para la **Partida rápida** (partidas rápidas y sueltas), mapas grandes o varios capítulos encadenados para el Modo Campaña (partidas tipo "campaña corta").
 
 ## 2c. Generación del prototipo (decidido)
 
@@ -44,8 +46,8 @@ Para el **primer prototipo**, generación **hexágono-a-hexágono con pesos** (l
 **Algoritmo mínimo:**
 1. Elegir tamaño (ej. 12×12 para partidas cortas) y semilla.
 2. Rellenar cada hex por **peso de terreno** (tabla A).
-3. Garantizar **conectividad**: debe existir camino transitable de la entrada al resto; la Montaña (intransitable, §3a) no debe aislar zonas.
-4. Colocar el **boss élite** en el hex transitable más lejano a la entrada, o en una **Guarida** (§3b) — Modo Prueba.
+3. Garantizar **conectividad**: debe existir camino transitable de la entrada al resto. La Montaña ya es transitable aunque muy costosa (§3a); aun así conviene que no encierre zonas tras un coste casi prohibitivo.
+4. Colocar el **boss élite** en el hex transitable más lejano a la entrada, o en una **Guarida** (§3b) — Partida rápida.
 5. Sembrar **fichas** según densidad y distribución (tabla B).
 
 **Tabla A — Pesos de terreno (prototipo):**
@@ -69,26 +71,26 @@ Las **localizaciones especiales** (§3b) colocan sus propias fichas (ej. Pueblo 
 
 > **Los 5 terrenos del prototipo ya tienen mecánicas oficiales** (§3a). La tabla grande de más abajo pasa a ser la referencia **ilustrativa** de los terrenos futuros (Colinas, Río/Lago, Ruinas/Cueva, Nieve/Tundra, Desierto/Erial), aún sin cerrar.
 >
-> El rango de visión base lo gobierna la Sabiduría (`game-design.md` §2.3); las mecánicas de terreno de abajo son bonus/penalizaciones encima de eso.
+> El rango de visión base lo gobierna la Sabiduría (`../game-design.md` §2.3); las mecánicas de terreno de abajo son bonus/penalizaciones encima de eso.
 >
 > **Set confirmado para el prototipo (5 terrenos):** Llanura, Bosque, Pantano, Montaña y Camino/Sendero.
 
 ### 3a. Mecánicas oficiales de los 5 terrenos del prototipo
 
-Cada terreno toca los sistemas que ya diseñamos: movimiento (`game-design.md` §2.2), detección enemiga (`enemies.md` §2), combate (`game-design.md` §4b) y descanso (`game-design.md` §4c). Valores = primer pase, sin balancear.
+Cada terreno toca los sistemas que ya diseñamos: movimiento (`../game-design.md` §2.2), detección enemiga (`../characters/enemies.md` §2), combate (`../game-design.md` §4b) y descanso (`../game-design.md` §4c). Valores = primer pase, sin balancear.
 
 | Terreno | Movimiento | Visión / Detección | Combate | Acampar (§4c.2) | Peligro | Peso gen. |
 |---|---|---|---|---|---|---|
 | **Llanura** | Coste 1 (base) | Sin ocultación; el enemigo te detecta a rango normal | — | **Inseguro** (expuesto) | — | Alto |
 | **Bosque** | Coste 1 | **Ocultación:** detección enemiga **−1**; pero **tu visión −1** (no ves lejos entre árboles) | **Cobertura:** +1 CA contra ataques a distancia; atacar sin haber sido detectado = **emboscada (ventaja)** | **Seguro** (riesgo mínimo) | — | Medio |
-| **Pantano** | Coste 2 (difícil) | Normal | — | Inseguro | Al cruzar: salvación CON CD 12 o **Envenenado** ([`effects.md`](../effects.md)) | Bajo |
-| **Montaña** | **Intransitable** en el prototipo (barrera; cruzarla requerirá item/habilidad en el futuro) | Bloquea línea de visión | n/a | n/a | n/a | Bajo (actúa de relieve/muro) |
+| **Pantano** | Coste 2 (difícil) | Normal | — | Inseguro | Al cruzar: salvación CON CD 12 o **Envenenado** ([`../effects.md`](../effects.md)) | Bajo |
+| **Montaña** | **Transitable pero muy difícil:** coste **3** (con el pool base de 2 necesitas movimiento extra —Camino, carta de movimiento o Kit de escalada, [`../cards/items.md`](../cards/items.md)— para entrar) | Bloquea línea de visión | — | Inseguro (expuesto) | — | Bajo (relieve, semi-barrera) |
 | **Camino/Sendero** | Coste 1, y **+1 de movimiento** el turno que te desplazas por camino | Expuesto (como Llanura) | — | Inseguro | — | Medio (conecta puntos; candidato a hexágono conector §4) |
 
 **Notas:**
 - **Bosque** es el terreno clave del sigilo: te esconde de los enemigos (detección −1, emboscada) pero también te ciega (visión −1) y te da cobertura a distancia. Es el contrapunto natural a Llanura/Camino (rápidos pero expuestos).
-- **Montaña intransitable** sirve además como "muro" natural para dar forma al mapa en la generación futura.
-- El estado **Oculto** ([`effects.md`](../effects.md)) del Pícaro se apila sobre la ocultación de Bosque (indetectable hasta actuar).
+- **Montaña (coste alto)** actúa como relieve/semi-barrera para dar forma al mapa; ya no es un muro absoluto (se puede cruzar con movimiento extra).
+- El estado **Oculto** ([`../effects.md`](../effects.md)) del Pícaro se apila sobre la ocultación de Bosque (indetectable hasta actuar).
 
 **Terrenos futuros (aún ilustrativos, no oficiales)** — se cerrarán en pases de contenido posteriores, igual que se hizo con los 5 del prototipo en §3a:
 
@@ -97,7 +99,7 @@ Cada terreno toca los sistemas que ya diseñamos: movimiento (`game-design.md` �
 | Colinas | +Alcance de visión (ves más hexágonos alrededor) | Bueno para explorar, malo para ocultarte |
 | Río/Lago | Intransitable salvo puente/vado, o -2 movimiento si se cruza a nado | Puede generarse como "línea" que conecta varios hexágonos, no solo una casilla suelta |
 | Ruinas/Cueva | Punto de interés especial: alta probabilidad de ficha de evento (tesoro o enemigo oculto) | Entrada a "mini-mazmorra" opcional |
-| Nieve/Tundra | -1 movimiento | Zona de clima extremo; un posible efecto de frío acumulativo queda como idea futura (ver [`../ideas.md`](../ideas.md)) si se retoma el tracker de Miedo |
+| Nieve/Tundra | -1 movimiento | Zona de clima extremo; un posible efecto de frío acumulativo que aplique el estado **Miedo** ([`../effects.md`](../effects.md)) queda como idea futura |
 | Desierto/Erial | -1 movimiento, recursos (agua/pociones) se consumen más rápido | Tensión de supervivencia |
 
 ## 3b. Localizaciones especiales (edificaciones)
@@ -108,7 +110,7 @@ Al ser un mapa hexagonal, estas localizaciones se pueden **predefinir sin proble
 
 | Localización | Qué se hace al entrar (ejemplo, no oficial) | Notas |
 |---|---|---|
-| Pueblo/Aldea | Zona segura: tienda, **descanso largo** (`game-design.md` §4c.3), NPCs con misiones | Punto de respiro entre exploración; no hay combate salvo que la historia lo dicte |
+| Pueblo/Aldea | Zona segura: tienda, **descanso largo** (`../game-design.md` §4c.3), NPCs con misiones | Punto de respiro entre exploración; no hay combate salvo que la historia lo dicte |
 | Castillo/Fortaleza | Hub de misiones importantes, o guarida de un enemigo relevante (mini-jefe de capítulo) | Puede estar controlado por aliados o por el enemigo según la historia |
 | Mazmorra | Sub-mapa de combate denso, alta probabilidad de loot bueno | Igual concepto que "Ruinas/Cueva" pero más grande y con varias salas/encuentros encadenados |
 | Mina | Sub-mapa de recolección de materiales/recursos (para crafteo futuro) + posible peligro (derrumbe, criaturas de cueva) | Buena vía para introducir un sistema de crafteo más adelante sin comprometernos ya a ello |
@@ -117,9 +119,11 @@ Al ser un mapa hexagonal, estas localizaciones se pueden **predefinir sin proble
 | Campamento (enemigo o aliado) *(añadido, sabor D&D)* | Encuentro de combate si es enemigo, o refuerzos/aliados temporales si es amistoso | Se decide al generarlo o al revelarlo, dando variedad |
 | Cripta/Cementerio *(añadido, sabor D&D)* | Entrada temática a mazmorra con enemigos no-muertos | Reutiliza el sub-mapa de Mazmorra con set de enemigos propio |
 | Torre de vigilancia *(añadido, sabor D&D)* | Al capturarla/visitarla, pasa a "Detectado" uno o más grupos de hexágonos vecinos, incluso sin conexión directa (ver sección 4) | Recompensa de exploración pura, sin combate obligatorio |
-| Guarida *(añadido, sabor D&D)* | Combate directo contra un enemigo elite/jefe | Es la versión "salvaje" del Castillo — sin narrativa de por medio, ideal también para el Modo Prueba |
+| Guarida *(añadido, sabor D&D)* | Combate directo contra un enemigo elite/jefe | Es la versión "salvaje" del Castillo — sin narrativa de por medio, ideal también para la **Partida rápida** |
 
 Estas localizaciones no sustituyen el terreno base: **se colocan sobre/en vez de un hexágono de terreno normal** durante la generación (por tiles o manualmente en Campaña), igual que un pueblo real se asienta sobre una pradera o un valle.
+
+> El **Nivel de Amenaza** del capítulo (`../game-design.md` §6c) **no se pausa** al entrar en el sub-mapa de una de estas localizaciones (Mazmorra, Mina...) — sigue corriendo igual que en el mapa principal.
 
 Todos los terrenos deben tener como mínimo: **coste de movimiento**, **modificador de ocultación/defensa** (puede ser 0), y **probabilidad de aparición** en la generación aleatoria.
 
@@ -153,10 +157,10 @@ Ciertos hexágonos (dentro de un grupo ya "Explorado") tienen una **ficha** visi
 |---|---|---|
 | Exploración | Ojo blanco | Comodín: al interactuar puede resultar en cualquier cosa (tesoro, prueba, mercenarios reclutables ([`../cards/mercenaries.md`](../cards/mercenaries.md)), evento narrativo, o incluso vacío) — es la más ambigua de todas |
 | Amenaza | Icono rojo sin definir | Peligro ambiguo: normalmente se resuelve como un enemigo, pero no se sabe con certeza hasta interactuar (podría ser una trampa, un peligro de terreno, etc.) |
-| Tesoro | Icono de cofre amarillo | Confirmado que da recompensa: carta(s) para el mazo (objeto, poción, arma, armadura) **y/o oro** (`game-design.md` §6b.1) — el contenido concreto es aleatorio, pero la categoría "tesoro" se sabe de antemano; los cofres de mayor rareza pueden dar ambos |
+| Tesoro | Icono de cofre amarillo | Confirmado que da recompensa: carta(s) para el mazo (objeto, poción, arma, armadura) **y/o oro** (`../game-design.md` §6b.1) — el contenido concreto es aleatorio, pero la categoría "tesoro" se sabe de antemano; los cofres de mayor rareza pueden dar ambos |
 | Terreno | Icono de montaña verde | Prueba ligada al terreno: puede dar un beneficio o ser un obstáculo (ej. una prueba de movimiento/agilidad para cruzar, especialmente relevante en capítulos de Campaña con un tramo difícil concreto) |
-| Personaje (NPC) | Icono de personaje blanco | NPC con el que interactuar: mercenario para contratar, tabernero para curarte, mago/vendedor que te vende objetos, etc. — no implica combate. Detalles de tipos de NPC en [`npcs.md`](../characters/npcs.md) |
-| Enemigo | Icono de enemigo | Ya se sabe con certeza que es un enemigo antes de interactuar (a diferencia de "Amenaza"); el combate se inicia al quedar en un hexágono **adyacente** al suyo, no entrando en su hexágono (héroe y enemigo nunca comparten hex — ver `game-design.md` §4b.1). Detalles de tipos de enemigo, comportamiento y jefes en [`enemies.md`](../characters/enemies.md) |
+| Personaje (NPC) | Icono de personaje blanco | NPC con el que interactuar: mercenario para contratar, tabernero para curarte, mago/vendedor que te vende objetos, etc. — no implica combate. Detalles de tipos de NPC en [`../characters/npcs.md`](../characters/npcs.md) |
+| Enemigo | Icono de enemigo | Ya se sabe con certeza que es un enemigo antes de interactuar (a diferencia de "Amenaza"); el combate se inicia al quedar en un hexágono **adyacente** al suyo, no entrando en su hexágono (héroe y enemigo nunca comparten hex — ver `../game-design.md` §4b.1). Detalles de tipos de enemigo, comportamiento y jefes en [`../characters/enemies.md`](../characters/enemies.md) |
 
 - Las fichas pueden tener una distribución ponderada distinta según el tipo de terreno/localización (ej. ruinas → más probabilidad de Amenaza o Enemigo que una llanura; Pueblo → solo fichas de Personaje).
 - El terreno puede afectar el encuentro al activar una ficha de Amenaza/Enemigo: emboscada con ventaja si el jugador está en bosque y el enemigo no lo ha detectado; desventaja si el jugador cruza una llanura o camino a la vista.
@@ -165,11 +169,11 @@ Ciertos hexágonos (dentro de un grupo ya "Explorado") tienen una **ficha** visi
 
 La referencia muestra cartas cortas de acción durante la exploración/combate en el mapa ("Captura", "Abatimiento") distintas de las cartas de loot. Propuesta:
 - **Mazo de encuentro/exploración**: cartas cortas que se roban al activar una ficha de evento o al entrar en combate sobre el mapa, con efectos puntuales de esa situación concreta (ej. "el enemigo intenta huir", "emboscada", "terreno se derrumba").
-- Distinto del **mazo personal** de `game-design.md` (clase + objetos equipados), que el jugador construye y controla. El mazo de encuentro es "del mapa/la partida", compartido o gestionado por el sistema, no por el jugador.
+- Distinto del **mazo personal** de `../game-design.md` (clase + objetos equipados), que el jugador construye y controla. El mazo de encuentro es "del mapa/la partida", compartido o gestionado por el sistema, no por el jugador.
 
 ## 6. Recompensas ligadas al mapa
 
-Explorar el mapa es una vía adicional (aparte de combate/clase) para conseguir cartas de mazo: ítems, pociones, armas, armaduras. Esto conecta directamente con la sección de progresión de `game-design.md` — dos ejes de progresión (nivel de personaje + colección de cartas) más un tercero: **exploración del mapa**.
+Explorar el mapa es una vía adicional (aparte de combate/clase) para conseguir cartas de mazo: ítems, pociones, armas, armaduras. Esto conecta directamente con la sección de progresión de `../game-design.md` — dos ejes de progresión (nivel de personaje + colección de cartas) más un tercero: **exploración del mapa**.
 
 ## 7. Notas de implementación
 
@@ -177,37 +181,39 @@ Los apuntes técnicos (sistema de coordenadas, modelo de datos, algoritmos) se m
 
 ## 8. Próximos pasos / preguntas abiertas
 
-**Generación de mapa y modos de juego: validado (sección 2b)** — Modo Prueba (random + boss elite opcional) primero, Modo Campaña (mapas fijos encadenados con historia propia) después.
+**Generación de mapa y modos de juego: validado (sección 2b)** — Partida rápida (random + boss elite opcional) primero, Modo Campaña (mapas fijos encadenados con historia propia) después.
 
 ### Dudas/contradicciones detectadas al revisar todo el documento
 
 **Resueltas:**
 1. ~~Contradicción en §4 sobre si explorar un grupo revela todo de golpe~~ → **Resuelto:** "Explorado" solo exige haber entrado en al menos 1 hexágono del grupo (no vale estar cerca desde el grupo anterior); a partir de ahí el rango de visión del personaje decide qué contenido se ve según su posición exacta, revelándose progresivamente al moverse por dentro del grupo.
 2. ~~Si el sub-mapa de las localizaciones especiales (3b) usa el mismo sistema hexagonal~~ → **Resuelto:** sí, todo el juego (mapa principal y localizaciones como Mazmorra/Mina/Pueblo) usa la misma arquitectura hexagonal, solo cambia el tamaño. El diseño visual/UI de cada localización queda como tarea de arte aparte (pendiente encontrar herramienta de IA generativa de imágenes), no afecta a la arquitectura.
-3. ~~§5 (Enemigos ocultos en el mapa) desactualizada~~ → **Resuelto:** se reemplazó por una taxonomía de 6 fichas del tablero (Exploración, Amenaza, Tesoro, Terreno, Personaje, Enemigo — sección "Fichas del tablero") y se creó [`enemies.md`](../characters/enemies.md) como documento dedicado a tipos de enemigo, comportamiento en el mapa y jefes.
+3. ~~§5 (Enemigos ocultos en el mapa) desactualizada~~ → **Resuelto:** se reemplazó por una taxonomía de 6 fichas del tablero (Exploración, Amenaza, Tesoro, Terreno, Personaje, Enemigo — sección "Fichas del tablero") y se creó [`../characters/enemies.md`](../characters/enemies.md) como documento dedicado a tipos de enemigo, comportamiento en el mapa y jefes.
 4. ~~Duplicado entre "Ruinas/Cueva" (§3) y "Construcción/Ruina genérica" (§3b)~~ → **Resuelto:** se mantiene "Ruinas/Cueva" como terreno en §3 y se quitó "Construcción/Ruina genérica" de §3b para no tener el mismo concepto dos veces.
 5. ~~Número de terrenos para el prototipo~~ → **Resuelto:** set confirmado de 5 — Llanura, Bosque, Pantano, Montaña, Camino/Sendero (marcados en la tabla de §3). El resto queda para pases de contenido posteriores.
 
 **Resueltas (desbloqueadas por game-design.md):**
-6. ~~Tensión entre §3 y §4 (terreno vs. habilidad de visión)~~ → **Resuelto:** el rango de visión base lo gobierna Sabiduría (`game-design.md` §2.3: +1 hexágono por cada +2 de modificador). El efecto de ejemplo de Colinas (§3) puede quedar como bonus adicional de terreno encima de eso; la **ocultación de Bosque** ya tiene mecánica: reduce el rango de detección de los enemigos (`game-design.md` §4b.5, `enemies.md` §2) — evitar/emboscar en vez de pelear.
-7. ~~Coste de cruzar un grupo entero~~ → **Resuelto:** cada hexágono cuesta 1 punto de movimiento de un pool por turno **fijo de 2 movimientos para todos los personajes** (`game-design.md` §2.2: estándar único, sin variación por raza ni por estadística; los extras vienen de fichas/cartas de movimiento/cartas de clase). El terreno de cada hexágono modifica ese coste como ya estaba descrito.
+6. ~~Tensión entre §3 y §4 (terreno vs. habilidad de visión)~~ → **Resuelto:** el rango de visión base lo gobierna Sabiduría (`../game-design.md` §2.3: +1 hexágono por cada +2 de modificador). El efecto de ejemplo de Colinas (§3) puede quedar como bonus adicional de terreno encima de eso; la **ocultación de Bosque** ya tiene mecánica: reduce el rango de detección de los enemigos (`../game-design.md` §4b.5, `../characters/enemies.md` §2) — evitar/emboscar en vez de pelear.
+7. ~~Coste de cruzar un grupo entero~~ → **Resuelto:** cada hexágono cuesta 1 punto de movimiento de un pool por turno **fijo de 2 movimientos para todos los personajes** (`../game-design.md` §2.2: estándar único, sin variación por raza ni por estadística; los extras vienen de fichas/cartas de movimiento/cartas de clase). El terreno de cada hexágono modifica ese coste como ya estaba descrito.
 
 **Abiertas:**
-1. ~~El "boss final" del Modo Prueba~~ → **Resuelto:** se coloca un Élite en una **Guarida** (§3b) en el hex más lejano a la entrada (§2c, paso 4); derrotarlo es la condición de victoria del Modo Prueba (§2b). Bloques de enemigos en [`enemies.md`](../characters/enemies.md) §5b.
-2. **Comportamiento de los enemigos en el mapa** → resuelto en [`enemies.md`](../characters/enemies.md) §2 (latente→activo por detección) y §5b (bloques). Queda abierta solo la **reaparición** (¿el mapa regenera enemigos con el tiempo o quedan despejados?).
+1. ~~El "boss final" de la **Partida rápida**~~ → **Resuelto:** se coloca un Élite en una **Guarida** (§3b) en el hex más lejano a la entrada (§2c, paso 4); derrotarlo es la condición de victoria de la **Partida rápida** (§2b). Bloques de enemigos en [`../characters/enemies.md`](../characters/enemies.md) §5b.
+2. **Comportamiento de los enemigos en el mapa** → resuelto en [`../characters/enemies.md`](../characters/enemies.md) §2 (latente→activo por detección), §2b (aproximación/sigilo) y §5b (bloques). **Reaparición resuelta:** los enemigos **no reaparecen**; se colocan al generar el mapa y una zona limpiada queda despejada (`../characters/enemies.md` §2). Con el sistema de tiles se ubican en **agrupaciones temáticas** (campamentos, salas — §2).
 
 ### Pendiente de concretar (checklist, para cuando toque implementar)
-- [ ] Diseñar el set inicial de "tiles" (grupos de hexágonos) para el sistema de generación por piezas, con sus reglas de conexión de bordes, cubriendo los 5 terrenos del prototipo.
+- [ ] Diseñar el set inicial de "tiles" (grupos de hexágonos) para el sistema de generación por piezas, con sus reglas de conexión de bordes, cubriendo los 5 terrenos del prototipo, **y sus agrupaciones temáticas de fichas** (campamentos, salas — §2).
 - [x] Definir tabla de probabilidades de generación por terreno y por tipo de ficha → §2c (tabla A pesos de terreno, tabla B distribución de fichas). Falta balancear.
 - [x] Definir rango de visión base del personaje y cómo lo modifican clase/objetos/terreno → base 1 hex + Sabiduría (`../game-design.md` §2.3), −1 en Bosque (§3a), +1 con Ojo avizor/habilidades de exploración (abajo).
-- [x] Definir cómo interactúan mapa y combate → **Resuelto (`game-design.md` §4b):** todo ocurre sobre el mismo tablero hex (sin pantalla aparte); se actúa por **adyacencia** (objetivo en hexágono contiguo, nunca en el propio).
+- [x] Definir cómo interactúan mapa y combate → **Resuelto (`../game-design.md` §4b):** todo ocurre sobre el mismo tablero hex (sin pantalla aparte); se actúa por **adyacencia** (objetivo en hexágono contiguo, nunca en el propio).
 - [x] Definir contenido inicial del mazo de encuentro y cómo se combina con las fichas → [`cards/encounter.md`](../cards/encounter.md) (10 cartas de Combate + 10 de Suceso, cruce con las 6 fichas, mazo único base). Falta balancear frecuencias.
 - [ ] Definir número de capítulos del arco principal de la Campaña y el gancho narrativo propio y original (no LOTR literal) de cada uno.
 - [x] Definir mecánicas reales de movimiento/ocultación/visión de los **5 terrenos del prototipo** → §3a (movimiento, detección, combate, descanso, peligro, peso). Los terrenos futuros siguen ilustrativos.
-- [x] Decidir qué localizaciones especiales (3b) entran en el prototipo inicial → **Pueblo** (hub seguro: tienda, descanso largo, limpiar maldiciones), **Mazmorra** (sub-mapa de combate/loot) y **Guarida** (boss élite del Modo Prueba, §2c). El resto se añade después.
+- [x] Decidir qué localizaciones especiales (3b) entran en el prototipo inicial → **Pueblo** (hub seguro: tienda, descanso largo, limpiar maldiciones), **Mazmorra** (sub-mapa de combate/loot) y **Guarida** (boss élite de la **Partida rápida**, §2c). El resto se añade después.
 - [x] Listar las primeras habilidades/hechizos de exploración para el prototipo → set inicial:
   - **Ojo avizor** (Pícaro, [`../cards/class.md`](../cards/class.md)): adelanta *Detectado* un grupo vecino o +1 rango de visión.
   - **Mapa del cartógrafo** (Item, [`../cards/items.md`](../cards/items.md)): revela los grupos vecinos al usarlo.
   - **Antorcha** (arma soporte, [`../cards/weapons.md`](../cards/weapons.md)): +visión en localizaciones oscuras (Cueva/Mazmorra/Mina).
   - **Informante/Guía** (NPC, [`../characters/npcs.md`](../characters/npcs.md)): adelanta *Detectado* sin magia.
   - *(Futuro)* **Vista lejana** (hechizo de Mago): revela el terreno/contenido de un grupo *Detectado* sin entrar.
+
+  > **Nota (prototipo) — cartas que se desbloquean con el sistema de grupos:** la niebla del prototipo es **simple por rango de visión** (sin grupos/tiles, §2c). Por eso, todo efecto que manipule el estado *Detectado* de un **grupo vecino** (la mitad de *Ojo avizor*, *Mapa del cartógrafo*, *Espejo de acero*, el *Informante/Guía*, *Vista lejana*) queda **inactivo hasta que llegue el sistema de tiles/grupos** (§2). Lo que **sí** funciona ya en el prototipo: el **+1 de rango de visión** (*Ojo avizor*, *Herramientas de navegante*) y la **iluminación** en localizaciones oscuras (*Antorcha*). Es un caso de "carta presente en el catálogo pero desactivada hasta desbloquear su sistema".

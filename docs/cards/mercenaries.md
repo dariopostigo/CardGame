@@ -16,13 +16,13 @@ Dos vías, con el mismo trade-off que el resto del juego (gratis-pero-arriesgado
 ### 2a. Reclutar — prueba en una ficha del tablero *(vía arriesgada, gratis)*
 
 1. Interactúas con una **ficha ambigua** (Amenaza o Exploración, [`../board/board-map.md`](../board/board-map.md) §4). El mazo de encuentro revela el Suceso **"Mercenarios"** ([`encounter.md`](encounter.md) §4).
-2. Haces una prueba de **Carisma: `1d20 + mod CAR` vs CD 12** (Carisma gobierna el trato con NPCs y el "límite de mercenarios", `../game-design.md` §2.1).
+2. Haces una prueba de **Carisma: `1d20 + mod CAR` vs CD 12** (Carisma gobierna el trato con NPCs y esta prueba de reclutamiento, `../game-design.md` §2.1). **No hay límite** de cuántos mercenarios llevas más allá del tope del mazo personal (`../game-design.md` §4).
    - **Éxito** → ganas una carta de Mercenario (rareza según lo que dicte la ficha / §3). Se añade a tu mazo.
    - **Fallo** → la negociación se tuerce y **la ficha se convierte en enemigo**: se roba 1 carta de **Combate** ([`encounter.md`](encounter.md) §3) y empieza el combate (`../game-design.md` §4b).
 
 ### 2b. Comprar — NPC *(vía segura, cuesta oro)*
 
-- Un NPC (Mercader, o un Capitán de mercenarios en Pueblo/Taberna — [`../characters/npcs.md`](../characters/npcs.md)) **vende cartas de Mercenario por oro** según su Rareza (`../game-design.md` §6b.3). Sin prueba ni riesgo: la alternativa cara y segura a reclutarlas.
+- El **Capitán de mercenarios** (aparece **solo en Pueblos** — [`../characters/npcs.md`](../characters/npcs.md)) **vende cartas de Mercenario por oro** según su Rareza (`../game-design.md` §6b.3). Es el **único** NPC que las vende (el Mercader solo vende Items). Sin prueba ni riesgo: la alternativa cara y segura a reclutarlas.
 
 ## 3. Catálogo (boceto)
 

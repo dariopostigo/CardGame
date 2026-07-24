@@ -25,7 +25,7 @@ Carpeta dedicada a **todos los tipos de carta** del juego, uno por documento. El
 
 - **Mazo personal** = cartas de clase (innatas) + cartas de equipo (drafteadas). No se baraja ni se roba: juegas cualquier carta que tengas, dentro de la economía de acción (§4b.3).
 - **Drafting:** cada turno "oteas" 2 cartas de equipo y eliges 1 para añadirla permanentemente.
-- **Máximo del mazo — decidido:** el límite (ej. 10) cuenta **todas** las cartas del mazo personal (clase + equipo), no solo el equipo. Habrá una explicación in-fiction que se desarrollará más adelante; si el límite queda demasiado ajustado según avance el diseño, se podrá **subir** el número disponible (mecanismo por definir, quizá ligado al nivel/progresión).
+- **Máximo del mazo — dos topes (idea inicial):** un **mazo de partida de hasta 20 cartas** (clase + equipo que llevas, construido antes del capítulo) y un **botín drafteado que se acumula hasta 10** durante el capítulo (oteando 2 / eligiendo 1 cada turno), aparte de las 20. Sustituye el "tope único de 10" anterior (`../game-design.md` §4).
 - **Mazo de encuentro** ([`encounter.md`](encounter.md)) = aparte, gestionado por el sistema, no por el jugador.
 - **Rareza** (Común → Legendario) aplica a Arma/Armadura/Item/Mercenario/Maldición, no a las cartas de clase (`../game-design.md` §3.3).
 - **Comprar/vender:** las cartas de equipo se compran y venden por **oro** según su Rareza (`../game-design.md` §6b.3). Vender es el desagüe del exceso de mazo cuando llegas al máximo.

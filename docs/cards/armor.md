@@ -40,7 +40,7 @@ La Destreza aporta a la Defensa/CA distinto según el peso de la armadura:
 ## 5. Reglas transversales
 
 - Solo **1 armadura** equipada (`../game-design.md` §2.4). El **Escudo** ([`weapons.md`](weapons.md)) es aparte: +2 CA, ocupa 1 mano, combinable con cualquier armadura.
-- **Evitar detección:** las armaduras ruidosas dan **desventaja** cuando intentas no ser detectado por enemigos (`../enemies.md` §2). El sigilo pesa contra el blindaje — coherente con Pícaro (ligera) vs. Guerrero (pesada, tanque que no se esconde).
+- **Evitar detección:** las armaduras ruidosas dan **desventaja** en la prueba de sigilo cuando intentas no ser detectado por enemigos (`../characters/enemies.md` §2b). El sigilo pesa contra el blindaje — coherente con Pícaro (ligera) vs. Guerrero (pesada, tanque que no se esconde).
 - **Ejemplos de CA:** Guerrero (DES +1) con Cota de malla = `10 + 6` = **16** (+2 de escudo = **18**). Mago (DES +2) sin armadura = **12**; con Cuero = **13**.
 - **No interactúa con el tipo de daño:** el bono de CA de la armadura es agnóstico al tipo de ataque que recibe (a diferencia de las resistencias/vulnerabilidades por Naturaleza de criatura, que sí distinguen tipo de daño — `../game-design.md` §4b.10, `../characters/enemies.md` §3b). Si en el futuro se quiere una armadura que resista un tipo concreto, sería un efecto especial de esa carta, no parte de la fórmula general de este documento.
 

@@ -1,6 +1,6 @@
 # CardGame — Cartas: Armas
 
-Catálogo de cartas de **Arma** (tipo/icono en [`../game-design.md`](../game-design.md) §3.2, Rareza en §3.3, reglas de manos ✋/🤲 en §2.4, tipos de daño 🗡️/🏹/🔨/🔮 en §4b.10, significado de todos los iconos en [`../glossary.md`](../glossary.md)). Índice de todas las cartas en [`README.md`](README.md). Los valores de abajo son un **primer pase sin balancear**, tomando D&D como base y adaptándolo al modelo de adyacencia/alcance en hexágonos (`../game-design.md` §4b).
+Catálogo de cartas de **Arma** (tipo/icono en [`../game-design.md`](../game-design.md) §3.2, Rareza en §3.3, reglas de manos ✋/🤲 en §2.4, tipos de daño 🗡️/🏹/🔨 en §4b.10, significado de todos los iconos en [`../glossary.md`](../glossary.md)). Índice de todas las cartas en [`README.md`](README.md). Los valores de abajo son un **primer pase sin balancear**, tomando D&D como base y adaptándolo al modelo de adyacencia/alcance en hexágonos (`../game-design.md` §4b).
 
 ## 1. Armas melee
 
@@ -16,7 +16,6 @@ Catálogo de cartas de **Arma** (tipo/icono en [`../game-design.md`](../game-des
 | Lanza | 🤲 | 1d10 | 🏹 | FUE | — | Común |
 | Maza | ✋ | 1d6 | 🔨 | FUE | — | Común |
 | Maza bendita | ✋ | 1d6 | 🔨 | FUE/SAB | — | Común |
-| Escudo | ✋ | 1d4 | 🔨 | FUE | — | Común |
 
 ## 2. Armas a distancia
 
@@ -27,7 +26,7 @@ Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hu
 | Arco | 🤲 | 1d8 | 🏹 | DES | 4 hex | — | Común |
 | Ballesta pesada | 🤲 | 1d10 | 🏹 | DES | 5 hex | — | Común |
 | Ballesta de mano | ✋ | 1d6 | 🏹 | DES | 3 hex | — | Común |
-| Bastón de mago | ✋ | 1d6 | 🔮 | INT | 2 hex | — | Común |
+| Bastón de mago | ✋ | 1d6 | 🔨 | INT | 2 hex | — | Común |
 
 ## 3. Armas de soporte
 
@@ -35,11 +34,13 @@ Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hu
 |---|---|---|---|
 | Libro de hechizos | ✋ | Foco arcano: necesario para preparar ciertos hechizos de Mago / +1 hechizo especial preparado. No hace daño. | Común |
 | Símbolo sagrado | ✋ | Foco divino: necesario para preparar ciertos hechizos de Clérigo / +1 hechizo especial preparado. No hace daño. | Común |
-| Antorcha | ✋ | **Ilumina:** mejora el rango de visión en localizaciones oscuras (Cueva/Mazmorra/Mina, `../board-map.md` §3b). No hace daño. | Común |
+| Antorcha | ✋ | **Ilumina:** mejora el rango de visión en localizaciones oscuras (Cueva/Mazmorra/Mina, `../board/board-map.md` §3b). No hace daño. | Común |
+| Escudo | ✋ | **+2 a la Defensa/CA** mientras lo empuñas; ocupa 1 mano, combinable con cualquier armadura ([`armor.md`](armor.md) §5). No hace daño. | Común |
 
 ## 4. Reglas transversales
 
 - **Stat de ataque:** FUE (armas pesadas), DES (ligeras finesse y a distancia), "FUE/DES" = usa el mejor de los dos mod. Los hechizos usan INT/SAB (`../game-design.md` §2.1).
+- **Bastón de mago — daño físico en v1:** de momento hace daño 🔨 contundente, no 🔮 arcano. Los tipos de daño mágico se reservan para los hechizos de clase; cuando se desarrollen las subclases de mago y las debilidades elementales de los enemigos, el bastón podrá volver a un tipo de daño mágico.
 - **Finesse/Ligera:** puede usarse con Destreza — beneficia al Pícaro ([`class.md`](class.md)).
 - **Ninguna arma melee es arrojadiza** *(decidido)*: el hueco de "atacar sin estar adyacente" ya lo cubren las armas a distancia (§2); no se duplica con dagas/hachas lanzables.
 - **Munición:** asumida infinita en el prototipo para armas a distancia (ver checklist).

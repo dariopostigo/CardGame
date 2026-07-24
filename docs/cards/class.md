@@ -1,8 +1,8 @@
 # CardGame — Cartas: de Clase
 
-Catálogo de **Cartas Básicas y Especiales de Clase** (sistema en [`../game-design.md`](../game-design.md) §3.1, economía de acción de combate en §4b.3). Salen de la clase del héroe, no se draftean ni llevan Rareza (§3.3). Héroes y stats en [`../heroes.md`](../characters/heroes.md). Índice de cartas en [`README.md`](README.md).
+Catálogo de **Cartas Básicas y Especiales de Clase** (sistema en [`../game-design.md`](../game-design.md) §3.1, economía de acción de combate en §4b.3). Salen de la clase del héroe, no se draftean ni llevan Rareza (§3.3). Héroes y stats en [`../characters/heroes.md`](../characters/heroes.md). Índice de cartas en [`README.md`](README.md).
 
-> **Roster completo (4 héroes):** Guerrero (§2), Mago (§3), Pícaro (§4) y Clérigo (§5) — los 4 arquetipos de `../heroes.md`. Cada uno tiene 3 Básicas + 1 Especial de ejemplo. Los valores (dados, bonos, CD) son un punto de partida **sin balancear**.
+> **Roster completo (4 héroes):** Guerrero (§2), Mago (§3), Pícaro (§4) y Clérigo (§5) — los 4 arquetipos de `../characters/heroes.md`. Cada uno tiene 3 Básicas + 1 Especial de ejemplo. Los valores (dados, bonos, CD) son un punto de partida **sin balancear**.
 
 ## 1. Anatomía de una carta de clase
 
@@ -17,7 +17,7 @@ Cada carta se define por estos campos, enganchados a la economía de acción de 
 - **Por qué las Básicas son reutilizables:** no hay barajar ni robar (`../game-design.md` §4), así que una carta que tienes en el mazo es una opción siempre disponible. Lo que impide spamear "Golpe firme" cada turno es que **cuesta la Acción principal**, no un límite de usos. Las Especiales sí llevan límite porque son mucho más potentes.
 - **Cuentan para el máximo del mazo — decidido:** las cartas de clase **sí ocupan hueco** en el máximo del mazo personal (junto al equipo drafteado; ver [`README.md`](README.md)). Habrá una explicación in-fiction por desarrollar; si el límite queda demasiado ajustado al ganar Especiales por nivel, se podrá subir más adelante.
 
-## 2. Guerrero *(Fighter — FUE 15/+2, CON 14/+2, d10, PV 12 — `../heroes.md` §2b-2c)*
+## 2. Guerrero *(Fighter — FUE 15/+2, CON 14/+2, d10, PV 14 — `../characters/heroes.md` §2b-2c)*
 
 Rol: tanque melee fiable. Sus cartas premian **impactar con seguridad**, **aguantar** y **cerrar distancia**.
 
@@ -35,9 +35,9 @@ Rol: tanque melee fiable. Sus cartas premian **impactar con seguridad**, **aguan
 |---|---|---|---|
 | **Segundo aliento** | Acción rápida | 1/descanso | Recuperas **1d10 + nivel** PV. (Toca también el sistema de descanso — ver checklist de `../game-design.md`.) |
 
-## 3. Mago *(Wizard — INT 15/+2, DES 14/+2, d6, PV 6 — `../heroes.md` §2b-2c)*
+## 3. Mago *(Wizard — INT 15/+2, DES 14/+2, d6, PV 8 — `../characters/heroes.md` §2b-2c)*
 
-Rol: daño a distancia y control, muy frágil (PV 6). Sus cartas premian **pegar desde lejos**, **frenar al que se acerca** y **sobrevivir un turno más**. Encaja con la detección de enemigos (`../enemies.md` §2): un mago quiere frenar al enemigo que lo ha detectado antes de que llegue a adyacencia.
+Rol: daño a distancia y control, el más frágil (PV 8). Sus cartas premian **pegar desde lejos**, **frenar al que se acerca** y **sobrevivir un turno más**. Encaja con la detección de enemigos (`../characters/enemies.md` §2): un mago quiere frenar al enemigo que lo ha detectado antes de que llegue a adyacencia.
 
 ### Básicas (nivel 1)
 
@@ -53,17 +53,17 @@ Rol: daño a distancia y control, muy frágil (PV 6). Sus cartas premian **pegar
 |---|---|---|---|
 | **Bola de fuego** | Acción | 1/combate | Explosión a distancia (alcance 4 hex): daño **3d6 de fuego** al enemigo objetivo y a los adyacentes a él. Cada afectado hace una salvación de Destreza (`1d20 + mod DES` vs CD) para recibir la mitad. |
 
-## 4. Pícaro *(Rogue — DES 15/+2, CAR 14/+2, d8, PV 9 — `../heroes.md` §2b-2c)*
+## 4. Pícaro *(Rogue — DES 15/+2, CAR 14/+2, d8, PV 11 — `../characters/heroes.md` §2b-2c)*
 
-Rol: sigilo, daño furtivo y exploración. Sus cartas premian **atacar desde la sombra**, **reposicionarse** y **ver antes que nadie**. Es el héroe que más dialoga con la detección enemiga (`../enemies.md` §2): evita el combate o lo empieza con ventaja.
+Rol: sigilo, daño furtivo y exploración. Sus cartas premian **atacar desde la sombra**, **reposicionarse** y **ver antes que nadie**. Es el héroe que más dialoga con la detección enemiga (`../characters/enemies.md` §2): evita el combate o lo empieza con ventaja.
 
 ### Básicas (nivel 1)
 
 | Carta | Coste | Efecto |
 |---|---|---|
 | **Ataque furtivo** | Acción | Ataque con arma ligera o a distancia. Si estás **Oculto** ([`../effects.md`](../effects.md)) o atacas con ventaja, **+2d6 de daño**. El pan de cada día del pícaro. |
-| **Escabullirse** | Acción rápida | Te mueves 1 hex sin arriesgar golpe de oportunidad y ganas **+2 para evitar detección** hasta tu próximo turno; si terminas en Bosque u otro terreno de ocultación, quedas **Oculto**. |
-| **Ojo avizor** | Acción | Adelanta a **Detectado** un grupo vecino sin explorar, o **+1 a tu rango de visión** hasta tu próximo turno (`../board-map.md` §4, `../game-design.md` §2.3). Exploración pura, sin combate. |
+| **Escabullirse** | Acción rápida | Te mueves 1 hex sin arriesgar golpe de oportunidad y ganas **+2 para evitar detección** (prueba de sigilo, [`../characters/enemies.md`](../characters/enemies.md) §2b) hasta tu próximo turno; si terminas en Bosque u otro terreno de ocultación, quedas **Oculto**. |
+| **Ojo avizor** | Acción | Adelanta a **Detectado** un grupo vecino sin explorar, o **+1 a tu rango de visión** hasta tu próximo turno (`../board/board-map.md` §4, `../game-design.md` §2.3). Exploración pura, sin combate. *(En el prototipo de niebla simple solo aplica el +1 de rango de visión; la parte de "grupo Detectado" se activa con el sistema de grupos/tiles, `../board/board-map.md` §8.)* |
 
 ### Especial (ejemplo)
 
@@ -71,16 +71,16 @@ Rol: sigilo, daño furtivo y exploración. Sus cartas premian **atacar desde la 
 |---|---|---|---|
 | **Desaparecer** | Acción rápida | 1/combate | Quedas **Oculto** aunque estés a la vista (los enemigos pierden tu rastro) hasta que ataques o interactúes. Prepara un Ataque furtivo demoledor o una huida. |
 
-## 5. Clérigo *(Cleric — SAB 15/+2, CON 14/+2, d8, PV 10 — `../heroes.md` §2b-2c)*
+## 5. Clérigo *(Cleric — SAB 15/+2, CON 14/+2, d8, PV 12 — `../characters/heroes.md` §2b-2c)*
 
-Rol: curación, soporte y algo de daño divino. Sus cartas premian **mantenerte en pie**, **proteger** y **castigar no-muertos**. (Con un solo héroe en el prototipo, la mayoría se aplican a ti mismo; los objetivos "aliado" cobran sentido con Mercenarios de `../npcs.md`.)
+Rol: curación, soporte y algo de daño divino. Sus cartas premian **mantenerte en pie**, **proteger** y **castigar no-muertos**. (Con un solo héroe en el prototipo, la mayoría se aplican a ti mismo; los objetivos "aliado" cobran sentido con Mercenarios de `../characters/npcs.md`.)
 
 ### Básicas (nivel 1)
 
 | Carta | Coste | Efecto |
 |---|---|---|
 | **Palabra sanadora** | Acción rápida | Recuperas tú (o un aliado adyacente) **1d8 + mod SAB** PV. Curación fiable y repetible. |
-| **Llama sagrada** | Acción | Ataque divino a distancia (alcance 3 hex): `1d20 + mod SAB` vs Defensa; **1d8 de daño ☀️ (radiante)**, especialmente efectivo vs no-muertos (`../enemies.md` §5). |
+| **Llama sagrada** | Acción | Ataque divino a distancia (alcance 3 hex): `1d20 + mod SAB` vs Defensa; **1d8 de daño ☀️ (radiante)**, especialmente efectivo vs no-muertos (`../characters/enemies.md` §5). |
 | **Escudo de fe** | Acción rápida | Concede **Escudado +2 CA** ([`../effects.md`](../effects.md)) a ti o a un aliado adyacente hasta tu próximo turno. |
 
 ### Especial (ejemplo)

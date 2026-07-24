@@ -24,22 +24,22 @@ Carta de **efecto negativo persistente** que **ocupa un hueco del mazo personal*
 | Herida infectada | 1 de daño al inicio de tu turno cada 2 turnos en combate | 30 oro | Leve |
 | Velo de sombras | Oteas solo 1 carta en vez de 2 en el drafting (`../game-design.md` §4) | 30 oro | Leve |
 | Mano temblorosa | **Desventaja** ([`../effects.md`](../effects.md)) en tu primera tirada de cada combate | 30 oro | Leve |
-| Marca del cazador | Los enemigos te detectan +1 hex más lejos (`../characters/enemies.md` §2) → más combates | 60 oro | Grave |
+| Marca del cazador | Los enemigos te detectan +1 hex más lejos (`../characters/enemies.md` §2b) → más combates | 60 oro | Grave |
 | Sangre lenta | Toda curación que recibes se reduce a la mitad (pociones, acampar, Palabra sanadora) | 60 oro | Grave |
 | Fatiga eterna | Tienes **1 Dado de Vida menos** disponible (`../game-design.md` §4c.4) hasta limpiarla | 60 oro | Grave |
 | Susurros | Al inicio de cada combate, salvación SAB CD 12 o quedas **Asustado** 1 turno ([`../effects.md`](../effects.md)) | 60 oro | Grave |
 
 ## 3. De dónde salen (fuentes)
 
-- **Mal presagio** — carta de Suceso del mazo de encuentro ([`encounter.md`](encounter.md)): impone una Leve.
+- **Maleficio** — carta de Suceso del mazo de encuentro ([`encounter.md`](encounter.md)): impone una Leve.
 - **Trampa** — la carta de Suceso "Trampa" puede imponer una Leve en vez de daño.
-- **Fichas ambiguas falladas** — una ficha de Amenaza/Terreno resuelta mal (`../board-map.md` §4).
+- **Fichas ambiguas falladas** — una ficha de Amenaza/Terreno resuelta mal (`../board/board-map.md` §4).
 - **Habilidades de enemigo/jefe** — algunos jefes imponen una **Grave** al golpear con cierta habilidad (por definir en sus bloques, `../characters/enemies.md`).
 - **Eventos narrativos de Campaña** — Graves temáticas ligadas a la historia.
 
 ## 4. Cómo se limpian *(decidido)*
 
-- **Templo/Santuario** (`../board-map.md` §3b), atendido por el **Sacerdote/Sanador** ([`../characters/npcs.md`](../characters/npcs.md)): pagas el coste de limpieza de la Maldición (§2, por defecto según severidad, §1) → eliminación **garantizada**. Es el uso principal del Templo y un sumidero de oro (`../game-design.md` §6b.2).
+- **Templo/Santuario** (`../board/board-map.md` §3b), atendido por el **Sacerdote/Sanador** ([`../characters/npcs.md`](../characters/npcs.md)): pagas el coste de limpieza de la Maldición (§2, por defecto según severidad, §1) → eliminación **garantizada**. Es el uso principal del Templo y un sumidero de oro (`../game-design.md` §6b.2).
 - **Prueba gratuita pero arriesgada:** 1d20 + mod SAB/CON vs la CD de su severidad (§1). Éxito = la quitas; fallo = sigue puesta (y, opcional, pierdes el intento hasta el próximo descanso).
 - **Futuro:** una carta/habilidad especial de Clérigo o el **Sacerdote/Sanador** ([`../characters/npcs.md`](../characters/npcs.md)) podría retirarlas sin coste de oro.
 

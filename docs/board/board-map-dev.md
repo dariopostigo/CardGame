@@ -22,7 +22,7 @@ Hex {
 }
 
 TerrainDef {                // datos de board-map.md §3a
-  moveCost                  // 1, 2, o 'intransitable'
+  moveCost                  // 1, 2, 3 (Montaña = 3, muy difícil; board-map.md §3a)
   enemyDetectionMod         // ej. Bosque -1
   heroVisionMod             // ej. Bosque -1
   coverVsRanged             // ej. Bosque +1 CA
