@@ -151,7 +151,7 @@ Ciertos hexágonos (dentro de un grupo ya "Explorado") tienen una **ficha** visi
 
 | Ficha | Icono (ejemplo) | Qué representa |
 |---|---|---|
-| Exploración | Ojo blanco | Comodín: al interactuar puede resultar en cualquier cosa (tesoro, prueba, evento narrativo, o incluso vacío) — es la más ambigua de todas |
+| Exploración | Ojo blanco | Comodín: al interactuar puede resultar en cualquier cosa (tesoro, prueba, mercenarios reclutables ([`../cards/mercenaries.md`](../cards/mercenaries.md)), evento narrativo, o incluso vacío) — es la más ambigua de todas |
 | Amenaza | Icono rojo sin definir | Peligro ambiguo: normalmente se resuelve como un enemigo, pero no se sabe con certeza hasta interactuar (podría ser una trampa, un peligro de terreno, etc.) |
 | Tesoro | Icono de cofre amarillo | Confirmado que da recompensa: carta(s) para el mazo (objeto, poción, arma, armadura) **y/o oro** (`game-design.md` §6b.1) — el contenido concreto es aleatorio, pero la categoría "tesoro" se sabe de antemano; los cofres de mayor rareza pueden dar ambos |
 | Terreno | Icono de montaña verde | Prueba ligada al terreno: puede dar un beneficio o ser un obstáculo (ej. una prueba de movimiento/agilidad para cruzar, especialmente relevante en capítulos de Campaña con un tramo difícil concreto) |

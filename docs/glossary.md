@@ -19,6 +19,7 @@ Términos transversales usados en todos los documentos de `docs/`. Se amplía co
 | Mazo personal | Mazo del jugador: cartas de clase + equipo obtenido. No se baraja ni se roba mano; se juega cualquier carta que ya se tenga (`game-design.md` §4) |
 | Mazo de encuentro | Mazo gestionado por el sistema (no por el jugador), con cartas cortas de acción que se roban al activar una ficha o entrar en combate (`board-map.md` §5) |
 | Maldición | Carta de efecto negativo persistente que **ocupa un hueco del mazo personal** (distinta de un Estado temporal de combate) (`game-design.md` §3.2) |
+| Mercenario | Carta de Acción que representa una compañía a sueldo; se recluta con una prueba de Carisma en una ficha ambigua (fallarla la convierte en enemigo) o se compra por oro; va al mazo personal (`game-design.md` §3, `cards/mercenaries.md`) |
 | Estado / Efecto | Modificador temporal aplicado durante una prueba/combate (ventaja, desventaja, aturdido, envenenado); no ocupa hueco de mazo (`game-design.md` §3.2) |
 | CR (Nivel de Desafío) | Escala de dificultad de D&D usada como referencia para ordenar las categorías de enemigo (`enemies.md` §3) |
 | Modo Prueba | Modo sandbox con mapa aleatorio y boss elite opcional; se implementa primero (`board-map.md` §2b) |

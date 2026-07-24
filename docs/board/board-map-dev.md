@@ -65,8 +65,8 @@ Enemy {                     // bloque de combate, enemies.md §5b
 }
 
 Card {                      // cards/*
-  origin                    // clase | equipo | maldicion | encuentro
-  type                      // Arma | Armadura | Item | Efecto | Maldicion | ...
+  origin                    // clase | equipo | mercenario | maldicion | encuentro
+  type                      // Arma | Armadura | Item | Mercenario | Efecto | Maldicion | ...
   actionCost                // Accion | AccionRapida | Modificador | Pasiva | FueraDeCombate
   uses                      // ilimitado | 1/combate | 1/descanso (ninguna carta del mazo personal se pierde al jugarla, game-design.md §4)
   rarity?                   // Comun..Legendario (no en cartas de clase)

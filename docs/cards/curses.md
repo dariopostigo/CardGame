@@ -39,9 +39,9 @@ Carta de **efecto negativo persistente** que **ocupa un hueco del mazo personal*
 
 ## 4. Cómo se limpian *(decidido)*
 
-- **Templo/Santuario** (`../board-map.md` §3b): pagas el coste de limpieza de la Maldición (§2, por defecto según severidad, §1) → eliminación **garantizada**. Es el uso principal del Templo y un sumidero de oro (`../game-design.md` §6b.2).
+- **Templo/Santuario** (`../board-map.md` §3b), atendido por el **Sacerdote/Sanador** ([`../characters/npcs.md`](../characters/npcs.md)): pagas el coste de limpieza de la Maldición (§2, por defecto según severidad, §1) → eliminación **garantizada**. Es el uso principal del Templo y un sumidero de oro (`../game-design.md` §6b.2).
 - **Prueba gratuita pero arriesgada:** 1d20 + mod SAB/CON vs la CD de su severidad (§1). Éxito = la quitas; fallo = sigue puesta (y, opcional, pierdes el intento hasta el próximo descanso).
-- **Futuro:** una carta/habilidad especial de Clérigo o un NPC (Tabernero/Clérigo, `../npcs.md`) podría retirarlas sin coste de oro.
+- **Futuro:** una carta/habilidad especial de Clérigo o el **Sacerdote/Sanador** ([`../characters/npcs.md`](../characters/npcs.md)) podría retirarlas sin coste de oro.
 
 ## 5. Próximos pasos
 

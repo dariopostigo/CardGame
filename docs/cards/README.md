@@ -15,6 +15,7 @@ Carpeta dedicada a **todos los tipos de carta** del juego, uno por documento. El
 | [`weapons.md`](weapons.md) | Armas (melee, distancia, soporte) | Equipo |
 | [`armor.md`](armor.md) | Armaduras (ligeras, medias, pesadas) | Equipo |
 | [`items.md`](items.md) | Items: aventurero, herramientas, mágicos, pociones, pergaminos, cartas de movimiento | Equipo |
+| [`mercenaries.md`](mercenaries.md) | Mercenarios (cartas de Acción reclutadas por prueba o compradas por oro) | Mercenario |
 | [`curses.md`](curses.md) | Maldiciones (efecto negativo que ocupa hueco de mazo) | Especial |
 | [`encounter.md`](encounter.md) | Mazo de encuentro (cartas del sistema en combate/exploración) | Sistema |
 
@@ -26,5 +27,5 @@ Carpeta dedicada a **todos los tipos de carta** del juego, uno por documento. El
 - **Drafting:** cada turno "oteas" 2 cartas de equipo y eliges 1 para añadirla permanentemente.
 - **Máximo del mazo — decidido:** el límite (ej. 10) cuenta **todas** las cartas del mazo personal (clase + equipo), no solo el equipo. Habrá una explicación in-fiction que se desarrollará más adelante; si el límite queda demasiado ajustado según avance el diseño, se podrá **subir** el número disponible (mecanismo por definir, quizá ligado al nivel/progresión).
 - **Mazo de encuentro** ([`encounter.md`](encounter.md)) = aparte, gestionado por el sistema, no por el jugador.
-- **Rareza** (Común → Legendario) aplica a Arma/Armadura/Item/Maldición, no a las cartas de clase (`../game-design.md` §3.3).
+- **Rareza** (Común → Legendario) aplica a Arma/Armadura/Item/Mercenario/Maldición, no a las cartas de clase (`../game-design.md` §3.3).
 - **Comprar/vender:** las cartas de equipo se compran y venden por **oro** según su Rareza (`../game-design.md` §6b.3). Vender es el desagüe del exceso de mazo cuando llegas al máximo.

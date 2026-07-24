@@ -53,6 +53,7 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 1. **Cartas Básicas de Clase** — inspiradas en las cartas "Básica 1/2/3" de Viajes. Cada clase tiene un set fijo de cartas genéricas disponibles desde el nivel 1 (p. ej. Guerrero: "Golpe firme", "Postura defensiva"). Catálogo en [`cards/class.md`](cards/class.md).
 2. **Cartas Especiales de Clase** — se desbloquean por nivel/hito, igual que las subclases de D&D. Más potentes, uso limitado (una vez por combate/descanso). Ver [`cards/class.md`](cards/class.md).
 3. **Cartas de equipo** — armas, armaduras e items obtenidos jugando (ver §3.2 y [`cards/`](cards/README.md) para el catálogo), se incorporan al mazo mediante el drafting de §4.
+4. **Cartas de Mercenario** — compañías a sueldo que se **reclutan** superando una prueba de Carisma en una ficha del tablero (fallarla la convierte en enemigo) o se **compran** por oro; van al mazo como cartas de Acción reutilizables. Catálogo en [`cards/mercenaries.md`](cards/mercenaries.md).
 
 ### 3.2 Por tipo (icono diferenciador)
 
@@ -61,6 +62,7 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 | **Arma** | Espada | Añade daño y tipo de daño (lista completa y resistencias en §4b.10); ocupa 1 o 2 manos (§2.4) | Puede requerir stat mínima para usarse sin penalización |
 | **Armadura** | Escudo/coraza | Suma a la Defensa/CA; puede restar Destreza si es pesada | Solo 1 equipada a la vez (§2.4) |
 | **Item** | Bolsa | Categoría amplia: pociones (efecto instantáneo), hechizos (Cartas Especiales o Pergaminos), objetos de aventura/herramientas/objetos mágicos raros — ver [`cards/items.md`](cards/items.md) | El más variado de los 4 tipos |
+| **Mercenario** | 🪖 Casco/estandarte | Carta de Acción: das la orden a una compañía a sueldo (atacar, curarte, etc.); reutilizable, cuesta tu Acción | Origen (reclutar/comprar) y catálogo en [`cards/mercenaries.md`](cards/mercenaries.md) |
 | **Maldición** | Calavera/nube negra | Efecto negativo persistente que **ocupa un hueco del mazo** (a diferencia de un Efecto/Estado temporal de combate) — ej. -1 movimiento, 1 de daño cada 2 turnos, otear solo 1 carta en vez de 2 | Definida en [`cards/curses.md`](cards/curses.md) (severidad Leve/Grave, fuentes, limpieza); da incentivo a "limpiar" el mazo |
 
 Además siguen existiendo las **Cartas de Efecto/Estado** (ventaja, desventaja, aturdido, envenenado) que se aplican de forma *temporal* durante una prueba/combate sobre un personaje (propio, aliado o enemigo) — no ocupan hueco de mazo como la Maldición, son more bien un modificador puntual de una carta de Arma/Item/hechizo al jugarse.
@@ -231,7 +233,7 @@ Esto es clave para que el "deckbuilding" tenga sentido táctico: no solo mejoras
 
 | Fuente | Oro (orientativo, sin balancear) |
 |---|---|
-| Enemigo Común derrotado | 1d6 |
+| Enemigo Normal derrotado | 1d6 |
 | Enemigo Élite | 3d6 + loot bueno garantizado |
 | Jefe de capítulo | ~5d10 |
 | Jefe final | mucho + recompensa única |
@@ -241,9 +243,9 @@ Esto es clave para que el "deckbuilding" tenga sentido táctico: no solo mejoras
 
 ### 6b.2 En qué se gasta (sumideros)
 
-- **Comprar cartas** en tiendas (Mercader, Mago/Encantador — `npcs.md`): precio por Rareza (§6b.3).
-- **Contratar Mercenarios** (`npcs.md`): coste según su potencia; aliado temporal.
-- **Limpiar una Maldición** en el Templo ([`cards/curses.md`](cards/curses.md)): coste fijo (o prueba).
+- **Comprar cartas** en tiendas (Mercader — Items, Herrero — armas/armaduras, Mago/Encantador — hechizos; `npcs.md`): precio por Rareza (§6b.3).
+- **Comprar cartas de Mercenario** (`npcs.md`, [`cards/mercenaries.md`](cards/mercenaries.md)): coste según su Rareza; van a tu mazo (vía segura frente a reclutarlas con una prueba).
+- **Limpiar una Maldición** en el Templo / **Sacerdote-Sanador** (`npcs.md`, [`cards/curses.md`](cards/curses.md)): coste fijo (o prueba).
 - **Herrero** (`npcs.md`): reparar/mejorar una carta de equipo (subir de rareza o reforjar) — coste por definir.
 - El **descanso largo** básico en Pueblo es gratis (§4c.3); solo los servicios premium cuestan oro.
 

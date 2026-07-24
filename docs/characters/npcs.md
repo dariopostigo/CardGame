@@ -13,13 +13,16 @@ Documento dedicado a los NPCs **no hostiles** que aparecen en el mapa mediante l
 
 | NPC | Qué ofrece | Notas |
 |---|---|---|
-| Vendedor/Mercader | Compra/vende objetos, pociones, a veces armas/armaduras — precios por Rareza y **venta a ≈40 %** (`game-design.md` §6b.3); stock limitado/rotatorio | El más genérico; aparece tanto en Pueblo como suelto en el mapa |
-| Tabernero | Ofrece el **descanso largo** (`game-design.md` §4c.3): cura total, recupera Dados de Vida, quita estados negativos; puede dar rumores/pistas. Posible coste de oro. | Ligado normalmente a Pueblo |
+| Vendedor/Mercader | Compra/vende **Items** (objetos de aventurero, pociones, pergaminos — [`../cards/items.md`](../cards/items.md)); **no** vende armas ni armaduras (eso es el Herrero) — precios por Rareza y **venta a ≈40 %** (`game-design.md` §6b.3); stock limitado/rotatorio | El más genérico; aparece tanto en Pueblo como suelto en el mapa |
+| Tabernero | Ofrece el **descanso largo** (`game-design.md` §4c.3): cura total, recupera Dados de Vida, quita estados negativos; puede dar rumores/pistas. Posible coste de oro. | Aparece en el Pueblo o en una **posada** suelta en mitad de un camino |
+| Sacerdote/Sanador | **Limpia Maldiciones** ([`../cards/curses.md`](../cards/curses.md) §4) pagando su coste de limpieza, o mediante la prueba gratuita arriesgada; puede ofrecer curación/bendición menor | Hace de **Templo del prototipo** (`../board/board-map.md` §3b, §8); vive en el Pueblo. Sumidero de oro (`game-design.md` §6b.2) |
 | Mago/Encantador | Vende hechizos, pergaminos, encanta objetos existentes | Contrapunto arcano del vendedor; encaja con la localización Torre de mago (`board-map.md` §3b) |
-| Mercenario contratable | Se une temporalmente como aliado (por un tramo del mapa o hasta un descanso) | Coste en **oro** según su potencia (`game-design.md` §6b.2) a cambio de ayuda en combate |
+| Capitán de mercenarios | **Vende cartas de Mercenario** por oro ([`../cards/mercenaries.md`](../cards/mercenaries.md) §2b) — la vía **segura**. Reclutarlas gratis (con riesgo de combate) es un **encuentro** en una ficha ambigua (`../cards/mercenaries.md` §2a), no este NPC | Cartas de tipo Acción que van a tu mazo; coste por Rareza (`game-design.md` §6b.3). **Solo aparece en Pueblos** |
 | Informante/Guía | Revela información del mapa sin magia (ej. adelanta el estado "Detectado" de un grupo vecino) | Vía alternativa no arcana para la mecánica de exploración de `board-map.md` §4 |
-| Herrero | Repara/mejora armas y armaduras existentes del mazo (subir de rareza/reforjar) por **oro** (`game-design.md` §6b.2) | Arquetipo clásico de D&D, contrapunto "físico" al Mago/Encantador (arcano) |
-| Dador de misión *(solo Campaña)* | Ofrece un objetivo secundario con recompensa narrativa/mecánica | Solo tiene sentido en Modo Campaña, no en Modo Prueba |
+| Herrero | **Vende cartas de Arma y Armadura** ([`../cards/weapons.md`](../cards/weapons.md), [`../cards/armor.md`](../cards/armor.md)) por oro, precios por Rareza (`game-design.md` §6b.3) | Es quien cubre armas/armaduras (el Mercader solo vende Items). *(La reparación/mejora de equipo queda como idea futura, [`../ideas.md`](../ideas.md).)* |
+| Dador de misión *(solo Campaña)* | NPC con **historia propia**: da misiones ligadas al arco de la Campaña o **secundarias opcionales** (decides si aceptarlas o no), con recompensa narrativa/mecánica | Solo tiene sentido en Modo Campaña (necesita narrativa); ficha con mucho recorrido a futuro |
+
+> **Subconjunto del prototipo:** entran **todos** estos tipos salvo el *Dador de misión* (solo Campaña). El **Sacerdote/Sanador** hace de Templo del prototipo (limpia Maldiciones), ya que el Pueblo absorbe esa función (`../board/board-map.md` §8).
 
 ## 3. Cómo se resuelve la interacción
 
@@ -28,8 +31,9 @@ Documento dedicado a los NPCs **no hostiles** que aparecen en el mapa mediante l
 
 ## 4. Próximos pasos / preguntas abiertas
 
-- [ ] Decidir si los NPCs sueltos en el mapa general (fuera de Pueblo) son fichas fijas o generadas aleatoriamente como el resto de fichas del tablero.
+- [ ] **Colocación en el mapa** — mezcla ya perfilada: el **Capitán de mercenarios** solo en Pueblos; el **Tabernero** en Pueblo o en una posada suelta de camino; el **Informante/Guía** y el **Mercader** pueden salir sueltos; Sacerdote/Herrero/Mago tienden al Pueblo. El reparto fino se concreta al revisar la generación de fichas (`../board/board-map.md` §2c).
 - [x] Definir el sistema de precios/economía → **Oro** (`game-design.md` §6b), precios por Rareza (§6b.3). Falta balancear cifras y definir el stock/rotación concreto de cada tienda.
+- [x] Subconjunto del prototipo → **los 7 tipos** de §2 entran en el prototipo (incluido el nuevo Sacerdote/Sanador); solo el Dador de misión queda para Campaña.
 - [ ] Definir 2-3 NPCs de ejemplo con nombre propio para el prototipo (mínimo: un tabernero y un mercader).
-- [ ] Decidir si el Mercenario contratable usa el mismo sistema de estadísticas/mazo que el jugador (más complejo) o solo aporta un efecto pasivo simple (más fácil de implementar).
+- [x] Decidir si el Mercenario usa stats/mazo propio o efecto pasivo simple → **ninguno de los dos**: es una **carta de Acción** que va a tu mazo, reclutada con una prueba de Carisma en una ficha ambigua o comprada por oro ([`../cards/mercenaries.md`](../cards/mercenaries.md)).
 - [ ] Cuando quieras, ir añadiendo más tipos de NPC a la tabla de §2.

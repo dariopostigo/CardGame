@@ -23,7 +23,7 @@ El terreno del hexágono aplica **además** su propio efecto (`../board-map.md` 
 |---|---|
 | Emboscada enemiga | Si el héroe iba expuesto (Llanura/Camino, no Oculto), el enemigo actúa primero e ignora la iniciativa el primer turno |
 | Golpe de las sombras | Si el héroe estaba **Oculto** o en **Bosque** ([`../effects.md`](../effects.md), `../board-map.md` §3a), abre con un ataque gratis con ventaja |
-| Refuerzos | Al final del turno 2 aparece 1 enemigo Común adicional (`../enemies.md` §5b) |
+| Refuerzos | Al final del turno 2 aparece 1 enemigo Normal adicional (`../enemies.md` §5b) |
 | Terreno favorable | El héroe gana **+1 CA** durante todo el combate (cobertura natural) |
 | Terreno traicionero | Un hexágono de la zona es peligroso: entrar en él inflige 1d4 o causa **Ralentizado** |
 | El enemigo flaquea | Al bajar del 50 % de PV, el enemigo intenta **huir** usando su movimiento; si escapa, sueltas menos loot |
@@ -46,6 +46,7 @@ El terreno del hexágono aplica **además** su propio efecto (`../board-map.md` 
 | Descanso interrumpido | *(solo al acampar)* La acampada falla: no recuperas y salta un combate (roba 1 carta de Combate) |
 | Clima adverso | **Ralentizado** o riesgo de estado hasta salir de la zona |
 | Provisiones | Recuperas algo de PV o ganas una Poción ([`items.md`](items.md)) |
+| Mercenarios | La ficha resulta ser una compañía a sueldo: prueba de **Carisma CD 12** — éxito = ganas una carta de Mercenario ([`mercenaries.md`](mercenaries.md)); fallo = **combate** (roba también 1 carta de Combate) |
 
 ## 5. Qué ficha del tablero usa el mazo
 
@@ -55,7 +56,7 @@ Cruce con las 6 fichas de [`../board-map.md`](../board/board-map.md) §4:
 |---|---|
 | Enemigo | Sí — 1 carta de **Combate** al iniciar la pelea |
 | Amenaza | Sí — 1 carta de **Suceso** (puede salir ¡Emboscada!, Trampa, o nada) |
-| Exploración (comodín) | Sí — 1 carta de **Suceso** (rango completo: hallazgo, NPC, trampa, vacío…) |
+| Exploración (comodín) | Sí — 1 carta de **Suceso** (rango completo: hallazgo, NPC, mercenarios, trampa, vacío…) |
 | Terreno | A veces — puede robar un Suceso de tipo Trampa/Hallazgo tras la prueba de terreno |
 | Tesoro | **No** — da loot directo (`../board-map.md` §4) |
 | Personaje (NPC) | **No** — interacción de calma, sin mazo (`../npcs.md` §3) |

@@ -29,12 +29,14 @@ Esta distinción da dos sabores de encuentro: la sorpresa de la Amenaza (tensió
 
 | Categoría | CR de referencia (D&D) | Dónde aparece | Notas |
 |---|---|---|---|
-| Común | CR 1/8 – 1 | Ficha de Amenaza/Enemigo normal, cualquier terreno | Combate rápido, loot menor |
+| Normal | CR 1/8 – 1 | Ficha de Amenaza/Enemigo normal, cualquier terreno | Combate rápido, loot menor |
 | Élite | CR 2 – 5 | Ficha de Enemigo en una localización "Guarida" (`board-map.md` §3b), o como boss del Modo Prueba | Combate más largo/duro, loot garantizado bueno |
 | Jefe de capítulo | CR 6 – 10 | Asociado a un Castillo/Fortaleza o evento narrativo concreto en Modo Campaña | Ligado a la historia de ese capítulo, no aparece en Modo Prueba |
 | Jefe final de campaña | CR 11+ | Último mapa de la Campaña (`board-map.md` §2b) | Cierra el arco narrativo principal, el más elaborado de todos |
 
 Los rangos de CR son solo una referencia de partida tomada de D&D para ordenar la dificultad relativa entre categorías, no implican usar las stats exactas del Manual de Monstruos — el sistema de combate propio (`game-design.md`) tendrá su propia forma de medir dificultad más adelante.
+
+> **Nota:** la categoría más baja se llama **Normal** (no "Común") a propósito, para no confundirla con la **Rareza** "Común" de las cartas (`../game-design.md` §3.3), que en la wiki se pinta como una mini-carta gris.
 
 ## 3b. Naturaleza de criatura y resistencias
 
@@ -62,12 +64,12 @@ Al quedar adyacente a una ficha de Amenaza (revelada como enemigo) o de Enemigo,
 
 | Categoría | Array base |
 |---|---|
-| Común | 13, 12, 11, 10, 9, 8 |
+| Normal | 13, 12, 11, 10, 9, 8 |
 | Élite | 16, 15, 13, 12, 10, 8 |
 | Jefe de capítulo | 18, 16, 16, 13, 12, 10 |
 | Jefe final | 20, 18, 18, 15, 14, 12 |
 
-**Comunes** (ficha de Amenaza/Enemigo normal):
+**Normales** (ficha de Amenaza/Enemigo normal):
 
 | Enemigo | FUE | DES | CON | INT | SAB | CAR | Terreno/localización típica | Idea de gancho mecánico |
 |---|---|---|---|---|---|---|---|---|
@@ -81,7 +83,7 @@ Al quedar adyacente a una ficha de Amenaza (revelada como enemigo) o de Enemigo,
 
 | Enemigo | FUE | DES | CON | INT | SAB | CAR | Dónde | Idea de gancho mecánico |
 |---|---|---|---|---|---|---|---|---|
-| Capitán bandido | 16 | 12 | 13 | 8 | 10 | 15 | Guarida en Llanura/Camino | Llega acompañado de 1-2 Comunes de refuerzo; CAR alto porque lidera |
+| Capitán bandido | 16 | 12 | 13 | 8 | 10 | 15 | Guarida en Llanura/Camino | Llega acompañado de 1-2 Normales de refuerzo; CAR alto porque lidera |
 | Trol de las minas | 16 | 13 | 15 | 8 | 12 | 10 | Guarida en Mina | Mucho HP (CON alta), golpe que ignora parte de la armadura ligera |
 | Araña matriarca | 12 | 16 | 15 | 10 | 13 | 8 | Guarida en Montaña/Cueva | Versión grande de la Araña cavernaria, veneno más fuerte |
 
@@ -99,8 +101,8 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 
 | Valor | Cómo se calcula |
 |---|---|
-| **PV** | `Dados de Vida × 5 + mod CON × Dados de Vida` (dado de monstruo d8, promedio 5). DV por categoría: Común **2**, Élite **5**, Jefe de capítulo **9**, Jefe final **14**. Ajustable por criatura (ej. "bajo HP" = menos DV). |
-| **CA (Defensa)** | `10 + mod DES + armadura natural` (`game-design.md` §2). Armadura natural por categoría: Común +0/+1, Élite +1/+2, Jefe +3/+4. |
+| **PV** | `Dados de Vida × 5 + mod CON × Dados de Vida` (dado de monstruo d8, promedio 5). DV por categoría: Normal **2**, Élite **5**, Jefe de capítulo **9**, Jefe final **14**. Ajustable por criatura (ej. "bajo HP" = menos DV). |
+| **CA (Defensa)** | `10 + mod DES + armadura natural` (`game-design.md` §2). Armadura natural por categoría: Normal +0/+1, Élite +1/+2, Jefe +3/+4. |
 | **Bono de ataque** | `mod de la stat del ataque` (FUE melee, DES a distancia). **Sin bono de competencia**, igual que los héroes (§4b.4) — ver nota de balance abajo. |
 | **Daño** | `dado del ataque + mod stat`, con su tipo de daño (🗡️🏹🔨 y otros — `../game-design.md` §4b.10). |
 | **Velocidad** | 2 hex por defecto (bestias ágiles 3; criaturas enormes/lentas pueden bajar a 1). Movimiento en combate según §4b.5. |
@@ -109,7 +111,7 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 
 > **Nota de balance (accuracy):** como ni héroes ni enemigos tienen bono de competencia, la precisión sale solo de los modificadores + cartas. Si al testear la sensación de "fallo mucho" es alta, la solución es añadir un **bono de competencia global** (+2) a ambos lados — decisión aplazada al balance, no ahora.
 
-### 5b.2 Comunes (2 DV)
+### 5b.2 Normales (2 DV)
 
 | Enemigo | Naturaleza | PV | CA | Vel | Det | Ataque | Habilidad |
 |---|---|---|---|---|---|---|---|
@@ -123,19 +125,19 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 
 | Enemigo | Naturaleza | PV | CA | Vel | Det | Ataque | Habilidad |
 |---|---|---|---|---|---|---|---|
-| Capitán bandido | Humanoide | 30 | 14 | 2 | 2 | Espada +3 / 1d8+3 🗡️ / melee | **Comandante:** llega con 1-2 Comunes de refuerzo; mientras el Capitán viva, los refuerzos atacan con +1 |
-| Trol de las minas | Gigante | 38 | 13 | 2 | 2 | Garras +3 / 1d10+3 🔨 / melee (ignora el bono de armadura ligera del objetivo) | **Regeneración:** +2 PV al inicio de su turno, salvo que recibiera daño de **🔥 (fuego)** ese turno (Antorcha, Bola de fuego) — habilidad propia, no una vulnerabilidad de su Naturaleza (§3b) |
-| Araña matriarca | Bestia | 35 | 14 | 3 | 3 | Mordisco +3 / 1d8+3 🏹 + Veneno fuerte (2d4, CON CD 14) · Telaraña (alcance 3, DES CD 14) | **Veneno potente + Telaraña** (versión dura de la cavernaria) |
+| Capitán bandido | Humanoide | 30 | 13 | 2 | 2 | Espada +3 / 1d8+3 🗡️ / melee | **Comandante:** llega con 1-2 Normales de refuerzo; mientras el Capitán viva, los refuerzos atacan con +1 |
+| Trol de las minas | Gigante | 35 | 13 | 2 | 2 | Garras +3 / 1d10+3 🔨 / melee (ignora el bono de armadura ligera del objetivo) | **Regeneración:** +2 PV al inicio de su turno, salvo que recibiera daño de **🔥 (fuego)** ese turno (Antorcha, Bola de fuego) — habilidad propia, no una vulnerabilidad de su Naturaleza (§3b) |
+| Araña matriarca | Bestia | 35 | 14 | 3 | 2 | Mordisco +3 / 1d8+3 🏹 + Veneno fuerte (2d4, CON CD 14) · Telaraña (alcance 3, DES CD 14) | **Veneno potente + Telaraña** (versión dura de la cavernaria) |
 
 ### 5b.4 Jefes (con Bono de jefe +2 ya incluido)
 
 **Jefe de capítulo — "El Heraldo Ceniciento"** (9 DV)
-- **PV** 72 · **CA** 16 · **Vel** 2 · **Det** 3
+- **PV** 72 · **CA** 16 · **Vel** 2 · **Det** 2
 - **Ataque:** Guadaña cenicienta +5 / 2d6+3 💀 / alcance 2
 - **Habilidades:** (1) *Aura de corrupción* — al empezar el combate y cada 3 turnos, el héroe salva SAB CD 14 o queda **Asustado** ([`effects.md`](../effects.md)); (2) *Invocar* — cada 2 turnos aparece 1 Esqueleto errante.
 
 **Jefe final — "La Sombra que Devora"** (14 DV, **diseño multifase — boceto**) — Naturaleza **Sombrío** (§3b): resistente a 🗡️/🏹, vulnerable a ☀️
-- **PV** 120 · **CA** 18 · **Vel** 3 · **Det** 4
+- **PV** 140 · **CA** 18 · **Vel** 3 · **Det** 3
 - **Ataque:** Zarpa devoradora +6 / 2d8+4 💀 / alcance 2, y **Drenar** (se cura la mitad del daño infligido)
 - **Habilidades:** combate **multifase** (al 66 % y al 33 % de PV gana un nuevo efecto / invoca sombras). Un jefe final merece diseño a medida cuando se escriba la Campaña — esto es solo el bloque base.
 
@@ -154,16 +156,16 @@ Como el leveling es por **hitos** (no XP; `../game-design.md` §5), no traducimo
 
 | Zona del mapa | Categorías que aparecen |
 |---|---|
-| Cerca de la entrada | Comunes sueltos (1-2) |
-| Zona media | Comunes en grupo + algún Élite |
+| Cerca de la entrada | Normales sueltos (1-2) |
+| Zona media | Normales en grupo + algún Élite |
 | Zona lejana / Guarida | Élite + el **boss** (Élite reforzado, §2c del `board-map.md`) |
 
 **Modo Campaña — por nivel de héroe / capítulo:**
 
 | Nivel héroe (~capítulo) | Categorías que aparecen |
 |---|---|
-| 1-2 (capítulos tempranos) | Comunes; 1 Élite como clímax de capítulo |
-| 3-4 (capítulos medios) | Comunes duros + Élite; **Jefe de capítulo** al final |
+| 1-2 (capítulos tempranos) | Normales; 1 Élite como clímax de capítulo |
+| 3-4 (capítulos medios) | Normales duros + Élite; **Jefe de capítulo** al final |
 | 5 (capítulo final) | Élite + **Jefe final** |
 
 El balance fino (cuántos a la vez, con qué stats exactas) se ajusta al testear; esta tabla solo fija la progresión de amenaza.
@@ -174,12 +176,12 @@ El balance fino (cuántos a la vez, con qué stats exactas) se ajusta al testear
 - [x] Concretar el **rango de detección del enemigo** → 2 hex base + SAB scaling (§2, §5b.1).
 - [x] Concretar la **persecución (leash)** → desiste y vuelve a su ancla tras 2 turnos fuera de detección/visión (§2).
 - [x] Concretar cómo la **ocultación del terreno** reduce la detección → Bosque −1; estado Oculto = indetectable (§2).
-- [x] Poner stats básicas (sin balancear) a los enemigos del boceto de arriba (comunes, élite y jefes — §5).
+- [x] Poner stats básicas (sin balancear) a los enemigos del boceto de arriba (normales, élite y jefes — §5).
 - [x] Definir **bloques de combate jugables** (PV, CA, ataque, daño, velocidad, detección, habilidad) para los 10 enemigos de ejemplo — §5b. Falta balancear.
 - [ ] Definir el enemigo élite/boss del Modo Prueba en detalle (vínculo con la localización "Guarida" de `board-map.md` §3b) — probablemente uno de los 3 Élite de arriba.
 - [x] Definir cómo escala la dificultad según profundidad del mapa / nivel del personaje → §5c (qué categorías aparecen por zona en Prueba y por nivel/capítulo en Campaña). Falta balancear cantidades.
 - [ ] Decidir si los nombres/historia de los jefes de capítulo y final son estos provisionales o se rediseñan al escribir la Campaña de verdad.
-- [ ] Cuando quieras, ir añadiendo más enemigos al bestiario de §5 (comunes, élite, o nuevos jefes).
+- [ ] Cuando quieras, ir añadiendo más enemigos al bestiario de §5 (normales, élite, o nuevos jefes).
 - [x] Formalizar el sistema de tipos de daño y resistencias → **Naturaleza de criatura** (§3b) con resistencias/vulnerabilidades por defecto; multiplicadores y lista de tipos en `../game-design.md` §4b.10. Falta balancear (¿son los multiplicadores correctos? ¿demasiados/pocos tipos?).
 - [ ] Decidir la Naturaleza del Heraldo Ceniciento (§3b, §5b.4) — ¿No-muerto de alto rango o Humanoide corrompido con poder 💀 (necrótico)?
 - [ ] Asignar Naturaleza (§3b) a cualquier enemigo nuevo que se añada al bestiario.

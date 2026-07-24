@@ -30,12 +30,13 @@ Foto única y honesta de qué está definido y qué no, para no perderse entre l
 | Armas | ✅ | Valores de 1er pase (`cards/weapons.md`) |
 | Armaduras | ✅ | Valores de 1er pase + fórmula de CA (`cards/armor.md`) |
 | Items | ✅ | Lista + consumibles + Hoguera + efectos de objetos mágicos + cartas de movimiento (`cards/items.md`). Falta balancear |
+| Mercenarios | ✅ | Sistema (reclutar por prueba / comprar por oro) + catálogo de 6 (`cards/mercenaries.md`). Falta balancear |
 | Efectos / estados | ✅ | 10 estados con efecto/duración/fuentes/cura + reglas generales (representación, CD 12, timing, stacking) en `effects.md`. Falta balancear |
 | Maldiciones | ✅ | Severidad Leve/Grave, catálogo de 8, fuentes y limpieza (Templo/prueba) en `cards/curses.md`. Falta balancear |
 | Mazo de encuentro | ✅ | 10 cartas de Combate + 10 de Suceso, cruce con las 6 fichas, mazo único (`cards/encounter.md`). Falta balancear frecuencias |
 | **Enemigos — bloque de combate** | ✅ | 10 bloques jugables (PV/CA/ataque/daño/velocidad/detección/habilidad) + reglas de derivación (`enemies.md` §5b). Falta balancear |
-| Enemigos — bestiario (variedad) | 🟡 | ~8 comunes/élite + 2 jefes de ejemplo (`enemies.md`) |
-| NPCs | 🟡 | Tipos e interacción ✅; NPCs con nombre y sistema real de Mercenario = sin definir |
+| Enemigos — bestiario (variedad) | 🟡 | ~8 normales/élite + 2 jefes de ejemplo (`enemies.md`) |
+| NPCs | 🟡 | 7 tipos definidos (incl. **Sacerdote/Sanador** que limpia Maldiciones) e interacción ✅; **Mercenario resuelto** (`cards/mercenaries.md`); NPCs con nombre = sin definir |
 
 ## 3. Mundo y estructura
 
