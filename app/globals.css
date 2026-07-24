@@ -9,42 +9,10 @@
 }
 
 /* ==========================================================================
-   Skins (estilos visuales) — variables por [data-skin], con variante .dark
-   El usuario elige el skin en vivo; los colores se aplican a todo el chrome
-   y a la tipografía (prose) mediante estas variables.
+   Skin (estilo visual) — variables globales, con variante .dark
    ========================================================================== */
 
-/* --- Pergamino / fantasía --- */
-[data-skin="pergamino"] {
-  --wiki-bg: #f6efe0;
-  --wiki-surface: #fbf6ea;
-  --wiki-surface-2: #efe6d2;
-  --wiki-text: #3b2e1e;
-  --wiki-muted: #7a6a52;
-  --wiki-accent: #b4802a;
-  --wiki-accent-soft: #e9d9b3;
-  --wiki-border: #e3d7bd;
-  --wiki-callout-bg: #f3e8cf;
-  --wiki-callout-border: #b4802a;
-  --wiki-code-bg: #efe6d2;
-}
-.dark[data-skin="pergamino"] {
-  --wiki-bg: #221b12;
-  --wiki-surface: #2b2117;
-  --wiki-surface-2: #342a1d;
-  --wiki-text: #ece0c9;
-  --wiki-muted: #b8a888;
-  --wiki-accent: #e0a94a;
-  --wiki-accent-soft: #4a3c28;
-  --wiki-border: #4a3c28;
-  --wiki-callout-bg: #2f2517;
-  --wiki-callout-border: #e0a94a;
-  --wiki-code-bg: #1b150e;
-}
-
-/* --- Limpio / moderno (por defecto) --- */
-:root,
-[data-skin="moderno"] {
+:root {
   --wiki-bg: #ffffff;
   --wiki-surface: #f8fafc;
   --wiki-surface-2: #f1f5f9;
@@ -57,8 +25,7 @@
   --wiki-callout-border: #4f46e5;
   --wiki-code-bg: #f1f5f9;
 }
-.dark,
-.dark[data-skin="moderno"] {
+.dark {
   --wiki-bg: #0b1020;
   --wiki-surface: #111827;
   --wiki-surface-2: #1f2937;
@@ -70,34 +37,6 @@
   --wiki-callout-bg: #1e2340;
   --wiki-callout-border: #818cf8;
   --wiki-code-bg: #0f1526;
-}
-
-/* --- Oscuro / gamer --- */
-[data-skin="gamer"] {
-  --wiki-bg: #f2f4f5;
-  --wiki-surface: #e9edf0;
-  --wiki-surface-2: #dfe5e9;
-  --wiki-text: #10151c;
-  --wiki-muted: #55636b;
-  --wiki-accent: #059669;
-  --wiki-accent-soft: #d1fae5;
-  --wiki-border: #d0d7dd;
-  --wiki-callout-bg: #dcfce7;
-  --wiki-callout-border: #059669;
-  --wiki-code-bg: #dfe5e9;
-}
-.dark[data-skin="gamer"] {
-  --wiki-bg: #0a0e0f;
-  --wiki-surface: #12181a;
-  --wiki-surface-2: #18211f;
-  --wiki-text: #e6f1ec;
-  --wiki-muted: #8aa79b;
-  --wiki-accent: #34d399;
-  --wiki-accent-soft: #10201a;
-  --wiki-border: #1f2b28;
-  --wiki-callout-bg: #10201a;
-  --wiki-callout-border: #34d399;
-  --wiki-code-bg: #0a1512;
 }
 
 /* ==========================================================================
@@ -205,6 +144,46 @@ body {
   list-style: none;
   margin-left: -1.25rem;
 }
+
+/* Iconos con tooltip (manos de arma, tipos de daño — glossary.md), ver components/wiki/IconTip.tsx */
+.wiki-icon-tip {
+  cursor: help;
+  border-radius: 0.25rem;
+  outline-offset: 2px;
+}
+.wiki-icon-tip-popup {
+  background: var(--wiki-text);
+  color: var(--wiki-surface);
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 50;
+}
+
+/* Mini-carta de color en tablas: Rareza (game-design.md §3.3, RarityChip.tsx) y
+   Severidad de Maldiciones (cards/curses.md §2, SeverityChip.tsx). Misma forma
+   para las dos, paletas distintas para no confundirlas (calidad vs. peligro). */
+.wiki-rarity-chip,
+.wiki-severity-chip {
+  display: inline-block;
+  width: 11px; height: 15px;
+  margin-right: 0.4em;
+  vertical-align: -2px;
+  border-radius: 3px;
+  border: 1.5px solid var(--chip-color);
+  background: radial-gradient(120% 120% at 30% 20%, var(--chip-soft), transparent 70%);
+}
+.wiki-rarity-chip--comun       { --chip-color: #9aa0a6; --chip-soft: rgba(154,160,166,.35); }
+.wiki-rarity-chip--poco-comun  { --chip-color: #3fae5a; --chip-soft: rgba(63,174,90,.35); }
+.wiki-rarity-chip--raro        { --chip-color: #3b82f6; --chip-soft: rgba(59,130,246,.35); }
+.wiki-rarity-chip--epico       { --chip-color: #a855f7; --chip-soft: rgba(168,85,247,.38); }
+.wiki-rarity-chip--legendario  { --chip-color: #e2b53c; --chip-soft: rgba(226,181,60,.45); }
+.wiki-severity-chip--leve      { --chip-color: #d97706; --chip-soft: rgba(217,119,6,.35); }
+.wiki-severity-chip--grave     { --chip-color: #b91c1c; --chip-soft: rgba(185,28,28,.4); }
 
 /* Utilidades de chrome */
 .wiki-surface { background: var(--wiki-surface); }

@@ -59,7 +59,7 @@ Ese mismo dado son los **Dados de Vida (DV)** que se gastan al acampar para cura
 
 - Cada héroe usa las 6 estadísticas de `game-design.md` §2; su stat principal marca qué Cartas Básicas de Clase tiene sentido que reciba primero.
 - Las Cartas Especiales de Clase (`game-design.md` §3) son donde cada héroe empieza a diferenciarse de verdad — el prototipo puede lanzarse con muy pocas y ampliar después.
-- *(Idea futura, no activa)* Si algún día se retoma el tracker de Miedo (`game-design.md`, "Ideas futuras"), podría afectar distinto según el héroe — ej. el Clérigo más resistente por fe, el Pícaro más vulnerable en combate abierto pero no en sigilo.
+- *(Idea futura, no activa)* Si algún día se retoma el tracker de Miedo ([`../ideas.md`](../ideas.md)), podría afectar distinto según el héroe — ej. el Clérigo más resistente por fe, el Pícaro más vulnerable en combate abierto pero no en sigilo.
 
 ## 4. Próximos pasos / preguntas abiertas
 

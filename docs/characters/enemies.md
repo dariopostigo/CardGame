@@ -20,7 +20,7 @@ Esta distinción da dos sabores de encuentro: la sorpresa de la Amenaza (tensió
   - **Activo:** al detectar al héroe, se mueve hacia él por el mapa (persecución), inicia combate al quedar adyacente y se sigue moviendo dentro del combate.
 - **¿Detección activa?** → **Sí, es el disparador del movimiento.** El enemigo se activa cuando el héroe entra en su **rango de detección**. Reglas concretas (resueltas junto con los bloques de combate, §5b):
   - **Rango de detección** = **2 hex base + 1 por cada +2 de modificador de Sabiduría** del enemigo (misma lógica que la visión del héroe, `game-design.md` §2.3, pero con base 2 porque el enemigo está alerta en su puesto).
-  - **Reducción por terreno/sigilo:** la ocultación del terreno del héroe resta al rango (**Bosque −1**; Llanura/Camino sin reducción — `board-map.md` §3/§4). El estado **Oculto** ([`cards/effects.md`](../cards/effects.md)) hace al héroe **indetectable** hasta que actúe.
+  - **Reducción por terreno/sigilo:** la ocultación del terreno del héroe resta al rango (**Bosque −1**; Llanura/Camino sin reducción — `board-map.md` §3/§4). El estado **Oculto** ([`effects.md`](../effects.md)) hace al héroe **indetectable** hasta que actúe.
   - **Persecución (leash):** si el héroe sale del rango de detección y de la línea de visión del enemigo durante **2 turnos seguidos**, el enemigo **desiste**, vuelve a su hexágono ancla, recupera sus PV y pasa de nuevo a Latente. Esto da sentido mecánico a huir/ocultarse.
   - *(Idea futura, nota del diseñador:* enemigos/eventos "cazadores" que busquen al héroe por el mapa **antes** de detectarlo. Por ahora la activación es siempre reactiva.)
 - **¿Reaparecen?** Si el jugador limpia una zona de enemigos, ¿el mapa puede generar nuevos con el tiempo (presión constante) o quedan despejados para siempre (progreso permanente)? — sigue abierta.
@@ -35,6 +35,22 @@ Esta distinción da dos sabores de encuentro: la sorpresa de la Amenaza (tensió
 | Jefe final de campaña | CR 11+ | Último mapa de la Campaña (`board-map.md` §2b) | Cierra el arco narrativo principal, el más elaborado de todos |
 
 Los rangos de CR son solo una referencia de partida tomada de D&D para ordenar la dificultad relativa entre categorías, no implican usar las stats exactas del Manual de Monstruos — el sistema de combate propio (`game-design.md`) tendrá su propia forma de medir dificultad más adelante.
+
+## 3b. Naturaleza de criatura y resistencias
+
+Eje **independiente** de la Categoría (§3, que mide dificultad/CR): la **Naturaleza** clasifica de qué está hecha la criatura y de ahí saca sus resistencias/vulnerabilidades **por defecto** a los tipos de daño (`../game-design.md` §4b.10). Un enemigo concreto puede tener además una excepción propia como **habilidad especial** sin que eso cambie su Naturaleza (ej. el Trol de las minas y el fuego, §5b.3, no es una resistencia/vulnerabilidad de daño sino una interrupción de su Regeneración).
+
+| Naturaleza | Resistente a | Vulnerable a | Ejemplos del bestiario |
+|---|---|---|---|
+| Humanoide | — | — | Bandido merodeador, Trasgo de pantano, Capitán bandido |
+| Bestia | — | — | Lobo de las lindes, Araña cavernaria, Araña matriarca |
+| Gigante | — | — | Trol de las minas *(su interacción con el 🔥 es habilidad, no resistencia — §5b.3)* |
+| No-muerto | 🏹 | 🔨, ☀️ | Esqueleto errante |
+| Sombrío *(entidad de oscuridad/corrupción, no un cadáver animado)* | 🗡️, 🏹 | ☀️ | Sombra que Devora (jefe final, §5b.4) |
+
+- **Resistente** = mitad de daño; **Vulnerable** = daño doble; **Inmune** (0 daño) queda reservado, sin uso todavía (`../game-design.md` §4b.10).
+- **Pendiente de decidir:** el Heraldo Ceniciento (jefe de capítulo, §5b.4) invoca No-muertos y usa daño 💀 (Necrótico), pero no se le ha asignado Naturaleza propia — ¿es un No-muerto de alto rango o un Humanoide corrompido con poder 💀? Ver checklist (§6).
+- Naturalezas nuevas (Elemental, Constructo...) se añaden a esta tabla conforme el bestiario las necesite — no hace falta agotar la lista de antemano.
 
 ## 4. De la ficha al combate
 
@@ -58,7 +74,7 @@ Al quedar adyacente a una ficha de Amenaza (revelada como enemigo) o de Enemigo,
 | Lobo de las lindes | 10 | 13 | 12 | 8 | 11 | 9 | Bosque | Ataca mejor en pareja/manada (bonus si hay 2+ juntos) |
 | Bandido merodeador | 13 | 12 | 11 | 8 | 9 | 10 | Llanura, Camino/Sendero | Ataque básico; puede robar un objeto y huir en vez de luchar a muerte |
 | Trasgo de pantano | 9 | 13 | 12 | 11 | 10 | 8 | Pantano | Bajo HP, veneno al golpear (estado negativo, no solo daño) |
-| Esqueleto errante | 12 | 13 | 11 | 8 | 10 | 9 | Ruinas/Cueva, Cripta/Cementerio (`board-map.md` §3b) | No-muerto: resistente a perforante, débil a contundente |
+| Esqueleto errante | 12 | 13 | 11 | 8 | 10 | 9 | Ruinas/Cueva, Cripta/Cementerio (`board-map.md` §3b del tablero) | Naturaleza No-muerto (§3b): resistencias/vulnerabilidades por defecto |
 | Araña cavernaria | 10 | 13 | 11 | 9 | 12 | 8 | Montaña, Mina | Telaraña: puede inmovilizar/atascar en vez de solo hacer daño |
 
 **Élite** (ficha de Enemigo en localización "Guarida", o boss del Modo Prueba):
@@ -86,7 +102,7 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 | **PV** | `Dados de Vida × 5 + mod CON × Dados de Vida` (dado de monstruo d8, promedio 5). DV por categoría: Común **2**, Élite **5**, Jefe de capítulo **9**, Jefe final **14**. Ajustable por criatura (ej. "bajo HP" = menos DV). |
 | **CA (Defensa)** | `10 + mod DES + armadura natural` (`game-design.md` §2). Armadura natural por categoría: Común +0/+1, Élite +1/+2, Jefe +3/+4. |
 | **Bono de ataque** | `mod de la stat del ataque` (FUE melee, DES a distancia). **Sin bono de competencia**, igual que los héroes (§4b.4) — ver nota de balance abajo. |
-| **Daño** | `dado del ataque + mod stat`, con su tipo (cortante/perforante/contundente/otros). |
+| **Daño** | `dado del ataque + mod stat`, con su tipo de daño (🗡️🏹🔨 y otros — `../game-design.md` §4b.10). |
 | **Velocidad** | 2 hex por defecto (bestias ágiles 3; criaturas enormes/lentas pueden bajar a 1). Movimiento en combate según §4b.5. |
 | **Detección** | `2 hex + 1 por cada +2 de mod SAB`, reducida por ocultación del héroe (§2). |
 | **Bono de jefe** | Solo categorías Jefe: **+2 a ataque y a CA** (representa su prestancia sobrenatural), ya incluido en sus bloques. |
@@ -95,39 +111,39 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 
 ### 5b.2 Comunes (2 DV)
 
-| Enemigo | PV | CA | Vel | Det | Ataque | Habilidad |
-|---|---|---|---|---|---|---|
-| Lobo de las lindes | 12 | 12 | 3 | 2 | Mordisco +1 / 1d6+1 perforante / melee | **Cazador de manada:** ventaja al atacar si otro Lobo está adyacente al objetivo |
-| Bandido merodeador | 10 | 12 | 2 | 2 | Cimitarra +1 / 1d6+1 cortante / melee | **Escurridizo:** por debajo del 50 % de PV, en su turno roba un objeto (si adyacente) o huye en vez de atacar |
-| Trasgo de pantano | 6 | 12 | 2 | 2 | Daga emponzoñada +1 / 1d4+1 perforante / melee | **Veneno:** al impactar aplica Envenenado (salvación CON CD 12, [`cards/effects.md`](../cards/effects.md)) |
-| Esqueleto errante | 10 | 12 | 2 | 2 | Espada mellada +1 / 1d6+1 cortante / melee | **No-muerto:** resistente a Perforante (½ daño), vulnerable a Contundente y a Radiante (Llama sagrada del Clérigo) |
-| Araña cavernaria | 10 | 12 | 2 | 2 | Mordisco +1 / 1d6 perforante + Envenenado (CON CD 12) / melee · Telaraña (alcance 2) | **Telaraña:** aplica Inmovilizado (salvación DES CD 12) sin daño |
+| Enemigo | Naturaleza | PV | CA | Vel | Det | Ataque | Habilidad |
+|---|---|---|---|---|---|---|---|
+| Lobo de las lindes | Bestia | 12 | 12 | 3 | 2 | Mordisco +1 / 1d6+1 🏹 / melee | **Cazador de manada:** ventaja al atacar si otro Lobo está adyacente al objetivo |
+| Bandido merodeador | Humanoide | 10 | 12 | 2 | 2 | Cimitarra +1 / 1d6+1 🗡️ / melee | **Escurridizo:** por debajo del 50 % de PV, en su turno roba un objeto (si adyacente) o huye en vez de atacar |
+| Trasgo de pantano | Humanoide | 6 | 12 | 2 | 2 | Daga emponzoñada +1 / 1d4+1 🏹 / melee | **Veneno:** al impactar aplica Envenenado (salvación CON CD 12, [`effects.md`](../effects.md)) |
+| Esqueleto errante | No-muerto | 10 | 12 | 2 | 2 | Espada mellada +1 / 1d6+1 🗡️ / melee | Resistencias/vulnerabilidades de su Naturaleza (§3b): resistente a 🏹, vulnerable a 🔨 y ☀️ |
+| Araña cavernaria | Bestia | 10 | 12 | 2 | 2 | Mordisco +1 / 1d6 🏹 + Envenenado (CON CD 12) / melee · Telaraña (alcance 2) | **Telaraña:** aplica Inmovilizado (salvación DES CD 12) sin daño |
 
 ### 5b.3 Élite (5 DV)
 
-| Enemigo | PV | CA | Vel | Det | Ataque | Habilidad |
-|---|---|---|---|---|---|---|
-| Capitán bandido | 30 | 14 | 2 | 2 | Espada +3 / 1d8+3 cortante / melee | **Comandante:** llega con 1-2 Comunes de refuerzo; mientras el Capitán viva, los refuerzos atacan con +1 |
-| Trol de las minas | 38 | 13 | 2 | 2 | Garras +3 / 1d10+3 contundente / melee (ignora el bono de armadura ligera del objetivo) | **Regeneración:** +2 PV al inicio de su turno, salvo que recibiera daño de **fuego** ese turno (Antorcha, Bola de fuego) |
-| Araña matriarca | 35 | 14 | 3 | 3 | Mordisco +3 / 1d8+3 perforante + Veneno fuerte (2d4, CON CD 14) · Telaraña (alcance 3, DES CD 14) | **Veneno potente + Telaraña** (versión dura de la cavernaria) |
+| Enemigo | Naturaleza | PV | CA | Vel | Det | Ataque | Habilidad |
+|---|---|---|---|---|---|---|---|
+| Capitán bandido | Humanoide | 30 | 14 | 2 | 2 | Espada +3 / 1d8+3 🗡️ / melee | **Comandante:** llega con 1-2 Comunes de refuerzo; mientras el Capitán viva, los refuerzos atacan con +1 |
+| Trol de las minas | Gigante | 38 | 13 | 2 | 2 | Garras +3 / 1d10+3 🔨 / melee (ignora el bono de armadura ligera del objetivo) | **Regeneración:** +2 PV al inicio de su turno, salvo que recibiera daño de **🔥 (fuego)** ese turno (Antorcha, Bola de fuego) — habilidad propia, no una vulnerabilidad de su Naturaleza (§3b) |
+| Araña matriarca | Bestia | 35 | 14 | 3 | 3 | Mordisco +3 / 1d8+3 🏹 + Veneno fuerte (2d4, CON CD 14) · Telaraña (alcance 3, DES CD 14) | **Veneno potente + Telaraña** (versión dura de la cavernaria) |
 
 ### 5b.4 Jefes (con Bono de jefe +2 ya incluido)
 
 **Jefe de capítulo — "El Heraldo Ceniciento"** (9 DV)
 - **PV** 72 · **CA** 16 · **Vel** 2 · **Det** 3
-- **Ataque:** Guadaña cenicienta +5 / 2d6+3 necrótico / alcance 2
-- **Habilidades:** (1) *Aura de corrupción* — al empezar el combate y cada 3 turnos, el héroe salva SAB CD 14 o queda **Asustado** ([`cards/effects.md`](../cards/effects.md)); (2) *Invocar* — cada 2 turnos aparece 1 Esqueleto errante.
+- **Ataque:** Guadaña cenicienta +5 / 2d6+3 💀 / alcance 2
+- **Habilidades:** (1) *Aura de corrupción* — al empezar el combate y cada 3 turnos, el héroe salva SAB CD 14 o queda **Asustado** ([`effects.md`](../effects.md)); (2) *Invocar* — cada 2 turnos aparece 1 Esqueleto errante.
 
-**Jefe final — "La Sombra que Devora"** (14 DV, **diseño multifase — boceto**)
+**Jefe final — "La Sombra que Devora"** (14 DV, **diseño multifase — boceto**) — Naturaleza **Sombrío** (§3b): resistente a 🗡️/🏹, vulnerable a ☀️
 - **PV** 120 · **CA** 18 · **Vel** 3 · **Det** 4
-- **Ataque:** Zarpa devoradora +6 / 2d8+4 necrótico / alcance 2, y **Drenar** (se cura la mitad del daño infligido)
+- **Ataque:** Zarpa devoradora +6 / 2d8+4 💀 / alcance 2, y **Drenar** (se cura la mitad del daño infligido)
 - **Habilidades:** combate **multifase** (al 66 % y al 33 % de PV gana un nuevo efecto / invoca sombras). Un jefe final merece diseño a medida cuando se escriba la Campaña — esto es solo el bloque base.
 
 ### 5b.5 Cómo se usa un bloque en combate
 
 1. El enemigo tira **iniciativa** (1d20 + mod DES) como el héroe (§4b.2).
 2. En su turno usa su **Velocidad** para acercarse (§4b.5) y **1 ataque**: `1d20 + bono de ataque` vs la **CA del héroe**; si impacta, aplica el daño y cualquier estado.
-3. Sus **habilidades** modifican esto según su texto. Los estados usan [`cards/effects.md`](../cards/effects.md).
+3. Sus **habilidades** modifican esto según su texto. Los estados usan [`effects.md`](../effects.md).
 4. Al llegar a **0 PV** cae y suelta oro/loot (`game-design.md` §6b.1).
 
 ## 5c. Escala de dificultad (resuelve "hito → CR")
@@ -164,3 +180,6 @@ El balance fino (cuántos a la vez, con qué stats exactas) se ajusta al testear
 - [x] Definir cómo escala la dificultad según profundidad del mapa / nivel del personaje → §5c (qué categorías aparecen por zona en Prueba y por nivel/capítulo en Campaña). Falta balancear cantidades.
 - [ ] Decidir si los nombres/historia de los jefes de capítulo y final son estos provisionales o se rediseñan al escribir la Campaña de verdad.
 - [ ] Cuando quieras, ir añadiendo más enemigos al bestiario de §5 (comunes, élite, o nuevos jefes).
+- [x] Formalizar el sistema de tipos de daño y resistencias → **Naturaleza de criatura** (§3b) con resistencias/vulnerabilidades por defecto; multiplicadores y lista de tipos en `../game-design.md` §4b.10. Falta balancear (¿son los multiplicadores correctos? ¿demasiados/pocos tipos?).
+- [ ] Decidir la Naturaleza del Heraldo Ceniciento (§3b, §5b.4) — ¿No-muerto de alto rango o Humanoide corrompido con poder 💀 (necrótico)?
+- [ ] Asignar Naturaleza (§3b) a cualquier enemigo nuevo que se añada al bestiario.

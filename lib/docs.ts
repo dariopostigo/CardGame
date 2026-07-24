@@ -35,6 +35,8 @@ const META: Record<string, { label: string; icon: string; order: number }> = {
   "game-design": { label: "Diseño del juego", icon: "pi pi-book", order: 1 },
   glossary: { label: "Glosario", icon: "pi pi-list", order: 2 },
   status: { label: "Estado", icon: "pi pi-check-circle", order: 3 },
+  ideas: { label: "Ideas", icon: "pi pi-lightbulb", order: 4 },
+  effects: { label: "Efectos / Estados", icon: "pi pi-sparkles", order: 5 },
   "board/board-map": { label: "Tablero y mapa", icon: "pi pi-map", order: 1 },
   "board/board-map-dev": { label: "Tablero (técnico)", icon: "pi pi-cog", order: 2 },
   "characters/heroes": { label: "Héroes", icon: "pi pi-user", order: 1 },
@@ -45,9 +47,8 @@ const META: Record<string, { label: string; icon: string; order: number }> = {
   "cards/weapons": { label: "Armas", icon: "pi pi-star", order: 2 },
   "cards/armor": { label: "Armaduras", icon: "pi pi-shield", order: 3 },
   "cards/items": { label: "Items", icon: "pi pi-box", order: 4 },
-  "cards/effects": { label: "Efectos / Estados", icon: "pi pi-sparkles", order: 5 },
-  "cards/curses": { label: "Maldiciones", icon: "pi pi-exclamation-triangle", order: 6 },
-  "cards/encounter": { label: "Mazo de encuentro", icon: "pi pi-clone", order: 7 },
+  "cards/curses": { label: "Maldiciones", icon: "pi pi-exclamation-triangle", order: 5 },
+  "cards/encounter": { label: "Mazo de encuentro", icon: "pi pi-clone", order: 6 },
 };
 
 function prettify(name: string): string {

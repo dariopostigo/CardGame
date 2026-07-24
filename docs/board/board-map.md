@@ -81,14 +81,14 @@ Cada terreno toca los sistemas que ya diseñamos: movimiento (`game-design.md` �
 |---|---|---|---|---|---|---|
 | **Llanura** | Coste 1 (base) | Sin ocultación; el enemigo te detecta a rango normal | — | **Inseguro** (expuesto) | — | Alto |
 | **Bosque** | Coste 1 | **Ocultación:** detección enemiga **−1**; pero **tu visión −1** (no ves lejos entre árboles) | **Cobertura:** +1 CA contra ataques a distancia; atacar sin haber sido detectado = **emboscada (ventaja)** | **Seguro** (riesgo mínimo) | — | Medio |
-| **Pantano** | Coste 2 (difícil) | Normal | — | Inseguro | Al cruzar: salvación CON CD 12 o **Envenenado** ([`cards/effects.md`](../cards/effects.md)) | Bajo |
+| **Pantano** | Coste 2 (difícil) | Normal | — | Inseguro | Al cruzar: salvación CON CD 12 o **Envenenado** ([`effects.md`](../effects.md)) | Bajo |
 | **Montaña** | **Intransitable** en el prototipo (barrera; cruzarla requerirá item/habilidad en el futuro) | Bloquea línea de visión | n/a | n/a | n/a | Bajo (actúa de relieve/muro) |
 | **Camino/Sendero** | Coste 1, y **+1 de movimiento** el turno que te desplazas por camino | Expuesto (como Llanura) | — | Inseguro | — | Medio (conecta puntos; candidato a hexágono conector §4) |
 
 **Notas:**
 - **Bosque** es el terreno clave del sigilo: te esconde de los enemigos (detección −1, emboscada) pero también te ciega (visión −1) y te da cobertura a distancia. Es el contrapunto natural a Llanura/Camino (rápidos pero expuestos).
 - **Montaña intransitable** sirve además como "muro" natural para dar forma al mapa en la generación futura.
-- El estado **Oculto** ([`cards/effects.md`](../cards/effects.md)) del Pícaro se apila sobre la ocultación de Bosque (indetectable hasta actuar).
+- El estado **Oculto** ([`effects.md`](../effects.md)) del Pícaro se apila sobre la ocultación de Bosque (indetectable hasta actuar).
 
 **Terrenos futuros (aún ilustrativos, no oficiales)** — se cerrarán en pases de contenido posteriores, igual que se hizo con los 5 del prototipo en §3a:
 
@@ -97,7 +97,7 @@ Cada terreno toca los sistemas que ya diseñamos: movimiento (`game-design.md` �
 | Colinas | +Alcance de visión (ves más hexágonos alrededor) | Bueno para explorar, malo para ocultarte |
 | Río/Lago | Intransitable salvo puente/vado, o -2 movimiento si se cruza a nado | Puede generarse como "línea" que conecta varios hexágonos, no solo una casilla suelta |
 | Ruinas/Cueva | Punto de interés especial: alta probabilidad de ficha de evento (tesoro o enemigo oculto) | Entrada a "mini-mazmorra" opcional |
-| Nieve/Tundra | -1 movimiento | Zona de clima extremo; un posible efecto de frío acumulativo queda como idea futura (ver `game-design.md`, "Ideas futuras") si se retoma el tracker de Miedo |
+| Nieve/Tundra | -1 movimiento | Zona de clima extremo; un posible efecto de frío acumulativo queda como idea futura (ver [`../ideas.md`](../ideas.md)) si se retoma el tracker de Miedo |
 | Desierto/Erial | -1 movimiento, recursos (agua/pociones) se consumen más rápido | Tensión de supervivencia |
 
 ## 3b. Localizaciones especiales (edificaciones)

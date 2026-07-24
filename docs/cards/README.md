@@ -5,7 +5,7 @@ Carpeta dedicada a **todos los tipos de carta** del juego, uno por documento. El
 ## Los dos ejes de una carta (`../game-design.md` §3)
 
 - **Por origen:** de la **clase** del héroe (innatas) o de **equipo** encontrado jugando (drafting).
-- **Por tipo/icono:** Arma, Armadura, Item, Maldición, más las cartas de Efecto/Estado y las del mazo de encuentro.
+- **Por tipo/icono:** Arma, Armadura, Item, Maldición, más las cartas del mazo de encuentro.
 
 ## Tipos de carta (un md cada uno)
 
@@ -16,8 +16,9 @@ Carpeta dedicada a **todos los tipos de carta** del juego, uno por documento. El
 | [`armor.md`](armor.md) | Armaduras (ligeras, medias, pesadas) | Equipo |
 | [`items.md`](items.md) | Items: aventurero, herramientas, mágicos, pociones, pergaminos, cartas de movimiento | Equipo |
 | [`curses.md`](curses.md) | Maldiciones (efecto negativo que ocupa hueco de mazo) | Especial |
-| [`effects.md`](effects.md) | Efectos/Estados (ventaja, aturdido, envenenado...) | Modificador |
 | [`encounter.md`](encounter.md) | Mazo de encuentro (cartas del sistema en combate/exploración) | Sistema |
+
+> Los **Estados/Efectos** (ventaja, aturdido, envenenado...) no son un tipo de carta — son la ficha de reglas de los modificadores temporales que estas cartas aplican. Viven en [`../effects.md`](../effects.md), fuera de esta carpeta.
 
 ## Reglas de mazo (resumen, `../game-design.md` §4)
 

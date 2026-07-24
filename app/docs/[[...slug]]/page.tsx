@@ -4,6 +4,11 @@ import Markdown from "@/components/Markdown";
 import DocsIndex from "@/components/wiki/DocsIndex";
 import { getAllParams, getDocBySlug } from "@/lib/docs";
 
+// Los docs viven en docs/*.md y se leen del disco con fs.readFileSync (lib/docs.ts).
+// Next no rastrea esas lecturas como dependencia de caché, así que sin esto la
+// wiki sirve una versión congelada del primer render en vez de reflejar ediciones al .md.
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return getAllParams();
 }

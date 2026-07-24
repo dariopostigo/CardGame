@@ -22,14 +22,14 @@ El terreno del hexágono aplica **además** su propio efecto (`../board-map.md` 
 | Carta | Efecto |
 |---|---|
 | Emboscada enemiga | Si el héroe iba expuesto (Llanura/Camino, no Oculto), el enemigo actúa primero e ignora la iniciativa el primer turno |
-| Golpe de las sombras | Si el héroe estaba **Oculto** o en **Bosque** ([`effects.md`](effects.md), `../board-map.md` §3a), abre con un ataque gratis con ventaja |
+| Golpe de las sombras | Si el héroe estaba **Oculto** o en **Bosque** ([`../effects.md`](../effects.md), `../board-map.md` §3a), abre con un ataque gratis con ventaja |
 | Refuerzos | Al final del turno 2 aparece 1 enemigo Común adicional (`../enemies.md` §5b) |
 | Terreno favorable | El héroe gana **+1 CA** durante todo el combate (cobertura natural) |
 | Terreno traicionero | Un hexágono de la zona es peligroso: entrar en él inflige 1d4 o causa **Ralentizado** |
 | El enemigo flaquea | Al bajar del 50 % de PV, el enemigo intenta **huir** usando su movimiento; si escapa, sueltas menos loot |
 | Frenesí | El enemigo ataca con **+1 al daño** pero **−2 CA** (todo o nada) |
 | Veterano solitario | Solo hay 1 enemigo, pero con **+25 % PV** y su habilidad reforzada |
-| Niebla | Los ataques a distancia (>2 hex) sufren **Desventaja** este combate |
+| Niebla | Los ataques a distancia sufren **Desventaja** este combate |
 | Botín inesperado | Al ganar, **oro extra** o una carta de Tesoro adicional (`../game-design.md` §6b.1) |
 
 ## 4. Cartas de Suceso (boceto, ~10)
@@ -37,7 +37,7 @@ El terreno del hexágono aplica **además** su propio efecto (`../board-map.md` 
 | Carta | Efecto |
 |---|---|
 | ¡Emboscada! | Se convierte en **combate**: roba también 1 carta de Combate (así una Amenaza se resuelve como enemigo) |
-| Trampa | Salvación DES CD 12 o 1d6 de daño / un estado negativo ([`effects.md`](effects.md)) |
+| Trampa | Salvación DES CD 12 o 1d6 de daño / un estado negativo ([`../effects.md`](../effects.md)) |
 | Sendero oculto | +2 de movimiento este turno, o revela (**Detectado**) un grupo vecino (`../board-map.md` §4) |
 | Hallazgo | Una carta de Tesoro menor o algo de oro |
 | Viajero | Aparece un NPC amistoso (`../npcs.md`) — pequeño encuentro de calma |

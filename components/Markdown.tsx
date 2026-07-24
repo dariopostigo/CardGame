@@ -4,6 +4,14 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { resolveLink } from "@/lib/markdown-link";
+import remarkIconTooltip from "@/lib/remark-icon-tooltip";
+import IconTip from "@/components/wiki/IconTip";
+import remarkRarityChip from "@/lib/remark-rarity-chip";
+import RarityChip from "@/components/wiki/RarityChip";
+import type { RarityLevel } from "@/lib/rarity";
+import remarkSeverityChip from "@/lib/remark-severity-chip";
+import SeverityChip from "@/components/wiki/SeverityChip";
+import type { SeverityLevel } from "@/lib/severity";
 
 export default function Markdown({
   content,
@@ -48,11 +56,27 @@ export default function Markdown({
     },
   };
 
+  // Custom elements que insertan los plugins remark de lib/remark-*.ts
+  // ("icon-tip", "rarity-chip") — no son keys de JSX.IntrinsicElements, así
+  // que no pueden vivir en el objeto `components` (activaría el chequeo de
+  // propiedades excedentes); se fusionan aquí y se castean juntos.
+  const customComponents = {
+    "icon-tip"({ icon }: { icon: string }) {
+      return <IconTip icon={icon} />;
+    },
+    "rarity-chip"({ level }: { level: RarityLevel }) {
+      return <RarityChip level={level} />;
+    },
+    "severity-chip"({ level }: { level: SeverityLevel }) {
+      return <SeverityChip level={level} />;
+    },
+  };
+
   return (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
+      remarkPlugins={[remarkGfm, remarkIconTooltip, remarkRarityChip, remarkSeverityChip]}
       rehypePlugins={[rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]]}
-      components={components}
+      components={{ ...components, ...customComponents } as Components}
     >
       {content}
     </ReactMarkdown>

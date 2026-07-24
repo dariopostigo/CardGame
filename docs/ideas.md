@@ -1,0 +1,13 @@
+# CardGame — Ideas futuras (sin implementar)
+
+Aparcadero de ideas que no forman parte del diseño activo todavía, para no perderlas ni confundirlas con mecánicas ya decididas. Cuando una idea se retoma y se decide, se saca de aquí y pasa al documento que corresponda (`game-design.md`, `characters/enemies.md`, etc.).
+
+- **Tracker de Miedo**: recurso narrativo separado de los PV (efectos negativos progresivos si se acumula, sin significar muerte directa), inspirado en Viajes por la Tierra Media. Se descartó como mecánica activa por ahora — si en el futuro se retoma, hay que revisar `board/board-map.md` (terreno Nieve/Tundra) y `characters/heroes.md` (§3) para volver a engancharlo ahí.
+- **Movimiento de enemigos**: confirmado que de momento los enemigos quedan estáticos (ver `characters/enemies.md` §2), pero en el futuro se les querría dar un sistema de movimiento/patrulla propio.
+- **Orientación en el hexágono (flanqueo)**: añadir a cada personaje/enemigo una orientación dentro de su hexágono, para poder atacar por delante/flanco/espalda con distinto efecto (ej. bonus de daño o ventaja atacando por la espalda). Afectaría al modelo de datos de `board/board-map-dev.md` (cada `Hex`/personaje necesitaría un campo de orientación) y al combate paso a paso (`game-design.md` §4b).
+- **Profesiones de héroe** (inspirado en World of Warcraft): sistema opcional de recolección + crafteo fuera de combate, en pares recolección→crafteo:
+  - **Minería** (recolectar mineral en hexágonos de Montaña/Cueva/Mina, `board/board-map.md` §3) → **Herrería** (fundir el mineral para mejorar/reforjar armas y armaduras — vía alternativa o complementaria a pagar oro al Herrero de `characters/npcs.md`, enganchando con la progresión de rareza por familia de `cards/weapons.md` §5 y `cards/armor.md` §6).
+  - **Herboristería** (recolectar hierbas en Bosque/Pantano) → **Alquimia** (craftear Pociones/Antídotos de `cards/items.md` §4 en vez de comprarlos siempre).
+  - **Desuello** (obtenido al derrotar Bestias, `characters/enemies.md`) → **Curtiduría** (craftear armaduras ligeras/medias de cuero, `cards/armor.md` §2-3).
+  - Otras ideas sueltas por explorar: **Encantamiento** (desencantar objetos mágicos sobrantes para mejorar equipo, ligado a `cards/items.md` §3) e **Inscripción** (runas/pergaminos para Mago/Clérigo, `cards/weapons.md` — Libro de hechizos/Símbolo sagrado).
+  - Cada héroe tendría 1-2 profesiones (como en WoW), dando una vía alternativa al Oro/drafting para progresar el equipo. Pendiente decidir si compite con el Otear (`game-design.md` §4) o es un sistema paralelo, y si tiene sentido en el Modo Prueba o solo en Campaña.

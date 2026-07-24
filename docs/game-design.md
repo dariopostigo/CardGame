@@ -1,6 +1,6 @@
 # CardGame — Documento de diseño (borrador inicial)
 
-Mezcla de mecánicas de **D&D** (personajes, estadísticas, progresión, identidad de héroes/enemigos/NPCs — ver [`heroes.md`](characters/heroes.md), [`enemies.md`](characters/enemies.md), [`npcs.md`](characters/npcs.md)) con **Viajes por la Tierra Media** como inspiración solo de la **estructura de cartas y mazo** (mazo personal, iconografía de pruebas) y del **tablero** (ver [`board-map.md`](board/board-map.md)) — no de la identidad de personajes/razas, que ya se fijó como D&D puro. Este documento se irá ampliando iteración a iteración. Términos transversales en [`glossary.md`](glossary.md); catálogo de cartas por tipo en [`cards/`](cards/README.md). **Foto de qué está definido vs. pendiente en [`status.md`](status.md).**
+Mezcla de mecánicas de **D&D** (personajes, estadísticas, progresión, identidad de héroes/enemigos/NPCs — ver [`heroes.md`](characters/heroes.md), [`enemies.md`](characters/enemies.md), [`npcs.md`](characters/npcs.md)) con **Viajes por la Tierra Media** como inspiración solo de la **estructura de cartas y mazo** (mazo personal, iconografía de pruebas) y del **tablero** (ver [`board-map.md`](board/board-map.md)) — no de la identidad de personajes/razas, que ya se fijó como D&D puro. Este documento se irá ampliando iteración a iteración. Términos transversales en [`glossary.md`](glossary.md); catálogo de cartas por tipo en [`cards/`](cards/README.md). **Foto de qué está definido vs. pendiente en [`status.md`](status.md).** Ideas sin decidir todavía, aparcadas en [`ideas.md`](ideas.md).
 
 ## 1. Concepto central
 
@@ -40,7 +40,7 @@ Rango de visión base = 1 hexágono (el actual + vecinos inmediatos, según `boa
 
 ### 2.4 Equipamiento: manos y armadura
 
-- Cada personaje tiene **2 manos**. Las armas ocupan 1 o 2 manos (ver [`cards/weapons.md`](cards/weapons.md) para el listado con su etiqueta 1h/2h) — se pueden llevar hasta 2 armas de 1 mano, o 1 arma de 2 manos, nunca combinando ambas a la vez si no caben en las 2 manos disponibles.
+- Cada personaje tiene **2 manos**. Las armas ocupan 1 o 2 manos (ver [`cards/weapons.md`](cards/weapons.md) para el listado con su icono ✋/🤲, ver [`glossary.md`](glossary.md)) — se pueden llevar hasta 2 armas de ✋ (una mano), o 1 arma de 🤲 (dos manos), nunca combinando ambas a la vez si no caben en las 2 manos disponibles.
 - Cada personaje lleva **1 sola armadura** equipada (no se acumulan varias).
 - Al principio de la aventura, el jugador elige con qué armas y armadura equiparse (partiendo del catálogo inicial de [`cards/`](cards/README.md)).
 
@@ -58,9 +58,9 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 
 | Tipo | Icono (ejemplo) | Qué hace | Notas |
 |---|---|---|---|
-| **Arma** | Espada | Añade daño y tipo de daño (cortante, perforante, contundente); ocupa 1 o 2 manos (§2.4) | Puede requerir stat mínima para usarse sin penalización |
+| **Arma** | Espada | Añade daño y tipo de daño (lista completa y resistencias en §4b.10); ocupa 1 o 2 manos (§2.4) | Puede requerir stat mínima para usarse sin penalización |
 | **Armadura** | Escudo/coraza | Suma a la Defensa/CA; puede restar Destreza si es pesada | Solo 1 equipada a la vez (§2.4) |
-| **Item** | Bolsa | Categoría amplia: pociones (efecto de un solo uso), hechizos (consumen maná/espacios de conjuro), objetos de aventura/herramientas/objetos mágicos raros — ver [`cards/items.md`](cards/items.md) | El más variado de los 4 tipos |
+| **Item** | Bolsa | Categoría amplia: pociones (efecto instantáneo), hechizos (Cartas Especiales o Pergaminos), objetos de aventura/herramientas/objetos mágicos raros — ver [`cards/items.md`](cards/items.md) | El más variado de los 4 tipos |
 | **Maldición** | Calavera/nube negra | Efecto negativo persistente que **ocupa un hueco del mazo** (a diferencia de un Efecto/Estado temporal de combate) — ej. -1 movimiento, 1 de daño cada 2 turnos, otear solo 1 carta en vez de 2 | Definida en [`cards/curses.md`](cards/curses.md) (severidad Leve/Grave, fuentes, limpieza); da incentivo a "limpiar" el mazo |
 
 Además siguen existiendo las **Cartas de Efecto/Estado** (ventaja, desventaja, aturdido, envenenado) que se aplican de forma *temporal* durante una prueba/combate sobre un personaje (propio, aliado o enemigo) — no ocupan hueco de mazo como la Maldición, son more bien un modificador puntual de una carta de Arma/Item/hechizo al jugarse.
@@ -86,6 +86,7 @@ Aplica a cartas de Arma/Armadura/Item (y previsiblemente Maldición). Las cartas
 - El mazo de cada jugador = cartas básicas de clase + cartas especiales desbloqueadas + cartas de equipo (§3.2) obtenidas jugando.
 - **Construcción del mazo de equipo (nuevo mecanismo):** en cada turno el jugador "otea" 2 cartas de equipo y elige 1 para añadirla de forma permanente a su mazo, hasta un máximo (ej. 10). **Decidido:** el máximo cuenta **todas** las cartas del mazo personal (cartas de clase innatas + equipo drafteado), no solo el equipo. Habrá una explicación in-fiction por desarrollar; si al ganar Cartas Especiales por nivel el límite queda demasiado ajustado, se podrá **subir** el número (mecanismo por definir, quizá ligado al nivel). Detalle en [`cards/README.md`](cards/README.md).
 - **Sin barajar ni robar mano:** al no haber mazo-que-se-baraja-y-roba, el jugador puede jugar en cualquier momento **cualquiera** de las cartas que ya tiene en su mazo (dentro del recurso de acción disponible ese turno) para realizar su acción (curarse, ayudar en la aventura, aumentar estadísticas, atacar, etc.).
+- **Ninguna carta se pierde al jugarla *(decidido)*:** jugar una carta del mazo personal (equipo, clase, item) cuesta el recurso de turno que le corresponda (Movimiento/Acción/Acción rápida/Carta de Efecto, §4b.3), pero la carta **vuelve a estar disponible** para jugarla otra vez más adelante — no hay descarte permanente ni cartas de "un solo uso" dentro del mazo personal. Textos como "un uso" o "se consume" en cartas de equipo/item **no aplican** y son restos de una idea descartada. El único límite real de repetición son las etiquetas explícitas **1/combate** o **1/descanso** de las Cartas Especiales de Clase (§3.1).
 - **Resolución de pruebas — decidido:** al no haber "carta robada al azar", las pruebas y ataques se resuelven con **1d20 + modificador** de la estadística relevante contra una CD/Defensa. Las **cartas actúan como modificadores** de esa tirada (bonus, daño extra, ventaja/desventaja, estados), coherente con el §6 y con "juega cualquier carta cuando quieras". El detalle paso a paso del combate se define en la sección de combate (checklist).
 
 ## 4b. Combate (borrador)
@@ -97,6 +98,7 @@ Modelo elegido: **todo ocurre sobre el mismo tablero de hexágonos** (no hay pan
 - El héroe y cualquier otra entidad (enemigo, ficha) **nunca comparten hexágono**.
 - Se **actúa sobre un objetivo en un hexágono contiguo** (uno de los 6 vecinos) — atacar cuerpo a cuerpo, interactuar con una ficha (NPC, Tesoro, etc.). Nunca sobre el propio hexágono.
 - Ataques **a distancia y hechizos** tienen alcance en hexágonos (definido por el arma/hechizo, p. ej. Arco 3-4 hex), no requieren adyacencia.
+- **Alcance mínimo "a distancia": 2 hex** *(decidido)*. El cuerpo a cuerpo ya cubre el hexágono contiguo (1 hex); para que un ataque cuente como **a distancia** tiene que quedar al menos un hexágono vacío entre el héroe y el enemigo (2 hex = 1 hex vacío + el hex del enemigo). Ninguna arma o hechizo a distancia puede tener alcance 1 — ese hueco ya es cuerpo a cuerpo.
 - **Inicio del combate:** el héroe termina su movimiento en un hexágono adyacente a un enemigo (o una ficha de Amenaza se revela como enemigo junto a él). No se "entra" en el hexágono del enemigo; se combate desde el contiguo. *(Actualiza la redacción de `board-map.md` §4, ficha de Enemigo, que decía "inicia combate al entrar en el hexágono".)*
 
 ### 4b.2 Iniciativa / orden de turno
@@ -122,7 +124,7 @@ Las **Cartas Especiales de Clase** son potentes y de uso limitado: **1 vez por c
 1. Declarar objetivo: en hex contiguo (melee) o dentro de alcance (distancia/hechizo).
 2. **Tirada de ataque:** `1d20 + mod stat relevante + bonos de cartas`. Stat según el arma/hechizo: FUE (melee pesada), DES (ligera/distancia), INT (arcano), SAB (divino) — coherente con §2.1.
 3. Comparar con la **Defensa/CA** del objetivo (`10 + mod DES + armadura`, §2).
-4. Si `tirada ≥ CA` → impacto. **Daño** = `dado(s) del arma/hechizo + mod stat + bonos de carta`. Aplicar tipo de daño (cortante/perforante/contundente) contra resistencias/debilidades del enemigo (ej. esqueleto: resistente a perforante, débil a contundente — `enemies.md` §5).
+4. Si `tirada ≥ CA` → impacto. **Daño** = `dado(s) del arma/hechizo + mod stat + bonos de carta`. Aplicar el tipo de daño contra las resistencias/vulnerabilidades del objetivo (§4b.10).
 5. **Crítico:** d20 natural 20 → impacto automático, se **doblan los dados de daño**. Natural 1 → fallo automático.
 6. **Ventaja/Desventaja:** tira 2d20 y coge el mejor (ventaja) o el peor (desventaja). La aportan cartas de Efecto, estados o el terreno del hex (emboscada desde Bosque = ventaja; atacar cruzando Llanura/Camino a la vista = posible desventaja — `board-map.md` §4).
 7. Restar el daño de los PV del objetivo. A 0 PV → derrotado.
@@ -147,7 +149,7 @@ Resuelve el cross-reference pendiente entre §4 (solo hablaba del mazo personal)
 
 ### 4b.7 Hechizos y maná (aplazado)
 
-No hay sistema de maná definido. Para el prototipo, los hechizos son **Cartas**: Especiales de Clase con límite 1/combate o descanso, o Items consumibles (Pergamino, 1 uso). Sin reserva de puntos. El "maná/espacios de conjuro" mencionado en [`cards/items.md`](cards/items.md) queda como **idea futura** si más adelante se quiere granularidad de caster.
+No hay sistema de maná definido. Para el prototipo, los hechizos son **Cartas**: Especiales de Clase con límite 1/combate o descanso, o Items (Pergamino). Sin reserva de puntos. El "maná/espacios de conjuro" mencionado en [`cards/items.md`](cards/items.md) queda como **idea futura** si más adelante se quiere granularidad de caster.
 
 ### 4b.8 Huir, victoria y derrota
 
@@ -159,13 +161,29 @@ No hay sistema de maná definido. Para el prototipo, los hechizos son **Cartas**
 
 Aturdido (pierdes la Acción ese turno), Envenenado (daño al inicio de tu turno), Inmovilizado (no puedes usar Movimiento — ej. telaraña de la Araña, `enemies.md` §5), Ventaja/Desventaja (afectan la próxima tirada). Duran un nº de turnos o hasta superar una salvación (`1d20 + mod CON/DES` vs CD) — a afinar. No ocupan hueco de mazo (a diferencia de la Maldición, §3.2).
 
+### 4b.10 Tipos de daño y resistencias
+
+Cada arma/hechizo lleva un **tipo de daño** fijo (`cards/weapons.md`, `cards/class.md`). Dos familias, según de dónde sale el daño:
+
+| Familia | Tipos | Fuente |
+|---|---|---|
+| **Físicos** (mundanos) | 🗡️ Cortante, 🏹 Perforante, 🔨 Contundente | Armas mundanas (`cards/weapons.md`) |
+| **Mágicos/elementales** | 🔮 Arcano, ☀️ Radiante, 🔥 Fuego, 💀 Necrótico | Hechizos de clase (`cards/class.md`) y ataques de jefes (`enemies.md` §5b.4). Arcano = Mago, Radiante = Clérigo/divino, Fuego = hechizos ígneos (ej. Bola de fuego), Necrótico = exclusivo de enemigos de momento |
+
+**Multiplicadores** al aplicar el tipo de daño contra el objetivo:
+- **Resistente** → mitad de daño (redondeo hacia abajo).
+- **Vulnerable** → daño doble.
+- **Inmune** → 0 daño. *(Reservado: ningún enemigo del bestiario lo usa todavía.)*
+
+Quién es resistente/vulnerable a qué **no se decide arma por arma ni enemigo por enemigo suelto**: lo fija la **Naturaleza de criatura** del objetivo (`enemies.md` §3b), con posibles excepciones puntuales como habilidad especial de un enemigo concreto (ej. el Trol de las minas y el fuego, `enemies.md` §5b.3). Los héroes no tienen resistencias propias por ahora (podría llegar más adelante vía armadura/objeto mágico).
+
 ## 4c. Descanso y recuperación
 
 **Sin ciclo día/noche automático.** A diferencia de D&D (donde el descanso largo cura "de por sí" al pasar la noche), aquí **la recuperación se hace jugando cartas o visitando localizaciones seguras** — coherente con la filosofía "todo es una carta". El día/noche podría volver en el futuro solo como ambientación/modificador, no como cura automática (idea futura). Tres vías, de menor a mayor alcance:
 
 ### 4c.1 Consumibles — en cualquier momento (incluido combate)
 
-- **Poción de vida** ([`cards/items.md`](cards/items.md)): Acción rápida (§4b.3), recupera PV al instante, un solo uso. La vía rápida de emergencia dentro del combate.
+- **Poción de vida** ([`cards/items.md`](cards/items.md)): Acción rápida (§4b.3), recupera PV al instante. La vía rápida de emergencia dentro del combate.
 - Otros consumibles (pergaminos de curación, antídotos que quitan Envenenado, etc.) siguen el mismo patrón.
 
 ### 4c.2 Acampar — carta Hoguera (fuera de combate) = descanso corto
@@ -256,7 +274,7 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
 1. ~~Faltaba el sistema de puntos de movimiento por turno~~ → **Resuelto (§2.2):** 2 movimientos estándar para todos (no depende de raza ni stat), con extras vía fichas/cartas de movimiento/cartas de clase.
 2. ~~Faltaba el sistema de rango de visión / habilidades de exploración~~ → **Resuelto en parte (§2.3):** el rango de visión base lo gobierna Sabiduría. Sigue pendiente diseñar las Cartas Especiales de Clase de exploración que lo amplíen más (ver checklist).
 3. ~~Falta un recurso de economía/moneda.~~ → **Resuelto (§6b):** el recurso es **Oro** (contador de personaje), con fuentes (enemigos, tesoros, venta) y sumideros (tiendas, mercenarios, descanso premium, limpiar maldiciones) y precios ligados a la Rareza.
-4. ~~El tracker de Miedo seguía como "candidato" pero otros documentos lo asumían adoptado~~ → **Resuelto:** se saca de la documentación activa y pasa a la sección "Ideas futuras" (abajo). `board-map.md` y `heroes.md` se actualizan para no depender de él.
+4. ~~El tracker de Miedo seguía como "candidato" pero otros documentos lo asumían adoptado~~ → **Resuelto:** se saca de la documentación activa y pasa a [`ideas.md`](ideas.md). `board-map.md` y `heroes.md` se actualizan para no depender de él.
 5. ~~Tensión entre CR de `enemies.md` y el leveling por hitos (§5).~~ → **Resuelto:** en vez de un CR 1:1, la **escala de dificultad** (`characters/enemies.md` §5c) decide qué categorías de enemigo aparecen según la zona del mapa (Modo Prueba) o el nivel/capítulo (Campaña).
 6. ~~Falta cross-reference con el mazo de encuentro.~~ → **Resuelto (§4b.6):** en combate conviven el mazo personal (jugador) y el mazo de encuentro (sistema); este último revela 1 carta de condición al iniciar la pelea.
 7. ~~El combate paso a paso es un bloqueo compartido~~ → **Resuelto (§4b):** combate sobre el mismo tablero hex por adyacencia, con recurso de acción por turno, ataque paso a paso e iniciativa. Queda **una decisión abierta** (§4b.5): si los enemigos se mueven o no dentro del combate. Pendiente propagar a `board-map.md` §8 y `enemies.md` §2/§4 (hecho en este mismo pase).
@@ -265,7 +283,7 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
 
 - [x] Definir lista de clases iniciales con sus cartas básicas — los **4 héroes** (Guerrero, Mago, Pícaro, Clérigo) tienen Básicas + 1 Especial en [`cards/class.md`](cards/class.md). Roster en [`heroes.md`](characters/heroes.md); falta balancear y decidir si el prototipo arranca con 2-3 o los 4.
 - [x] Definir resolución exacta de pruebas — **1d20 + modificador** contra CD/Defensa, con las cartas como modificadores de la tirada (§4, §6).
-- [x] Bocetar el catálogo de cartas de equipo por categoría (arma, armadura, item) — ver [`cards/`](cards/README.md) ([`weapons`](cards/weapons.md)/[`armor`](cards/armor.md)/[`items`](cards/items.md)). Cartas de **clase** bocetadas para Guerrero/Mago en [`cards/class.md`](cards/class.md). Bocetos iniciales de [`Efecto/Estado`](cards/effects.md), [`Maldición`](cards/curses.md) y [`Mazo de encuentro`](cards/encounter.md) creados (pendientes de detalle).
+- [x] Bocetar el catálogo de cartas de equipo por categoría (arma, armadura, item) — ver [`cards/`](cards/README.md) ([`weapons`](cards/weapons.md)/[`armor`](cards/armor.md)/[`items`](cards/items.md)). Cartas de **clase** bocetadas para Guerrero/Mago en [`cards/class.md`](cards/class.md). Bocetos iniciales de [`Efecto/Estado`](effects.md), [`Maldición`](cards/curses.md) y [`Mazo de encuentro`](cards/encounter.md) creados (pendientes de detalle).
 - [x] Definir combate: orden de turno, cómo se resuelve un ataque paso a paso — ver **§4b** (adyacencia, iniciativa, recurso de acción por turno, ataque paso a paso, mazo de encuentro). Falta solo confirmar §4b.5 (movimiento de enemigos en combate).
 - [x] Definir condición de victoria/derrota y estructura de "descanso" (recuperar recursos) — victoria/derrota en §4b.8; **descanso** en §4c (consumibles / carta Hoguera con riesgo / localización segura, sobre Dados de Vida). Falta balancear valores.
 - [ ] Definir las primeras Cartas Especiales de Clase de exploración que amplíen el rango de visión (duda 2, queda solo esta parte).
@@ -274,14 +292,6 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
 - [ ] Definir cómo se traduce capítulo/hito de Campaña a CR de enemigo esperado (duda 5).
 - [x] Confirmar si el máximo de cartas del mazo (§4, ej. 10) cuenta solo el equipo o también las cartas de clase → **cuenta todas** (clase + equipo). El límite podrá subirse más adelante si hace falta.
 - [x] Terminar de definir la mecánica de Maldición (§3.2) → [`cards/curses.md`](cards/curses.md): severidad Leve/Grave, catálogo de 8, fuentes, y limpieza (Templo por oro o prueba). Falta balancear.
-
-## Ideas futuras (sin implementar)
-
-Aparcadero de ideas que no forman parte del diseño activo todavía, para no perderlas ni confundirlas con mecánicas ya decididas.
-
-- **Tracker de Miedo**: recurso narrativo separado de los PV (efectos negativos progresivos si se acumula, sin significar muerte directa), inspirado en Viajes por la Tierra Media. Se descartó como mecánica activa por ahora — si en el futuro se retoma, hay que revisar `board-map.md` (terreno Nieve/Tundra) y `heroes.md` (§3) para volver a engancharlo ahí.
-- **Movimiento de enemigos**: confirmado que de momento los enemigos quedan estáticos (ver `enemies.md` §2), pero en el futuro se les querría dar un sistema de movimiento/patrulla propio.
-- **Orientación en el hexágono (flanqueo)**: añadir a cada personaje/enemigo una orientación dentro de su hexágono, para poder atacar por delante/flanco/espalda con distinto efecto (ej. bonus de daño o ventaja atacando por la espalda). Afectaría al modelo de datos de `board-map-dev.md` (cada `Hex`/personaje necesitaría un campo de orientación) y al combate paso a paso (checklist, arriba).
 
 ## Referencias de inspiración
 

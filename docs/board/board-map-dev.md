@@ -49,7 +49,7 @@ Character {
   hands[2], armor           // equipo (§2.4)
   deck: Card[]              // clase + equipo; tope = deckMax (§4)
   deckMax
-  states: Effect[]          // estados activos (cards/effects.md)
+  states: Effect[]          // estados activos (../effects.md)
   usedThisCombat: []        // Especiales 1/combate
   usedThisRest: []          // Especiales/Hoguera 1/descanso
 }
@@ -68,7 +68,7 @@ Card {                      // cards/*
   origin                    // clase | equipo | maldicion | encuentro
   type                      // Arma | Armadura | Item | Efecto | Maldicion | ...
   actionCost                // Accion | AccionRapida | Modificador | Pasiva | FueraDeCombate
-  uses                      // ilimitado | 1/combate | 1/descanso | 1 (consumible)
+  uses                      // ilimitado | 1/combate | 1/descanso (ninguna carta del mazo personal se pierde al jugarla, game-design.md §4)
   rarity?                   // Comun..Legendario (no en cartas de clase)
   effect
 }

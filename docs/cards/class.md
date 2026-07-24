@@ -43,7 +43,7 @@ Rol: daño a distancia y control, muy frágil (PV 6). Sus cartas premian **pegar
 
 | Carta | Coste | Efecto |
 |---|---|---|
-| **Descarga arcana** | Acción | Ataque a distancia (alcance **4 hex**): `1d20 + mod INT` vs Defensa; si impacta, **1d8 de daño arcano**. Es el ataque a distancia fiable del mago (sus armas cuerpo a cuerpo son flojas). |
+| **Descarga arcana** | Acción | Ataque a distancia (alcance **4 hex**): `1d20 + mod INT` vs Defensa; si impacta, **1d8 de daño 🔮 (arcano)**. Es el ataque a distancia fiable del mago (sus armas cuerpo a cuerpo son flojas). |
 | **Escudo arcano** | Acción rápida | Hasta tu próximo turno, **+3 a tu Defensa/CA**. La red de seguridad del mago frágil. |
 | **Enredo gélido** | Acción | A distancia (alcance 3 hex): si impacta (`1d20 + mod INT` vs Defensa), el enemigo queda **Inmovilizado 1 turno** (no puede usar Movimiento; `../game-design.md` §4b.9). Sin daño, control puro para hacer *kiting*. |
 
@@ -61,7 +61,7 @@ Rol: sigilo, daño furtivo y exploración. Sus cartas premian **atacar desde la 
 
 | Carta | Coste | Efecto |
 |---|---|---|
-| **Ataque furtivo** | Acción | Ataque con arma ligera o a distancia. Si estás **Oculto** ([`effects.md`](effects.md)) o atacas con ventaja, **+2d6 de daño**. El pan de cada día del pícaro. |
+| **Ataque furtivo** | Acción | Ataque con arma ligera o a distancia. Si estás **Oculto** ([`../effects.md`](../effects.md)) o atacas con ventaja, **+2d6 de daño**. El pan de cada día del pícaro. |
 | **Escabullirse** | Acción rápida | Te mueves 1 hex sin arriesgar golpe de oportunidad y ganas **+2 para evitar detección** hasta tu próximo turno; si terminas en Bosque u otro terreno de ocultación, quedas **Oculto**. |
 | **Ojo avizor** | Acción | Adelanta a **Detectado** un grupo vecino sin explorar, o **+1 a tu rango de visión** hasta tu próximo turno (`../board-map.md` §4, `../game-design.md` §2.3). Exploración pura, sin combate. |
 
@@ -80,19 +80,19 @@ Rol: curación, soporte y algo de daño divino. Sus cartas premian **mantenerte 
 | Carta | Coste | Efecto |
 |---|---|---|
 | **Palabra sanadora** | Acción rápida | Recuperas tú (o un aliado adyacente) **1d8 + mod SAB** PV. Curación fiable y repetible. |
-| **Llama sagrada** | Acción | Ataque divino a distancia (alcance 3 hex): `1d20 + mod SAB` vs Defensa; **1d8 de daño radiante**, especialmente efectivo vs no-muertos (`../enemies.md` §5). |
-| **Escudo de fe** | Acción rápida | Concede **Escudado +2 CA** ([`effects.md`](effects.md)) a ti o a un aliado adyacente hasta tu próximo turno. |
+| **Llama sagrada** | Acción | Ataque divino a distancia (alcance 3 hex): `1d20 + mod SAB` vs Defensa; **1d8 de daño ☀️ (radiante)**, especialmente efectivo vs no-muertos (`../enemies.md` §5). |
+| **Escudo de fe** | Acción rápida | Concede **Escudado +2 CA** ([`../effects.md`](../effects.md)) a ti o a un aliado adyacente hasta tu próximo turno. |
 
 ### Especial (ejemplo)
 
 | Carta | Coste | Uso | Efecto |
 |---|---|---|---|
-| **Bendición** | Acción | 1/combate | Durante 3 turnos ganas **Bendecido** ([`effects.md`](effects.md)): +1d4 a tus tiradas de ataque y de salvación. |
+| **Bendición** | Acción | 1/combate | Durante 3 turnos ganas **Bendecido** ([`../effects.md`](../effects.md)): +1d4 a tus tiradas de ataque y de salvación. |
 
 ## 6. Próximos pasos / preguntas abiertas
 
 - [x] Diseñar las Básicas de **Pícaro** (sigilo/exploración) y **Clérigo** (curación/soporte) → hechas (§4-5).
 - [ ] Balancear valores (dados de daño, bonos, alcances, CD) al testear en el prototipo.
 - [ ] Ampliar las Especiales de cada clase (por ahora 1 de ejemplo por héroe) y ligarlas a la progresión por nivel (`../game-design.md` §5: 1 Especial nueva por nivel).
-- [ ] Cerrar la duración/CD de los estados nuevos que introducen estas cartas (Oculto, Bendecido, Escudado) en [`effects.md`](effects.md).
+- [ ] Cerrar la duración/CD de los estados nuevos que introducen estas cartas (Oculto, Bendecido, Escudado) en [`../effects.md`](../effects.md).
 - [ ] Cuando quieras, añadir más cartas a cualquier clase.

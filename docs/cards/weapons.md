@@ -1,48 +1,78 @@
 # CardGame — Cartas: Armas
 
-Catálogo de cartas de **Arma** (tipo/icono en [`../game-design.md`](../game-design.md) §3.2, Rareza en §3.3, reglas de manos 1h/2h en §2.4). Índice de todas las cartas en [`README.md`](README.md). Los valores de abajo son un **primer pase sin balancear**, tomando D&D como base y adaptándolo al modelo de adyacencia/alcance en hexágonos (`../game-design.md` §4b).
+Catálogo de cartas de **Arma** (tipo/icono en [`../game-design.md`](../game-design.md) §3.2, Rareza en §3.3, reglas de manos ✋/🤲 en §2.4, tipos de daño 🗡️/🏹/🔨/🔮 en §4b.10, significado de todos los iconos en [`../glossary.md`](../glossary.md)). Índice de todas las cartas en [`README.md`](README.md). Los valores de abajo son un **primer pase sin balancear**, tomando D&D como base y adaptándolo al modelo de adyacencia/alcance en hexágonos (`../game-design.md` §4b).
 
 ## 1. Armas melee
 
+*Columna Propiedades vacía a propósito — aparcada hasta que se revise el sistema de combate (§4b), ver checklist §6.*
+
 | Arma | Manos | Daño | Tipo | Stat ataque | Propiedades | Rareza |
 |---|---|---|---|---|---|---|
-| Dagas | 1h | 1d4 | Perforante | FUE/DES (finesse) | Ligera; arrojadiza (2 hex) | Común |
-| Espada | 1h | 1d8 | Cortante | FUE | — | Común |
-| Espada | 2h | 1d12 | Cortante | FUE | Dos manos; requisito FUE 13 | Poco común |
-| Hacha | 1h | 1d6 | Cortante | FUE | Ligera; arrojadiza (2 hex) | Común |
-| Hacha | 2h | 1d12 | Cortante | FUE | Dos manos, pesada; requisito FUE 13 | Poco común |
-| Lanza | 2h | 1d10 | Perforante | FUE | **Alcance** (ataca a 2 hex en línea sin estar adyacente) | Común |
-| Maza | 1h | 1d6 | Contundente | FUE | Buena vs no-muertos (`../enemies.md` §5) | Común |
-| Escudo | 1h | 1d4 | Contundente | FUE | **+2 CA** mientras lo llevas; combinable con cualquier armadura | Común |
+| Dagas | ✋ | 1d4 | 🏹 | FUE/DES (finesse) | — | Común |
+| Espada | ✋ | 1d8 | 🗡️ | FUE | — | Común |
+| Espada | 🤲 | 1d12 | 🗡️ | FUE | — | Común |
+| Hacha | ✋ | 1d6 | 🗡️ | FUE | — | Común |
+| Hacha | 🤲 | 1d12 | 🗡️ | FUE | — | Común |
+| Lanza | 🤲 | 1d10 | 🏹 | FUE | — | Común |
+| Maza | ✋ | 1d6 | 🔨 | FUE | — | Común |
+| Maza bendita | ✋ | 1d6 | 🔨 | FUE/SAB | — | Común |
+| Escudo | ✋ | 1d4 | 🔨 | FUE | — | Común |
 
 ## 2. Armas a distancia
 
+Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hueco ya es cuerpo a cuerpo (`../game-design.md` §4b.1). *Columna Propiedades vacía a propósito, ver nota de §1.*
+
 | Arma | Manos | Daño | Tipo | Stat ataque | Alcance | Propiedades | Rareza |
 |---|---|---|---|---|---|---|---|
-| Arco | 2h | 1d8 | Perforante | DES | 4 hex | Dos manos | Común |
-| Ballesta pesada | 2h | 1d10 | Perforante | DES | 5 hex | Dos manos; recarga (1 disparo/turno) | Poco común |
-| Ballesta de mano | 1h | 1d6 | Perforante | DES | 3 hex | — | Común |
-| Bastón de mago | 1h | 1d6 (melee) | Contundente | FUE/DES | 1 hex | **Foco arcano:** +1 a la tirada de ataque de hechizos | Poco común |
+| Arco | 🤲 | 1d8 | 🏹 | DES | 4 hex | — | Común |
+| Ballesta pesada | 🤲 | 1d10 | 🏹 | DES | 5 hex | — | Común |
+| Ballesta de mano | ✋ | 1d6 | 🏹 | DES | 3 hex | — | Común |
+| Bastón de mago | ✋ | 1d6 | 🔮 | INT | 2 hex | — | Común |
 
 ## 3. Armas de soporte
 
 | Arma | Manos | Efecto | Rareza |
 |---|---|---|---|
-| Libro de hechizos | 1h | Foco arcano: necesario para preparar ciertos hechizos de Mago / +1 hechizo especial preparado. No hace daño. | Común |
-| Antorcha | 1h | Melee 1d4 de fuego; **ilumina** (mejora el rango de visión en localizaciones oscuras: Cueva/Mazmorra/Mina, `../board-map.md` §3b). | Común |
+| Libro de hechizos | ✋ | Foco arcano: necesario para preparar ciertos hechizos de Mago / +1 hechizo especial preparado. No hace daño. | Común |
+| Símbolo sagrado | ✋ | Foco divino: necesario para preparar ciertos hechizos de Clérigo / +1 hechizo especial preparado. No hace daño. | Común |
+| Antorcha | ✋ | **Ilumina:** mejora el rango de visión en localizaciones oscuras (Cueva/Mazmorra/Mina, `../board-map.md` §3b). No hace daño. | Común |
 
 ## 4. Reglas transversales
 
 - **Stat de ataque:** FUE (armas pesadas), DES (ligeras finesse y a distancia), "FUE/DES" = usa el mejor de los dos mod. Los hechizos usan INT/SAB (`../game-design.md` §2.1).
 - **Finesse/Ligera:** puede usarse con Destreza — beneficia al Pícaro ([`class.md`](class.md)).
-- **Arrojadiza:** un arma melee ligera puede lanzarse a un enemigo a 2 hex (gasta la Acción). Munición asumida infinita en el prototipo (ver checklist).
+- **Ninguna arma melee es arrojadiza** *(decidido)*: el hueco de "atacar sin estar adyacente" ya lo cubren las armas a distancia (§2); no se duplica con dagas/hachas lanzables.
+- **Munición:** asumida infinita en el prototipo para armas a distancia (ver checklist).
 - **Alcance (Lanza):** ataca a un enemigo a 2 hex en línea sin estar adyacente — útil con el modelo de adyacencia (`../game-design.md` §4b.1).
 - **Recarga (Ballesta pesada):** solo 1 disparo por turno (no combina con un segundo disparo de Acción rápida).
 - **Requisito de FUE:** las armas de 2 manos pesadas piden FUE 13; por debajo, **desventaja** en la tirada de ataque (el Mago FUE 8 no debería blandir un mandoble).
 
-## 5. Próximos pasos
+## 5. Progresión de rareza por familia *(política a futuro, decidido)*
+
+Todas las armas del catálogo actual son **Común** — no hay todavía ninguna Poco común/Rara/Épica/Legendaria. A medida que se añadan más armas, la vía preferida **no** es meter armas nuevas sueltas, sino ampliar cada familia existente con variantes de rareza creciente y nombre propio en los tramos altos — mismo arma base, más potencia y más historia cuanto más rara. Ejemplo ilustrativo (Espada):
+
+| Rareza | Nombre |
+|---|---|
+| Común | Espada |
+| Poco común | Gran espada de acero |
+| Épica | Hoja de hielo eterno |
+| Legendaria | Excalibur |
+
+Esto da progresión de loot dentro de un mismo arquetipo de arma en vez de una lista plana de armas todas parecidas. Aplica igual a Arma/Armadura/Item (Rareza general en `../game-design.md` §3.3).
+
+## 6. Futuras implementaciones (fuera de la v1)
+
+Aparcadero de cartas de **arma** concretas que se nos van ocurriendo pero que no entran en la primera versión del prototipo — mismo espíritu que [`../ideas.md`](../ideas.md), pero solo para cartas de arma ya bastante definidas (con nombre y efecto) en vez de ideas de sistema más abiertas. Se amplía esta tabla conforme surgen más, sin comprometerse a meterlas en la v1 todavía.
+
+| Arma | Efecto | Rareza |
+|---|---|---|
+| Espada vorpal | Arma 🤲, 2d8 🗡️; con crítico (nat 20) **decapita**: muerte instantánea a enemigos no-jefe, daño masivo a jefes | Legendario |
+| Bastón del poder | Foco arcano: +1 a tiradas y CD de hechizos y **+1 CA**; potencia las cartas de Mago | Épico |
+
+## 7. Próximos pasos
 
 - [ ] Balancear dados/alcances al testear en el prototipo.
-- [ ] Crear variantes mágicas (ligar con [`items.md`](items.md) §3) y asignar su Rareza.
 - [ ] Definir munición para armas a distancia (¿infinita en prototipo o recurso gestionado?).
-- [ ] Decidir el subconjunto del prototipo (recomendado: Espada 1h, Hacha 2h, Dagas, Arco, Bastón, Maza + Escudo).
+- [ ] Decidir el subconjunto del prototipo (recomendado: Espada ✋, Hacha 🤲, Dagas, Arco, Bastón, Maza + Escudo).
+- [ ] Ampliar cada familia de arma con variantes Poco común/Rara/Épica/Legendaria siguiendo la progresión de §5.
+- [ ] Revisar §6 de vez en cuando y decidir si alguna de esas armas pasa ya a la v1.

@@ -1,139 +1,49 @@
 "use client";
 
-import { useState, type PointerEvent, type ReactNode } from "react";
+import { isValidElement, useMemo, useState, type PointerEvent, type ReactNode } from "react";
+import { EB_Garamond, Metamorphous } from "next/font/google";
 import "./card-design.css";
+import { CARDS, CATEGORIES, type Category, type CardData } from "./cards-data";
 
 /* Laboratorio de diseño de carta integrado en la wiki.
    Mismo esqueleto y datos (docs/cards/*, game-design.md §3) con estilos
    conmutables por pestaña. Sin flip ni otras interacciones (solo tilt al hover). */
 
-type Theme = "dark" | "rpg" | "arcano" | "grimorio";
-type Stat = { k?: string; v?: string; label?: string };
-type CardData = {
-  rarity: string;
-  badge: string;
-  cost?: string;
-  emoji: string;
-  name: string;
-  text: ReactNode;
-  stats: Stat[];
-  tag: string;
-  legendary?: boolean;
-};
+// Tipografía del tema Grimorio, escapada a .card-lab (no afecta al resto de la wiki).
+const metamorphous = Metamorphous({ weight: "400", subsets: ["latin"], variable: "--font-metamorphous" });
+const ebGaramond = EB_Garamond({ weight: ["400", "500", "600", "700"], subsets: ["latin"], variable: "--font-eb-garamond" });
 
+type Theme = "grimorio";
+
+// Pestañas de diseño. Se van añadiendo aquí a medida que se crean nuevos
+// templates de carta (cada uno como [data-theme] en card-design.css).
 const THEMES: { key: Theme; label: string }[] = [
-  { key: "dark", label: "Oscuro" },
-  { key: "rpg", label: "RPG" },
-  { key: "arcano", label: "Arcano" },
   { key: "grimorio", label: "Grimorio" },
 ];
 
-// Set representativo — datos reales de docs/cards/* y characters/enemies.md
-const CARDS: CardData[] = [
-  {
-    rarity: "clase",
-    badge: "🛡️",
-    cost: "Acción",
-    emoji: "⚔️",
-    name: "Golpe firme",
-    text: (
-      <>Ataque cuerpo a cuerpo a un enemigo adyacente <b>con ventaja</b> (2d20, coges el mejor).</>
-    ),
-    stats: [
-      { label: "Guerrero" },
-      { k: "Uso", v: "Básica" },
-    ],
-    tag: "Básica 1 · Clase",
-  },
-  {
-    rarity: "poco-comun",
-    badge: "⚔️",
-    emoji: "🗡️",
-    name: "Espada (2 manos)",
-    text: (
-      <>Hoja pesada a dos manos. Requiere <b>FUE 13</b>; por debajo, desventaja al atacar.</>
-    ),
-    stats: [
-      { k: "Daño", v: "1d12" },
-      { label: "Cortante" },
-      { k: "Stat", v: "FUE" },
-      { label: "2 manos" },
-    ],
-    tag: "Poco común · Arma",
-  },
-  {
-    rarity: "poco-comun",
-    badge: "🛡️",
-    emoji: "🧥",
-    name: "Cota de malla",
-    text: <>Armadura pesada. <b>Desventaja</b> para evitar detección (ruidosa).</>,
-    stats: [
-      { k: "CA", v: "+6" },
-      { label: "Pesada" },
-      { k: "Req.", v: "FUE 13" },
-    ],
-    tag: "Poco común · Armadura",
-  },
-  {
-    rarity: "epico",
-    badge: "🎒",
-    cost: "Pasiva",
-    emoji: "🪄",
-    name: "Bastón del poder",
-    text: (
-      <>Foco arcano: <b>+1</b> a tiradas y CD de hechizos y <b>+1 CA</b>. Potencia las cartas de Mago.</>
-    ),
-    stats: [
-      { k: "Manos", v: "1h" },
-      { label: "Foco arcano" },
-    ],
-    tag: "Épico · Item",
-  },
-  {
-    rarity: "maldicion",
-    badge: "💀",
-    emoji: "⛓️",
-    name: "Peso maldito",
-    text: <>Ocupa un hueco del mazo y <b>no se puede vender</b>. Límpiala en el Templo.</>,
-    stats: [
-      { k: "Efecto", v: "−1 Mov." },
-      { k: "Limpieza", v: "30 oro" },
-    ],
-    tag: "Severidad Leve · Maldición",
-  },
-  {
-    rarity: "enemigo",
-    badge: "👹",
-    emoji: "🐸",
-    name: "Trasgo de pantano",
-    text: <>Bajo HP, <b>veneno al golpear</b>. Terreno típico: Pantano.</>,
-    stats: [
-      { k: "FUE", v: "9" },
-      { k: "DES", v: "13" },
-      { k: "CON", v: "12" },
-      { k: "INT", v: "11" },
-      { k: "SAB", v: "10" },
-      { k: "CAR", v: "8" },
-    ],
-    tag: "Común · Enemigo",
-  },
-  {
-    rarity: "legendario",
-    badge: "⚔️",
-    emoji: "🗡️",
-    name: "Espada vorpal",
-    text: (
-      <>Con crítico (<b>nat 20</b>) decapita: muerte instantánea a no-jefes, daño masivo a jefes.</>
-    ),
-    stats: [
-      { k: "Daño", v: "2d8" },
-      { label: "Cortante" },
-      { label: "2 manos" },
-    ],
-    tag: "Legendario · Arma",
-    legendary: true,
-  },
-];
+// Iconos de tipo de daño (game-design.md §4b.10). Sin entrada = la carta no hace daño.
+const DAMAGE_TYPE: Record<NonNullable<CardData["damageType"]>, { icon: string; label: string }> = {
+  cortante: { icon: "🗡️", label: "Cortante" },
+  perforante: { icon: "🏹", label: "Perforante" },
+  contundente: { icon: "🔨", label: "Contundente" },
+  arcano: { icon: "🔮", label: "Arcano" },
+  radiante: { icon: "☀️", label: "Radiante" },
+  fuego: { icon: "🔥", label: "Fuego" },
+  necrotico: { icon: "💀", label: "Necrótico" },
+};
+
+// Iconos de peso de armadura (cards/armor.md §1). Sin entrada = no es armadura.
+const WEIGHT: Record<NonNullable<CardData["weight"]>, { icon: string; label: string }> = {
+  ligera: { icon: "🥼", label: "Ligera" },
+  media: { icon: "👕", label: "Media" },
+  pesada: { icon: "🧥", label: "Pesada" },
+};
+
+// Iconos de severidad de Maldición (cards/curses.md §2). Sin entrada = no es maldición.
+const SEVERITY: Record<NonNullable<CardData["severity"]>, { icon: string; label: string }> = {
+  leve: { icon: "🟡", label: "Leve" },
+  grave: { icon: "🔴", label: "Grave" },
+};
 
 const RARITIES: { rarity: string; tag: string; legendary?: boolean }[] = [
   { rarity: "comun", tag: "Común" },
@@ -144,6 +54,20 @@ const RARITIES: { rarity: string; tag: string; legendary?: boolean }[] = [
 ];
 
 const MAX_TILT = 10;
+
+// Nivel de ajuste (1/2/3) según longitud real del texto — deriva del dato
+// ya autorado en cards-data.tsx, así que se recalcula solo si la copia cambia.
+function textLength(node: ReactNode): number {
+  if (typeof node === "string") return node.length;
+  if (typeof node === "number") return String(node).length;
+  if (Array.isArray(node)) return node.reduce((n: number, c) => n + textLength(c), 0);
+  if (isValidElement(node)) return textLength((node.props as { children?: ReactNode }).children);
+  return 0;
+}
+function fitStep(node: ReactNode): 1 | 2 | 3 {
+  const len = textLength(node);
+  return len > 160 ? 3 : len > 100 ? 2 : 1;
+}
 
 function LabCard({ data, tilt }: { data: CardData; tilt: boolean }) {
   const onMove = (e: PointerEvent<HTMLElement>) => {
@@ -166,10 +90,31 @@ function LabCard({ data, tilt }: { data: CardData; tilt: boolean }) {
     <article
       className={`card card--tilt${data.legendary ? " card--legendary" : ""}`}
       data-rarity={data.rarity}
+      data-fit={fitStep(data.text)}
       onPointerMove={onMove}
       onPointerLeave={onLeave}
     >
       <span className="card__badge">{data.badge}</span>
+      {data.hands && (
+        <span className="card__hands" title={data.hands === "2h" ? "Arma a dos manos" : "Arma a una mano"}>
+          {data.hands === "2h" ? "🤲" : "✋"}
+        </span>
+      )}
+      {data.damageType && (
+        <span className="card__damage-type" title={DAMAGE_TYPE[data.damageType].label}>
+          {DAMAGE_TYPE[data.damageType].icon}
+        </span>
+      )}
+      {data.weight && (
+        <span className="card__hands" title={`Armadura ${WEIGHT[data.weight].label.toLowerCase()}`}>
+          {WEIGHT[data.weight].icon}
+        </span>
+      )}
+      {data.severity && (
+        <span className="card__hands" title={`Severidad ${SEVERITY[data.severity].label}`}>
+          {SEVERITY[data.severity].icon}
+        </span>
+      )}
       {data.cost && <span className="card__cost">{data.cost}</span>}
       <div className="card__art">
         <span className="emoji">{data.emoji}</span>
@@ -185,16 +130,21 @@ function LabCard({ data, tilt }: { data: CardData; tilt: boolean }) {
           </span>
         ))}
       </footer>
-      <span className="card__tag">{data.tag}</span>
       <div className="card__gloss" />
     </article>
   );
 }
 
 export default function CardDesignLab() {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>("grimorio");
   const [tilt, setTilt] = useState(true);
   const [view, setView] = useState<"cards" | "rarities">("cards");
+  const [category, setCategory] = useState<Category | "todas">("todas");
+
+  const shown = useMemo(
+    () => (category === "todas" ? CARDS : CARDS.filter((c) => c.category === category)),
+    [category]
+  );
 
   const btn = (active: boolean) =>
     `rounded-md border px-3 py-1.5 text-sm transition-colors ${
@@ -204,7 +154,7 @@ export default function CardDesignLab() {
     }`;
 
   return (
-    <div className="card-lab" data-theme={theme}>
+    <div className={`card-lab ${metamorphous.variable} ${ebGaramond.variable}`} data-theme={theme}>
       <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">Diseño de cartas</h1>
       <p className="mb-5 text-sm text-[var(--wiki-muted)]">
         Galería de estilos del esqueleto de carta. Cambia de diseño con las pestañas. Datos de{" "}
@@ -224,9 +174,22 @@ export default function CardDesignLab() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]">Vista</span>
-          <button className={btn(view === "cards")} onClick={() => setView("cards")}>Set</button>
+          <button className={btn(view === "cards")} onClick={() => setView("cards")}>Catálogo</button>
           <button className={btn(view === "rarities")} onClick={() => setView("rarities")}>Rareza</button>
         </div>
+        {view === "cards" && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]">Categoría</span>
+            <button className={btn(category === "todas")} onClick={() => setCategory("todas")}>
+              Todas ({CARDS.length})
+            </button>
+            {CATEGORIES.map((c) => (
+              <button key={c.key} className={btn(category === c.key)} onClick={() => setCategory(c.key)}>
+                {c.label} ({CARDS.filter((card) => card.category === c.key).length})
+              </button>
+            ))}
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]">Efectos</span>
           <button className={btn(tilt)} onClick={() => setTilt((v) => !v)}>Tilt 3D</button>
@@ -237,12 +200,13 @@ export default function CardDesignLab() {
       <div className="card-lab__stage">
         <div className="card-lab__grid">
           {view === "cards"
-            ? CARDS.map((c) => <LabCard key={c.name} data={c} tilt={tilt} />)
+            ? shown.map((c) => <LabCard key={c.name} data={c} tilt={tilt} />)
             : RARITIES.map((r) => (
                 <LabCard
                   key={r.rarity}
                   tilt={tilt}
                   data={{
+                    category: "arma",
                     rarity: r.rarity,
                     badge: "⚔️",
                     emoji: "🗡️",
