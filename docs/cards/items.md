@@ -45,7 +45,7 @@ Primer pase de efectos, sin balancear.
 
 ## 3. Objetos mágicos raros/legendarios
 
-Solo se **encuentran** (loot de Élite/Jefe, cofres de alta rareza); los Legendarios **no se venden en tienda** (`../game-design.md` §6b.3). Efectos = primer pase sin balancear. Las cartas de **arma** mágica (con nombre pero forma de arma: espadas, bastones...) viven en [`weapons.md`](weapons.md) §6 "Futuras implementaciones" en vez de aquí, para no mezclar los dos catálogos.
+Se **encuentran** (loot de Élite/Jefe, cofres de alta rareza) y, de momento, también pueden **salir en la oferta del Mercader** — no hay tope de rareza en tienda (`../game-design.md` §6b.3, `../characters/npcs.md` §3). Efectos = primer pase sin balancear. Las cartas de **arma** mágica (con nombre pero forma de arma: espadas, bastones...) viven en [`weapons.md`](weapons.md) §6 "Futuras implementaciones" en vez de aquí, para no mezclar los dos catálogos.
 
 | Objeto | Efecto | Rareza |
 |---|---|---|

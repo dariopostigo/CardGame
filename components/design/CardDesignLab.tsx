@@ -3,6 +3,7 @@
 import { isValidElement, useMemo, useState, type PointerEvent, type ReactNode } from "react";
 import { EB_Garamond, Cormorant } from "next/font/google";
 import { CARDS, CATEGORIES, type Category, type CardData } from "./cards-data";
+import { CARD_FRAMES, CardFrameDefs, type CardTheme } from "./card-frames";
 
 // Los estilos viven en el árbol ITCSS, no aquí: el esqueleto en
 // styles/components/_card.scss y cada pestaña en styles/components/card-themes/.
@@ -17,12 +18,17 @@ import { CARDS, CATEGORIES, type Category, type CardData } from "./cards-data";
 const cormorant = Cormorant({ weight: ["500", "600", "700"], subsets: ["latin"], variable: "--font-cormorant" });
 const ebGaramond = EB_Garamond({ weight: ["400", "500", "600", "700"], subsets: ["latin"], variable: "--font-eb-garamond" });
 
-type Theme = "pergamino";
+// La lista de temas vive en card-frames.tsx, que es quien debe cubrirlos todos.
+type Theme = CardTheme;
 
 // Pestañas de diseño. Se van añadiendo aquí a medida que se crean nuevos
 // templates de carta (cada uno un parcial de styles/components/card-themes/).
+// Los "vector-*" además traen marco SVG propio en card-frames.tsx.
 const THEMES: { key: Theme; label: string }[] = [
   { key: "pergamino", label: "Pergamino" },
+  { key: "vector-oro", label: "Vector · Oro" },
+  { key: "vector-arborea", label: "Vector · Arbórea" },
+  { key: "vector-sombra", label: "Vector · Sombra" },
 ];
 
 // Iconos de tipo de daño (game-design.md §4b.10). Sin entrada = la carta no hace daño.
@@ -93,7 +99,9 @@ function displayName(name: string): string {
   return name.replace(/\s*\((?:una|dos|1|2)\s*manos?\)\s*$/i, "");
 }
 
-function LabCard({ data, tilt }: { data: CardData; tilt: boolean }) {
+function LabCard({ data, tilt, theme }: { data: CardData; tilt: boolean; theme: Theme }) {
+  const Frame = CARD_FRAMES[theme];
+
   const onMove = (e: PointerEvent<HTMLElement>) => {
     if (!tilt) return;
     const el = e.currentTarget;
@@ -118,6 +126,9 @@ function LabCard({ data, tilt }: { data: CardData; tilt: boolean }) {
       onPointerMove={onMove}
       onPointerLeave={onLeave}
     >
+      {/* Marco del tema (null en Pergamino, que lo hace con CSS). Va primero
+          para quedar por debajo de las fichas en el orden del documento. */}
+      <Frame />
       <span className="card__badge" aria-hidden="true">{CATEGORY_BADGE[data.category]}</span>
       {data.hands && (
         <span className="card__hands" title={data.hands === "2h" ? "Arma a dos manos" : "Arma a una mano"}>
@@ -225,13 +236,15 @@ export default function CardDesignLab() {
 
       {/* Escenario */}
       <div className="card-lab__stage">
+        <CardFrameDefs />
         <div className="card-lab__grid">
           {view === "cards"
-            ? shown.map((c) => <LabCard key={c.name} data={c} tilt={tilt} />)
+            ? shown.map((c) => <LabCard key={c.name} data={c} tilt={tilt} theme={theme} />)
             : RARITIES.map((r) => (
                 <LabCard
                   key={r.rarity}
                   tilt={tilt}
+                  theme={theme}
                   data={{
                     category: "arma",
                     rarity: r.rarity,

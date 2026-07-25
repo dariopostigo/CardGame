@@ -31,7 +31,7 @@ $teal-lo: #0b2c29; // fichas circulares: sombra
 
 // Geometría propia del tema.
 $card-radius-theme: 14px;
-$art-height-theme: 168px;
+$art-height-theme: 196px;          // ~54% del alto de la carta
 $badge-size: 34px;
 $sub-size: 24px;
 $sub-gap: 5px;
@@ -76,7 +76,7 @@ $panel-radius: 6px;
     height: var(--art-h);
     margin: 0;
     border-radius: 0;
-    font-size: 2.6rem;
+    font-size: 3.4rem;
     background:
       radial-gradient(120% 90% at 50% 18%, rgba(255, 244, 214, 0.08), transparent 60%),
       radial-gradient(140% 120% at 50% 120%, rgba(0, 0, 0, 0.55), transparent 55%),
@@ -141,7 +141,7 @@ $panel-radius: 6px;
 
   // --- Banda de nombre oscura, solapada sobre el arte ---------------------
   .card__name {
-    margin: -26px $panel-inset 0;
+    margin: -32px $panel-inset 0;
     z-index: z("chip");
     border-radius: 7px;
     padding: 8px 14px;
@@ -160,8 +160,8 @@ $panel-radius: 6px;
   // --- Panel de pergamino: texto arriba, stats al pie, enmarcado ----------
   .card__text {
     display: block; // fluye la línea de coste + el cuerpo (sin -webkit-box)
-    margin: 8px $panel-inset 0;
-    padding: 12px 14px 8px;
+    margin: 6px $panel-inset 0;
+    padding: 10px 14px 6px;
     border-radius: $panel-radius $panel-radius 0 0;
     font-family: $font-serif-body;
     font-size: 0.86rem;
@@ -197,7 +197,7 @@ $panel-radius: 6px;
 
   .card__footer {
     margin: 0 $panel-inset $panel-inset;
-    padding: 6px 10px 8px;
+    padding: 5px 10px 6px;
     border-radius: 0 0 $panel-radius $panel-radius;
     background: linear-gradient(180deg, $parch-lo, $parch-deep);
     box-shadow:
@@ -208,6 +208,7 @@ $panel-radius: 6px;
   .stat {
     border-radius: radius("pill");
     padding: 2px 9px;
+    font-family: $font-serif-body;
     background: linear-gradient(180deg, #f3e8c9, #e2cfa2);
     border: 1px solid $gilt;
     color: $ink-stat;

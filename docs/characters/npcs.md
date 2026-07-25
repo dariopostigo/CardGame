@@ -24,15 +24,40 @@ Documento dedicado a los NPCs **no hostiles** que aparecen en el mapa mediante l
 
 > **Subconjunto del prototipo:** entran **todos** estos tipos salvo el *Dador de misión* (solo Campaña). El **Sacerdote/Sanador** hace de Templo del prototipo (limpia Maldiciones), ya que el Pueblo absorbe esa función (`../board/board-map.md` §8).
 
-## 3. Cómo se resuelve la interacción
+## 3. Stock: cuántas cartas ofrece cada NPC
+
+### 3a. Cuándo se genera y cuánto dura
+
+- **Se sortea al empezar el capítulo:** al entrar en un capítulo, cada NPC del mapa recibe de golpe su oferta, elegida **aleatoriamente** del catálogo que le corresponde.
+- **Es fija durante todo el capítulo:** no rota, no se reinicia ni cambia a mitad. Salir del Pueblo y volver **no** genera una oferta nueva — lo que viste es lo que hay, así que no existe el "reroll" por entrar y salir.
+- **Lo que compras se agota:** la carta comprada desaparece de esa oferta para el resto del capítulo (el stock no se repone).
+- **Cambio de capítulo (Campaña):** al pasar al siguiente capítulo se sortea una **oferta nueva y distinta**. Es la única forma de renovar el stock.
+- **Partida rápida:** al ser un único mapa/capítulo (`../board/board-map.md` §2b), la oferta inicial es la de toda la partida.
+
+Consecuencia de diseño: la decisión de compra es "¿me lo llevo ahora o ahorro?", no "¿vuelvo más tarde a ver si ha cambiado?".
+
+### 3b. Cuántas cartas
+
+| NPC | Cartas en oferta | De qué catálogo |
+|---|---|---|
+| Vendedor/Mercader | **4** | Items ([`../cards/items.md`](../cards/items.md)) |
+| Herrero | **3** | Armas + Armaduras ([`../cards/weapons.md`](../cards/weapons.md), [`../cards/armor.md`](../cards/armor.md)), mezcla libre |
+| Mago/Encantador | **3** | Hechizos y pergaminos |
+| Capitán de mercenarios | **2** | Mercenarios ([`../cards/mercenaries.md`](../cards/mercenaries.md) §3) |
+
+- **Sin tope de rareza (de momento):** cualquier carta del catálogo puede salir en la oferta, **incluidos los Legendarios**, con su precio de `../game-design.md` §6b.3. Limitar el mercado por rareza queda como palanca de balance para más adelante ([`../ideas.md`](../ideas.md)).
+- El resto de NPCs (Tabernero, Sacerdote/Sanador, Informante) **no venden cartas**: ofrecen servicios (§2), así que no tienen stock.
+
+## 4. Cómo se resuelve la interacción
 
 - Interacción de menú/diálogo simple (no un mini-combate ni prueba de estadística obligatoria), aunque algunos NPCs puedan ofrecer una prueba opcional (ej. Carisma para conseguir mejor precio).
 - No consume el mazo de encuentro de `../board/board-map.md` §5 (eso es solo para combate/tensión de exploración) — es una interacción "de calma", coherente con que Pueblo es el "punto de respiro" definido en `../board/board-map.md` §3b.
 
-## 4. Próximos pasos / preguntas abiertas
+## 5. Próximos pasos / preguntas abiertas
 
 - [ ] **Colocación en el mapa** — mezcla ya perfilada: el **Capitán de mercenarios** solo en Pueblos; el **Tabernero** en Pueblo o en una posada suelta de camino; el **Informante/Guía** y el **Mercader** pueden salir sueltos; Sacerdote/Herrero/Mago tienden al Pueblo. El reparto fino se concreta al revisar la generación de fichas (`../board/board-map.md` §2c).
-- [x] Definir el sistema de precios/economía → **Oro** (`../game-design.md` §6b), precios por Rareza (§6b.3). Falta balancear cifras y definir el stock/rotación concreto de cada tienda.
+- [x] Definir el sistema de precios/economía → **Oro** (`../game-design.md` §6b), precios por Rareza (§6b.3). Falta balancear cifras.
+- [x] Definir el stock/rotación concreto de cada tienda → **§3**: oferta aleatoria fijada al empezar el capítulo, sin rotación intracapítulo, renovada al cambiar de capítulo; 4/3/3/2 cartas y sin tope de rareza por ahora. Falta balancear si esas cantidades dan demasiada o poca elección.
 - [x] Subconjunto del prototipo → **7 de los 8 tipos** de §2 entran en el prototipo (incluido el nuevo Sacerdote/Sanador); solo el Dador de misión queda para Campaña.
 - [ ] Definir 2-3 NPCs de ejemplo con nombre propio para el prototipo (mínimo: un tabernero y un mercader).
 - [x] Decidir si el Mercenario usa stats/mazo propio o efecto pasivo simple → **ninguno de los dos**: es una **carta de Acción** que va a tu mazo, reclutada con una prueba de Carisma en una ficha ambigua o comprada por oro ([`../cards/mercenaries.md`](../cards/mercenaries.md)).

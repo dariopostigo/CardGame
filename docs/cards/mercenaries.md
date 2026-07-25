@@ -42,6 +42,6 @@ Dos vías, con el mismo trade-off que el resto del juego (gratis-pero-arriesgado
 
 - [ ] Balancear dados/bonos por rareza y la CD de reclutamiento (§2a).
 - [ ] Decidir si los mercenarios más potentes (Épico/Legendario) pasan a uso **1/combate** en vez de reutilizable, como palanca de balance.
-- [ ] Definir el NPC concreto que los vende (§2b) y su stock/rotación (`../characters/npcs.md`).
+- [x] Definir el NPC concreto que los vende (§2b) y su stock/rotación → **Capitán de mercenarios**, **2 cartas** sorteadas al empezar el capítulo y fijas hasta el siguiente (`../characters/npcs.md` §3).
 - [ ] Decidir si una ficha ofrece un mercenario de rareza fija o aleatoria.
 - [ ] Cuando quieras, ampliar el catálogo (§3) con más compañías y variantes de rareza.

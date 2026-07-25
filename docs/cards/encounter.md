@@ -60,7 +60,7 @@ Cruce con las 6 fichas de [`../board/board-map.md`](../board/board-map.md) §4:
 | Exploración (comodín) | Sí — 1 carta de **Suceso** (rango completo: hallazgo, NPC, mercenarios, trampa, vacío…) |
 | Terreno | A veces — puede robar un Suceso de tipo Trampa/Hallazgo tras la prueba de terreno |
 | Tesoro | **No** — da loot directo (`../board/board-map.md` §4) |
-| Personaje (NPC) | **No** — interacción de calma, sin mazo (`../characters/npcs.md` §3) |
+| Personaje (NPC) | **No** — interacción de calma, sin mazo (`../characters/npcs.md` §4) |
 
 ## 6. ¿Un mazo o varios? *(decidido)*
 

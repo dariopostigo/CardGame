@@ -16,6 +16,7 @@ $radius: (
 // Una sola escala para toda la carta: así se ve de un vistazo qué tapa a qué
 // y no hay que ir buscando z-index sueltos por el archivo.
 $z: (
+  "art-overlay": 2,      // marco vectorial y ola: tapan el arte, no el texto
   "legendary-frame": 3,  // marco dorado, por DEBAJO del contenido
   "content": 4,          // nombre, descripción, pie
   "frame": 5,            // filete de rareza (.card::before)

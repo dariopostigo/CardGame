@@ -83,6 +83,32 @@ $sub-chip-left: chip-center-left($chip-sub-size);
     }
   }
 
+  // Sprite de <defs> de los marcos vectoriales: se emite una vez por página
+  // (CardFrameDefs) y todas las cartas referencian sus gradientes y paths por
+  // id. No debe pintar ni ocupar sitio.
+  // Colapsado a 0×0 en lugar de display:none, que en varios navegadores deja
+  // de resolver las referencias url(#…) de los <defs>.
+  .card-lab__defs {
+    display: block;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  // --- Marco vectorial ----------------------------------------------------
+  // Lienzo SVG a sangre (components/design/card-frames.tsx) que dibuja marco,
+  // ola y ornamentos. Oculto por defecto, igual que .card__cost-line: cada
+  // tema decide si su marco es SVG o puro CSS (Pergamino es CSS).
+  .card__frame {
+    display: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: z("art-overlay");
+    pointer-events: none;
+  }
+
   // --- Arte ---------------------------------------------------------------
   .card__art {
     grid-area: art;

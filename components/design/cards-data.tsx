@@ -304,7 +304,7 @@ export const CARDS: CardData[] = [
     damageType: "cortante",
   },
   {
-    category: "arma", rarity: "epico", emoji: "🪄",
+    category: "arma", rarity: "epico", emoji: "🦯",
     name: "Bastón del poder",
     text: <>Foco arcano: <b>+1</b> a tiradas y CD de hechizos y <b>+1 CA</b>. Potencia las cartas de Mago.</>,
     stats: [{ label: "Foco arcano" }, { k: "CA", v: "+1" }],
@@ -425,14 +425,14 @@ export const CARDS: CardData[] = [
     tag: "Común · Item",
   },
   {
-    category: "item", rarity: "comun", cost: "Acción rápida", emoji: "🪢",
+    category: "item", rarity: "comun", cost: "Acción rápida", emoji: "🧶",
     name: "Cuerda de cáñamo",
     text: <>Cruzas un hex de Río/Lago sin la penalización de nadar.</>,
     stats: [{ label: "Cruza agua" }],
     tag: "Común · Item",
   },
   {
-    category: "item", rarity: "comun", cost: "Pasiva", emoji: "🪨",
+    category: "item", rarity: "comun", cost: "Pasiva", emoji: "⛰️",
     name: "Yesca y pedernal",
     text: <>Enciendes la Antorcha o la Hoguera sin gastar tu Acción rápida.</>,
     stats: [{ label: "Enciende gratis" }],
@@ -474,7 +474,7 @@ export const CARDS: CardData[] = [
     tag: "Común · Item",
   },
   {
-    category: "item", rarity: "poco-comun", cost: "Acción rápida", emoji: "🪞",
+    category: "item", rarity: "poco-comun", cost: "Acción rápida", emoji: "۝",
     name: "Espejo de acero pequeño",
     text: <>Miras el interior de un grupo vecino sin entrar (como quedar Detectado al instante). <i>Grupos: inactivo en el prototipo.</i></>,
     stats: [{ label: "Otea grupo" }],
@@ -566,7 +566,7 @@ export const CARDS: CardData[] = [
     tag: "Común · Item",
   },
   {
-    category: "item", rarity: "poco-comun", cost: "Acción", emoji: "🪤",
+    category: "item", rarity: "poco-comun", cost: "Acción", emoji: "🕳️",
     name: "Trampa para osos",
     text: <>Colocas una trampa en un hex adyacente; el primer enemigo que entra queda <b>Inmovilizado</b> y recibe 1d6 contundente.</>,
     stats: [{ k: "Daño", v: "1d6" }, { label: "Inmoviliza" }],
@@ -744,7 +744,7 @@ export const CARDS: CardData[] = [
 
   // ----------------------------------------------------------- MERCENARIO
   {
-    category: "mercenario", rarity: "comun", cost: "Acción", emoji: "🗡️",
+    category: "mercenario", rarity: "comun", cost: "Acción", emoji: "👤",
     name: "Mercenarios de las Llanuras",
     text: <>Un mercenario ataca a un enemigo adyacente: <b>1d6+2</b> cortante.</>,
     stats: [{ k: "Daño", v: "1d6+2" }],
@@ -752,7 +752,7 @@ export const CARDS: CardData[] = [
     damageType: "cortante",
   },
   {
-    category: "mercenario", rarity: "comun", cost: "Acción", emoji: "🏹",
+    category: "mercenario", rarity: "comun", cost: "Acción", emoji: "🧝🏼",
     name: "Arquero a sueldo",
     text: <>Disparo a distancia (alcance 4 hex): <b>1d6</b> perforante.</>,
     stats: [{ k: "Daño", v: "1d6" }, { k: "Alcance", v: "4 hex" }],
@@ -760,7 +760,7 @@ export const CARDS: CardData[] = [
     damageType: "perforante",
   },
   {
-    category: "mercenario", rarity: "poco-comun", cost: "Acción", emoji: "🍺",
+    category: "mercenario", rarity: "poco-comun", cost: "Acción", emoji: "👹",
     name: "Bruto de taberna",
     text: <>Ataque melee <b>1d8</b> contundente; <b>+2 de daño</b> si el objetivo está por debajo del 50 % de PV.</>,
     stats: [{ k: "Daño", v: "1d8" }],
@@ -768,7 +768,7 @@ export const CARDS: CardData[] = [
     damageType: "contundente",
   },
   {
-    category: "mercenario", rarity: "poco-comun", cost: "Acción", emoji: "❤️‍🩹",
+    category: "mercenario", rarity: "poco-comun", cost: "Acción", emoji: "🧚🏼",
     name: "Curandera errante",
     text: <>Los mercenarios te asisten: recuperas <b>1d8</b> PV.</>,
     stats: [{ k: "Cura", v: "1d8" }],

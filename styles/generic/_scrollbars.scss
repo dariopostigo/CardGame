@@ -1,7 +1,13 @@
 @use "../abstracts" as *;
 
 // Barras de scroll finas y teñidas con el skin en toda la wiki.
+//
+// El pulgar tiene token propio ("scrollbar") y no reusa "border": con el gris
+// pálido de los bordes casi no se veía dónde agarrarlo. Solo la propiedad
+// estándar: en Chromium, si hay scrollbar-color, las reglas
+// ::-webkit-scrollbar del mismo scroller se ignoran, así que un :hover por
+// esa vía no llegaría a aplicarse.
 * {
   scrollbar-width: thin;
-  scrollbar-color: skin("border") transparent;
+  scrollbar-color: skin("scrollbar") transparent;
 }

@@ -287,8 +287,8 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
 | Épico (morado) | 150 | 60 |
 | Legendario (dorado) | 400 | 160 |
 
-- Los **Legendarios** normalmente **no se venden en tiendas** (solo se encuentran); el mercado llega hasta Épico.
-- Las tiendas tienen **stock limitado/rotatorio** (no un catálogo infinito), para que explorar y encontrar botín sigan importando y comprar no eclipse la exploración.
+- **Sin tope de rareza de momento:** cualquier carta puede aparecer en una tienda, **también los Legendarios**, a su precio de la tabla (400 de oro ya es de por sí una barrera). Cerrar el mercado por encima de Épico queda como palanca de balance futura ([`ideas.md`](ideas.md)).
+- Las tiendas tienen **stock limitado** (no un catálogo infinito), para que explorar y encontrar botín sigan importando y comprar no eclipse la exploración. La oferta concreta de cada NPC —cuántas cartas y cuándo se renueva— está en `characters/npcs.md` §3: **se sortea al empezar el capítulo y no cambia hasta el siguiente**.
 
 ### 6b.4 Cómo encaja con el mazo
 

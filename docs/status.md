@@ -37,7 +37,7 @@ Foto única y honesta de qué está definido y qué no, para no perderse entre l
 | Mazo de encuentro | ✅ | 10 cartas de Combate + 10 de Suceso, cruce con las 6 fichas, mazo único (`cards/encounter.md`). Falta balancear frecuencias |
 | **Enemigos — bloque de combate** | ✅ | 10 bloques jugables (PV/CA/ataque/daño/velocidad/detección/habilidad) + reglas de derivación (`characters/enemies.md` §5b). Falta balancear |
 | Enemigos — bestiario (variedad) | 🟡 | ~8 normales/élite + 2 jefes de ejemplo (`characters/enemies.md`) |
-| NPCs | 🟡 | 8 tipos definidos (7 en el prototipo; el Dador de misión es solo Campaña) (incl. **Sacerdote/Sanador** que limpia Maldiciones) e interacción ✅; **Mercenario resuelto** (`cards/mercenaries.md`); NPCs con nombre = sin definir |
+| NPCs | 🟡 | 8 tipos definidos (7 en el prototipo; el Dador de misión es solo Campaña) (incl. **Sacerdote/Sanador** que limpia Maldiciones) e interacción ✅; **Mercenario resuelto** (`cards/mercenaries.md`); **stock de tienda resuelto** (4/3/3/2 cartas, sorteadas por capítulo y fijas hasta el siguiente, `characters/npcs.md` §3); NPCs con nombre = sin definir |
 
 ## 3. Mundo y estructura
 
