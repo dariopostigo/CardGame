@@ -26,9 +26,10 @@ type Theme = CardTheme;
 // Los "vector-*" además traen marco SVG propio en card-frames.tsx.
 const THEMES: { key: Theme; label: string }[] = [
   { key: "pergamino", label: "Pergamino" },
-  { key: "vector-oro", label: "Vector · Oro" },
   { key: "vector-arborea", label: "Vector · Arbórea" },
-  { key: "vector-sombra", label: "Vector · Sombra" },
+  { key: "vector-blason", label: "Vector · Blasón" },
+  { key: "vector-vitela", label: "Vector · Vitela" },
+  { key: "runica", label: "Rúnica" },
 ];
 
 // Iconos de tipo de daño (game-design.md §4b.10). Sin entrada = la carta no hace daño.
@@ -64,6 +65,19 @@ const RARITIES: { rarity: string; tag: string; legendary?: boolean }[] = [
 ];
 
 const MAX_TILT = 10;
+
+// Vistas del escenario. "Muestra" es la de trabajo mientras se itera un diseño:
+// una carta por categoría, que es lo que hace falta para ver todas las variantes
+// de fichas (manos, daño, peso, severidad, coste) sin pintar el catálogo entero.
+// El catálogo completo sigue a un clic, para revisar el diseño ya elegido contra
+// las 97 cartas reales.
+type View = "muestra" | "cards" | "rarities";
+
+// Una carta por categoría, la primera de cada una: no se eligen a mano para que
+// la muestra siga a cards-data.tsx si el catálogo cambia.
+const SAMPLE: CardData[] = CATEGORIES.map((c) => CARDS.find((card) => card.category === c.key)).filter(
+  (c): c is CardData => c !== undefined
+);
 
 // Icono principal (card__badge), por categoría. Las cartas de CLASE llevan todas
 // el mismo (antes cambiaba por clase: 🛡️/🔮/🗡️/✨, redundante con la clase que ya
@@ -176,13 +190,13 @@ function LabCard({ data, tilt, theme }: { data: CardData; tilt: boolean; theme: 
 export default function CardDesignLab() {
   const [theme, setTheme] = useState<Theme>("pergamino");
   const [tilt, setTilt] = useState(true);
-  const [view, setView] = useState<"cards" | "rarities">("cards");
+  const [view, setView] = useState<View>("muestra");
   const [category, setCategory] = useState<Category | "todas">("todas");
 
-  const shown = useMemo(
-    () => (category === "todas" ? CARDS : CARDS.filter((c) => c.category === category)),
-    [category]
-  );
+  const shown = useMemo(() => {
+    if (view === "muestra") return SAMPLE;
+    return category === "todas" ? CARDS : CARDS.filter((c) => c.category === category);
+  }, [view, category]);
 
   const btn = (active: boolean) =>
     `rounded-md border px-3 py-1.5 text-sm transition-colors ${
@@ -195,7 +209,8 @@ export default function CardDesignLab() {
     <div className={`card-lab ${cormorant.variable} ${ebGaramond.variable}`} data-theme={theme}>
       <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">Diseño de cartas</h1>
       <p className="mb-5 text-sm text-[var(--wiki-muted)]">
-        Galería de estilos del esqueleto de carta. Cambia de diseño con las pestañas. Datos de{" "}
+        Galería de estilos del esqueleto de carta. Cambia de diseño con las pestañas; la vista{" "}
+        <b>Muestra</b> enseña una carta por categoría, que es con lo que se itera el diseño. Datos de{" "}
         <code className="rounded bg-[var(--wiki-code-bg)] px-1.5 py-0.5 text-[0.8em]">docs/cards/*</code>{" "}
         y <code className="rounded bg-[var(--wiki-code-bg)] px-1.5 py-0.5 text-[0.8em]">game-design.md</code> §3.
       </p>
@@ -212,7 +227,12 @@ export default function CardDesignLab() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]">Vista</span>
-          <button className={btn(view === "cards")} onClick={() => setView("cards")}>Catálogo</button>
+          <button className={btn(view === "muestra")} onClick={() => setView("muestra")}>
+            Muestra ({SAMPLE.length})
+          </button>
+          <button className={btn(view === "cards")} onClick={() => setView("cards")}>
+            Catálogo ({CARDS.length})
+          </button>
           <button className={btn(view === "rarities")} onClick={() => setView("rarities")}>Rareza</button>
         </div>
         {view === "cards" && (
@@ -238,7 +258,7 @@ export default function CardDesignLab() {
       <div className="card-lab__stage">
         <CardFrameDefs />
         <div className="card-lab__grid">
-          {view === "cards"
+          {view !== "rarities"
             ? shown.map((c) => <LabCard key={c.name} data={c} tilt={tilt} theme={theme} />)
             : RARITIES.map((r) => (
                 <LabCard

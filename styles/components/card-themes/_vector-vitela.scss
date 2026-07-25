@@ -1,0 +1,271 @@
+@use "sass:math";
+@use "../../abstracts" as *;
+
+// =========================================================================
+// Tema VECTOR · VITELA
+//
+// Copia de Vector·Blasón con UNA diferencia: el panel de lectura no es oro
+// batido sino vitela. El resto —filete, cantoneras, cresta, gema, fichas— es
+// idéntico y sale del mismo <BlasonFrame> (card-frames.tsx), aquí con la piel
+// "vitela".
+//
+// El porqué: sobre el degradado dorado la tinta perdía contraste justo donde
+// más falta hace, en el titular y la descripción, y con una serif fina el
+// texto se deshacía. Sobre vitela la mancha de texto va a ~10:1 y el fondo es
+// una superficie definida en vez de un brillo. Lo que cambia respecto a
+// Blasón, todo junto:
+//   - $ink casi negro y peso de cuerpo 500 (la EB Garamond 400 era el otro
+//     mitad del problema: no era solo el fondo, eran las letras),
+//   - realce del texto invertido (blanco tenue en vez de grabado en oro),
+//   - filetes y pastillas del pie recalibrados al claro.
+//
+// Cotas ligadas al viewBox del marco (260×364), las mismas que Blasón:
+//   cresta: base y=176 (= --art-h), pico y=142, gema centrada en (130,172).
+// =========================================================================
+
+$bg: #140800;            // fondo bajo el arte (solo se ve en los redondeos)
+$art-lo: #0c0300;        // viñeta del arte
+$art-hi: rgba(66, 26, 2, 0.8); // luz cálida del centro del arte
+$gilt: #d18c3e;          // oro medio (aros de las fichas)
+$gilt-hi: #f8dda6;       // oro claro (luces)
+$gilt-lo: #7d4f1f;       // oro en sombra
+$ink: #2a1d0b;           // tinta sobre vitela
+$ink-strong: #170e02;    // tinta de los términos en negrita
+$rule: rgba(94, 68, 26, 0.55); // filete bajo el titular
+$emboss: rgba(255, 252, 240, 0.6); // realce del texto sobre claro
+$stat-bg: #3c2109;       // pastilla de stat
+$stat-ink: #f4e0b4;
+$gem-hi: #e0555c;        // gema: luz
+$gem-mid: #c01f31;
+$gem-lo: #6d0413;        // gema: sombra
+
+// --- Cotas ligadas al viewBox del marco (ver cabecera) --------------------
+$art-height-theme: 176px;
+$crest-base: 176px;
+$gem-size: 44px;
+$gem-half: math.div($gem-size, 2);
+$gem-center: 172px;
+
+// Las cantoneras ocupan una escuadra de 12px pegada al filete (brazos hasta
+// x=84 e y=76). Las fichas van por dentro de esa escuadra, no encima.
+$frame-inner: 15px;      // borde interior del filete
+$chip-top: 36px;
+$sub-size: 26px;
+$sub-gap: 5px;
+$chip-side: 32px;        // por dentro del brazo de la cantonera (12+12) + aire
+
+.card-lab[data-theme="vector-vitela"] {
+  .card {
+    --card-radius: 14px;
+    --art-h: #{$art-height-theme};
+
+    background: $bg;
+    font-family: $font-serif-display;
+    color: $ink;
+    box-shadow:
+      0 18px 40px -18px #000,
+      0 0 26px -12px var(--rarity-soft);
+  }
+
+  .card__frame {
+    display: block;
+  }
+
+  // El filete del SVG arranca en 2.5px, así que el rim de rareza se queda con
+  // los 2px exteriores: la carta se sigue leyendo por color de lejos sin
+  // pelearse con el oro.
+  .card::before {
+    border-width: 2px;
+    box-shadow: 0 0 20px -4px var(--rarity-soft);
+  }
+
+  // --- Arte a sangre: las cantoneras se le montan encima ------------------
+  .card__art {
+    height: var(--art-h);
+    font-size: 3.6rem;
+    background:
+      radial-gradient(105% 80% at 50% 32%, $art-hi, transparent 66%),
+      radial-gradient(140% 120% at 50% 118%, rgba(0, 0, 0, 0.8), transparent 52%),
+      radial-gradient(100% 90% at 50% 36%, #2d1000, $art-lo 82%);
+
+    .emoji {
+      opacity: 0.94;
+      filter: drop-shadow(0 4px 9px rgba(0, 0, 0, 0.8));
+    }
+  }
+
+  // --- Gema del blasón: badge de categoría, clavado en el pico -----------
+  // El engarce en estrella lo pinta el SVG por detrás (plano art-overlay);
+  // esta es la piedra, que va en el plano de las fichas.
+  .card__badge {
+    width: $gem-size;
+    height: $gem-size;
+    top: $gem-center - $gem-half;
+    left: 50%;
+    font-size: 1.25rem;
+    background:
+      radial-gradient(circle at 33% 24%, rgba(255, 255, 255, 0.55), transparent 42%),
+      radial-gradient(circle at 50% 46%, $gem-hi, $gem-mid 46%, $gem-lo 88%);
+    color: #fff0dd;
+    // Aro doble: oro por fuera y el color de rareza por dentro, que es lo que
+    // hace que la gema cuente la rareza sin cambiar de piedra.
+    border: 3px solid $gilt;
+    // El translate va ANTES del translateZ del mixin card-chip, que se pierde
+    // al redeclarar transform: hay que reponerlo o la gema no levita con el tilt.
+    transform: translate(-50%, 0) translateZ(depth("chip"));
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    box-shadow:
+      0 0 0 1px $gilt-lo,
+      inset 0 0 0 1px var(--rarity),
+      0 4px 10px rgba(0, 0, 0, 0.6),
+      0 0 14px var(--rarity-soft);
+  }
+
+  // --- Sub-fichas: gemas pequeñas por dentro de la cantonera --------------
+  .card__hands,
+  .card__damage-type {
+    width: $sub-size;
+    height: $sub-size;
+    left: $chip-side;
+    font-size: 0.74rem;
+    background: radial-gradient(circle at 34% 26%, #6a4a1f, #1c0f03 82%);
+    color: #f6e6c4;
+    border: 2px solid $gilt;
+    box-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.6),
+      inset 0 1px 3px rgba(255, 240, 200, 0.28);
+  }
+
+  .card__hands {
+    top: $chip-top;
+  }
+
+  .card__damage-type {
+    top: $chip-top;
+  }
+
+  // Los mercenarios llevan daño sin manos: solo baja un hueco si hay manos.
+  .card__hands ~ .card__damage-type {
+    top: $chip-top + $sub-size + $sub-gap;
+  }
+
+  // --- Coste: placa de bronce a la derecha, a la altura de las fichas -----
+  // Sin el text-transform del esqueleto: los costes son frases ("2 acciones"),
+  // no números, y en versalitas la placa se comía un tercio del ancho.
+  .card__cost {
+    top: $chip-top;
+    right: $chip-side;
+    height: 22px;
+    min-width: 22px;
+    padding: 0 8px;
+    border-radius: radius("sm");
+    font-family: $font-serif-body;
+    font-size: 0.64rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    background: linear-gradient(180deg, #5b3a14, #241405);
+    color: $gilt-hi;
+    border: 1.5px solid $gilt;
+    box-shadow:
+      inset 0 1px 0 rgba(248, 221, 166, 0.3),
+      0 2px 6px rgba(0, 0, 0, 0.55);
+  }
+
+  // --- Nombre: escrito sobre la vitela, bajo la gema ----------------------
+  // El margen superior deja libre la mitad de la gema que cuelga sobre el
+  // panel, y el filete inferior separa titular de cuerpo sin caja ni banda.
+  // El realce va al revés que en Blasón: allí el texto está grabado en metal
+  // (luz por debajo), aquí escrito sobre vitela (luz por encima).
+  .card__name {
+    margin: ($gem-center + $gem-half - $crest-base + 6px) 20px 0;
+    padding: 0 0 6px;
+    font-size: 1.22rem;
+    font-weight: 700;
+    letter-spacing: 0.012em;
+    line-height: 1.15;
+    color: $ink;
+    text-shadow: 0 1px 0 $emboss;
+    border-bottom: 1px solid $rule;
+    box-shadow: 0 1px 0 rgba(255, 252, 240, 0.5);
+  }
+
+  .card[data-fit="2"] .card__name,
+  .card[data-fit="3"] .card__name {
+    font-size: 1.08rem;
+    padding-bottom: 5px;
+  }
+
+  // --- Descripción: el peso 500 es tan importante como el fondo -----------
+  // Con la EB Garamond en 400 el trazo es tan fino que a 0.72rem (escalón de
+  // ajuste 3) se rompe aunque el contraste dé de sobra.
+  .card__text {
+    margin: 7px 0 0;
+    padding: 0 20px 4px;
+    font-family: $font-serif-body;
+    font-size: 0.86rem;
+    font-weight: 500;
+    line-height: 1.36;
+    color: $ink;
+
+    b {
+      color: $ink-strong;
+      font-weight: 700;
+    }
+  }
+
+  .card[data-fit="2"] .card__text {
+    font-size: 0.78rem;
+  }
+
+  .card[data-fit="3"] .card__text {
+    font-size: 0.72rem;
+  }
+
+  // --- Pie: pastillas oscuras, que sobre vitela contrastan aún mejor ------
+  .card__footer {
+    padding: 6px 14px 15px;
+    gap: 4px 5px;
+  }
+
+  .stat {
+    padding: 2px 9px;
+    border-radius: radius("pill");
+    font-family: $font-serif-body;
+    background: linear-gradient(180deg, #56340f, $stat-bg);
+    border: 1px solid color-mix(in srgb, #{$gilt-lo} 75%, transparent);
+    color: $stat-ink;
+    box-shadow:
+      inset 0 1px 0 rgba(248, 221, 166, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .stat__k {
+    color: color-mix(in srgb, #{$stat-ink} 62%, transparent);
+    opacity: 1;
+  }
+
+  .stat__v {
+    color: $gilt-hi;
+  }
+
+  // Sin uso en este tema: el coste va en la placa de la esquina.
+  .card__cost-line {
+    display: none;
+  }
+
+  // --- Escenario: penumbra cálida de cripta -------------------------------
+  .card-lab__stage {
+    background: radial-gradient(120% 80% at 50% 0%, #2b1a08, #0e0703 74%);
+  }
+
+  // El gloss blanco sobre la vitela la lava y se lleva por delante justo el
+  // contraste que este tema viene a arreglar: se queda en un apunte.
+  .card__gloss {
+    opacity: 0;
+  }
+
+  .card:hover .card__gloss {
+    opacity: 0.3;
+  }
+}
