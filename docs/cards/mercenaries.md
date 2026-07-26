@@ -5,7 +5,8 @@ Carta de **Acción** que representa a una compañía de mercenarios a tu servici
 ## 1. Concepto
 
 - **Todo es una carta:** en vez de simular un segundo personaje con estadísticas y mazo propios, un mercenario es una **carta de tipo Acción** que va a tu mazo personal. Con un solo héroe en el prototipo ([`../characters/heroes.md`](../characters/heroes.md)), te da "acciones de aliado" sin la complejidad de un compañero completo.
-- **Reutilizable, cuesta la Acción:** jugar la carta gasta tu **Acción** principal del turno ([`../game-design.md`](../game-design.md) §4b.3). Como cualquier carta del mazo personal, **no se consume** al jugarla (§4): vuelve a estar disponible. Es, en la práctica, un aliado al que "das la orden" una vez por turno.
+- **Cuesta la Acción y gasta la preparación:** dar la orden gasta tu **Acción** principal del turno ([`../game-design.md`](../game-design.md) §4b.3) y, por la **regla madre** de §4, la carta **vuelve al Mazo**: para volver a llamarlos tiene que **salirte otra vez en un Oteo**. *(Este punto decía antes "un aliado al que das la orden una vez por turno" — era texto anterior a que se cerrara §4 y **no es la regla**.)*
+- **Son ráfaga, no un aliado permanente *(consecuencia buscada)*:** por eso un mercenario de rareza alta **puede pegar más fuerte que tú** sin romper nada (la Compañía de la Grifa Negra hace ~5,4 de daño por turno frente a los ~5,9 del Guerrero **cada** turno). Pagas esa potencia con un hueco de Mazo, un hueco de "en juego" y la suerte del Oteo. Esto también responde a la duda de §4 de si los Épicos deberían pasar a `1/combate`: **no hace falta**, el propio Oteo ya los raciona.
 - **Cuenta para el máximo del mazo:** ocupa un hueco del mazo personal como cualquier carta del Mazo (`../game-design.md` §4). Se puede **vender por oro al Capitán de mercenarios**, el mismo NPC que las vende (regla "cada NPC compra lo que vende", `../game-design.md` §6b.4) — a diferencia de una Maldición ([`curses.md`](curses.md)), que no se puede vender.
 - **Usa Rareza:** (`../game-design.md` §3.3) marca su potencia; a mayor rareza, más fuerte el efecto.
 
@@ -65,7 +66,7 @@ Dos vías, con el mismo trade-off que el resto del juego (gratis-pero-arriesgado
 
 - [x] Definir **alcance** (melee / a distancia, medido desde tu hexágono) y si tiran ataque → §1b: **sí tiran**, `1d20 + bono por rareza` vs CA. Falta balancear.
 - [ ] Balancear dados/bonos por rareza y la CD de reclutamiento (§2a).
-- [ ] Decidir si los mercenarios más potentes (Épico/Legendario) pasan a uso **1/combate** en vez de reutilizable, como palanca de balance.
+- [x] Decidir si los mercenarios más potentes (Épico/Legendario) pasan a uso **1/combate** → **no hace falta** *(decidido)*: la regla madre de `../game-design.md` §4 (jugar la carta gasta la preparación) ya los raciona al ritmo del Oteo, así que su potencia por encima del ataque del héroe es intencionada y no acumulable (§1).
 - [x] Definir el NPC concreto que los vende (§2b) y su stock/rotación → **Capitán de mercenarios**, **2 cartas** sorteadas al empezar el capítulo y fijas hasta el siguiente (`../characters/npcs.md` §3).
 - [ ] Decidir si una ficha ofrece un mercenario de rareza fija o aleatoria.
 - [ ] Cuando quieras, ampliar el catálogo (§3) con más compañías y variantes de rareza.

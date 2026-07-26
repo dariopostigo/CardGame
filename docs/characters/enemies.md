@@ -46,7 +46,7 @@ Formaliza cómo el héroe se acerca a un enemigo **Latente** antes de que empiec
    - **Fallo** → el enemigo pasa a **Activo** (§2): te ha detectado, arranca la persecución/combate (§5b.6).
 3. **Ataque desde el sigilo = emboscada:** si llegas a adyacencia (melee) o abres fuego (a distancia) **sin haber sido detectado**, es una **emboscada**: atacas **con ventaja** y **actúas primero** (ignoras la iniciativa el primer turno) — coherente con la emboscada de Bosque (`../board/board-map.md` §3a) y *Golpe de las sombras* ([`../cards/encounter.md`](../cards/encounter.md)).
 
-**Por qué importa el alcance del enemigo:** contra un enemigo **a distancia**, colarte sin ser detectado te deja **pegarte a él** y negarle el kiting (§5b.6); si te detecta de lejos, abrirá fuego desde su alcance. Contra uno melee, la emboscada te da el primer golpe con ventaja.
+**Por qué importa el alcance del enemigo:** contra un enemigo **a distancia**, colarte sin ser detectado te deja **pegarte a él**, y desde ahí solo puede dispararte **a bocajarro, con Desventaja** (§5b.6 paso 3, `../game-design.md` §4b.1); si te detecta de lejos, abrirá fuego desde su alcance con la tirada limpia. Contra uno melee, la emboscada te da el primer golpe con ventaja.
 
 **Fichas ambiguas (Amenaza):** esta fase solo aplica a enemigos que **ya ves** (ficha de Enemigo o ya detectados). Una ficha de **Amenaza** (`../board/board-map.md` §4) es incierta hasta interactuar: puede **sorprenderte** y arrancar el combate sin fase de aproximación previa (el mazo de encuentro puede dar *¡Emboscada!* a su favor, [`../cards/encounter.md`](../cards/encounter.md)).
 
@@ -108,7 +108,7 @@ Al quedar adyacente a una ficha de Amenaza (revelada como enemigo) o de Enemigo,
 
 | Enemigo | FUE | DES | CON | INT | SAB | CAR | Dónde | Idea de gancho mecánico |
 |---|---|---|---|---|---|---|---|---|
-| Capitán bandido | 16 | 12 | 13 | 8 | 10 | 15 | Guarida en Llanura/Camino | Llega acompañado de 1-2 Normales de refuerzo; CAR alto porque lidera |
+| Capitán bandido | 16 | 12 | 13 | 8 | 10 | 15 | Guarida en Llanura/Camino | Llega acompañado de **1** Normal de refuerzo (tope de 2 enemigos, §5b.6); CAR alto porque lidera |
 | Trol de las minas | 16 | 13 | 15 | 8 | 12 | 10 | Guarida en Mina | Mucho HP (CON alta), golpe que ignora parte de la armadura ligera |
 | Araña matriarca | 12 | 16 | 15 | 10 | 13 | 8 | Guarida en Montaña/Cueva | Versión grande de la Araña cavernaria, veneno más fuerte |
 
@@ -126,21 +126,26 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 
 | Valor | Cómo se calcula |
 |---|---|
-| **PV** | `Dados de Vida × 5 + mod CON × Dados de Vida` (dado de monstruo d8, promedio 5). DV por categoría: Normal **2**, Élite **5**, Jefe de capítulo **9**, Jefe final **14**. Ajustable por criatura (ej. "bajo HP" = menos DV). |
+| **PV** | `Dados de Vida × 5 + mod CON × Dados de Vida` (dado de monstruo d8, promedio 5). DV por categoría: Normal **2**, Élite **4**, Jefe de capítulo **9**, Jefe final **14**. Ajustable por criatura (ej. "bajo HP" = menos DV). |
 | **CA (Defensa)** | `10 + mod DES + armadura natural` (`../game-design.md` §2). Armadura natural por categoría: Normal +0/+1, Élite +1/+2, Jefe +3/+4. |
 | **Bono de ataque** | `mod de la stat del ataque` (FUE melee; DES para ataques a distancia, armas ligeras/finesse y **ataques naturales ágiles de bestias** —mordiscos, zarpazos rápidos—). **Sin bono de competencia**, igual que los héroes (§4b.4) — ver nota de balance abajo. |
 | **Daño** | `dado del ataque + mod stat`, con su tipo de daño (🗡️🏹🔨 y otros — `../game-design.md` §4b.10). |
-| **Velocidad** | **2 hex para todos** (igualado al movimiento del héroe, `../game-design.md` §2.2; se personalizará por tipo más adelante —algunos más rápidos "cazadores", otros más lentos—, `../ideas.md`). Movimiento en combate según §4b.5. |
+| **Velocidad** | **2 hex de base**, con **3 para los cazadores ágiles** *(decidido)*: Lobo, Araña matriarca y la Sombra que Devora. Movimiento en combate según `../game-design.md` §4b.5. |
 | **Detección** | `2 hex + 1 por punto de mod SAB`, reducida por ocultación del héroe (§2). Debe quedar **por debajo** de la visión de detalle del héroe (`../game-design.md` §2.3). |
+| **Crítico** | **Igual que el héroe** *(decidido)*: nat 20 = impacto automático y **dados de daño doblados** (no el modificador); nat 1 = fallo automático (`../game-design.md` §4b.4 paso 5). No estaba escrito para los enemigos y ahora sí: es la misma matemática en los dos bandos. |
 | **Bono de jefe** | Solo categorías Jefe: **+2 a ataque y a CA** (representa su prestancia sobrenatural), ya incluido en sus bloques. |
 
 > **Nota de balance (accuracy):** como ni héroes ni enemigos tienen bono de competencia, la precisión sale solo de los modificadores + cartas. Si al testear la sensación de "fallo mucho" es alta, la solución es añadir un **bono de competencia global** (+2) a ambos lados — decisión aplazada al balance, no ahora.
+
+> **Velocidad diferenciada — qué arregla y qué no *(decidido)*.** Los 3 hex del Lobo y de la Matriarca son **textura**, no la solución al posicionamiento: como un enemigo mueve su Velocidad completa **y** ataca el mismo turno (§5b.6, paso 4), el *kiting* a pie **no funciona a ninguna velocidad** y no se pretende que funcione (`../game-design.md` §4b.5). Lo que hace la Velocidad 3 es que a esas tres criaturas **no puedas elegir la distancia** ni cortarles la carga con terreno: te alcanzan desde 3 hex. Crear distancia de verdad es cosa del **control** (Inmovilizado / Ralentizado / Oculto, [`../effects.md`](../effects.md)).
+>
+> **Deliberadamente no se usa Velocidad 1.** Un enemigo más lento que el héroe se vuelve *gratis* para cualquiera que ataque a distancia: te alejas 2, él avanza 1, y lo mueles sin que te toque nunca. El **Trol se queda en 2** por eso, aunque temáticamente pediría ser lento; su peso se expresa en PV y daño, no en velocidad. Esto cierra la personalización que §5b.1 tenía apuntada como futura en `../ideas.md`.
 
 ### 5b.2 Normales (2 DV)
 
 | Enemigo | Naturaleza | PV | CA | Vel | Det | Ataque | Habilidad |
 |---|---|---|---|---|---|---|---|
-| Lobo de las lindes | Bestia | 12 | 12 | 2 | 2 | Mordisco +1 / 1d6+1 🏹 / melee | **Cazador de manada:** ventaja al atacar si otro Lobo está adyacente al objetivo |
+| Lobo de las lindes | Bestia | 12 | 12 | **3** | 2 | Mordisco +1 / 1d6+1 🏹 / melee | **Cazador de manada:** ventaja al atacar si otro Lobo está adyacente al objetivo |
 | Bandido merodeador | Humanoide | 10 | 12 | 2 | **1** | Cimitarra +1 / 1d6+1 🗡️ / melee | **Escurridizo:** por debajo del 50 % de PV, en su turno roba un objeto (si adyacente) o **huye** (Desengancharse, §5b.6) en vez de atacar |
 | Trasgo de pantano | Humanoide | 6 | 12 | 2 | 2 | Daga emponzoñada +1 / 1d4+1 🏹 / melee | **Veneno:** al impactar aplica Envenenado (salvación CON CD 12, [`../effects.md`](../effects.md)) |
 | Esqueleto errante | No-muerto | 10 | 12 | 2 | 2 | Espada mellada +1 / 1d6+1 🗡️ / melee | Resistencias/vulnerabilidades de su Naturaleza (§3b): resistente a 🏹, vulnerable a 🔨 y ☀️ |
@@ -150,13 +155,17 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 
 > **Nota — Dados de Vida variables:** el Trasgo de pantano usa **1 DV** (por su gancho *bajo HP*), de ahí sus 6 PV en vez de ~12; el resto de Normales usan los 2 DV de la sección. Es la excepción "ajustable por criatura" de §5b.1.
 
-### 5b.3 Élite (5 DV)
+### 5b.3 Élite (4 DV)
 
 | Enemigo | Naturaleza | PV | CA | Vel | Det | Ataque | Habilidad |
 |---|---|---|---|---|---|---|---|
-| Capitán bandido | Humanoide | 30 | 13 | 2 | 2 | Espada +3 / 1d8+3 🗡️ / melee | **Comandante:** llega con 1-2 Normales de refuerzo; mientras el Capitán viva, los refuerzos atacan con +1 |
-| Trol de las minas | Gigante | 35 | 13 | 2 | **3** | Garras +3 / 1d10+3 🔨 / melee (ignora el bono de armadura ligera del objetivo) | **Regeneración:** +2 PV al inicio de su turno, salvo que recibiera daño de **🔥 (fuego)** ese turno (Antorcha, Bola de fuego) — habilidad propia, no una vulnerabilidad de su Naturaleza (§3b) |
-| Araña matriarca | Bestia | 35 | 14 | 2 | **3** | Mordisco +3 / 1d8+3 🏹 + Veneno fuerte (2d4, CON CD 14) · Telaraña (alcance 3, DES CD 14) | **Veneno potente + Telaraña** (versión dura de la cavernaria) |
+| Capitán bandido | Humanoide | **24** | 13 | 2 | 2 | Espada +3 / 1d8+3 🗡️ / melee | **Comandante:** llega con **1** Normal de refuerzo; mientras el Capitán viva, el refuerzo ataca con +1 |
+| Trol de las minas | Gigante | **28** | 13 | 2 | **3** | Garras +3 / 1d10+3 🔨 / melee (ignora el bono de armadura ligera del objetivo) | **Regeneración:** **+1 PV** al inicio de su turno, salvo que recibiera daño de **🔥 (fuego)** ese turno (Antorcha, Bola de fuego) — habilidad propia, no una vulnerabilidad de su Naturaleza (§3b) |
+| Araña matriarca | Bestia | **28** | 14 | **3** | **3** | Mordisco +3 / 1d8+3 🏹 + Veneno fuerte (2d4, CON CD 14) · Telaraña (alcance 3, DES CD 14) | **Veneno potente + Telaraña** (versión dura de la cavernaria) |
+
+> **Los Élite bajan de 5 DV a 4 *(decidido)*, y la regeneración del Trol de +2 a +1.** Uno de estos tres es el **boss de la Partida rápida** (§6), elegido al azar, y con los valores anteriores (30/35/35 PV, regen +2) **los tres ganaban a los cuatro héroes**: el Guerrero tardaba 8,6 turnos en matar al Capitán y moría en 2, y contra el Trol tardaba **23 turnos** porque la regeneración de +2 se comía el 57 % de su daño. Con estas cifras, más los PV de protagonista (`../game-design.md` §2) y el ataque secundario (§4b.3), el boss se pelea a **5-6 turnos por bando**: se puede ganar, pero jugando bien.
+>
+> **Aviso concreto sobre el Trol:** su habilidad exige una respuesta de **fuego** y **ningún kit inicial lleva una** (`heroes.md` §2d) — la Antorcha necesita una mano libre y el Guerrero va con Espada + Escudo. Con regen +1 el Trol es ganable sin fuego (5,7 turnos), pero **encontrar una Antorcha o llevar al Mago sigue siendo la jugada**. Si al testear se quiere volver a subirle la regeneración, primero hay que darle al héroe una fuente de fuego accesible.
 
 ### 5b.4 Jefes (con Bono de jefe +2 ya incluido)
 
@@ -166,14 +175,15 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 - **Habilidades:** (1) *Aura de corrupción* — al empezar el combate y cada 3 turnos, el héroe salva SAB CD 14 o queda **Asustado** ([`../effects.md`](../effects.md)); (2) *Invocar* — cada 2 turnos aparece 1 Esqueleto errante.
 
 **Jefe final — "La Sombra que Devora"** (14 DV, **diseño multifase — boceto**) — Naturaleza **Sombrío** (§3b): resistente a 🗡️/🏹, vulnerable a ☀️
-- **PV** 140 · **CA** 18 · **Vel** 2 · **Det** 4
+- **PV** 140 · **CA** 18 · **Vel 3** · **Det** 4
 - **Ataque:** Zarpa devoradora +6 / 2d8+4 💀 / alcance 2, y **Drenar** (se cura la mitad del daño infligido)
 - **Habilidades:** combate **multifase** (al 66 % y al 33 % de PV gana un nuevo efecto / invoca sombras). Un jefe final merece diseño a medida cuando se escriba la Campaña — esto es solo el bloque base.
 
 ### 5b.5 Cómo se usa un bloque en combate
 
 1. El enemigo tira **iniciativa** (1d20 + mod DES) como el héroe (§4b.2).
-2. En su turno usa su **Velocidad** para acercarse (§4b.5) y **1 ataque**: `1d20 + bono de ataque` vs la **CA del héroe**; si impacta, aplica el daño y cualquier estado.
+2. En su turno usa su **Velocidad** para acercarse (§4b.5) y **1 ataque**: `1d20 + bono de ataque` vs la **CA del héroe**; si impacta, aplica el daño y cualquier estado. **Nat 20 = crítico** (dados de daño doblados), **nat 1 = fallo** — igual que el héroe (§5b.1, `../game-design.md` §4b.4).
+   - *Un enemigo tiene **1 ataque por turno**: no existe el ataque secundario de la Acción rápida, que es exclusivo del héroe (`../game-design.md` §4b.3). Es la compensación por que el héroe pelee solo contra varios.*
 3. Sus **habilidades** modifican esto según su texto. Los estados usan [`../effects.md`](../effects.md).
 4. Al llegar a **0 PV** cae y suelta oro/loot (`../game-design.md` §6b.1).
 
@@ -190,7 +200,8 @@ Cómo decide un enemigo **Activo** (§2) qué hacer en su turno. Es **determinis
 0. **Inicio de turno (automático, no es una elección):** resolver lo que se dispara "al inicio de tu turno" — regeneración (Trol), daño de estados que sufra el propio enemigo (Envenenado, [`../effects.md`](../effects.md)) y avanzar contadores de habilidad (Invocar cada 2 turnos, Aura cada 3). Comprobar umbrales de PV (multifase / huida).
 1. **¿Debe huir?** Si una habilidad lo ordena (ej. Bandido *Escurridizo* por debajo del 50 % de PV): intenta la **huida** (ver abajo).
 2. **¿Habilidad lista y útil?** Si tiene una habilidad activa disponible cuyo disparador se cumple y mejora su situación (ej. *Invocar* del Heraldo, *Telaraña* si el héroe no está ya Inmovilizado), la usa como su **Acción**.
-3. **¿Puede atacar ya?** Si el objetivo está **en alcance** (adyacente para melee; dentro de alcance para distancia, `../game-design.md` §4b.1), **ataca** (§5b.5). Un enemigo a distancia que tenga al héroe **demasiado cerca** (adyacente) primero se **aleja** hasta ≥2 hex (kiting) y luego dispara si le queda alcance.
+3. **¿Puede atacar ya?** Si el objetivo está **en alcance** (adyacente para melee; dentro de alcance para distancia, `../game-design.md` §4b.1), **ataca** (§5b.5).
+   - **Enemigo a distancia con el héroe encima *(precisado)*:** dispara **a bocajarro con Desventaja** (`../game-design.md` §4b.1) — **no** se aleja. Antes este paso decía que primero retrocedía hasta ≥2 hex ("kiting"), y eso era imposible de resolver: salir de tu adyacencia le obliga a **Desengancharse** (§4b.11) y, con la Velocidad igualada, el héroe se le vuelve a pegar en su turno. El enemigo pagaba un golpe gratis cada turno para no ganar nada. Disparar con Desventaja es la opción determinista y además simétrica con lo que puede hacer el héroe.
 4. **¿Acercarse?** Si el objetivo está fuera de alcance, gasta **Movimiento** para acercarse por la ruta transitable más corta (coste de terreno, `../board/board-map.md` §3a). Si tras moverse queda en alcance, ataca (paso 3).
 5. **Sin nada útil** (bloqueado, sin ruta): se acerca lo máximo posible y termina el turno.
 
@@ -211,6 +222,11 @@ Cómo decide un enemigo **Activo** (§2) qué hacer en su turno. Es **determinis
 **Varios enemigos a la vez:**
 - Cada enemigo tira su **propia iniciativa** (`../game-design.md` §4b.2) y corre el árbol por su cuenta en su turno — sin coordinación táctica compleja (coherente con "determinista simple").
 - **Refuerzos** (Capitán *Comandante*, carta *Refuerzos* del mazo de encuentro, [`../cards/encounter.md`](../cards/encounter.md)) entran **Activos** en el hexágono libre más cercano al combate y actúan desde el turno siguiente (tiran iniciativa al aparecer).
+- **Tope de 2 enemigos simultáneos en el prototipo *(decidido)*.** Nunca hay más de **2 enemigos actuando a la vez** contra el héroe (incluidos refuerzos e invocaciones): si una habilidad quiere meter un tercero, **espera** a que caiga uno.
+
+  > **Por qué hay tope.** El héroe tiene **1 turno**; N enemigos tienen **N turnos**. Con 3 Normales el daño entrante era ~4,7 por turno y el héroe necesitaba 9,5 turnos para limpiarlos: matemáticamente imposible, y no por los valores de cada bloque sino por la **economía de acción**. El ataque secundario (`../game-design.md` §4b.3) compensa hasta **2** atacantes; a partir de ahí no hay número que salve el encuentro. Por eso el tope es una regla y no una recomendación de balance, y por eso el *Comandante* del Capitán trae **1** refuerzo y no 1-2 (§5b.3).
+  >
+  > Subir el tope a 3 es viable **cuando** el héroe pueda tener aliados que actúen en su propio turno (grupo de héroes o mercenarios como ficha en el tablero, [`../ideas.md`](../ideas.md)) — no antes.
 
 ## 5c. Escala de dificultad (resuelve "hito → CR")
 
@@ -220,9 +236,21 @@ Como el leveling es por **hitos** (no XP; `../game-design.md` §5), no traducimo
 
 | Zona del mapa | Categorías que aparecen |
 |---|---|
-| Cerca de la entrada | Normales sueltos (1-2) |
-| Zona media | Normales en grupo + algún Élite |
-| Zona lejana / Guarida | Élite + el **boss** (Élite reforzado, §2c del `../board/board-map.md`) |
+| Cerca de la entrada | **1** Normal suelto |
+| Zona media | **2** Normales, o 1 Élite suelto |
+| Zona lejana / Guarida | 1 Élite (+1 Normal), y el **boss** en la Guarida (§2c del `../board/board-map.md`) |
+
+Las cantidades respetan el **tope de 2 enemigos simultáneos** (§5b.6): "Normales en grupo" era antes indefinido y con 3 el encuentro no se podía ganar.
+
+**Los tres Élite en una misma partida *(decidido)*.** Se reparten así, para que no se repita ninguno:
+
+| Sitio | Qué Élite |
+|---|---|
+| **Guarida** (garantizada) | El **boss**: 1 de los 3, al azar |
+| **Mazmorra** (opcional, 1 hex reforzado — `../board/board-map.md` §3b-bis) | 1 de los **2 restantes**, al azar |
+| Ficha de Enemigo en zona lejana | El que sobre, o ninguno según densidad |
+
+Así una partida completa te enfrenta a **2 Élite distintos como máximo**, y el que te toque de boss cambia la partida entera: el Trol pide fuego (§5b.3), la Matriarca control contra su Telaraña y el Capitán aguantar a dos a la vez.
 
 **Modo Campaña — por nivel de héroe / capítulo:**
 
@@ -246,7 +274,13 @@ El balance fino (cuántos a la vez, con qué stats exactas) se ajusta al testear
 - [x] Definir la **IA de combate** (bucle de decisión turno a turno) → §5b.6: árbol de prioridades **determinista**, patrón único, huida por prueba enfrentada de DES, disparadores de habilidad unificados. Los arquetipos de comportamiento quedan como evolución futura (`../ideas.md`).
 - [x] Boss de la **Partida rápida** = **uno de los 3 Élite, elegido al azar** al generar el mapa *(decidido)*; habita la Guarida y derrotarlo cierra la partida (`../board/board-map.md` §2b, §3b). Pendiente (balance): si el Élite-boss recibe algún refuerzo extra sobre su bloque normal (§5b).
 - [x] Definir cómo escala la dificultad según profundidad del mapa / nivel del personaje → §5c (qué categorías aparecen por zona en **Partida rápida** y por nivel/capítulo en Campaña). Falta balancear cantidades.
+- [x] **Personalizar la Velocidad por criatura** *(decidido)*: base 2, **3** para Lobo / Araña matriarca / Sombra que Devora, **ningún enemigo a 1** (§5b.1). Cierra lo que estaba apuntado como futuro en `../ideas.md`.
+- [x] **Escribir los críticos de los enemigos** *(decidido)*: simétricos con el héroe, nat 20 dobla dados (§5b.1, §5b.5). No estaban definidos.
+- [x] **Tope de 2 enemigos simultáneos** *(decidido)* — §5b.6, con las cantidades por zona de §5c ajustadas. Es un límite de **economía de acción** (el héroe tiene 1 turno, N enemigos tienen N), no de balance de bloques.
+- [x] **Rebajar los Élite** *(decidido)*: 5 DV → **4** (24/28/28 PV) y regeneración del Trol +2 → **+1** (§5b.3). Con los valores anteriores los tres ganaban a los cuatro héroes.
+- [x] Resolver el paso 3 de la IA para enemigos a distancia con el héroe adyacente → **disparan a bocajarro con Desventaja**, no retroceden (§5b.6). El "kiting" anterior era irresoluble con la Velocidad igualada.
 - [ ] Decidir si los nombres/historia de los jefes de capítulo y final son estos provisionales o se rediseñan al escribir la Campaña de verdad.
+- [ ] Al testear: revisar si el **Bandido** (Det 1) es *demasiado* fácil de emboscar, ahora que la visión de detalle del héroe va de 3 a 5 (§2b).
 - [ ] Cuando quieras, ir añadiendo más enemigos al bestiario de §5 (normales, élite, o nuevos jefes).
 - [x] Formalizar el sistema de tipos de daño y resistencias → **Naturaleza de criatura** (§3b) con resistencias/vulnerabilidades por defecto; multiplicadores y lista de tipos en `../game-design.md` §4b.10. Falta balancear (¿son los multiplicadores correctos? ¿demasiados/pocos tipos?).
 - [x] Naturaleza del Heraldo Ceniciento = **No-muerto de alto rango** *(decidido)*: hereda resistente 🏹 / vulnerable 🔨,☀️ (§3b, §5b.4).

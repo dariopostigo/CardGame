@@ -45,13 +45,16 @@ Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hu
 
 ## 4. Reglas transversales
 
-- **Stat de ataque:** FUE (armas pesadas), DES (ligeras finesse y a distancia), "FUE/DES" = usa el mejor de los dos mod. Los hechizos usan INT/SAB (`../game-design.md` §2.1).
+- **Stat de ataque:** FUE (armas pesadas), DES (finesse y a distancia), "FUE/DES" = usa el mejor de los dos mod. Los hechizos usan INT/SAB (`../game-design.md` §2.1).
+- **No existe la propiedad "Ligera" *(decidido)*.** La columna **Manos ✋/🤲** hace ese trabajo, y la columna *Propiedades* sigue vacía a propósito (§1). Había **dos reglas** colgando de una propiedad que no estaba en ninguna tabla —el segundo ataque de dual-wield (`../game-design.md` §4b.3) y *Ataque furtivo* del Pícaro ([`class.md`](class.md) §4)—, así que **ninguna de las dos podía dispararse nunca**. Las dos se reescribieron para leer ✋/🤲 o "a distancia".
+- **Ataque secundario (`../game-design.md` §4b.3):** con la Acción rápida puedes atacar otra vez con lo que lleves puesto. Con **dos armas ✋** (una por mano) el segundo ataque usa la otra arma **y suma el mod de la stat**; con **una sola arma** (✋ con escudo o mano libre, o 🤲) es un segundo golpe con la misma arma **sin el mod**. Así el **escudo** (+2 CA, §3) y las **dos armas** son elecciones distintas y no una sola óptima.
+- **A bocajarro (`../game-design.md` §4b.1):** las armas a distancia **sí** pueden atacar a un enemigo adyacente, con **Desventaja** ([`../effects.md`](../effects.md)). El alcance mínimo de 2 hex de §2 es el alcance *eficaz*, no una prohibición — importa sobre todo para el **Bastón de mago** (alcance 2), que sin esta regla dejaba al Mago sin ningún ataque posible en melee.
 - **Bastón de mago — daño físico en v1:** de momento hace daño 🔨 contundente, no 🔮 arcano. Los tipos de daño mágico se reservan para los hechizos de clase; cuando se desarrollen las subclases de mago y las debilidades elementales de los enemigos, el bastón podrá volver a un tipo de daño mágico.
 - **Finesse/Ligera:** puede usarse con Destreza — beneficia al Pícaro ([`class.md`](class.md)).
 - **Ninguna arma melee es arrojadiza** *(decidido)*: el hueco de "atacar sin estar adyacente" ya lo cubren las armas a distancia (§2); no se duplica con dagas/hachas lanzables.
 - **Munición — infinita *(decidido)*:** las armas a distancia **no** gestionan munición; disparas sin límite. (Revisable si el balance pidiera introducir munición como recurso más adelante.)
 - **Alcance (Lanza):** ataca a un enemigo a 2 hex en línea sin estar adyacente — útil con el modelo de adyacencia (`../game-design.md` §4b.1).
-- **Recarga (Ballesta pesada):** solo 1 disparo por turno (no combina con un segundo disparo de Acción rápida).
+- **Recarga (Ballesta pesada):** solo 1 disparo por turno — es la **única excepción** al ataque secundario (`../game-design.md` §4b.3). Es su precio por ser el arma de más daño a distancia (1d10, 5 hex).
 - **Requisito de FUE:** las armas de 2 manos pesadas piden FUE 13; por debajo, **desventaja** en la tirada de ataque (el Mago FUE 8 no debería blandir un mandoble).
 
 ## 5. Progresión de rareza por familia *(política a futuro, decidido)*
@@ -66,6 +69,41 @@ Todas las armas del catálogo actual son **Común** — no hay todavía ninguna 
 | Legendaria | Excalibur |
 
 Esto da progresión de loot dentro de un mismo arquetipo de arma en vez de una lista plana de armas todas parecidas. Aplica igual a Arma/Armadura/Item (Rareza general en `../game-design.md` §3.3).
+
+### 5b. Escalones del prototipo *(decidido)*
+
+**Regla de derivación** — cada escalón de rareza mantiene el dado y las manos de su familia y añade:
+
+| Rareza | Qué gana sobre la Común |
+|---|---|
+| **Poco común** | **+1 al daño** |
+| **Raro** | **+1 al ataque y +1 al daño** |
+| Épico / Legendario | Lo del Raro **más una propiedad propia** (a diseñar pieza por pieza, §6) |
+
+Cada pieza hereda **manos, dado, tipo de daño y stat de ataque** de su familia de §1-§2; aquí solo se listan las mejoras.
+
+<!-- cards: arma -->
+
+| Arma | Familia | Manos | Daño | Tipo | Mejora | Rareza |
+|---|---|---|---|---|---|---|
+| Espada de acero enano | Espada | ✋ | 1d8 | 🗡️ | +1 al daño | Poco común |
+| Filo del juramento | Espada | ✋ | 1d8 | 🗡️ | +1 al ataque y +1 al daño | Raro |
+| Hacha de guerra orlada | Hacha | 🤲 | 1d12 | 🗡️ | +1 al daño | Poco común |
+| Hendedora de cráneos | Hacha | 🤲 | 1d12 | 🗡️ | +1 al ataque y +1 al daño | Raro |
+| Dagas del alba | Dagas | ✋ | 1d4 | 🏹 | +1 al daño | Poco común |
+| Colmillos gemelos | Dagas | ✋ | 1d4 | 🏹 | +1 al ataque y +1 al daño | Raro |
+| Maza estrellada | Maza | ✋ | 1d6 | 🔨 | +1 al daño | Poco común |
+| Yugo del penitente | Maza | ✋ | 1d6 | 🔨 | +1 al ataque y +1 al daño | Raro |
+| Arco largo de tejo | Arco | 🤲 | 1d8 | 🏹 | +1 al daño · alcance 4 hex | Poco común |
+| Susurro del bosque | Arco | 🤲 | 1d8 | 🏹 | +1 al ataque y +1 al daño · alcance **5 hex** | Raro |
+| Ballesta de gatillo fino | Ballesta de mano | ✋ | 1d6 | 🏹 | +1 al daño · alcance 3 hex | Poco común |
+| Aguijón de bolsillo | Ballesta de mano | ✋ | 1d6 | 🏹 | +1 al ataque y +1 al daño · alcance **4 hex** | Raro |
+| Bastón nudoso | Bastón de mago | ✋ | 1d6 | 🔨 | +1 al daño · alcance 2 hex | Poco común |
+| Bastón de las mareas | Bastón de mago | ✋ | 1d6 | 🔨 | +1 al ataque y +1 al daño · alcance 2 hex · foco arcano **+1** (§3) | Raro |
+
+**Por qué existe esta tabla.** Todo el catálogo anterior era **Común**, así que la premisa de los kits iniciales —*"el equipo bueno es la recompensa de explorar"* ([`../characters/heroes.md`](../characters/heroes.md) §2d)— **no tenía nada a lo que aspirar**: la única mejora real de daño era pasar a un arma 🤲 y perder el escudo. La **tabla de loot** (pendiente en `../game-design.md` §7) necesita este contenido para poder apuntar a algo; con la regla de derivación, sortear botín es elegir **familia + rareza**.
+
+Efecto medido: el Guerrero con *Filo del juramento* pasa de ~5,9 a ~7,8 de daño por turno (**+32 %**) — un premio que se nota sin romper la ventana de 5-6 turnos del boss (`../characters/enemies.md` §5b.3).
 
 ## 6. Futuras implementaciones (fuera de la v1)
 
@@ -82,6 +120,7 @@ Aparcadero de cartas de **arma** concretas que se nos van ocurriendo pero que no
 
 - [ ] Balancear dados/alcances al testear en el prototipo.
 - [x] Munición **infinita** *(decidido)*: sin recurso de munición en la v1 (§4).
-- [ ] Decidir el subconjunto del prototipo (recomendado: Espada ✋, Hacha 🤲, Dagas, Arco, Bastón, Maza + Escudo).
-- [ ] Ampliar cada familia de arma con variantes Poco común/Rara/Épica/Legendaria siguiendo la progresión de §5.
+- [x] Subconjunto del prototipo *(decidido)*: **Espada ✋, Hacha 🤲, Dagas ✋, Arco 🤲, Ballesta de mano ✋, Bastón ✋, Maza ✋ + Escudo**, más los focos (Libro, Símbolo) y la Antorcha — las 7 familias con escalón de rareza en §5b, que son también las que salen en los kits iniciales (`../characters/heroes.md` §2d).
+- [x] Ampliar cada familia con variantes de rareza siguiendo la progresión de §5 → **§5b**: Poco común (+1 daño) y Raro (+1 ataque y daño) para las 7 familias del prototipo. Épico/Legendario siguen pieza por pieza en §6.
+- [x] Retirar la propiedad **"Ligera"**, que no existía y de la que colgaban dos reglas *(decidido)* → §4.
 - [ ] Revisar §6 de vez en cuando y decidir si alguna de esas armas pasa ya a la v1.

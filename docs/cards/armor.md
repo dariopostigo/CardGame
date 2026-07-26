@@ -63,10 +63,48 @@ Todas las armaduras del catálogo actual son **Común** — no hay todavía ning
 
 Aplica igual a Arma/Armadura/Item (Rareza general en `../game-design.md` §3.3, progresión de Arma en `weapons.md` §5).
 
+### 6b. Escalones del prototipo *(decidido)*
+
+**Regla de derivación** — mismo peso y misma fórmula de CA que su familia (§1), y por escalón:
+
+| Rareza | Qué gana sobre la Común |
+|---|---|
+| **Poco común** | **+1 al bono de CA** |
+| **Raro** | **+1 al bono de CA** y, si la tenía, **pierde la desventaja de sigilo** |
+
+**Ligeras 🥼** (familia: Cuero tachonado)
+
+<!-- cards: armadura peso=ligera -->
+
+| Armadura | Bono CA | Notas | Rareza |
+|---|---|---|---|
+| Cuero endurecido | +3 | — | Poco común |
+| Piel de sombra | +4 | **+2** a la prueba de sigilo (`../characters/enemies.md` §2b) | Raro |
+
+**Medias 👕** (familia: Cota de escamas)
+
+<!-- cards: armadura peso=media -->
+
+| Armadura | Bono CA | Notas | Rareza |
+|---|---|---|---|
+| Escamas de wyvern | +5 | Desventaja para evitar detección | Poco común |
+| Escamas silentes | +5 | **Sin** desventaja de sigilo — este escalón gasta su mejora en silenciarla en vez de en CA | Raro |
+
+**Pesadas 🧥** (familia: Cota de malla)
+
+<!-- cards: armadura peso=pesada -->
+
+| Armadura | Bono CA | Requisito | Notas | Rareza |
+|---|---|---|---|---|
+| Malla enana | +7 | FUE 13 | Desventaja para evitar detección | Poco común |
+| Égida del centinela | +8 | FUE 13 | Desventaja para evitar detección | Raro |
+
+**Por qué existe esta tabla.** Todas las armaduras del catálogo eran **Común**, así que no había armadura que *encontrar* — y la CA es la palanca de supervivencia más directa que tiene el héroe. La **tabla de loot** (`../game-design.md` §7) necesita este contenido. Techo intencionado: la Égida del centinela deja al Guerrero en **CA 20** con escudo, contra la que un Élite (ataque +3) acierta 1 de cada 5 — es premio de final de partida, no de zona media (`../characters/enemies.md` §5c).
+
 ## 7. Próximos pasos
 
 - [ ] Balancear los bonos al testear.
 - [ ] Decidir si más armaduras pesadas penalizan el movimiento.
 - [ ] Crear variantes mágicas (ligar con [`items.md`](items.md) §3) y asignar su Rareza.
-- [ ] Subconjunto del prototipo (recomendado 1 por peso: Cuero, Cota de escamas, Cota de malla).
-- [ ] Ampliar cada familia de armadura con variantes Poco común/Rara/Épica/Legendaria siguiendo la progresión de §6.
+- [x] Subconjunto del prototipo *(decidido)*: **Acolchada, Cuero, Cuero tachonado** (🥼), **Cota de escamas** (👕) y **Cota de malla** (🧥) — las de los kits iniciales (`../characters/heroes.md` §2d) más las tres familias con escalón de rareza en §6b.
+- [x] Ampliar cada familia con variantes de rareza siguiendo la progresión de §6 → **§6b**: Poco común (+1 CA) y Raro (+1 CA y, si la tenía, sin desventaja de sigilo) para Cuero tachonado, Cota de escamas y Cota de malla.

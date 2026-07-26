@@ -64,7 +64,9 @@ Se **encuentran** (loot de Élite/Jefe, cofres de alta rareza) y, de momento, ta
 
 ## 4. Consumibles
 
-Pociones (efecto instantáneo: curación, buff temporal), Pergaminos (lanzan un hechizo concreto — sostienen el modelo de hechizos-como-cartas, sin maná, de `../game-design.md` §4b.7). Se usan normalmente como **Acción rápida** en combate (`../game-design.md` §4b.3). Como cualquier carta del mazo personal, vuelven a estar disponibles después de jugarlas (`../game-design.md` §4).
+Pociones (efecto instantáneo: curación, buff temporal), Pergaminos (lanzan un hechizo concreto — sostienen el modelo de hechizos-como-cartas, sin maná, de `../game-design.md` §4b.7). Se usan normalmente como **Acción rápida** en combate (`../game-design.md` §4b.3).
+
+> **Un consumible es un uso por preparación, no un grifo abierto.** Por la **regla madre** de `../game-design.md` §4, beber la Poción la **saca de "en juego"** y la devuelve al Mazo: para volver a beberla tiene que **salirte otra vez en un Oteo**. Ahí está su límite natural, y por eso **ninguna carta de curación necesita una etiqueta `1/combate`**: el techo sostenible de curación es el ritmo del Oteo (~1 carta por turno), y gastar la Acción rápida en curarte es renunciar al **ataque secundario** de §4b.3 ese turno. *(Punto a vigilar al testear: un Clérigo que dedique cada Oteo y cada Acción rápida a **Palabra sanadora** puede superar el daño entrante de un Élite (~6,5 curados frente a 3,4-4,7 recibidos) a cambio de todo su ritmo ofensivo. Es una estrategia legítima de desgaste, la paga en turnos y en Nivel de Amenaza — pero si al jugar convierte los combates en una eternidad, la palanca es bajar la curación de esa carta, no tocar la regla.)*
 
 <!-- cards: item -->
 

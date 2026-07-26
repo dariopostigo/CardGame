@@ -78,14 +78,16 @@ Notas de por qué cada uno dumpea lo que dumpea:
 
 ## 2c. Movimiento, Dado de Vida y visión
 
-Valores derivados según `../game-design.md` §2.2-§2.3 (movimiento estándar, PV = dado de vida + mod Constitución + **2 de aguante base** del prototipo, ver §2). El movimiento es **2 para todos** (estándar fijo, no varía por raza — ver `../game-design.md` §2.2); los extras vienen de fichas/cartas, no de la raza:
+Valores derivados según `../game-design.md` §2.2-§2.3 (movimiento estándar, PV = dado de vida + mod Constitución + **10 de aguante de protagonista**, ver §2). El movimiento es **2 para todos** (estándar fijo, no varía por raza — ver `../game-design.md` §2.2); los extras vienen de fichas/cartas, no de la raza:
 
-| Héroe | Raza | Mov./turno | Dado de vida | PV nivel 1 (dado máx + mod CON + 2 base) | Visión detalle | Visión terreno |
+| Héroe | Raza | Mov./turno | Dado de vida | PV nivel 1 (dado máx + mod CON + 10) | Visión detalle | Visión terreno |
 |---|---|---|---|---|---|---|
-| Guerrero | Enano | 2 | d10 | 10 + 2 + 2 = 14 | 4 | 6 |
-| Pícaro | Mediano | 2 | d8 | 8 + 1 + 2 = 11 | 3 | 5 |
-| Mago | Elfo | 2 | d6 | 6 + 0 + 2 = 8 | 4 | 6 |
-| Clérigo | Humano | 2 | d8 | 8 + 2 + 2 = 12 | 5 | 7 |
+| Guerrero | Enano | 2 | d10 | 10 + 2 + 10 = **22** | 4 | 6 |
+| Pícaro | Mediano | 2 | d8 | 8 + 1 + 10 = **19** | 3 | 5 |
+| Mago | Elfo | 2 | d6 | 6 + 0 + 10 = **16** | 4 | 6 |
+| Clérigo | Humano | 2 | d8 | 8 + 2 + 10 = **20** | 5 | 7 |
+
+> **El aguante base subió de 2 a 10 *(decidido)*.** Con los 14/11/8/12 anteriores los tres Élite del bestiario ganaban a los cuatro héroes y el Mago perdía contra un lobo suelto (`../game-design.md` §2). La proporción entre los cuatro se conserva —el Guerrero sigue aguantando un 38 % más que el Mago—, solo se sube el suelo. Motivo y cuentas completas en `../game-design.md` §2.
 
 El dado de vida sigue la convención D&D por rol (marcial > semi-marcial > caster puro): Guerrero d10 (el más resistente), Pícaro/Clérigo d8, Mago d6 (el más frágil, coherente con su Fuerza/Constitución bajas).
 

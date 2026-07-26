@@ -32,7 +32,7 @@ El terreno del hexágono aplica **además** su propio efecto (`../board/board-ma
 | Frenesí | El enemigo ataca con **+1 al daño** pero **−2 CA** (todo o nada) |
 | Veterano solitario | Solo hay 1 enemigo, pero con **+25 % PV** y su habilidad reforzada |
 | Niebla | Los ataques a distancia sufren **Desventaja** este combate |
-| Botín inesperado | Al ganar, **oro extra** o una carta de Tesoro adicional (`../game-design.md` §6b.1) |
+| Botín inesperado | Al ganar, **1 carta extra** en la misma fila que la fuente del combate (`../game-design.md` §6b.6) o el doble de oro |
 
 ## 4. Cartas de Suceso (boceto, ~10)
 
@@ -43,11 +43,11 @@ El terreno del hexágono aplica **además** su propio efecto (`../board/board-ma
 | ¡Emboscada! | Se convierte en **combate**: roba también 1 carta de Combate (así una Amenaza se resuelve como enemigo) |
 | Trampa | Salvación DES CD 12 o 1d6 de daño / un estado negativo ([`../effects.md`](../effects.md)) |
 | Sendero oculto | +2 de movimiento este turno, o revela (**Detectado**) un grupo vecino (`../board/board-map.md` §4) |
-| Hallazgo | Una carta de Tesoro menor o algo de oro |
+| Hallazgo | Una carta de la fila **Normal** de la tabla de loot (`../game-design.md` §6b.6) y 1d6 de oro |
 | Viajero | Aparece un NPC amistoso (`../characters/npcs.md`) — pequeño encuentro de calma |
 | Falsa alarma | Nada: el hexágono queda vacío (el resultado "vacío" de `../board/board-map.md` §4) |
 | Maleficio | Ganas una **Maldición** leve ([`curses.md`](curses.md)) — el riesgo real de husmear donde no debes |
-| Mal augurio | Sube **+15 el Nivel de Amenaza** (`../game-design.md` §6c.2) — un presagio funesto sin más consecuencia inmediata; puede salir tras interactuar con ciertos NPCs (ej. una profecía) o al fallar la prueba de una **ficha de Amenaza** ambigua (`../board/board-map.md` §4) |
+| Mal augurio | Sube **+5 el Nivel de Amenaza** (= 5 turnos, la subida de golpe más dura del juego con el tope a 40) (`../game-design.md` §6c.2) — un presagio funesto sin más consecuencia inmediata; puede salir tras interactuar con ciertos NPCs (ej. una profecía) o al fallar la prueba de una **ficha de Amenaza** ambigua (`../board/board-map.md` §4) |
 | Descanso interrumpido | *(solo al acampar)* La acampada falla: no recuperas y salta un combate (roba 1 carta de Combate) |
 | Clima adverso | **Ralentizado** o riesgo de estado hasta salir de la zona |
 | Provisiones | Recuperas algo de PV o ganas una Poción ([`items.md`](items.md)) |
@@ -62,18 +62,18 @@ Cruce con las 6 fichas de [`../board/board-map.md`](../board/board-map.md) §4:
 | Enemigo | Sí — 1 carta de **Combate** al iniciar la pelea |
 | Amenaza | Sí — 1 carta de **Suceso** (puede salir ¡Emboscada!, Trampa, o nada) |
 | Exploración (comodín) | Sí — 1 carta de **Suceso** (rango completo: hallazgo, NPC, mercenarios, trampa, vacío…) |
-| Terreno | A veces — puede robar un Suceso de tipo Trampa/Hallazgo tras la prueba de terreno |
+| Terreno | **No** *(corregido)* — la prueba se resuelve sola (`../board/board-map.md` §4b: `1d20 + FUE/DES` vs CD 12, éxito = cruzas gratis +1 mov, fallo = pierdes el movimiento y sufres el peligro del hex). Solo roba un Suceso si la ficha cae en una localización especial |
 | Tesoro | **No** — da loot directo (`../board/board-map.md` §4) |
 | Personaje (NPC) | **No** — interacción de calma, sin mazo (`../characters/npcs.md` §4) |
 
 ## 6. ¿Un mazo o varios? *(decidido)*
 
-- **Prototipo / Partida rápida:** un **único mazo base** (las cartas de arriba). Simple y suficiente. La variedad ya la aporta la **distribución de fichas por terreno** (`../board/board-map.md` §4).
+- **Prototipo / Partida rápida:** un **único juego de cartas base** (las de arriba), sin variantes por capítulo. La variedad ya la aporta la **distribución de fichas por terreno** (`../board/board-map.md` §4). *(Ojo: "un solo mazo" se refiere a que no hay sets alternativos — físicamente son **dos pilas**, Combate y Suceso, porque §1 siempre pide una carta de un tipo concreto; ver §7.)*
 - **Modo Campaña:** se puede **sesgar o añadir** cartas temáticas por capítulo (ej. un capítulo de no-muertos añade cartas de "más esqueletos"/"terreno maldito"). No se implementa hasta la Campaña.
 
 ## 7. Próximos pasos
 
 - [ ] Balancear frecuencias (cuántas de cada tipo, probabilidad de ¡Emboscada! vs. Hallazgo) al testear.
-- [ ] Decidir el reparto exacto Combate/Suceso del mazo base y si se barajan juntas o en dos pilas.
+- [x] Reparto Combate/Suceso y barajado *(decidido)*: **dos pilas separadas**, no un mazo mezclado — §1 siempre pide una carta *de un tipo concreto*, así que mezclarlas obligaría a descartar hasta encontrar el tipo bueno. Cada pila se baraja al agotarse (las cartas vuelven, como el mazo personal). Cantidades del prototipo = las ~10 + ~12 de §3-§4, sin repetidos; las frecuencias finas se afinan jugando.
 - [ ] Afinar valores de daño/CD de las cartas de Suceso.
 - [ ] Cuando llegue la Campaña, diseñar los sesgos temáticos por capítulo (§6).

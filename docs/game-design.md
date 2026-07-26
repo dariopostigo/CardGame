@@ -17,7 +17,10 @@ Flujo desde que el jugador abre la aplicación hasta que pisa el primer hexágon
    - Una **selección fija de armas y armaduras por clase** → van **equipadas** (§4a), no al Mazo.
    - Un **puñado de items de arranque por clase** → van al **Mazo**. Existen por una razón mecánica, no de sabor: sin ellos el Mazo arranca con solo 4 cartas y el **Oteo se rompe** (ver el aviso de §4).
    - Los kits concretos de los 4 héroes están en `characters/heroes.md` §2d.
-4. **Generación del mapa y entrada.** Se genera el mapa (`board/board-map.md` §2c) y el héroe entra por **una esquina**, la "puerta" del mapa (§2c, paso 0). A partir de ahí empieza el turno 1: oteas, mueves, actúas.
+4. **Preparación de salida — eliges 2 Básicas de clase que arrancan ya "en juego"** *(decidido)*. La zona "en juego" (§4) no empieza vacía: escoges **2 de las 3 Básicas** de tu héroe ([`cards/class.md`](cards/class.md)) y salen preparadas desde el turno 1. Los otros 2 huecos (el tope de arranque es 4, §4) los llena el Oteo.
+
+   > **Por qué.** Sin esto, el **primer combate de la partida se peleaba con 0-2 cartas preparadas y al azar**, y para el Mago era una lotería de supervivencia: solo aguanta con *Escudo arcano* listo (CA 16 en vez de 13), y con un Mazo de 8 cartas de las que el Oteo revela 2 por turno, entraba a su primera pelea sin escudo **~4 de cada 10 partidas**. Un héroe no debería morir por un sorteo antes de tomar ninguna decisión. Que **elijas** las 2 (en vez de dártelas todas) mantiene la decisión en tus manos y no infla el arranque: sigues empezando con 1 hueco libre y sin tu Especial.
+5. **Generación del mapa y entrada.** Se genera el mapa (`board/board-map.md` §2c) y el héroe entra por **una esquina**, la "puerta" del mapa (§2c, paso 0). A partir de ahí empieza el turno 1: oteas, mueves, actúas.
 
 ## 2. Personaje y estadísticas
 
@@ -36,11 +39,22 @@ Base D&D (6 características clásicas). Cada personaje tiene: PV, Nivel, Clase,
 
 Otros valores derivados directamente de las estadísticas:
 - **Defensa/CA** = 10 + mod Destreza (+ bono de armadura equipada).
-- **PV máximo** = dado de vida de la clase (nivel 1: máximo del dado; niveles siguientes: tirada o promedio, a decidir) + mod Constitución por nivel + **2 de aguante base** *(ajuste de prototipo, una sola vez a nivel 1: sube el suelo de PV para que los casters no caigan en 2 golpes — B2 del balance; a revalidar jugando)*.
+- **Defensa/CA** con armadura equipada: la Destreza aporta distinto según el **peso** — fórmula completa en [`cards/armor.md`](cards/armor.md) §1.
+- **PV máximo** = dado de vida de la clase (nivel 1: máximo del dado; niveles siguientes: tirada o promedio, a decidir) + mod Constitución por nivel + **10 de aguante de protagonista** *(decidido)*.
+
+  > **Por qué 10 y no 2 *(decidido — sustituye el "+2 de aguante base")*.** El héroe **no es un personaje de nivel 1 de D&D**: es un protagonista **solo** al que le pedimos que limpie un mapa entero y mate a un Élite que en D&D es contenido de CR 2-5, o sea trabajo de un grupo de cuatro. Con +2 los números salían así:
+  >
+  > | | PV | Turnos que tardaba en morir | Turnos que tardaba en matar al boss |
+  > |---|---|---|---|
+  > | Guerrero (14 PV) vs. Capitán bandido | 14 | **2** *(con sus refuerzos)* | 8,6 |
+  > | Guerrero vs. Trol de las minas | 14 | 3,7 | **23** *(la regeneración se comía el 57 % de su daño)* |
+  > | Mago (8 PV) vs. **un lobo suelto** | 8 | **3,9** | 4,3 |
+  >
+  > Los tres Élite del bestiario ganaban a los cuatro héroes, y un crítico del Trol (2d10+3 = 14) mataba al Guerrero **de un golpe desde PV máximos**. No era una perilla de balance fino: faltaba aproximadamente el doble de aguante. Con +10 (Guerrero 22, Clérigo 20, Pícaro 19, Mago 16) el boss se pelea a 5-6 turnos por bando, que es la ventana que queremos. Va junto al ataque secundario de §4b.3 y al recorte de PV de los Élite (`characters/enemies.md` §5b) — las tres cosas son **un mismo ajuste**, no tres independientes.
 
 ### 2.2 Movimiento
 
-**Estándar: 2 movimientos por turno para todos los héroes**, sin variación por raza (sustituye la idea anterior de Velocidad-por-raza). Los enemigos usan la misma base (de momento **2** para todos, igualados al héroe; se personalizará por tipo más adelante, `characters/enemies.md` §5b.1). 1 movimiento = 1 hexágono cruzado en `board/board-map.md`, modificado por el terreno de cada hexágono (`board/board-map.md` §3).
+**Estándar: 2 movimientos por turno para todos los héroes**, sin variación por raza (sustituye la idea anterior de Velocidad-por-raza). Los enemigos usan la misma base de **2**, con **3 para los cazadores ágiles** (Lobo, Araña matriarca, la Sombra) y **ninguno por debajo de 2** — detalle y motivo en `characters/enemies.md` §5b.1. 1 movimiento = 1 hexágono cruzado en `board/board-map.md`, modificado por el terreno de cada hexágono (`board/board-map.md` §3).
 
 Fuentes de movimiento **extra** por encima del estándar:
 - **Fichas del tablero** (ej. un NPC informante/guía, `characters/npcs.md`) que conceden movimiento adicional puntual.
@@ -89,7 +103,7 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 1. **Cartas Básicas de Clase** — inspiradas en las cartas "Básica 1/2/3" de Viajes. Cada clase tiene un set fijo de cartas genéricas disponibles desde el nivel 1 (p. ej. Guerrero: "Golpe firme", "Postura defensiva"). Catálogo en [`cards/class.md`](cards/class.md).
 2. **Cartas Especiales de Clase** — se desbloquean por nivel/hito, igual que las subclases de D&D. Más potentes, uso limitado (una vez por combate/descanso). Ver [`cards/class.md`](cards/class.md).
 3. **Cartas de equipo** — armas, armaduras e items conseguidos jugando (botín, tesoro, recompensas, compra; ver §3.2 y [`cards/`](cards/README.md)). Las **armas y armaduras** se **equipan** aparte (§4a); los **items** entran al **Mazo** (§4). Nada de esto se consigue con el Oteo.
-4. **Cartas de Mercenario** — compañías a sueldo que se **reclutan** superando una prueba de Carisma en una ficha del tablero (fallarla la convierte en enemigo) o se **compran** por oro; van al mazo como cartas de Acción reutilizables. Catálogo en [`cards/mercenaries.md`](cards/mercenaries.md).
+4. **Cartas de Mercenario** — compañías a sueldo que se **reclutan** superando una prueba de Carisma en una ficha del tablero (fallarla la convierte en enemigo) o se **compran** por oro; van al Mazo como cartas de Acción. Como cualquier carta, **al darles la orden vuelven al Mazo** (regla madre de §4): son una ráfaga preparada, no un aliado permanente en el tablero. Catálogo en [`cards/mercenaries.md`](cards/mercenaries.md).
 
 ### 3.2 Por tipo (icono diferenciador)
 
@@ -98,7 +112,7 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 | **Arma** | Espada | Añade daño y tipo de daño (lista completa y resistencias en §4b.10); ocupa 1 o 2 manos (§2.4) | Puede requerir stat mínima para usarse sin penalización |
 | **Armadura** | Escudo/coraza | Suma a la Defensa/CA; puede restar Destreza si es pesada | Solo 1 equipada a la vez (§2.4) |
 | **Item** | Bolsa | Categoría amplia: pociones (efecto instantáneo), hechizos (Cartas Especiales o Pergaminos), objetos de aventura/herramientas/objetos mágicos raros — ver [`cards/items.md`](cards/items.md) | El más variado de los 4 tipos |
-| **Mercenario** | 🪖 Casco/estandarte | Carta de Acción: das la orden a una compañía a sueldo (atacar, curarte, etc.); reutilizable, cuesta tu Acción | Origen (reclutar/comprar) y catálogo en [`cards/mercenaries.md`](cards/mercenaries.md) |
+| **Mercenario** | 🪖 Casco/estandarte | Carta de Acción: das la orden a una compañía a sueldo (atacar, curarte, etc.); cuesta tu Acción y, como toda carta, **gasta su preparación** al jugarse (regla madre de §4) | Origen (reclutar/comprar) y catálogo en [`cards/mercenaries.md`](cards/mercenaries.md) |
 | **Maldición** | Calavera/nube negra | Efecto negativo persistente que **ocupa un hueco del mazo** (a diferencia de un Efecto/Estado temporal de combate) — ej. -1 movimiento, 1 de daño cada 2 turnos, −1 al rango de visión | Definida en [`cards/curses.md`](cards/curses.md) (severidad Leve/Grave, fuentes, limpieza); da incentivo a "limpiar" el mazo |
 
 > **Dónde vive cada tipo:** **armas** y **armaduras** son el **sistema de equipo** (§4a) — se equipan, no ocupan hueco del Mazo ni pasan por el Oteo. **Items**, **mercenarios** y **maldiciones** sí viven en el **Mazo** (§4).
@@ -126,7 +140,7 @@ Aplica a cartas de Arma/Armadura/Item (y previsiblemente Maldición). Las cartas
 - El mazo de cada jugador = cartas de clase (básicas + especiales) + **items y mercenarios** obtenidos jugando (§3.2). Las **armas y armaduras van aparte**, en el sistema de equipo (§4a).
 - **Mazo — dos zonas: el Mazo y "en juego" *(decidido)*:**
   - **Mazo del capítulo — hasta 20 cartas:** tu baraja personal = **cartas de clase + items + mercenarios** (más las **maldiciones** que te caigan). **Las armas y armaduras NO cuentan aquí** — van en el sistema de equipo aparte (§4a). Es un **tope duro**: los items/mercenarios nuevos entran jugando (botín, Tesoro, recompensas, compra, §6b), **no** con el Oteo; al llegar a 20, incorporar uno nuevo obliga a **cambiar una carta por otra** (swap 1-por-1).
-  - **En juego — tope elástico `techo(Mazo ÷ 2)`, entre 3 y 10 *(decidido)*:** tu zona de cartas **preparadas**, las únicas que puedes jugar. Empieza **vacía** al comenzar el capítulo y se llena poco a poco con el Oteo. **Clase, items y mercenarios compiten** por esos huecos (más de un tipo preparado = menos hueco para los demás).
+  - **En juego — tope elástico `techo(Mazo ÷ 2)`, entre 3 y 10 *(decidido)*:** tu zona de cartas **preparadas**, las únicas que puedes jugar. Arranca con las **2 Básicas de clase que elegiste en el setup** (§1b, paso 4) y se llena poco a poco con el Oteo. **Clase, items y mercenarios compiten** por esos huecos (más de un tipo preparado = menos hueco para los demás).
 
     El tope **depende del tamaño de tu Mazo**, no es un 10 fijo: con un Mazo de 8 cartas son **4** huecos, con 14 son **7**, con 20 los **10** de siempre. Un 10 fijo estaba calibrado para un Mazo de 20 y quedaba **muerto** al empezar la partida (con 7-8 cartas nunca lo alcanzas, así que nunca sustituyes nada y el Oteo pierde su decisión más interesante). Con la fórmula, la rampa y las sustituciones funcionan igual en cualquier punto de la progresión.
   - **Otear *(decidido)*:** al **empezar tu turno**, antes de mover o actuar, revelas **2 cartas al azar de tu Mazo** y **eliges 1** para ponerla **en juego**; la otra **vuelve al Mazo**. Así "en juego" crece ~1 carta por turno. Las cartas en juego las usas **cuando quieras** (una poción, un mercenario, una carta de acción…), dentro de la economía de acción (§4b.3); no caducan si no las usas.
@@ -138,9 +152,19 @@ Aplica a cartas de Arma/Armadura/Item (y previsiblemente Maldición). Las cartas
 
   > **Reglas del Oteo *(decidido)*:** de las 2 cartas puedes elegir **1** o **ninguna** (si no te convence ninguna, las rechazas y las dos vuelven al Mazo). Con "en juego" **lleno**, para quedarte una nueva **sustituyes** una carta que ya tengas en juego (la sustituida vuelve al Mazo). Al **jugar** una carta también vuelve al Mazo y puede reaparecer en un Oteo posterior — nada se pierde.
   >
-  > **El Oteo reparte al azar *(decidido)*:** las 2 cartas que muestra salen **al azar** de tu Mazo (como robar de una baraja); de ellas eliges 1 o ninguna. Hay un componente de **suerte**, así que **cómo compones tu Mazo de 20 importa**: cuanto mejor sea la mezcla, mejores serán las 2 que te ofrezca cada turno.
+  > **El Oteo reparte al azar *(decidido)*:** las 2 cartas que muestra salen **al azar** de tu Mazo (como robar de una baraja); de ellas eliges 1 o ninguna. Hay un componente de **suerte**, así que **cómo compones tu Mazo importa**: cuanto mejor sea la mezcla, mejores serán las 2 que te ofrezca cada turno.
+  >
+  > **Puedes consultar tu Mazo entero, siempre *(decidido)*.** En cualquier momento ves la **lista completa** de las cartas que tienes en el Mazo sin preparar, además de las que tienes en juego. Lo aleatorio es **el orden en que salen**, no su identidad: no hay información oculta que proteger, es tu propia baraja.
+  >
+  > Así el Oteo es una **decisión con información** —"rechazo estas 2 porque sé que me quedan dos mejores"— en vez de una apuesta a ciegas, que es lo que hace que componer el Mazo (qué compras, qué vendes, qué te quedas del botín) tenga consecuencias que puedes razonar. Además el **swap 1-por-1** al llegar a 20 lo exige: no puedes elegir qué carta sacrificas si no ves lo que tienes.
 - **Sin "mano" clásica:** no se roba y descarta una **mano completa** cada turno como en un juego de cartas al uso; el Oteo solo saca **2 al azar**, preparas 1 y lo que preparas **se queda en juego** hasta que lo juegas. Una vez una carta está **en juego**, es una opción **siempre disponible** hasta que la juegues (dentro del recurso de acción del turno, §4b.3): curarte, ayudar en la aventura, subir estadísticas, atacar, etc.
 - **Ninguna carta se pierde al jugarla *(decidido)*:** jugar una carta del mazo personal (equipo, clase, item) cuesta el recurso de turno que le corresponda (Movimiento/Acción/Acción rápida/Carta de Efecto, §4b.3), pero la carta **vuelve al Mazo** (§4) y puede volver a prepararse con el Oteo más adelante — **hoy** no hay descarte permanente ni cartas de "un solo uso" en el mazo personal (podría añadirse como excepción puntual en el futuro; de momento ninguna carta lo lleva). Textos como "un uso" o "se consume" en cartas de equipo/item **no aplican** y son restos de una idea descartada. El único límite real de repetición son las etiquetas explícitas **1/combate** o **1/descanso** de las Cartas Especiales de Clase (§3.1).
+
+  > **Regla madre — jugar una carta la saca de "en juego" *(decidido, resuelve una contradicción entre documentos)*.** "Nada se pierde" **no** significa "se puede repetir". Al jugarla, la carta **abandona la zona "en juego"** y vuelve al Mazo; para volver a usarla tiene que **salirte otra vez en un Oteo** y ocupar de nuevo un hueco preparado. O sea: **"en juego" es munición preparada, no un equipamiento permanente.**
+  >
+  > Esto contradecía a [`cards/class.md`](cards/class.md) §1 ("las Básicas son reutilizables cada turno; lo único que impide spamearlas es que cuestan la Acción"), a §3.1 de este documento y a [`cards/mercenaries.md`](cards/mercenaries.md) §1 ("un aliado al que das la orden una vez por turno") — **los tres eran texto viejo y quedan corregidos**; manda esta regla. Con la lectura contraria, "en juego" se convertía en un *loadout* fijo que montas en 4-6 turnos y luego repites hasta el final: el Oteo dejaba de decidir nada a partir del turno 6, y una sola carta de curación preparada volvía el combate imposible de perder.
+  >
+  > **Consecuencia de diseño, importante:** tu **motor de daño sostenido es el ataque con el arma equipada** (gratis, siempre disponible, sin otearlo — §4a), y las cartas son **ráfaga y utilidad** a un ritmo sostenido de **~1 por turno** (el ritmo del Oteo), con la opción de **acumular** hasta llenar "en juego" y descargarlas de golpe. Por eso el equilibrio del combate (§4b) se calibra sobre el arma, no sobre las cartas.
 - **Resolución de pruebas — decidido:** las pruebas y ataques **no** se resuelven robando una carta al azar, sino con **1d20 + modificador** de la estadística relevante contra una CD/Defensa. Las **cartas actúan como modificadores** de esa tirada (bonus, daño extra, ventaja/desventaja, estados), coherente con el §6 y con "juega cualquier carta cuando quieras". El detalle paso a paso del combate se define en la sección de combate (checklist).
 
 ## 4a. Equipo: armas y armaduras (fuera del Mazo) *(decidido)*
@@ -162,6 +186,9 @@ Modelo elegido: **todo ocurre sobre el mismo tablero de hexágonos** (no hay pan
 - Se **actúa sobre un objetivo en un hexágono contiguo** (uno de los 6 vecinos) — atacar cuerpo a cuerpo, interactuar con una ficha (NPC, Tesoro, etc.). Nunca sobre el propio hexágono.
 - Ataques **a distancia y hechizos** tienen alcance en hexágonos (definido por el arma/hechizo, p. ej. Arco 3-4 hex), no requieren adyacencia.
 - **Alcance mínimo "a distancia": 2 hex** *(decidido)*. El cuerpo a cuerpo ya cubre el hexágono contiguo (1 hex); para que un ataque cuente como **a distancia** tiene que quedar al menos un hexágono vacío entre el héroe y el enemigo (2 hex = 1 hex vacío + el hex del enemigo). Ninguna arma o hechizo a distancia puede tener alcance 1 — ese hueco ya es cuerpo a cuerpo.
+- **A bocajarro *(decidido)*:** ese mínimo de 2 hex es el alcance **eficaz**, no una prohibición. **Sí puedes** disparar o lanzar un hechizo contra un enemigo **adyacente**, pero con **Desventaja** ([`effects.md`](effects.md)) — te está encima y no tienes espacio para apuntar.
+  - Hacía falta decidirlo por dos motivos concretos. Uno: [`effects.md`](effects.md) ya citaba "disparar a bocajarro" como fuente de Desventaja **y la regla no existía en ninguna parte**. Dos: sin ella, el **Mago** —cuyo Bastón tiene alcance 2 ([`cards/weapons.md`](cards/weapons.md) §2)— se quedaba literalmente **sin ningún ataque posible** en cuanto un enemigo se le pegaba, salvo que el Oteo le hubiera dado una carta. Nadie debe quedarse sin turno por su equipo.
+  - Sigue siendo cierto que **ningún arma o hechizo puede tener alcance 1** en su ficha: el 1 lo cubre esta regla, no el catálogo.
 - **Inicio del combate:** el héroe termina su movimiento en un hexágono adyacente a un enemigo (o una ficha de Amenaza se revela como enemigo junto a él). No se "entra" en el hexágono del enemigo; se combate desde el contiguo. *(Actualiza la redacción de `board/board-map.md` §4, ficha de Enemigo, que decía "inicia combate al entrar en el hexágono".)*
 
 ### 4b.2 Iniciativa / orden de turno *(decidido)*
@@ -178,10 +205,22 @@ Cada turno el héroe dispone de:
 |---|---|
 | **Movimiento (2 hex)** | Moverse hasta 2 hexágonos (coste modificado por terreno, §2.2). Se puede repartir antes y después de la Acción. |
 | **1 Acción principal** | Un ataque con arma equipada, lanzar un hechizo, activar una Carta Especial de Clase, o interactuar con una ficha contigua. |
-| **1 Acción rápida** (1/turno) | Beber una poción, jugar una carta de Item "rápido", o un segundo ataque con arma ligera en la otra mano (dual-wield, sin el mod de daño la segunda vez). |
+| **1 Acción rápida** (1/turno) | Beber una poción, jugar una carta de Item "rápido", o hacer un **ataque secundario** con tu equipo (ver abajo). |
 | **Cartas de Efecto/modificador** | Enganchadas a una tirada concreta (tuya o del enemigo). **Hasta 1 por tirada** — así "juegas cualquier carta cuando quieras" (§4) sin poder apilar infinitas. No gastan la Acción. |
 
 Las **Cartas Especiales de Clase** son potentes y de uso limitado: **1 vez por combate o por descanso** (§3.1).
+
+**Ataque secundario *(decidido — sustituye al "dual-wield con arma ligera")*.** Cualquier héroe puede gastar su **Acción rápida** en un segundo ataque con el equipo que lleve puesto, sin necesitar ninguna carta:
+
+| Lo que llevas equipado | Ataque secundario | Daño |
+|---|---|---|
+| **Dos armas** (una en cada mano ✋) | Con el arma de la **otra** mano | dado del arma **+ mod de la stat** |
+| **Un arma** (✋ con la otra mano libre o con escudo, o 🤲 a dos manos) | Un **segundo golpe** con la misma arma | dado del arma, **sin el mod** |
+
+- La tirada de ataque es normal (`1d20 + mod`, §4b.4) en los dos casos; lo que cambia es el daño.
+- **Por qué así:** el escudo (+2 CA, [`cards/weapons.md`](cards/weapons.md) §3) y las dos armas dejan de ser la misma cosa — **escudo = defensa, dos armas = ofensiva** —, y ya no hace falta la propiedad **"Ligera"**, que se referenciaba en dos reglas y **no existía en ningún catálogo** (`cards/weapons.md` §4). La columna de Manos ✋/🤲 hace ese trabajo con datos que ya están escritos.
+- **Por qué existe:** con la regla madre de §4 (jugar una carta gasta su preparación), el turno en el que el Oteo no te da nada útil se quedaba en *un solo* ataque de ~3,5 de daño frente a Élite de 30-35 PV. El ataque secundario sube el daño sostenido de la plantilla a **4,0-5,9** sin depender de la suerte, y convierte la Acción rápida en una decisión real cada turno: **¿poción, item, o pegar otra vez?**
+- **Excepción:** la **Ballesta pesada** no admite ataque secundario (regla de Recarga, [`cards/weapons.md`](cards/weapons.md) §4).
 
 ### 4b.4 Resolución de un ataque (paso a paso)
 
@@ -189,7 +228,9 @@ Las **Cartas Especiales de Clase** son potentes y de uso limitado: **1 vez por c
 2. **Tirada de ataque:** `1d20 + mod stat relevante + bonos de cartas`. Stat según el arma/hechizo: FUE (melee pesada), DES (ligera/distancia), INT (arcano), SAB (divino) — coherente con §2.1.
 3. Comparar con la **Defensa/CA** del objetivo (`10 + mod DES + armadura`, §2).
 4. Si `tirada ≥ CA` → impacto. **Daño** = `dado(s) del arma/hechizo + mod stat + bonos de carta`. Aplicar el tipo de daño contra las resistencias/vulnerabilidades del objetivo (§4b.10).
-5. **Crítico:** d20 natural 20 → impacto automático, se **doblan los dados de daño**. Natural 1 → fallo automático.
+
+   > **El modificador se suma siempre, hechizos incluidos *(decidido)*.** No hay excepción de "truco/cantrip" al estilo D&D: *Descarga arcana* hace `1d8 + mod INT` y *Llama sagrada* `1d8 + mod SAB` ([`cards/class.md`](cards/class.md)). Los textos de esas cartas decían solo "1d8" y **contradecían este paso**; corregidos. Sin el modificador, el atacante a distancia del juego pegaba **menos que una espada** (4,5 frente a 6,5), que es justo lo contrario de su rol. Las **dos excepciones explícitas** son el **ataque secundario** con una sola arma (§4b.3) y los **mercenarios**, que usan los valores fijos de su carta y no tus estadísticas ([`cards/mercenaries.md`](cards/mercenaries.md) §3).
+5. **Crítico:** d20 natural 20 → impacto automático, se **doblan los dados de daño** (solo los dados, no el modificador). Natural 1 → fallo automático. **Aplica igual a los enemigos *(decidido)*** — la misma matemática en los dos bandos, como el resto de §4b (`characters/enemies.md` §5b.5).
 6. **Ventaja/Desventaja:** tira 2d20 y coge el mejor (ventaja) o el peor (desventaja). La aportan cartas de Efecto, estados o el terreno del hex (emboscada desde Bosque = ventaja; atacar cruzando Llanura/Camino a la vista = posible desventaja — `board/board-map.md` §4).
 7. Restar el daño de los PV del objetivo. A 0 PV → derrotado.
 
@@ -202,6 +243,12 @@ Los enemigos **sí se mueven**, pero solo tras **detectar al héroe**. Modelo de
 - **Latente:** anclado en su hexágono, no patrulla, mientras no **detecte** al héroe. Entrar en su rango de detección obliga a una **prueba de sigilo** (`characters/enemies.md` §2b); solo si el héroe la falla (o no es sigiloso) el enemigo despierta. Terreno como el Bosque acorta ese rango (`board/board-map.md` §3/§4).
 - **Activo (detectado el héroe — prueba de sigilo fallada, `characters/enemies.md` §2b):** se mueve hacia él por el mapa (persecución) e inicia combate al quedar adyacente. Dentro del combate sigue moviéndose (acercarse + golpear si melee, o reposicionarse si a distancia). El **bucle de decisión** turno a turno dentro del combate (IA determinista: mover / atacar / habilidad / huir) está en `characters/enemies.md` §5b.6.
 - Esto reintroduce la **detección activa** que `characters/enemies.md` §2 tenía aplazada, y da valor mecánico al sigilo/ocultación (evitar o emboscar en vez de pelear siempre).
+
+> **El *kiting* por velocidad no funciona, y es a propósito *(decidido)*.** Un enemigo puede **mover su Velocidad completa y atacar en el mismo turno** (`characters/enemies.md` §5b.6, paso 4). Con la Velocidad igualada a 2, uno melee que esté a 3 hex se te pega y te golpea en un turno; si tú retrocedes 2, él vuelve a pegarse — y encima retroceder te cuesta una tirada de **Desengancharse** (§4b.11). O sea que **alejarte a pie es estrictamente peor que quedarte quieto**.
+>
+> No se arregla dando velocidad extra al héroe (eso convierte a todo enemigo lento en gratis). La forma de crear distancia es el **control**: *Enredo gélido* → **Inmovilizado**, Ralentizado, *Escabullirse* / *Desaparecer* → **Oculto** ([`effects.md`](effects.md)). Por eso *Enredo gélido* pasa a **Acción rápida** ([`cards/class.md`](cards/class.md) §3): si frenar al enemigo te costaba la Acción, frenarlo salía igual de caro que matarlo y nunca compensaba.
+>
+> Consecuencia para el rol del Mago: **no es un *kiter*, es un frágil que castiga desde lejos y compra turnos con control** (`cards/class.md` §3, reescrito). Sobrevive por PV (16, §2), por *Escudo arcano* y por poder disparar a bocajarro (§4b.1), no por correr más.
 
 *(Idea futura, aún sin decidir — nota del diseñador:* enemigos o eventos "cazadores" que buscan proactivamente al héroe por el mapa **antes** de detectarlo por visión. Por ahora la activación es siempre reactiva, por detección.)
 
@@ -223,6 +270,16 @@ En el prototipo los hechizos son simplemente **Cartas de clase** (Especiales 1/c
 
 - **Huir:** usar el Movimiento para salir de adyacencia/alcance. Si un enemigo **Activo** está adyacente, salir de su lado exige **Desengancharse** (§4b.11).
 - **Victoria:** todos los enemigos a 0 PV → recompensas (loot de la ficha de Tesoro si aplica, posible carta del mazo de encuentro, y avance de hito si era un jefe).
+
+**Cuándo termina exactamente un combate *(decidido)*.** Hacía falta definirlo porque de ello dependen los contadores **1/combate** (§3.1) y no estaba escrito. El combate termina cuando **no queda ningún enemigo Activo que te tenga localizado**, por cualquiera de estas tres vías:
+
+| Vía | Qué pasa con los `1/combate` |
+|---|---|
+| **Victoria** — todos a 0 PV | Se resetean **ya** |
+| **El enemigo escapa** — completa su *leash* de 2 turnos (`characters/enemies.md` §5b.6) | Se resetean al completarse el leash |
+| **Escapas tú** — te mantienes fuera de la detección y la línea de visión de todos los enemigos Activos durante **2 turnos** (el mismo leash de `characters/enemies.md` §2, aplicado en tu dirección) | Se resetean **al completarse esos 2 turnos**, no al salir corriendo |
+
+> **Por qué el reset no es inmediato al huir.** Si lo fuera, el bucle óptimo sería: lanzas *Bola de fuego*, te alejas un hexágono, vuelves con la Especial recargada. Exigir los 2 turnos completos de leash lo cierra sin inventar ninguna regla nueva —reutiliza el leash que ya existe— y le pone un precio real: **+8 de Nivel de Amenaza por huir** (§6c.2) más los dos turnos perdidos. Si el enemigo te vuelve a detectar antes de completarlos, **es el mismo combate**: el contador de turnos se reinicia y tus `1/combate` siguen gastados.
 - **Derrota (héroe a 0 PV):** con un solo héroe (`characters/heroes.md`), 0 PV = caído. Partida rápida → fin de partida; Modo Campaña → reiniciar el mapa/capítulo (el nivel y el mazo persisten). La recuperación entre combates se define en §4c (Descanso y recuperación).
 
 ### 4b.9 Estados de combate (borrador)
@@ -259,6 +316,39 @@ Por qué así:
 - **Una sola regla cubre los dos sentidos.** Antes había dos reglas distintas para lo mismo: la prueba de DES del héroe al huir (§4b.8) y la tirada **enfrentada** de DES del enemigo al huir (`characters/enemies.md` §5b.6). Ahora es la misma en ambas direcciones.
 - **"Fallo = daño pero te mueves"**, no "fallo = te quedas clavado". Quedarse pegado a un enemigo por una tirada fallida es un bucle frustrante y, con 8 PV, letal para el Mago; así el jugador nunca pierde el control de su movimiento, solo paga por él.
 - **Da texto real a las cartas de escape.** *Escabullirse* (Pícaro), *Botas de teletransporte* y equivalentes pasan a **desengancharse sin tirar** (éxito automático), que es un efecto concreto y valioso en vez de una referencia a una regla que no existía.
+
+### 4b.12 Referencia de balance: las cuentas que sostienen §4b *(primer pase)*
+
+Los números de §4b, §2 y `characters/enemies.md` §5b **no son independientes**: se eligieron juntos para que el boss de la Partida rápida se pelee en una ventana de 5-6 turnos por bando. Esta tabla existe para poder **comprobar** un cambio futuro en vez de re-deducirlo. Daño por turno = `probabilidad de impacto × daño medio`, incluyendo el crítico.
+
+**Daño por turno del héroe** — solo con el **equipo del kit inicial** (`characters/heroes.md` §2d), **sin jugar ninguna carta**: es el suelo, y las cartas son el margen.
+
+| Héroe | Acción (arma) | Acción rápida (ataque secundario, §4b.3) | Daño/turno vs CA 13 |
+|---|---|---|---|
+| Guerrero | Espada 1d8+2 | 2º golpe con la Espada, 1d8 sin mod | **5,9** |
+| Clérigo | Maza bendita 1d6+2 | 2º golpe, 1d6 sin mod | **4,8** |
+| Mago *(a 2 hex)* | Bastón 1d6+2 | 2º golpe, 1d6 sin mod | **4,8** |
+| Pícaro *(adyacente)* | Dagas 1d4+2 | Ballesta a bocajarro, Desventaja | **3,6** |
+
+- El **Pícaro** es el más bajo a propósito: su daño está en *Ataque furtivo* desde **Oculto** (+2d6 ≈ **10** ese turno), no en el intercambio de golpes. Con las dos armas en su rango (a 3 hex con la Ballesta) sube a ~5,0.
+- El **Mago adyacente** cae a ~2,3 (Desventaja a bocajarro, §4b.1). Es su penalización por dejarse alcanzar, no un error.
+
+**El boss de la Partida rápida** (uno de los 3 Élite al azar, `characters/enemies.md` §5b.3) contra el **Guerrero** (22 PV, CA 15), sin jugar ninguna carta:
+
+| Boss | PV / CA | Turnos que tarda el Guerrero en matarlo | Turnos que tarda en morir | Veredicto |
+|---|---|---|---|---|
+| Capitán bandido + 1 refuerzo | 24 / 13 | 5,8 | 6,1 | **Gana con ~2 PV** — las cartas son el colchón |
+| Araña matriarca | 28 / 14 | 5,3 | 5,3 *(+ veneno)* | **Empate técnico** — hay que jugar |
+| Trol de las minas *(regen +1)* | 28 / 13 | 5,7 | 5,4 | **Pierde por poco sin cartas** — una Poción o *Postura defensiva* lo dan la vuelta |
+
+Es la ventana que se buscaba: **el equipo solo no basta y el mazo decide la pelea**, que es justo lo que tiene que pasar en un juego de cartas.
+
+> **La peor combinación conocida: Mago vs. Trol.** 7,4 turnos para matarlo contra 4,4 de aguante con *Escudo arcano* activo. Necesita *Bola de fuego* (corta la regeneración y quita 10,5 PV), pociones y buena suerte en el Oteo. Se deja así **a propósito** —el frágil contra el saco de PV es su peor emparejamiento— pero es el primer sitio donde mirar si al testear se siente injusto.
+>
+> **Si cambias un número, revisa estas relaciones**, no la tabla:
+> - Daño/turno del héroe **× 5-6 ≈ PV del boss**.
+> - Daño/turno del boss **× 5-6 ≈ PV del héroe**.
+> - **Nunca más de 2 enemigos** a la vez (`characters/enemies.md` §5b.6): el héroe tiene 1 turno y N enemigos tienen N, y el ataque secundario solo compensa hasta 2.
 
 ## 4c. Descanso y recuperación
 
@@ -376,6 +466,66 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
   - **Items y mercenarios** → alivia el **tope del Mazo**: cambias lo que ya no usas por oro para comprar algo mejor. Cierra el bucle botín/tesoro → tienda → Mazo, que antes lo inflaba sin salida.
   - **Armas y armaduras** → **no** alivia nada del Mazo (su colección es ilimitada desde §4a): es puro **oro por equipo obsoleto**. Es, de hecho, la fuente de ingresos más regular, porque el equipo viejo se acumula sin límite y sin coste.
 
+### 6b.6 Tabla de loot: qué carta cae *(decidido)*
+
+§6b.1 ya dice **cuánto oro** suelta cada fuente; esto es la otra mitad: **qué carta**. Sin ella no se podía implementar la ficha de Tesoro, el botín al matar, los Sucesos *Hallazgo* / *Botín inesperado* ni el umbral del 25 % de Amenaza ("empeora el loot", §6c.3).
+
+**Paso 1 — ¿cae carta?**
+
+| Fuente | Carta |
+|---|---|
+| Enemigo **Normal** | Tira 1d6: con **4-6** suelta 1 carta *(50 %)* |
+| Enemigo **Élite** (incluido el boss de la Partida rápida) | **1 garantizada** |
+| **Jefe de capítulo** | **1 garantizada** + otra tirada de 1d6 (4-6) |
+| **Jefe final** | **2 garantizadas** + recompensa única de la Campaña |
+| **Ficha de Tesoro** (`board/board-map.md` §4) | **1 garantizada**; si la rareza sorteada sale **Raro o superior**, **2 cartas** |
+| **Mazmorra** (`board/board-map.md` §3b) | **2 garantizadas**, tirando en la fila de Élite |
+| Suceso **Hallazgo** ([`cards/encounter.md`](cards/encounter.md) §4) | **1 garantizada**, tirando en la fila de Normal |
+| Suceso **Botín inesperado** (Combate, §3) | **1 carta extra** al ganar, misma fila que la fuente del combate |
+
+**Paso 2 — ¿de qué rareza?** (§3.3). La rareza la marca **la fuente**, no la zona del mapa: los Élite ya aparecen lejos de la entrada (`characters/enemies.md` §5c), así que la progresión sale sola.
+
+| Fuente | Común | Poco común | Raro | Épico | Legendario |
+|---|---|---|---|---|---|
+| Normal · Hallazgo | 80 % | 20 % | — | — | — |
+| Ficha de Tesoro | 45 % | 40 % | 15 % | — | — |
+| Élite · Mazmorra | — | 55 % | 35 % | 10 % | — |
+| Jefe de capítulo | — | 25 % | 50 % | 25 % | — |
+| Jefe final | — | — | 40 % | 45 % | 15 % |
+
+> **En el prototipo, Épico y Legendario casi no existen.** Las armas y armaduras solo llegan a **Raro** ([`cards/weapons.md`](cards/weapons.md) §5b, [`cards/armor.md`](cards/armor.md) §6b); los únicos Épico/Legendario escritos son objetos mágicos ([`cards/items.md`](cards/items.md) §3). **Regla de caída:** si la rareza sorteada no existe para el tipo de carta que toca, **baja al escalón más alto disponible**. Con el reparto de tipos de abajo, un Élite saca Épico un 10 % de las veces y casi siempre acabará siendo un item mágico o un Raro — que es exactamente el ritmo que se quiere hasta que se amplíen los catálogos.
+
+**Paso 3 — ¿de qué tipo?** Importa mucho, porque solo dos de los cuatro tipos ocupan hueco del Mazo (§4, §4a):
+
+| Tipo | Peso | ¿Cuenta para el Mazo? |
+|---|---|---|
+| **Item** ([`cards/items.md`](cards/items.md)) | 50 % | **Sí** |
+| **Arma** ([`cards/weapons.md`](cards/weapons.md)) | 22 % | No — equipo (§4a) |
+| **Armadura** ([`cards/armor.md`](cards/armor.md)) | 18 % | No — equipo (§4a) |
+| **Mercenario** ([`cards/mercenaries.md`](cards/mercenaries.md)) | 10 % | **Sí** |
+
+Dentro del tipo y la rareza, se sortea **uniformemente** entre las cartas del catálogo que encajen. Para armas y armaduras eso es elegir **familia + escalón** (`cards/weapons.md` §5b).
+
+#### Calibrado: ¿a cuánto llega el Mazo? *(la comprobación)*
+
+El objetivo elegido es **botín moderado: el Mazo acaba en 14-16 cartas** (arranca en 8, `characters/heroes.md` §2d). Estas son las cuentas que lo sostienen, para poder verificar un cambio futuro en vez de re-deducirlo:
+
+| | Cuentas |
+|---|---|
+| Fichas en un mapa 12×12 | ~130 hexes con ficha posible × 17,5 % ≈ **23 fichas** |
+| Reparto por tipo (tabla B de `board/board-map.md` §2c) | ~4,5 Enemigo · ~6,7 Amenaza · ~3,5 Tesoro · ~2,4 Exploración · ~5,3 Personaje · ~0,6 Terreno |
+| Con qué te cruzas de verdad en **40 turnos** (§6c) | ~55 % del mapa → **~13 fichas** |
+| Combates | ~2,5 de ficha de Enemigo + ~1,5 de Amenaza que sale ¡Emboscada! + **1 boss** ≈ **5 peleas** |
+| **Cartas encontradas** | ~2 de Tesoro + ~2 de Normales + ~1,5 de Élite/boss + ~1 de Sucesos ≈ **~7** |
+| De ellas, al Mazo (60 %: items + mercenarios) | **~4** |
+| Compradas con el oro de la partida (~40-60 oro, stock limitado) | **~2** al Mazo |
+| **Mazo al final** | 8 + 4 + 2 ≈ **14** ✅ |
+
+Consecuencias que conviene tener presentes:
+- **El tope de 20 no se toca en una Partida rápida**, y es correcto: es el techo del Modo Campaña, donde el Mazo persiste entre mapas. Lo que **sí** se usa entero es la fórmula elástica de "en juego": de 4 huecos al empezar (Mazo 8) a **7** al final (Mazo 14), con las sustituciones entrando en juego a mitad de partida (§4).
+- **Las armas y armaduras son el 40 % del botín y no ocupan Mazo**: es la fuente de ingresos regular de §6b.5 y la razón de que el Herrero importe.
+- Las **Maldiciones** también entran al Mazo (Suceso *Maleficio*, [`cards/curses.md`](cards/curses.md)) y **cuentan** para el tope: engordan el Mazo sin darte nada, lo que sube el tope de "en juego" a cambio de diluir el Oteo. Ese es su castigo real.
+
 ## 6c. Nivel de Amenaza (reloj de capítulo)
 
 Reloj de presión que impide que un capítulo (o una Partida rápida) se eternice y obliga a **decidir entre explorar o avanzar**. Inspirado en la Amenaza de *Viajes por la Tierra Media*. **Obligatorio en los dos modos** (Partida rápida y Campaña, `board/board-map.md` §2b). Cifras = primer pase sin balancear.
@@ -384,8 +534,10 @@ Reloj de presión que impide que un capítulo (o una Partida rápida) se eternic
 
 ### 6c.1 El reloj
 
-- Barra **por capítulo** de **0 → 100**, se **reinicia** al empezar cada capítulo/mapa (en **Partida rápida**, el único mapa es "el capítulo").
-- **+1 al final de cada turno de héroe *(decidido, primer pase)*.** *(Sustituye el "+5 por ronda" anterior. Con este ritmo mucho más lento, el tope 100, los umbrales 25/50/75 y las demás fuentes de abajo quedan **pendientes de reajustar a esta nueva base** — "de momento +1 por turno y ya iremos afinando".)*
+- Barra **por capítulo** de **0 → 40**, se **reinicia** al empezar cada capítulo/mapa (en **Partida rápida**, el único mapa es "el capítulo").
+- **+1 al final de cada turno de héroe *(decidido)*.** Con la base a +1, el tope **es** la duración: **una partida son 40 turnos.**
+
+  > **De dónde sale el 40 *(decidido — sustituye el tope 100)*.** El tope tenía que salir de una decisión de duración, no de un número redondo. Las referencias: el mapa del prototipo es **12×12** y el boss está en el hex más lejano a la entrada (`board/board-map.md` §2c), o sea una travesía de **22 hexes** ≈ **15-20 turnos** con coste de terreno. Con tope 100 tenías **cinco veces** lo necesario: podías recorrer el mapa entero dos veces y ganar de sobra, así que el reloj **no ejercía ninguna presión** — que es lo único para lo que existe. Con 40 llegas al boss holgado, te da para recoger ~55 % de las fichas del mapa y para una o dos acampadas, y **elegir entre explorar o avanzar vuelve a doler**. Es también la duración sobre la que está calibrada la tabla de loot (§6b.6).
 - **No se pausa nunca *(decidido)*:** sigue corriendo igual dentro de una localización especial/sub-mapa (Mazmorra, Mina... `board/board-map.md` §3b) que dentro del mapa principal — entrar en un sub-mapa no es un respiro para el reloj.
 - **Visible siempre** en pantalla, como los PV — la tensión solo funciona si se ve subir.
 
@@ -393,31 +545,33 @@ Reloj de presión que impide que un capítulo (o una Partida rápida) se eternic
 
 Sube más rápido con acciones "lentas" o ruidosas y se frena avanzando — ahí está la decisión táctica:
 
-| Sube la Amenaza | |
-|---|---|
-| Fin de turno (base) | +1 |
-| Acampar / descanso corto (§4c.2) | **+10** *(propuesta: el doble de una ronda, para que curarte/resetear habilidades tenga un coste de tiempo real — refuerza el anti-abuso de acampar ya existente)* |
-| Fallar una prueba de sigilo y alertar una zona (`characters/enemies.md` §2b) | **+8** *(propuesta)* |
-| Huir de un combate (`characters/enemies.md` §5b.6) | **+8** *(propuesta, mismo peso que alertar — ambos son "un contratiempo", no una elección deliberada como acampar)* |
-| Carta de Suceso **Mal augurio** ([`cards/encounter.md`](cards/encounter.md) §4) | +15 (subida de golpe, fuera de las 4 fuentes fijas anteriores) |
+| Sube la Amenaza | | Equivale a |
+|---|---|---|
+| Fin de turno (base) | **+1** | 1 turno |
+| Acampar / descanso corto (§4c.2) | **+3** | 3 turnos — curarte medio PV y resetear habilidades cuesta tiempo de verdad, y refuerza el anti-abuso de §4c.2 |
+| Fallar una prueba de sigilo y alertar una zona (`characters/enemies.md` §2b) | **+2** | 2 turnos |
+| Huir de un combate (`characters/enemies.md` §5b.6) | **+2** | 2 turnos — mismo peso que alertar: los dos son un contratiempo, no una elección deliberada como acampar. Se suman a los 2 turnos de *leash* que ya cuesta escapar (§4b.8) |
+| Carta de Suceso **Mal augurio** ([`cards/encounter.md`](cards/encounter.md) §4) | **+5** | 5 turnos — la subida de golpe más dura del juego, y por eso es la peor carta del mazo de Suceso |
 
-| Baja / congela la Amenaza | |
-|---|---|
-| Derrotar al boss/objetivo del capítulo (Élite de Guarida en **Partida rápida**, objetivo de la historia en Campaña) | *(no aplica un −W: la victoria ya resetea la barra a 0 directamente, §6c.4 — esta fila queda solo como referencia de qué acción es "la" que cierra el capítulo)* |
-| **Tabernero**, pagando oro — **decidido:** ya no es el Pueblo el que baja la Amenaza automáticamente; es una acción de pago del NPC Tabernero (`characters/npcs.md` §2), usable **1 vez por partida/capítulo** | **−25 por 50 oro** *(propuesta: ratio 2 oro por punto, en línea con el precio de un objeto Raro, §6b.3)* |
+| Baja / congela la Amenaza | | Equivale a |
+|---|---|---|
+| Derrotar al boss/objetivo del capítulo | *(no aplica un −W: la victoria ya resetea la barra a 0, §6c.4)* | — |
+| **Tabernero**, pagando oro (`characters/npcs.md` §2), usable **1 vez por partida/capítulo** | **−10 por 50 oro** | Te devuelve **10 turnos** por casi todo el oro de una partida (~40-60, §6b.6): es un botón de pánico, no una rutina |
 
-*(Cifras = primer pase, a afinar jugando. **Aviso:** con la base recién bajada a +1/turno (§6c.1), las subidas de golpe de esta tabla —+10, +8, +15— quedan desproporcionadas y hay que reescalarlas junto con el tope y los umbrales.)*
+> **Reescalado a la base de 40 *(decidido)*.** Estas cifras eran +10 / +8 / +8 / +15 / −25, calibradas para el "+5 por ronda" y un tope de 100 que ya no existen. Sobre un tope de 40, acampar a +10 se comía **una cuarta parte de la partida** por una sola acampada y *Mal augurio* a +15 era casi una derrota instantánea. Ahora cada cifra se lee directamente como **"cuántos turnos te cuesta"**, que es la única forma de que sigan cuadrando si mañana cambia la duración: si el tope se mueve, esta columna no cambia — solo el tope.
+>
+> El ratio del Tabernero pasa de 2 a **5 oro por punto** a propósito: con el tope a 40, un punto de Amenaza vale 2,5 veces más que antes.
 
 ### 6c.3 Umbrales (escalado **mixto**: suave → duro)
 
-Escalados **de una sola vez** al cruzar cada cuarto:
+Escalados **de una sola vez** al cruzar cada cuarto. Con el tope a 40 (§6c.1), los cuartos caen en los **turnos 10, 20 y 30** si no haces nada más que avanzar:
 
-| Umbral | Efecto |
-|---|---|
-| **25 %** *(suave)* | Presión económica: suben los precios de tienda y empeora el loot |
-| **50 %** *(medio)* | Todos los enemigos ganan **+1 hex de rango de detección** (`characters/enemies.md` §2, §5b.1) — se vuelven más perceptivos, más difícil pasar desapercibido |
-| **75 %** *(duro)* | Los ataques enemigos que impactan ganan una **probabilidad extra de aplicar un Estado negativo** además de su daño normal (`effects.md`) — tira 1d6, con 1-2 aplica Ralentizado, Envenenado leve o Miedo, aunque el enemigo no tenga esa habilidad de por sí; y **todos los enemigos Élite** (no solo el boss/jefe de la localización) ganan el mismo **Bono de jefe** (+2 a ataque y CA, `characters/enemies.md` §5b.1) que ya llevan los Jefes de forma permanente |
-| **100 %** *(fin)* | **Pierdes el capítulo** (§6c.4) |
+| Umbral | Valor (tope 40) | Efecto |
+|---|---|---|
+| **25 %** *(suave)* | **10** | Presión económica: los precios de tienda suben un **25 %** (§6b.3) y el loot **baja un escalón de rareza** en la tirada de §6b.6 (un Poco común sale Común) |
+| **50 %** *(medio)* | **20** | Todos los enemigos ganan **+1 hex de rango de detección** (`characters/enemies.md` §2, §5b.1) — se vuelven más perceptivos, más difícil pasar desapercibido |
+| **75 %** *(duro)* | **30** | Los ataques enemigos que impactan ganan una **probabilidad extra de aplicar un Estado negativo** además de su daño normal (`effects.md`) — tira 1d6, con 1-2 aplica Ralentizado, Envenenado leve o Miedo, aunque el enemigo no tenga esa habilidad de por sí; y **todos los enemigos Élite** (no solo el boss/jefe de la localización) ganan el mismo **Bono de jefe** (+2 a ataque y CA, `characters/enemies.md` §5b.1) que ya llevan los Jefes de forma permanente |
+| **100 %** *(fin)* | **40** | **Pierdes el capítulo** (§6c.4) |
 
 **Histéresis — se disparan una sola vez *(decidido):*** cada umbral (25/50/75 %) aplica su efecto **solo la primera vez** que se cruza hacia arriba en ese capítulo. Si luego la Amenaza baja (ej. Tabernero, objetivo cumplido) y **vuelve a subir** por encima de un umbral ya disparado, **no se repite** el efecto — es un cambio de estado permanente para el resto del capítulo, no una condición que se reevalúa cada ronda. *(Nota de UI: la barra debería marcar visualmente qué umbrales ya se han consumido, ej. una marca/muesca en 25/50/75 que se "rellena" al cruzarla — detalle de implementación, no de reglas.)*
 
@@ -439,7 +593,8 @@ Escalados **de una sola vez** al cruzar cada cuarto:
 
 - **Leveling por hitos** (§5): la Amenaza es el eje de *tiempo*; los hitos, el de *historia*. Independientes.
 - **Descanso** (§4c): acampar sube Amenaza, coherente con su anti-abuso.
-- **Partida rápida**: da urgencia real (no puedes farmear el mapa sin fin); el boss de la Guarida (`board/board-map.md` §2b) debe caer antes del 100 %.
+- **Partida rápida**: da urgencia real (no puedes farmear el mapa sin fin); el boss de la Guarida (`board/board-map.md` §2b) debe caer antes del turno **40**. Como la travesía hasta él son 15-20 turnos, el reloj se traduce en una pregunta concreta cada turno: **¿me desvío a esta ficha o sigo hacia la Guarida?**
+- **Tabla de loot** (§6b.6): está calibrada sobre estos 40 turnos. Si mañana cambia la duración, hay que rehacer el calibrado del Mazo — son el mismo número visto desde dos sitios.
 
 ## 7. Próximos pasos / temas a documentar
 
@@ -467,9 +622,20 @@ Escalados **de una sola vez** al cruzar cada cuarto:
 - [x] Elegir modelo de **recuperación** (§4c.4) → **cura fija** (mitad de PV máx) en el prototipo; DV completos llegan con la progresión.
 - [x] Cerrar **quién compra las cartas** que te sobran → §6b.4: cada NPC compra lo que vende.
 - [x] Arreglar el tope de "en juego", que era **muerto** con un Mazo pequeño → §4: tope elástico `techo(Mazo ÷ 2)` entre 3 y 10, + regla de Mazo con <2 cartas.
+- [x] **Resolver si una carta jugada se queda "en juego" o vuelve al Mazo** → **vuelve al Mazo** (regla madre de §4). `cards/class.md` §1, §3.1 de este documento y `cards/mercenaries.md` §1 decían lo contrario y quedan corregidos. Era la contradicción más grave del sistema: decidía si "en juego" es un *loadout* que se spamea o **munición preparada**.
+- [x] **Cuadrar la matemática del combate** → §4b.12: PV de protagonista (§2), **ataque secundario** (§4b.3) y recorte de los Élite (`characters/enemies.md` §5b.3). Antes los tres Élite ganaban a los cuatro héroes y el Mago perdía contra un lobo suelto.
+- [x] **Tope de 2 enemigos simultáneos** (`characters/enemies.md` §5b.6) — límite de economía de acción, no de balance.
+- [x] **Definir cuándo termina un combate** (de lo que dependen los contadores `1/combate`) → §4b.8, por victoria / leash del enemigo / leash tuyo, cerrando el exploit de huir para recargar Especiales.
+- [x] **Ataques a distancia contra un enemigo adyacente** → §4b.1, **a bocajarro con Desventaja**. Hace real la referencia que `effects.md` ya hacía y evita que el Mago se quede sin ataque.
+- [x] **Críticos de los enemigos** → simétricos con el héroe (§4b.4 paso 5, `characters/enemies.md` §5b.1).
+- [x] **El daño suma siempre el modificador**, hechizos incluidos → §4b.4 paso 4; corregidas *Descarga arcana* y *Llama sagrada*.
+- [x] **Primer combate jugable** → §1b paso 4: eliges **2 Básicas** que arrancan preparadas. Antes el primer combate se peleaba con 0-2 cartas al azar y el Mago moría por sorteo.
+- [x] **Retirar la propiedad fantasma "Ligera"**, de la que colgaban dos reglas sin existir en ningún catálogo → `cards/weapons.md` §4.
+- [x] **Dar contenido a la progresión de equipo** → `cards/weapons.md` §5b y `cards/armor.md` §6b: escalones Poco común/Raro para las familias del prototipo. Todo el catálogo era Común, así que no había nada que encontrar (ni a lo que apuntar desde la tabla de loot).
 - [ ] Definir las primeras Cartas Especiales de Clase de exploración que amplíen el rango de visión (duda 2, queda solo esta parte).
-- [ ] **Tabla de loot** (qué carta suelta cada enemigo/cofre, y con qué rareza): sin ella no se puede implementar ni el botín ni el umbral del 25 % de Amenaza ("empeora el loot", §6c.3).
-- [ ] Reescalar el **Nivel de Amenaza** a la base de +1/turno (§6c.1-6c.2): el tope 100, los umbrales y las subidas de golpe (+10/+8/+15) están calibrados para el "+5 por ronda" antiguo.
+- [x] **Tabla de loot** *(decidido)* → §6b.6: tres pasos (¿cae carta? · ¿qué rareza? · ¿qué tipo?), con el calibrado que la ata al objetivo elegido —**botín moderado, Mazo de 8 a ~14-16**— y la regla de caída para Épico/Legendario, que casi no existen en el catálogo del prototipo.
+- [x] **Duración de una Partida rápida y reescalado del Nivel de Amenaza** *(decidido)* → **40 turnos** (§6c.1): el tope pasa de 100 a 40, los umbrales caen en los turnos 10/20/30 y las subidas de golpe se reescriben como "cuántos turnos te cuesta" (+3 acampar, +2 alertar/huir, +5 Mal augurio, −10 el Tabernero). Con tope 100 el reloj daba **cinco veces** lo necesario para la travesía de 22 hexes y no ejercía ninguna presión.
+- [x] **¿Puede el jugador consultar su Mazo?** *(decidido)* → **sí, la lista completa y en cualquier momento** (§4). No estaba escrito, y el swap 1-por-1 ya lo exigía.
 - [x] Definir recurso de economía/moneda (duda 3) → **Oro** (§6b), con fuentes, sumideros y precios por Rareza. Falta balancear las cifras.
 - [x] Definir dado de vida por clase — ver `characters/heroes.md` §2c (Guerrero d10, Pícaro/Clérigo d8, Mago d6).
 - [x] Definir cómo se traduce capítulo/hito de Campaña a CR de enemigo esperado (duda 5) → **escala de dificultad** por zona/nivel (`characters/enemies.md` §5c).

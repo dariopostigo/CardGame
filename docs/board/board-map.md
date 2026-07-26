@@ -23,7 +23,7 @@ Con esto queda **validada la generación de mapa** para los dos modos que necesi
 ### Partida rápida *(nombre de diseño anterior: "Modo Prueba")* (sandbox/skirmish)
 - Mapa **100% aleatorio** (por tiles o hexágono-a-hexágono, sección 2), sin narrativa ni eventos escritos a mano.
 - Configuración mínima: tamaño de mapa. **Siempre se coloca un boss** (enemigo élite/jefe) al generar el mapa, en el punto más alejado del punto de entrada o en una zona marcada como "guarida" — derrotarlo es la condición de victoria (obligatorio, no opcional).
-- **Condición de victoria:** derrotar al **boss élite de la Guarida**. **Derrota:** si el héroe cae (0 PV, `../game-design.md` §4b.8), o si el **Nivel de Amenaza** llega al 100 % antes (`../game-design.md` §6c) → fin de partida (reinicias el mapa). Sin **bonus de eficiencia** al ganar (`../game-design.md` §6c.4) — al ser una partida suelta de un solo mapa, no hay "siguiente capítulo" que premiar.
+- **Condición de victoria:** derrotar al **boss élite de la Guarida**. **Derrota:** si el héroe cae (0 PV, `../game-design.md` §4b.8), o si el **Nivel de Amenaza** llega a su tope antes — **40, o sea el turno 40** (`../game-design.md` §6c.1) → fin de partida (reinicias el mapa). Esa es la duración de una Partida rápida, y la travesía hasta la Guarida son ~15-20 turnos: te sobra para desviarte, pero no para todo. Sin **bonus de eficiencia** al ganar (`../game-design.md` §6c.4) — al ser una partida suelta de un solo mapa, no hay "siguiente capítulo" que premiar.
 - Objetivo de este modo: jugar partidas rápidas y sueltas para probar equilibrio de combate, progresión de mazo y sensación general de exploración, sin depender de tener contenido narrativo terminado.
 - Es el modo que se implementa primero — desbloquea poder testear todo lo demás (personaje, cartas, combate) sin escribir ni una línea de historia.
 
@@ -59,7 +59,7 @@ Para el **primer prototipo**, generación **hexágono-a-hexágono con pesos** (l
 4. Colocar las **localizaciones especiales garantizadas** *(decidido)*:
    - **1 Guarida** (§3b) con el **boss élite** —**uno de los 3 Élite elegido al azar** (`../characters/enemies.md` §5b)— en el hex transitable **más lejano** a la entrada. Con entrada en esquina, eso lo pone en la esquina opuesta: la travesía máxima del mapa.
    - **1 Pueblo** (§3b), en la **mitad cercana** a la entrada. **Garantizado, no opcional:** el Pueblo concentra los NPCs de tienda, el descanso largo y la limpieza de Maldiciones (`../characters/npcs.md`), así que si la generación no lo coloca, **tres sistemas enteros quedan inaccesibles** en esa partida — y con oro inicial 0 tampoco habría forma de gastar el oro que ganas.
-   - **1 Mazmorra opcional** (§3b), según densidad.
+   - **1 Mazmorra opcional** (§3b), según densidad — en el prototipo, **un solo hexágono reforzado, sin sub-mapa** (§3b).
 5. Sembrar **fichas** según densidad y distribución (tabla B).
 
 **Tabla A — Pesos de terreno (prototipo):**
@@ -73,9 +73,11 @@ Para el **primer prototipo**, generación **hexágono-a-hexágono con pesos** (l
 | Terreno | Enemigo | Amenaza | Tesoro | Exploración | Terreno (prueba) | Personaje |
 |---|---|---|---|---|---|---|
 | Llanura | 2 | 2 | 1 | 1 | 0 | 2 |
-| Bosque | 1 | 3 | 2 | 2 | 0 | 1 |
+| Bosque | 1 | 3 | 2 | 2 | **1** | 1 |
 | Pantano | 2 | 3 | 1 | 0 | 2 | 0 |
 | Camino | 1 | 2 | 1 | 0 | 0 | 3 |
+
+Con estos pesos, un mapa 12×12 lleva **~23 fichas** repartidas así: ~4,5 Enemigo · ~6,7 Amenaza · ~3,5 Tesoro · ~5,3 Personaje · ~2,4 Exploración · ~1,2 Terreno. Es el reparto sobre el que están calibradas la **tabla de loot** y la **duración de 40 turnos** (`../game-design.md` §6b.6, §6c.1), así que tocar esta tabla obliga a revisar los dos.
 
 Las **localizaciones especiales** (§3b) colocan sus propias fichas (ej. Pueblo → solo Personaje; Guarida → boss). Parámetros configurables (recap de §2): tamaño, densidad de fichas, densidad de enemigos, semilla.
 
@@ -124,18 +126,31 @@ Al ser un mapa hexagonal, estas localizaciones se pueden **predefinir sin proble
 |---|---|---|
 | Pueblo/Aldea | Zona segura: tienda, **descanso largo** (`../game-design.md` §4c.3), NPCs con misiones | Punto de respiro entre exploración; no hay combate salvo que la historia lo dicte |
 | Castillo/Fortaleza | Hub de misiones importantes, o guarida de un enemigo relevante (mini-jefe de capítulo) | Puede estar controlado por aliados o por el enemigo según la historia |
-| Mazmorra | Sub-mapa de combate denso, alta probabilidad de loot bueno | Igual concepto que "Ruinas/Cueva" pero más grande y con varias salas/encuentros encadenados |
+| Mazmorra | Sub-mapa de combate denso, alta probabilidad de loot bueno | Igual concepto que "Ruinas/Cueva" pero más grande y con varias salas/encuentros encadenados. **En el prototipo: 1 hexágono reforzado, sin sub-mapa — ver §3b-bis** |
 | Mina | Sub-mapa de recolección de materiales/recursos (para crafteo futuro) + posible peligro (derrumbe, criaturas de cueva) | Buena vía para introducir un sistema de crafteo más adelante sin comprometernos ya a ello |
 | Templo/Santuario *(añadido, sabor D&D)* | Bendición temporal, curación, o misión de fe/moralidad | Encaja con Sabiduría/Carisma del personaje |
 | Torre de mago *(añadido, sabor D&D)* | Tienda arcana (hechizos, pergaminos), posible prueba de Inteligencia | Contrapunto arcano al pueblo/tienda genérica |
 | Campamento (enemigo o aliado) *(añadido, sabor D&D)* | Encuentro de combate si es enemigo, o refuerzos/aliados temporales si es amistoso | Se decide al generarlo o al revelarlo, dando variedad |
-| Cripta/Cementerio *(añadido, sabor D&D)* | Entrada temática a mazmorra con enemigos no-muertos | Reutiliza el sub-mapa de Mazmorra con set de enemigos propio |
+| Cripta/Cementerio *(añadido, sabor D&D)* | Entrada temática a mazmorra con enemigos no-muertos | Reutiliza la Mazmorra con set de enemigos propio (en el prototipo, su hexágono reforzado — §3b-bis) |
 | Torre de vigilancia *(añadido, sabor D&D)* | Al capturarla/visitarla, pasa a "Detectado" uno o más grupos de hexágonos vecinos, incluso sin conexión directa (ver sección 4) | Recompensa de exploración pura, sin combate obligatorio |
 | Guarida *(añadido, sabor D&D)* | Combate directo contra un enemigo elite/jefe | Es la versión "salvaje" del Castillo — sin narrativa de por medio, ideal también para la **Partida rápida** |
 
 Estas localizaciones no sustituyen el terreno base: **se colocan sobre/en vez de un hexágono de terreno normal** durante la generación (por tiles o manualmente en Campaña), igual que un pueblo real se asienta sobre una pradera o un valle.
 
 > El **Nivel de Amenaza** del capítulo (`../game-design.md` §6c) **no se pausa** al entrar en el sub-mapa de una de estas localizaciones (Mazmorra, Mina...) — sigue corriendo igual que en el mapa principal.
+
+### 3b-bis. La Mazmorra del prototipo: un hexágono reforzado, sin sub-mapa *(decidido)*
+
+En el **prototipo** la Mazmorra **no genera un mapa interior**. Se resuelve entera en su hexágono:
+
+- **Combate:** al quedar adyacente, peleas contra **1 Élite distinto al boss de la Guarida** (se sortea entre los 2 que sobran, `../characters/enemies.md` §5b.3). Sigue valiendo el tope de 2 enemigos simultáneos (§5b.6).
+- **Recompensa al ganar:** **2 cartas** tirando en la fila de Élite de la tabla de loot (`../game-design.md` §6b.6) — es el mejor botín del mapa después del boss, que es lo que la hacía atractiva.
+- **La oscuridad importa *(y por fin le da uso a la Antorcha)*:** si entras **sin una fuente de luz equipada** (Antorcha o Linterna, [`../cards/weapons.md`](../cards/weapons.md) §3, [`../cards/items.md`](../cards/items.md) §1), el Élite **te embosca**: actúa primero e ignora la iniciativa el primer turno (`../game-design.md` §4b.2). Con luz, iniciativa normal.
+- **Sigue siendo opcional:** puedes ignorarla y ganar la partida sin entrar. Con el reloj a 40 turnos (`../game-design.md` §6c.1), meterse es una apuesta de tiempo real.
+
+> **Por qué se recorta.** El sub-mapa es la versión buena y sigue siendo el objetivo (§3b), pero para el primer prototipo exige un **segundo generador entero** —con sus propias reglas de niebla, entrada/salida, fichas y conectividad— y **no añade ninguna mecánica** que no puedas probar en el mapa principal: combate duro y loot bueno ya los tienes. Guarida + Pueblo cubren boss y tiendas/descanso. Era la única pieza del prototipo que multiplicaba el trabajo sin ampliar el sistema.
+>
+> Aplica igual a la **Mina** y a la **Cripta/Cementerio** si se activan: en el prototipo, hexágono reforzado con su propio set de enemigos, no sub-mapa. Lo mismo vale para el **Templo** y la **Torre de mago** (interacción de NPC en su hexágono, sin interior).
 
 Todos los terrenos deben tener como mínimo: **coste de movimiento**, **modificador de ocultación/defensa** (puede ser 0), y **probabilidad de aparición** en la generación aleatoria.
 
@@ -177,6 +192,20 @@ Ciertos hexágonos (dentro de un grupo ya "Explorado") tienen una **ficha** visi
 - Las fichas pueden tener una distribución ponderada distinta según el tipo de terreno/localización (ej. ruinas → más probabilidad de Amenaza o Enemigo que una llanura; Pueblo → solo fichas de Personaje).
 - El terreno puede afectar el encuentro al activar una ficha de Amenaza/Enemigo: emboscada con ventaja si el jugador está en bosque y el enemigo no lo ha detectado; desventaja si el jugador cruza una llanura o camino a la vista.
 
+### 4b. La prueba de la ficha de Terreno *(decidido)*
+
+Era la única de las 6 fichas **sin ninguna regla**: decía "puede dar un beneficio o ser un obstáculo" y ahí acababa, sin estadística, sin CD y sin qué pasa al fallar.
+
+**Qué es:** un **atajo arriesgado**. La ficha marca un paso difícil —un vado, una grieta, un tramo de maleza cerrada— que **puedes rodear siempre**: no bloquea el camino, solo lo acorta si te atreves. Ahí está la decisión, y encaja con el reloj de Amenaza (`../game-design.md` §6c): ahorrar 2 turnos o no arriesgar.
+
+- **Prueba:** `1d20 + mod de FUE o DES` (**la mejor de las dos**, según si fuerzas el paso o lo esquivas) vs **CD 12**.
+- **Éxito:** cruzas el hex **sin pagar su coste de movimiento** y ganas **+1 de movimiento** ese turno (has dado con el paso bueno). La ficha **se retira**.
+- **Fallo:** **pierdes el movimiento que te quedara** ese turno y sufres el **peligro del terreno** del hex (§3a — ej. Pantano: salvación CON o Envenenado; si el terreno no tiene peligro propio, **1d6 contundente**). La ficha **se queda**: puedes reintentarlo otro turno o rodearla.
+- **Las cartas de equipo se enganchan aquí**, que es lo que les da uso fuera de combate: *Kit de escalada*, *Cuerda de cáñamo*, *Manta*, *Atajo del pícaro* y *Bota veloz* ([`../cards/items.md`](../cards/items.md)) dan **ventaja** en esta prueba o directamente evitan el coste.
+- El mazo de encuentro **no** se roba en el caso normal (corrige [`../cards/encounter.md`](../cards/encounter.md) §5, que decía "a veces"): el resultado ya está en la propia prueba. Solo se roba un Suceso si la ficha estaba en un hex con **localización especial**.
+
+> **Ojo, aparece poco:** con la tabla B de §2c esta ficha solo salía en Pantano, o sea **~0,6 veces por mapa**. Se le añade peso **1 en Bosque** (maleza cerrada) para que llegue a ~1,2 por partida. Sigue siendo la ficha más rara de las 6 a propósito —es sabor de exploración, no un sistema central—, así que **es la última que hay que implementar** del generador.
+
 ## 5. Mazo de encuentro (aparte del mazo de objetos)
 
 La referencia muestra cartas cortas de acción durante la exploración/combate en el mapa ("Captura", "Abatimiento") distintas de las cartas de loot. Propuesta:
@@ -213,6 +242,8 @@ Los apuntes técnicos (sistema de coordenadas, modelo de datos, algoritmos) se m
 2. **Comportamiento de los enemigos en el mapa** → resuelto en [`../characters/enemies.md`](../characters/enemies.md) §2 (latente→activo por detección), §2b (aproximación/sigilo) y §5b (bloques). **Reaparición resuelta:** los enemigos **no reaparecen**; se colocan al generar el mapa y una zona limpiada queda despejada (`../characters/enemies.md` §2). Con el sistema de tiles se ubican en **agrupaciones temáticas** (campamentos, salas — §2).
 
 ### Pendiente de concretar (checklist, para cuando toque implementar)
+- [x] **Reglas de la ficha de Terreno** *(decidido)* → §4b: atajo arriesgado, `1d20 + FUE/DES` vs CD 12; éxito = cruzas gratis y +1 movimiento, fallo = pierdes el movimiento y sufres el peligro del hex. Era la única de las 6 fichas sin ninguna regla. Peso 1 en Bosque añadido para que aparezca más de 0,6 veces por mapa.
+- [x] **Mazmorra del prototipo** *(decidido)* → §3b-bis: **1 hexágono reforzado, sin sub-mapa** (1 Élite distinto al boss + 2 cartas de loot de Élite; sin luz, te embosca). El sub-mapa sigue siendo el objetivo, pero exigía un segundo generador entero sin añadir mecánica nueva.
 - [ ] Diseñar el set inicial de "tiles" (grupos de hexágonos) para el sistema de generación por piezas, con sus reglas de conexión de bordes, cubriendo los 5 terrenos del prototipo, **y sus agrupaciones temáticas de fichas** (campamentos, salas — §2).
 - [x] Definir tabla de probabilidades de generación por terreno y por tipo de ficha → §2c (tabla A pesos de terreno, tabla B distribución de fichas). Falta balancear.
 - [x] Definir rango de visión base del personaje y cómo lo modifican clase/objetos/terreno → **dos radios** (`../game-design.md` §2.3): detalle `3 + mod SAB` (fichas) y terreno `detalle + 2` (silueta); −1 a ambos en Bosque (§3a), Montaña bloquea la línea de visión, +1 con Ojo avizor/habilidades de exploración (abajo). Falta afinar las cifras contra el tablero real.
