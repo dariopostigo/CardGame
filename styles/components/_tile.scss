@@ -1,0 +1,144 @@
+@use "sass:map";
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Lienzo de una loseta suelta — ver components/dev/TileCanvas.tsx
+//
+// Hermano de _board.scss y con la misma división de trabajo: el SVG aporta
+// geometría, el color se pide por nombre aquí. Pintan lo mismo (data-terrain
+// con los colores de $terrain), y a propósito: una loseta tiene que
+// reconocerse luego dentro del tablero.
+//
+// Lo que solo existe aquí son los tres estados que el tablero no tiene:
+// el hexágono AL SORTEO (terreno sin fijar, gris del tema), el hueco CANDIDATO
+// que se puede añadir con un clic, y el ANCLA, la flecha que marca por dónde se
+// une esta loseta a la siguiente.
+//
+// El trazo del sendero NO se pinta aquí, y el tablero sí lo pinta: en una
+// loseta suelta el relleno del Camino ya dice por dónde va, y la línea solo
+// tapaba el terreno. En el tablero hace falta, porque ahí sirve para ver si el
+// sendero enlaza de una loseta a la siguiente.
+// -------------------------------------------------------------------------
+
+.tile-canvas__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 78vh;
+}
+
+// --- Hexágonos -------------------------------------------------------------
+
+.tile-canvas__hex {
+  stroke-width: 1;
+  transition: fill $duration-fast $ease, stroke $duration-fast $ease;
+}
+
+// Un bloque por terreno, del mismo mapa de settings que el tablero.
+@each $name, $colors in $terrain {
+  .tile-canvas__hex[data-terrain="#{$name}"] {
+    fill: map.get($colors, "base");
+    stroke: map.get($colors, "line");
+  }
+}
+
+// Al sorteo: la loseta no fija este terreno, lo decide el tablero al colocarla.
+// Gris del tema y no un color de terreno, porque no ES ningún terreno.
+.tile-canvas__hex[data-terrain="libre"] {
+  fill: skin("surface-2");
+  stroke: skin("border");
+}
+
+// Hueco vecino: se ve que está ahí, pero no es de la loseta.
+.tile-canvas__hex[data-kind="candidate"] {
+  fill: transparent;
+  stroke: $tile-candidate-line;
+  stroke-dasharray: 3 3;
+}
+
+.tile-canvas__hex[data-interactive="true"] {
+  cursor: pointer;
+
+  &:hover {
+    stroke: skin("accent");
+    stroke-width: 2.5;
+    stroke-dasharray: none;
+  }
+}
+
+.tile-canvas__hex[data-selected="true"] {
+  stroke: skin("text");
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+
+// --- Contorno y anclas -----------------------------------------------------
+
+// Ninguna de estas capas debe robar el clic al hexágono de debajo; la zona de
+// clic de los lados (más abajo) es la excepción, y es explícita.
+.tile-canvas__outline,
+.tile-canvas__anchors {
+  pointer-events: none;
+}
+
+// El contorno de la loseta, que no es el de sus hexágonos: es lo que la hace
+// leerse como una pieza y no como un grupo de casillas.
+.tile-canvas__border {
+  stroke: $board-tile-edge;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+// El ancla: una flecha pequeña, dentro del hexágono, apuntando a su lado.
+.tile-canvas__anchor {
+  fill: $tile-anchor;
+  stroke: $tile-anchor-line;
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+}
+
+// Banda invisible sobre cada lado del contorno, para poner o quitar el ancla
+// con un clic. Ancha a propósito: un lado de hexágono es un objetivo pequeño.
+.tile-canvas__edge-hit {
+  stroke: transparent;
+  stroke-width: 12;
+  cursor: pointer;
+
+  &:hover {
+    stroke: skin("accent-soft");
+  }
+}
+
+// --- Coordenadas -----------------------------------------------------------
+
+.tile-canvas__coord {
+  pointer-events: none;
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-size: 0.5rem;
+  fill: skin("muted");
+  user-select: none;
+}
+
+.tile-canvas__coord[data-kind="candidate"] {
+  opacity: 0.5;
+}
+
+// --- Paleta del editor -----------------------------------------------------
+// Los mismos colores que el lienzo: la paleta hace de leyenda además de pincel.
+
+.tile-swatch {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: radius("xs");
+  border: 1px solid skin("border");
+  background: skin("surface-2");
+}
+
+@each $name, $colors in $terrain {
+  .tile-swatch[data-terrain="#{$name}"] {
+    background: map.get($colors, "base");
+    border-color: map.get($colors, "line");
+  }
+}

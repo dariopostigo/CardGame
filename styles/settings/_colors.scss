@@ -67,6 +67,42 @@ $rarity: (
 // tablas de la wiki (RarityChip.tsx). Orden = progresión de calidad.
 $rarity-levels: ("comun", "poco-comun", "raro", "epico", "legendario");
 
+// --- Terreno del tablero (board/board-map.md §3a) -------------------------
+// Constantes de diseño, como la rareza: NO cambian con el tema claro/oscuro,
+// porque son la identidad del mapa (una llanura es verde en los dos temas).
+// "base" rellena el hexágono, "line" pinta su borde.
+// Espejo de TerrainId en lib/rules/terrain.ts: mismas 5 claves, mismos nombres.
+$terrain: (
+  "llanura": ("base": #9cb46a, "line": #7c9150),
+  "camino": ("base": #d8bb86, "line": #b2966a),
+  "bosque": ("base": #2f6b41, "line": #245132),
+  "pantano": ("base": #5a6b62, "line": #43514a),
+  "montana": ("base": #8b8896, "line": #6c697a),
+);
+
+// Halo claro detrás de las fichas del tablero: sin él, los glifos oscuros son
+// ilegibles sobre Bosque y Pantano.
+$board-glyph-halo: rgba(255, 255, 255, 0.78);
+
+// Trazo del sendero. Más oscuro que el relleno del Camino para que el trazado
+// se lea por encima del hexágono.
+$board-road: #8a6a3c;
+
+// Contorno de cada loseta. Es lo que hace que el tablero se lea como piezas
+// encajadas y no como una rejilla continua.
+$board-tile-edge: rgba(24, 20, 12, 0.62);
+
+// Ancla, en el lienzo de losetas (/dev/losetas): la flecha que marca por dónde
+// se une una loseta a otra. Va rellena oscura con filete claro porque se pinta
+// sobre cualquier terreno, y sobre el Bosque una flecha sin filete
+// desaparecería.
+$tile-anchor: rgba(24, 20, 12, 0.85);
+$tile-anchor-line: rgba(255, 255, 255, 0.9);
+
+// Hexágono "candidato" del editor: el hueco vecino que todavía no es de la
+// loseta pero se puede añadir con un clic.
+$tile-candidate-line: rgba(120, 120, 130, 0.55);
+
 // --- Severidad de Maldiciones (cards/curses.md §2) ------------------------
 // Paleta propia, no la de rareza: mide peligro, no calidad, y confundirlas
 // haría ilegibles las tablas (SeverityChip.tsx).

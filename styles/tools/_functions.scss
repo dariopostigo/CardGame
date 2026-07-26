@@ -49,6 +49,14 @@
   @return map.get($rarity, $name, $key);
 }
 
+// Color de terreno. $key: "base" (relleno del hexágono) | "line" (borde).
+@function terrain($name, $key: "base") {
+  @if not map.has-key($terrain, $name) {
+    @error "terrain(): no existe el terreno '#{$name}'. Disponibles: #{map.keys($terrain)}.";
+  }
+  @return map.get($terrain, $name, $key);
+}
+
 // Color de severidad de Maldición. Mismas claves que rarity().
 @function severity($name, $key: "base") {
   @if not map.has-key($severity, $name) {

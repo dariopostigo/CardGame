@@ -1,0 +1,163 @@
+@use "sass:map";
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Tablero hexagonal — ver components/game/board/HexBoard.tsx
+//
+// El SVG solo aporta geometría (centros y vértices los calcula lib/rules/hex.ts);
+// todo el color vive aquí, pedido por nombre a terrain(). El componente marca
+// cada hexágono con data-terrain / data-location / data-hidden y esta hoja
+// decide cómo se ve.
+// -------------------------------------------------------------------------
+
+.board {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.board__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  // Sin esto, al reducir la ventana el mapa se recorta en vez de encogerse.
+  max-height: 78vh;
+}
+
+// --- Hexágono --------------------------------------------------------------
+
+.board__hex {
+  // El relleno por defecto es la niebla; cada terreno lo pisa más abajo.
+  fill: skin("surface-2");
+  stroke: skin("border");
+  stroke-width: 1;
+  transition: fill $duration-fast $ease, stroke $duration-fast $ease;
+}
+
+// Un bloque por terreno, generado desde el mapa de settings: si mañana entra
+// un sexto terreno (Colinas, Río…), basta añadirlo a $terrain y a TerrainId.
+@each $name, $colors in $terrain {
+  .board__hex[data-terrain="#{$name}"] {
+    fill: map.get($colors, "base");
+    stroke: map.get($colors, "line");
+  }
+}
+
+// Niebla: gana a cualquier terreno, porque el jugador no sabe qué hay debajo.
+.board__hex[data-hidden="true"] {
+  fill: skin("surface-2");
+  stroke: skin("border");
+}
+
+.board__hex[data-interactive="true"] {
+  cursor: pointer;
+
+  &:hover {
+    stroke: skin("text");
+    stroke-width: 2.5;
+  }
+}
+
+// Hexágono seleccionado: contorno grueso del color de texto, para que se lea
+// sobre cualquier terreno.
+.board__hex[data-selected="true"] {
+  stroke: skin("text");
+  stroke-width: 3;
+}
+
+// --- Senderos y contorno de loseta ----------------------------------------
+
+// Ninguna de las dos capas debe robar el clic al hexágono de debajo.
+.board__roads,
+.board__tiles {
+  pointer-events: none;
+}
+
+.board__road {
+  stroke: $board-road;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  fill: none;
+}
+
+// Solo se pinta el lado que da a otra loseta o al vacío, así que el resultado
+// es la silueta de cada una.
+.board__tile-edge {
+  stroke: $board-tile-edge;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+
+// --- Marcas encima del hexágono -------------------------------------------
+
+// Localizaciones y fichas se pintan como glifos centrados. `pointer-events:
+// none` para que no roben el clic al hexágono de debajo.
+.board__glyph {
+  pointer-events: none;
+  text-anchor: middle;
+  dominant-baseline: central;
+  user-select: none;
+}
+
+.board__glyph--token {
+  font-size: 0.85rem;
+}
+
+.board__glyph--location {
+  font-size: 1.1rem;
+}
+
+// Disco claro bajo el glifo. Los emoji se pintan como bitmap, así que no
+// admiten contorno: la única forma de darles contraste es el fondo.
+.board__glyph-halo {
+  fill: $board-glyph-halo;
+  pointer-events: none;
+}
+
+// Anillo de la entrada: la "puerta" del mapa (board-map.md §2c paso 0).
+.board__entrance {
+  fill: none;
+  stroke: rarity("legendario");
+  stroke-width: 3;
+  pointer-events: none;
+}
+
+// Coordenadas axiales, solo en la vista de desarrollo.
+.board__coord {
+  pointer-events: none;
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-size: 0.5rem;
+  fill: skin("muted");
+  user-select: none;
+}
+
+// --- Leyenda ---------------------------------------------------------------
+
+.board__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  align-items: center;
+  font-size: 0.8rem;
+  color: skin("muted");
+}
+
+.board__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.board__swatch {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: radius("xs");
+  border: 1px solid skin("border");
+}
+
+@each $name, $colors in $terrain {
+  .board__swatch[data-terrain="#{$name}"] {
+    background: map.get($colors, "base");
+    border-color: map.get($colors, "line");
+  }
+}
