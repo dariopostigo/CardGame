@@ -6,6 +6,19 @@ Mezcla de mecánicas de **D&D** (personajes, estadísticas, progresión, identid
 
 Cada jugador controla un personaje con estadísticas de tipo D&D. Tiene un **mazo personal** (clase + items + mercenarios) del que cada turno **otea** 2 cartas al azar y prepara 1 para jugarla cuando quiera (§4) —ahí está la suerte de cada turno—, más un **equipo** de armas y armaduras que lleva puesto, aparte del mazo (§4a). Las cartas se juegan para modificar estadísticas propias, de aliados o de enemigos, aplicar ventaja/desventaja, curarse, invocar mercenarios, etc.
 
+## 1b. Inicio de una partida (setup) *(decidido)*
+
+Flujo desde que el jugador abre la aplicación hasta que pisa el primer hexágono:
+
+1. **Partida nueva → elegir modalidad.** **Partida rápida** (la única disponible en el prototipo) o **Modo Campaña**, que a su vez contiene **varias historias distintas seleccionables** (no un único arco; se irán añadiendo — `board/board-map.md` §2b).
+2. **Elegir héroe** de los disponibles ([`characters/heroes.md`](characters/heroes.md)). La pantalla de selección muestra una **ficha completa** de cada uno: retrato, historia breve, puntos fuertes y débiles, las 6 estadísticas, PV, dado de vida y su kit inicial (`characters/heroes.md` §1b).
+3. **Kit inicial** — se otorga automáticamente, sin pasar por tienda ni gastar oro (**el oro inicial sigue siendo 0**, §6b):
+   - **Todas sus cartas de clase** (Básicas + Especial, [`cards/class.md`](cards/class.md)) → van al **Mazo**.
+   - Una **selección fija de armas y armaduras por clase** → van **equipadas** (§4a), no al Mazo.
+   - Un **puñado de items de arranque por clase** → van al **Mazo**. Existen por una razón mecánica, no de sabor: sin ellos el Mazo arranca con solo 4 cartas y el **Oteo se rompe** (ver el aviso de §4).
+   - Los kits concretos de los 4 héroes están en `characters/heroes.md` §2d.
+4. **Generación del mapa y entrada.** Se genera el mapa (`board/board-map.md` §2c) y el héroe entra por **una esquina**, la "puerta" del mapa (§2c, paso 0). A partir de ahí empieza el turno 1: oteas, mueves, actúas.
+
 ## 2. Personaje y estadísticas
 
 Base D&D (6 características clásicas). Cada personaje tiene: PV, Nivel, Clase, Movimiento (§2.2) y las 6 estadísticas con su modificador (igual que D&D: `mod = floor((stat - 10) / 2)`).
@@ -34,15 +47,38 @@ Fuentes de movimiento **extra** por encima del estándar:
 - **Cartas de movimiento** — un tipo de carta de equipo/objeto que se juega para ganar movimiento extra ese turno.
 - **Cartas de clase innatas** — ciertos héroes pueden tener ya en su mazo cartas que dan movimiento extra desde el principio (ej. el Pícaro, coherente con su rol explorador en `characters/heroes.md`).
 
-### 2.3 Rango de visión
+**Suelo mínimo *(decidido)*:** el movimiento **nunca baja de 1 hexágono** por turno, por muchos modificadores negativos que se acumulen (Ralentizado de [`effects.md`](effects.md) + *Peso maldito* de [`cards/curses.md`](cards/curses.md) sumarían 0 sin esta regla). Quedarse literalmente clavado solo lo consigue el estado **Inmovilizado**, que es explícito.
 
-Rango de visión base = 1 hexágono (el actual + vecinos inmediatos, según `board/board-map.md` §4), gobernado por **Sabiduría**: cada +2 de modificador de Sabiduría añade +1 hexágono de rango. Las Cartas Especiales de Clase de exploración (pendientes de diseñar, ver checklist) pueden ampliarlo más allá de esta base, tal como ya anticipaba `board/board-map.md` §4.
+### 2.3 Rango de visión *(decidido)*
+
+**Dos radios distintos**, porque "ver por dónde voy" y "ver qué hay ahí" no son la misma cosa. Separarlos arregla la sensación de mirilla del radio único de 1 hexágono y da una **niebla en dos capas por hexágono**, sin necesitar el sistema de grupos/tiles que sigue aparcado (`board/board-map.md` §2, §4):
+
+| Radio | Qué revela | Fórmula |
+|---|---|---|
+| **Visión de detalle** | Las **fichas** del tablero (Enemigo, Amenaza, Tesoro, NPC…) y las localizaciones especiales | `3 + mod SAB` (mínimo 1) |
+| **Visión de terreno** | Solo el **tipo de terreno** de cada hexágono — la silueta del mapa, sin su contenido | `visión de detalle + 2` (mínimo 2) |
+
+| Héroe | mod SAB | Detalle | Terreno |
+|---|---|---|---|
+| Guerrero (SAB 12) | +1 | 4 | 6 |
+| Pícaro (SAB 10) | +0 | 3 | 5 |
+| Mago (SAB 13) | +1 | 4 | 6 |
+| Clérigo (SAB 15) | +2 | 5 | 7 |
+
+- **Escala +1 por punto de modificador de SAB.** Sustituye el "+1 por cada +2 de mod" anterior, que daba **+0 a tres de los cuatro héroes** — con él la Sabiduría no diferenciaba nada.
+- **Terreno:** Bosque **−1 a ambos radios** (`board/board-map.md` §3a); Montaña **bloquea la línea de visión**.
+- **Invariantes de balance.** Los valores absolutos son perilla libre —no se pueden cerrar del todo hasta ver el tablero real jugando—, pero al afinarlos hay que preservar estas dos relaciones:
+  - `detalle > detección enemiga` (detección = 2 + mod SAB del enemigo, `characters/enemies.md` §2) → **el héroe ve al enemigo antes de que el enemigo pueda detectarle**, que es exactamente lo que asume la fase de aproximación de `characters/enemies.md` §2b. Con el radio único anterior (visión 1 vs. detección 2) pasaba lo contrario y el sigilo quedaba muerto.
+  - `terreno > detalle` → siempre conoces la silueta antes que el contenido.
+- Entrar por una **esquina** del mapa (`board/board-map.md` §2c) hace que estos radios sean seguros: un disco de radio 6 desde una esquina solo cae ~1/3 sobre el tablero (~20 hexes de 144), no medio mapa. Desde el centro habría que recortarlos.
+- **Nota de diseño:** el **Pícaro tiene la peor visión del roster** (SAB 10), lo cual es irónico para el explorador. Es a propósito: su ventaja en exploración no es la percepción bruta sino *Ojo avizor*, el sigilo y **Oculto** ([`cards/class.md`](cards/class.md), [`effects.md`](effects.md)).
+- Cartas de clase e items de exploración pueden **ampliar cualquiera de los dos radios** (*Ojo avizor*, *Herramientas de navegante*…).
 
 ### 2.4 Equipamiento: manos y armadura
 
 - Cada personaje tiene **2 manos**. Las armas ocupan 1 o 2 manos (ver [`cards/weapons.md`](cards/weapons.md) para el listado con su icono ✋/🤲, ver [`glossary.md`](glossary.md)) — se pueden llevar hasta 2 armas de ✋ (una mano), o 1 arma de 🤲 (dos manos), nunca combinando ambas a la vez si no caben en las 2 manos disponibles.
 - Cada personaje lleva **1 sola armadura** equipada (no se acumulan varias).
-- Al principio de la aventura (y luego antes de cada capítulo y en sitios seguros, §4a), el jugador elige con qué armas y armadura equiparse (partiendo del catálogo inicial de [`cards/`](cards/README.md)).
+- **De salida** el héroe lleva equipado el **kit inicial fijo de su clase** (§1b, `characters/heroes.md` §2d) — no se elige del catálogo completo, porque el oro inicial es 0 y no habría con qué comprar nada. A partir de ahí, equipa y desequipa libremente lo que vaya consiguiendo, antes de cada capítulo y en sitios seguros (§4a).
 
 ## 3. Tipos de carta
 
@@ -90,12 +126,17 @@ Aplica a cartas de Arma/Armadura/Item (y previsiblemente Maldición). Las cartas
 - El mazo de cada jugador = cartas de clase (básicas + especiales) + **items y mercenarios** obtenidos jugando (§3.2). Las **armas y armaduras van aparte**, en el sistema de equipo (§4a).
 - **Mazo — dos zonas: el Mazo y "en juego" *(decidido)*:**
   - **Mazo del capítulo — hasta 20 cartas:** tu baraja personal = **cartas de clase + items + mercenarios** (más las **maldiciones** que te caigan). **Las armas y armaduras NO cuentan aquí** — van en el sistema de equipo aparte (§4a). Es un **tope duro**: los items/mercenarios nuevos entran jugando (botín, Tesoro, recompensas, compra, §6b), **no** con el Oteo; al llegar a 20, incorporar uno nuevo obliga a **cambiar una carta por otra** (swap 1-por-1).
-  - **En juego — hasta 10 cartas:** tu zona de cartas **preparadas**, las únicas que puedes jugar. Empieza **vacía** al comenzar el capítulo y se llena poco a poco con el Oteo. **Clase, items y mercenarios compiten** por esos 10 huecos (más de un tipo preparado = menos hueco para los demás).
-  - **Otear *(decidido)*:** al **empezar tu turno**, antes de mover o actuar, revelas **2 cartas al azar de tu Mazo** y **eliges 1** para ponerla **en juego**; la otra **vuelve al Mazo**. Así "en juego" crece ~1 carta por turno (1/10, 2/10…). Las cartas en juego las usas **cuando quieras** (una poción, un mercenario, una carta de acción…), dentro de la economía de acción (§4b.3); no caducan si no las usas.
+  - **En juego — tope elástico `techo(Mazo ÷ 2)`, entre 3 y 10 *(decidido)*:** tu zona de cartas **preparadas**, las únicas que puedes jugar. Empieza **vacía** al comenzar el capítulo y se llena poco a poco con el Oteo. **Clase, items y mercenarios compiten** por esos huecos (más de un tipo preparado = menos hueco para los demás).
+
+    El tope **depende del tamaño de tu Mazo**, no es un 10 fijo: con un Mazo de 8 cartas son **4** huecos, con 14 son **7**, con 20 los **10** de siempre. Un 10 fijo estaba calibrado para un Mazo de 20 y quedaba **muerto** al empezar la partida (con 7-8 cartas nunca lo alcanzas, así que nunca sustituyes nada y el Oteo pierde su decisión más interesante). Con la fórmula, la rampa y las sustituciones funcionan igual en cualquier punto de la progresión.
+  - **Otear *(decidido)*:** al **empezar tu turno**, antes de mover o actuar, revelas **2 cartas al azar de tu Mazo** y **eliges 1** para ponerla **en juego**; la otra **vuelve al Mazo**. Así "en juego" crece ~1 carta por turno. Las cartas en juego las usas **cuando quieras** (una poción, un mercenario, una carta de acción…), dentro de la economía de acción (§4b.3); no caducan si no las usas.
+  - **Mazo con menos de 2 cartas *(decidido)*:** si en el Mazo queda **1 sola** carta sin preparar, el Oteo revela **esa 1** (la tomas o la dejas); si el Mazo está **vacío**, **no hay Oteo** ese turno. Es un caso de borde real, no teórico: con un Mazo pequeño se alcanza en pocos turnos.
+
+  > **Aviso de contenido — el Oteo necesita un Mazo mínimo.** Para que el Oteo sea una decisión de verdad, el Mazo debe tener **siempre ≥3-4 cartas sin preparar**. Con solo las 4 cartas de clase de nivel 1, el Mazo se vacía en el **turno 3** y en el turno 4 ya tienes toda tu baraja en juego: cero suerte, cero decisión. Por eso el **kit inicial regala items** (§1b, `characters/heroes.md` §2d) hasta unas **7-8 cartas** de arranque. Ampliar el catálogo de cartas de clase (`cards/class.md`) sigue mereciendo la pena por sabor e identidad, pero **no es el arreglo estructural**: subir un héroe de nivel 1 a 8-10 habilidades infla su presupuesto de poder y diluye la clase.
 
   Sustituye la idea anterior de "20 construidas + 10 drafteadas aparte (~30 en juego)". Detalle en [`cards/README.md`](cards/README.md).
 
-  > **Reglas del Oteo *(decidido)*:** de las 2 cartas puedes elegir **1** o **ninguna** (si no te convence ninguna, las rechazas y las dos vuelven al Mazo). Con "en juego" **lleno (10/10)**, para quedarte una nueva **sustituyes** una carta que ya tengas en juego (la sustituida vuelve al Mazo). Al **jugar** una carta también vuelve al Mazo y puede reaparecer en un Oteo posterior — nada se pierde.
+  > **Reglas del Oteo *(decidido)*:** de las 2 cartas puedes elegir **1** o **ninguna** (si no te convence ninguna, las rechazas y las dos vuelven al Mazo). Con "en juego" **lleno**, para quedarte una nueva **sustituyes** una carta que ya tengas en juego (la sustituida vuelve al Mazo). Al **jugar** una carta también vuelve al Mazo y puede reaparecer en un Oteo posterior — nada se pierde.
   >
   > **El Oteo reparte al azar *(decidido)*:** las 2 cartas que muestra salen **al azar** de tu Mazo (como robar de una baraja); de ellas eliges 1 o ninguna. Hay un componente de **suerte**, así que **cómo compones tu Mazo de 20 importa**: cuanto mejor sea la mezcla, mejores serán las 2 que te ofrezca cada turno.
 - **Sin "mano" clásica:** no se roba y descarta una **mano completa** cada turno como en un juego de cartas al uso; el Oteo solo saca **2 al azar**, preparas 1 y lo que preparas **se queda en juego** hasta que lo juegas. Una vez una carta está **en juego**, es una opción **siempre disponible** hasta que la juegues (dentro del recurso de acción del turno, §4b.3): curarte, ayudar en la aventura, subir estadísticas, atacar, etc.
@@ -123,10 +164,11 @@ Modelo elegido: **todo ocurre sobre el mismo tablero de hexágonos** (no hay pan
 - **Alcance mínimo "a distancia": 2 hex** *(decidido)*. El cuerpo a cuerpo ya cubre el hexágono contiguo (1 hex); para que un ataque cuente como **a distancia** tiene que quedar al menos un hexágono vacío entre el héroe y el enemigo (2 hex = 1 hex vacío + el hex del enemigo). Ninguna arma o hechizo a distancia puede tener alcance 1 — ese hueco ya es cuerpo a cuerpo.
 - **Inicio del combate:** el héroe termina su movimiento en un hexágono adyacente a un enemigo (o una ficha de Amenaza se revela como enemigo junto a él). No se "entra" en el hexágono del enemigo; se combate desde el contiguo. *(Actualiza la redacción de `board/board-map.md` §4, ficha de Enemigo, que decía "inicia combate al entrar en el hexágono".)*
 
-### 4b.2 Iniciativa / orden de turno
+### 4b.2 Iniciativa / orden de turno *(decidido)*
 
 - Al empezar el combate: **1d20 + mod Destreza** para el héroe y para cada enemigo. Actúa primero el más alto. Empates → mayor Destreza bruta → héroe gana.
-- Alternativa más simple para el prototipo (sin tirada): compara mod Destreza directamente, mayor primero.
+- **Se tira, no se compara** *(decidido)*: se descarta la alternativa de comparar modificadores a secas. Con tirada, la Destreza pesa pero no decide sola, y encaja con las otras dos tiradas enfrentadas del sistema (Desengancharse §4b.11, huida enemiga `characters/enemies.md` §5b.6).
+- Una **emboscada** (atacar sin haber sido detectado, `characters/enemies.md` §2b) **se salta la iniciativa** el primer turno: actúas tú primero.
 
 ### 4b.3 Recurso de acción por turno *(el que faltaba en §4)*
 
@@ -179,7 +221,7 @@ En el prototipo los hechizos son simplemente **Cartas de clase** (Especiales 1/c
 
 ### 4b.8 Huir, victoria y derrota
 
-- **Huir:** usar el Movimiento para salir de adyacencia/alcance. Si un enemigo está adyacente, opcionalmente una prueba de DES (`1d20 + mod DES` vs CD) para desengancharse sin recibir un golpe de oportunidad.
+- **Huir:** usar el Movimiento para salir de adyacencia/alcance. Si un enemigo **Activo** está adyacente, salir de su lado exige **Desengancharse** (§4b.11).
 - **Victoria:** todos los enemigos a 0 PV → recompensas (loot de la ficha de Tesoro si aplica, posible carta del mazo de encuentro, y avance de hito si era un jefe).
 - **Derrota (héroe a 0 PV):** con un solo héroe (`characters/heroes.md`), 0 PV = caído. Partida rápida → fin de partida; Modo Campaña → reiniciar el mapa/capítulo (el nivel y el mazo persisten). La recuperación entre combates se define en §4c (Descanso y recuperación).
 
@@ -202,6 +244,21 @@ Cada arma/hechizo lleva un **tipo de daño** fijo (`cards/weapons.md`, `cards/cl
 - **Inmune** → 0 daño. *(Reservado: ningún enemigo del bestiario lo usa todavía.)*
 
 Quién es resistente/vulnerable a qué **no se decide arma por arma ni enemigo por enemigo suelto**: lo fija la **Naturaleza de criatura** del objetivo (`characters/enemies.md` §3b), con posibles excepciones puntuales como habilidad especial de un enemigo concreto (ej. el Trol de las minas y el fuego, `characters/enemies.md` §5b.3). Los héroes no tienen resistencias propias por ahora (podría llegar más adelante vía armadura/objeto mágico).
+
+### 4b.11 Desengancharse *(decidido — sustituye al "golpe de oportunidad")*
+
+**No existe el golpe de oportunidad.** Se descarta como concepto: era una **reacción** (actuar fuera de tu turno) y el sistema no tiene timing de reacciones en ningún otro sitio, así que introducirlo solo para esto complicaría el motor a cambio de nada. En su lugar, una única regla simétrica:
+
+> **Salir de un hexágono adyacente a un enemigo Activo** (`characters/enemies.md` §2) exige una **tirada enfrentada `1d20 + mod DES`**: el que se va contra el que retiene.
+> - **Gana el que se va** → se mueve libremente.
+> - **Gana el que retiene** → el que se va **recibe el daño del ataque básico del rival sin tirada de ataque** (dado de daño + mod, se aplica directo, sin comparar con la CA) y **completa el movimiento igualmente**.
+> - **Máximo 1 vez por enemigo y por turno.** No gasta Acción de nadie: es parte del movimiento.
+> - **Empate** → gana el que se va (el movimiento se completa limpio).
+
+Por qué así:
+- **Una sola regla cubre los dos sentidos.** Antes había dos reglas distintas para lo mismo: la prueba de DES del héroe al huir (§4b.8) y la tirada **enfrentada** de DES del enemigo al huir (`characters/enemies.md` §5b.6). Ahora es la misma en ambas direcciones.
+- **"Fallo = daño pero te mueves"**, no "fallo = te quedas clavado". Quedarse pegado a un enemigo por una tirada fallida es un bucle frustrante y, con 8 PV, letal para el Mago; así el jugador nunca pierde el control de su movimiento, solo paga por él.
+- **Da texto real a las cartas de escape.** *Escabullirse* (Pícaro), *Botas de teletransporte* y equivalentes pasan a **desengancharse sin tirar** (éxito automático), que es un efecto concreto y valioso en vez de una referencia a una regla que no existía.
 
 ## 4c. Descanso y recuperación
 
@@ -227,10 +284,17 @@ Quién es resistente/vulnerable a qué **no se decide arma por arma ni enemigo p
 
 ### 4c.4 Dados de Vida (DV)
 
-- Cada héroe tiene **DV = su nivel**, del tamaño de su dado de clase (Guerrero d10, Pícaro/Clérigo d8, Mago d6; `characters/heroes.md` §2c). A nivel 1 = 1 DV.
-- **Acampar (4c.2):** gastas 1 o más DV disponibles; por cada uno tiras el dado + mod CON y recuperas esos PV.
+**En el prototipo: cura fija, sin contar DV *(decidido)*.** La **Hoguera** (§4c.2) cura **la mitad de los PV máximos** (redondeo hacia arriba) y se puede volver a jugar cuando la regla de "que ocurra algo" lo permita. Sin contador de DV que gestionar.
+
+Motivo: el modelo de DV fiel a D&D se rompe justo en el prototipo. Con la progresión aparcada (§5, [`status.md`](status.md)) el héroe está **permanentemente a nivel 1**, o sea **1 solo DV**: acampas una vez, curas `1d10 + mod CON`, y hasta el próximo descanso largo la Hoguera **no hace nada**, aunque te cueste +10 de Nivel de Amenaza (§6c.2). Un sistema de recuperación con un único uso por partida no se puede testear.
+
+**Modelo completo de DV *(diferido, llega con la progresión de nivel)*:**
+- Cada héroe tiene **DV = su nivel**, del tamaño de su dado de clase (Guerrero d10, Pícaro/Clérigo d8, Mago d6; `characters/heroes.md` §2c).
+- **Acampar:** gastas 1 o más DV disponibles; por cada uno tiras el dado + mod CON y recuperas esos PV.
 - **Descanso largo (4c.3):** recuperas todos los DV gastados.
-- *(Modelo recomendado, fiel a D&D. Alternativa más simple para el primer prototipo: que la Hoguera cure una cantidad fija —p. ej. la mitad de los PV máx— sin llevar cuenta de DV.)*
+- Cobra sentido a partir de nivel 3-4, cuando tener varios DV convierte "cuánto curo ahora" en una decisión de recurso. Hasta entonces, cura fija.
+
+> **Ojo al reactivarlo:** cartas y maldiciones ya referencian DV — *Saco de dormir* (+1 DV al acampar, [`cards/items.md`](cards/items.md)) y *Fatiga eterna* (−1 DV, [`cards/curses.md`](cards/curses.md)). Con cura fija, ambas quedan **inactivas** (mismo caso que las cartas que esperan el sistema de grupos/tiles, `board/board-map.md` §8): *Saco de dormir* pasa a "+2 PV al acampar" y *Fatiga eterna* a "la Hoguera cura un cuarto en vez de la mitad" mientras dure el prototipo.
 
 ## 5. Progresión de personaje
 
@@ -264,7 +328,7 @@ Esto es clave para que el "deckbuilding" tenga sentido táctico: no solo mejoras
 | Jefe de capítulo | ~5d10 |
 | Jefe final | mucho + recompensa única |
 | Ficha de Tesoro (`board/board-map.md` §4) | carta y/o oro (cofres de mayor rareza pueden dar ambos) |
-| Vender cartas al Mercader | según Rareza (§6b.3) |
+| Vender cartas a un NPC | según Rareza (§6b.3), al ≈40 % del precio de compra |
 | Misiones (Dador de misión, `characters/npcs.md`, solo Campaña) | recompensa fija |
 
 ### 6b.2 En qué se gasta (sumideros)
@@ -290,10 +354,27 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
 - **Sin tope de rareza de momento:** cualquier carta puede aparecer en una tienda, **también los Legendarios**, a su precio de la tabla (400 de oro ya es de por sí una barrera). Cerrar el mercado por encima de Épico queda como palanca de balance futura ([`ideas.md`](ideas.md)).
 - Las tiendas tienen **stock limitado** (no un catálogo infinito), para que explorar y encontrar botín sigan importando y comprar no eclipse la exploración. La oferta concreta de cada NPC —cuántas cartas y cuándo se renueva— está en `characters/npcs.md` §3: **se sortea al empezar el capítulo y no cambia hasta el siguiente**.
 
-### 6b.4 Cómo encaja con el mazo
+### 6b.4 Vender: quién compra qué *(decidido)*
+
+**Regla única: cada NPC compra lo que vende.** No hay un "comprador universal" ni una tienda genérica; el NPC que trata una categoría de carta también te la compra al ≈40 % (§6b.3).
+
+| NPC (`characters/npcs.md`) | Compra |
+|---|---|
+| Vendedor/Mercader | Items ([`cards/items.md`](cards/items.md)) |
+| Herrero | Armas y armaduras ([`cards/weapons.md`](cards/weapons.md), [`cards/armor.md`](cards/armor.md)) |
+| Capitán de mercenarios | Mercenarios ([`cards/mercenaries.md`](cards/mercenaries.md)) |
+| Mago/Encantador | Pergaminos y hechizos |
+| Tabernero · Sacerdote/Sanador · Informante · Dador de misión | **Nada** — solo ofrecen servicios |
+
+- Las **Maldiciones no se venden nunca** ([`cards/curses.md`](cards/curses.md)): se limpian pagando al Sacerdote o con la prueba arriesgada.
+- **Consecuencia a tener en cuenta:** si el mapa generado no tiene Herrero, no puedes liquidar armaduras esa partida. Por eso la generación garantiza **1 Pueblo** (`board/board-map.md` §2c), que es donde se concentran los NPCs de tienda.
+
+### 6b.5 Cómo encaja con el mazo
 
 - Comprar una carta la añade al Mazo → **cuenta para el máximo** (§4) — esto vale para **items y mercenarios**; las **armas/armaduras** compradas al Herrero **no cuentan** para el Mazo (colección ilimitada, §4a). El oro da *elección*, pero el tamaño del Mazo sigue siendo el límite real de las cartas que sí lo ocupan.
-- **Vender** es el sumidero natural del exceso de cartas: como el Mazo tiene tope, cambias equipo que ya no usas por oro para comprar algo mejor. Esto cierra el bucle botín/tesoro → tienda → Mazo que antes lo inflaba sin salida.
+- **Vender cumple dos funciones distintas**, según qué vendas:
+  - **Items y mercenarios** → alivia el **tope del Mazo**: cambias lo que ya no usas por oro para comprar algo mejor. Cierra el bucle botín/tesoro → tienda → Mazo, que antes lo inflaba sin salida.
+  - **Armas y armaduras** → **no** alivia nada del Mazo (su colección es ilimitada desde §4a): es puro **oro por equipo obsoleto**. Es, de hecho, la fuente de ingresos más regular, porque el equipo viejo se acumula sin límite y sin coste.
 
 ## 6c. Nivel de Amenaza (reloj de capítulo)
 
@@ -379,7 +460,16 @@ Escalados **de una sola vez** al cruzar cada cuarto:
 - [x] Bocetar el catálogo de cartas de equipo por categoría (arma, armadura, item) — ver [`cards/`](cards/README.md) ([`weapons`](cards/weapons.md)/[`armor`](cards/armor.md)/[`items`](cards/items.md)). Cartas de **clase** bocetadas para Guerrero/Mago en [`cards/class.md`](cards/class.md). Bocetos iniciales de [`Efecto/Estado`](effects.md), [`Maldición`](cards/curses.md) y [`Mazo de encuentro`](cards/encounter.md) creados (pendientes de detalle).
 - [x] Definir combate: orden de turno, cómo se resuelve un ataque paso a paso — ver **§4b** (adyacencia, iniciativa, recurso de acción por turno, ataque paso a paso, mazo de encuentro). Falta solo confirmar §4b.5 (movimiento de enemigos en combate).
 - [x] Definir condición de victoria/derrota y estructura de "descanso" (recuperar recursos) — victoria/derrota en §4b.8; **descanso** en §4c (consumibles / carta Hoguera con riesgo / localización segura, sobre Dados de Vida). Falta balancear valores.
+- [x] Definir el **setup inicial** de una partida (modalidad → héroe → kit → entrada) → §1b, con los kits concretos en `characters/heroes.md` §2d.
+- [x] Definir el **rango de visión** en condiciones → §2.3: dos radios (detalle `3 + mod SAB` / terreno `detalle + 2`), escala +1 por punto de mod, con los invariantes `detalle > detección enemiga` y `terreno > detalle`. Falta afinar cifras contra el tablero real.
+- [x] Resolver el **"golpe de oportunidad"** referenciado pero nunca definido → §4b.11 **Desengancharse**: tirada enfrentada de DES, misma regla para héroe y enemigo, sin reacciones.
+- [x] Elegir modelo de **iniciativa** (§4b.2) → **tirada** 1d20 + mod DES *(decidido)*.
+- [x] Elegir modelo de **recuperación** (§4c.4) → **cura fija** (mitad de PV máx) en el prototipo; DV completos llegan con la progresión.
+- [x] Cerrar **quién compra las cartas** que te sobran → §6b.4: cada NPC compra lo que vende.
+- [x] Arreglar el tope de "en juego", que era **muerto** con un Mazo pequeño → §4: tope elástico `techo(Mazo ÷ 2)` entre 3 y 10, + regla de Mazo con <2 cartas.
 - [ ] Definir las primeras Cartas Especiales de Clase de exploración que amplíen el rango de visión (duda 2, queda solo esta parte).
+- [ ] **Tabla de loot** (qué carta suelta cada enemigo/cofre, y con qué rareza): sin ella no se puede implementar ni el botín ni el umbral del 25 % de Amenaza ("empeora el loot", §6c.3).
+- [ ] Reescalar el **Nivel de Amenaza** a la base de +1/turno (§6c.1-6c.2): el tope 100, los umbrales y las subidas de golpe (+10/+8/+15) están calibrados para el "+5 por ronda" antiguo.
 - [x] Definir recurso de economía/moneda (duda 3) → **Oro** (§6b), con fuentes, sumideros y precios por Rareza. Falta balancear las cifras.
 - [x] Definir dado de vida por clase — ver `characters/heroes.md` §2c (Guerrero d10, Pícaro/Clérigo d8, Mago d6).
 - [x] Definir cómo se traduce capítulo/hito de Campaña a CR de enemigo esperado (duda 5) → **escala de dificultad** por zona/nivel (`characters/enemies.md` §5c).

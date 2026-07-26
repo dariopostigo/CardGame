@@ -18,8 +18,10 @@ Hex {
   isConnector: bool   // si es un hexágono "puerta" entre dos grupos (board-map.md §4)
   location?           // Pueblo | Mazmorra | Guarida | null  (localización especial, board-map.md §3b)
   boardToken?         // Exploracion | Amenaza | Tesoro | Terreno | Personaje | Enemigo | null
-  revealed: bool      // prototipo: si ya está dentro del rango de visión (niebla simple, §2c)
-}
+  isEntrance: bool    // hex de entrada, en una esquina (board-map.md §2c paso 0)
+  terrainRevealed: bool   // capa 1 de niebla: se conoce el tipo de terreno (visión de terreno)
+  contentRevealed: bool   // capa 2: se conoce su contenido/ficha (visión de detalle)
+}                         // dos capas, no un solo `revealed` (board-map.md §2c, game-design.md §2.3)
 
 TerrainDef {                // datos de board-map.md §3a
   moveCost                  // 1, 2, 3 (Montaña = 3, muy difícil; board-map.md §3a)
@@ -42,13 +44,16 @@ Character {
   stats { fue, des, con, int, sab, car }   // game-design.md §2
   pv, pvMax
   ca                        // 10 + modDES + armadura (game-design.md §2, §4b)
-  movementPoints            // 2 base (§2.2)
-  visionRange               // base 1 + Sabiduría (§2.3)
-  gold                      // game-design.md §6b
-  hitDice, hitDiceMax       // = nivel; se gastan al acampar (§4c.4)
-  hands[2], armor           // equipo (§2.4)
-  deck: Card[]              // clase + equipo; tope = deckMax (§4)
-  deckMax
+  movementPoints            // 2 base, mínimo 1 tras modificadores (§2.2)
+  visionDetail              // 3 + modSAB, mínimo 1 → revela fichas (§2.3)
+  visionTerrain             // visionDetail + 2, mínimo 2 → revela terreno (§2.3)
+  gold                      // game-design.md §6b; inicial 0
+  hitDice, hitDiceMax       // DIFERIDO: en el prototipo la Hoguera cura fijo (§4c.4)
+  hands[2], armor           // equipo, del kit inicial (§2.4, §1b)
+  deck: Card[]              // clase + items + mercenarios; tope deckMax=20 (§4)
+  deckMax                   // 20
+  inPlay: Card[]            // cartas preparadas, las únicas jugables (§4)
+  inPlayMax                 // = clamp(ceil(deck.length / 2), 3, 10) — elástico, no un 10 fijo (§4)
   states: Effect[]          // estados activos (../effects.md)
   usedThisCombat: []        // Especiales 1/combate
   usedThisRest: []          // Especiales/Hoguera 1/descanso
@@ -67,7 +72,8 @@ Enemy {                     // bloque de combate, enemies.md §5b
 Card {                      // cards/*
   origin                    // clase | equipo | mercenario | maldicion | encuentro
   type                      // Arma | Armadura | Item | Mercenario | Efecto | Maldicion | ...
-  actionCost                // Accion | AccionRapida | Modificador | Pasiva | FueraDeCombate
+  actionCost                // Accion | AccionRapida | Modificador | FueraDeCombate
+                            // (sin `Pasiva`: retirado de la v1, cards/class.md §1)
   uses                      // ilimitado | 1/combate | 1/descanso (ninguna carta del mazo personal se pierde al jugarla, game-design.md §4)
   rarity?                   // Comun..Legendario (no en cartas de clase)
   effect
@@ -78,8 +84,10 @@ Esto no es el modelo final, solo una forma concreta de ver cómo encajan las pie
 
 ## 3. Algoritmos clave a tener en cuenta
 
-- **Generación del prototipo (board-map.md §2c):** hex-por-hex con pesos (tabla A), garantizar conectividad (BFS/flood-fill desde la entrada evitando Montaña), colocar boss en el hex transitable más lejano, y sembrar fichas por la tabla B. Sin tiles ni grupos en esta fase.
-- **Niebla del prototipo:** simple por rango de visión (marcar `Hex.revealed` para los hexes dentro de la visión del personaje según su posición); la niebla por grupo (3 estados) es solo para la versión con tiles.
+- **Generación del prototipo (board-map.md §2c):** elegir hex de entrada en **una esquina**, hex-por-hex con pesos (tabla A), garantizar conectividad (BFS/flood-fill desde la entrada evitando Montaña), colocar las localizaciones **garantizadas** (Guarida con el boss en el hex transitable más lejano —usar la distancia del mismo BFS—, y **1 Pueblo** en la mitad cercana a la entrada), y sembrar fichas por la tabla B. Sin tiles ni grupos en esta fase.
+- **Niebla del prototipo — dos capas por hex:** para cada hex dentro de `visionTerrain` marcar `terrainRevealed`, y dentro de `visionDetail` marcar además `contentRevealed` (board-map.md §2c). Ambas son **acumulativas y permanentes**: lo revelado no se vuelve a ocultar al alejarse. La niebla por grupo (3 estados) es solo para la versión con tiles.
+- **Recalcular visión** tras cada movimiento del héroe, y también al cambiar un modificador de visión (entrar/salir de Bosque, jugar *Ojo avizor*, ganar *Velo de sombras*). La Montaña **bloquea línea de visión**, así que no basta con el radio: hace falta un trazado de línea (supercover/line-of-sight sobre coordenadas cúbicas) por cada hex candidato.
+- **Desengancharse (game-design.md §4b.11):** se evalúa al **abandonar** un hex adyacente a un enemigo con `aiState === 'activo'`, una vez por enemigo y turno. Conviene resolverlo dentro del propio paso de movimiento, no como un evento aparte, para que el orden movimiento → daño → llegada sea determinista.
 - **Encaje de tiles (board-map.md §2, post-prototipo):** definir cada tile con "sockets" de borde (qué terrenos puede tocar en cada lado), similar a cómo encajan las piezas en juegos tipo Carcassonne, para que la generación aleatoria no produzca uniones raras entre grupos.
 - **Propagación de niebla de guerra (board-map.md §4):** cuando un grupo pasa a `explorado`, recorrer sus `neighborGroupIds` y ponerlos en `detectado` si seguían en `sinExplorar`. Es una operación local (solo vecinos directos), no hace falta recalcular todo el mapa.
 - **Vecinos y distancias:** usar las fórmulas estándar de coordenadas axiales/cúbicas (hay librerías/snippets de referencia ya resueltos, no conviene reinventarlas).

@@ -28,6 +28,9 @@ Con esto queda **validada la generación de mapa** para los dos modos que necesi
 - Es el modo que se implementa primero — desbloquea poder testear todo lo demás (personaje, cartas, combate) sin escribir ni una línea de historia.
 
 ### Modo Campaña
+
+> **Varias historias, no un único arco *(decidido)*.** El Modo Campaña es un **contenedor de historias seleccionables**: al elegirlo, el jugador escoge cuál jugar (`../game-design.md` §1b, paso 1), y se irán añadiendo con el tiempo. Todo lo de abajo describe **cómo se estructura una** de esas historias — así que "Jefe final de campaña" (`../characters/enemies.md` §3) significa el jefe final **de esa historia**, no uno único del juego.
+
 - Secuencia de **N mapas predeterminados** (diseñados a mano, no random), cada uno = un "capítulo" con su propia mini-historia, eventos y fichas específicas de esa parte de la trama.
 - Los mapas se completan **en orden**: terminar el objetivo de un mapa (que puede incluir o no un jefe de capítulo) desbloquea el siguiente, como un recorrido — igual que ir de escenario en escenario en la trilogía de El Señor de los Anillos (Bolsón Cerrado → Bree → Rivendel → Moria → ... → destino final), sin que tenga que ser literalmente esos lugares, solo la misma sensación de "viaje con arcos narrativos encadenados".
 - El **último mapa de la campaña** cierra el arco principal (el "gran final"), con su propio jefe/evento climático, más grande o narrativamente relevante que los de capítulos intermedios.
@@ -41,13 +44,22 @@ Con esto queda **validada la generación de mapa** para los dos modos que necesi
 
 Para el **primer prototipo**, generación **hexágono-a-hexágono con pesos** (la alternativa simple de §2), **no** por tiles: es lo mínimo para tener mapa jugable sin diseñar aún el set de tiles ni sus reglas de borde. El sistema de **tiles/grupos sigue siendo el objetivo** de la versión rica (§2), solo se pospone.
 
-- **Consecuencia en la niebla:** sin grupos, el prototipo usa **niebla simple por rango de visión** (se revela lo que entra en tu visión, `../game-design.md` §2.3; el resto queda oculto). La niebla por grupo de 3 estados (§4) llega con los tiles.
+- **Consecuencia en la niebla — dos capas por hexágono *(decidido)*:** sin grupos, el prototipo aplica la niebla **hex a hex**, pero en **dos capas**, siguiendo los dos radios de visión de `../game-design.md` §2.3:
+  - dentro de la **visión de terreno** → se revela el **tipo de terreno** del hex (la silueta del mapa);
+  - dentro de la **visión de detalle** → se revela además su **contenido** (fichas, localizaciones);
+  - fuera de ambas → oculto del todo.
+
+  Esto da el mismo escalón conceptual que los 3 estados de niebla por grupo (§4) —intuyes antes de saber— **sin necesitar el sistema de tiles**. La niebla por grupo llega con los tiles y sustituirá a esto.
 
 **Algoritmo mínimo:**
+0. Elegir el **hex de entrada**: **una esquina del mapa** *(decidido)* — la "puerta" por la que se accede al mapa completo. Puede caer en cualquier terreno transitable (entras a una llanura, a un bosque, directamente a unas ruinas…), lo que ya da variedad de arranque sin lógica extra. Colocar el héroe ahí.
 1. Elegir tamaño (ej. 12×12 para partidas cortas) y semilla.
 2. Rellenar cada hex por **peso de terreno** (tabla A).
 3. Garantizar **conectividad**: debe existir camino transitable de la entrada al resto. La Montaña ya es transitable aunque muy costosa (§3a); aun así conviene que no encierre zonas tras un coste casi prohibitivo.
-4. Colocar el **boss élite** —**uno de los 3 Élite elegido al azar** (`../characters/enemies.md` §5b)— en el hex transitable más lejano a la entrada, o en una **Guarida** (§3b) — Partida rápida.
+4. Colocar las **localizaciones especiales garantizadas** *(decidido)*:
+   - **1 Guarida** (§3b) con el **boss élite** —**uno de los 3 Élite elegido al azar** (`../characters/enemies.md` §5b)— en el hex transitable **más lejano** a la entrada. Con entrada en esquina, eso lo pone en la esquina opuesta: la travesía máxima del mapa.
+   - **1 Pueblo** (§3b), en la **mitad cercana** a la entrada. **Garantizado, no opcional:** el Pueblo concentra los NPCs de tienda, el descanso largo y la limpieza de Maldiciones (`../characters/npcs.md`), así que si la generación no lo coloca, **tres sistemas enteros quedan inaccesibles** en esa partida — y con oro inicial 0 tampoco habría forma de gastar el oro que ganas.
+   - **1 Mazmorra opcional** (§3b), según densidad.
 5. Sembrar **fichas** según densidad y distribución (tabla B).
 
 **Tabla A — Pesos de terreno (prototipo):**
@@ -144,7 +156,7 @@ Como el mapa se construye a partir de **grupos de hexágonos** (tiles — ej. un
 
 ### Rango de visión como habilidad del personaje
 
-- El rango de visión base es corto (ej. el hexágono actual + sus vecinos inmediatos), y aplica **siempre según la posición exacta del personaje**, incluso dentro de un grupo ya "Explorado" — moverse por el interior de un grupo grande (ej. el bosque de 20 hexágonos) va revelando su contenido progresivamente, no todo de golpe al entrar.
+- El rango de visión son **dos radios** (terreno y detalle, `../game-design.md` §2.3) y aplican **siempre según la posición exacta del personaje**, incluso dentro de un grupo ya "Explorado" — moverse por el interior de un grupo grande (ej. el bosque de 20 hexágonos) va revelando su contenido progresivamente, no todo de golpe al entrar.
 - Se amplía mediante **habilidades/hechizos del personaje**, no por el terreno en sí (a diferencia del efecto de ejemplo de "Colinas" en la sección 3, que puede quedar como un bonus adicional, no la fuente principal).
 - Ejemplo: un hechizo de exploración que permita "ver el tipo de terreno de un grupo Detectado sin necesidad de entrar en él", o directamente adelantar el estado de un grupo vecino a "Detectado" desde más lejos de lo normal.
 - Esto da una razón mecánica clara para elegir ciertas clases/hechizos orientados a exploración, aparte de combate.
@@ -193,7 +205,7 @@ Los apuntes técnicos (sistema de coordenadas, modelo de datos, algoritmos) se m
 5. ~~Número de terrenos para el prototipo~~ → **Resuelto:** set confirmado de 5 — Llanura, Bosque, Pantano, Montaña, Camino/Sendero (marcados en la tabla de §3). El resto queda para pases de contenido posteriores.
 
 **Resueltas (desbloqueadas por game-design.md):**
-6. ~~Tensión entre §3 y §4 (terreno vs. habilidad de visión)~~ → **Resuelto:** el rango de visión base lo gobierna Sabiduría (`../game-design.md` §2.3: +1 hexágono por cada +2 de modificador). El efecto de ejemplo de Colinas (§3) puede quedar como bonus adicional de terreno encima de eso; la **ocultación de Bosque** ya tiene mecánica: reduce el rango de detección de los enemigos (`../game-design.md` §4b.5, `../characters/enemies.md` §2) — evitar/emboscar en vez de pelear.
+6. ~~Tensión entre §3 y §4 (terreno vs. habilidad de visión)~~ → **Resuelto:** el rango de visión lo gobierna Sabiduría, en **dos radios** (`../game-design.md` §2.3: detalle `3 + mod SAB`, terreno `+2` más, +1 por punto de modificador). El efecto de ejemplo de Colinas (§3) puede quedar como bonus adicional de terreno encima de eso; la **ocultación de Bosque** ya tiene mecánica: reduce el rango de detección de los enemigos (`../game-design.md` §4b.5, `../characters/enemies.md` §2) — evitar/emboscar en vez de pelear.
 7. ~~Coste de cruzar un grupo entero~~ → **Resuelto:** cada hexágono cuesta 1 punto de movimiento de un pool por turno **fijo de 2 movimientos para todos los personajes** (`../game-design.md` §2.2: estándar único, sin variación por raza ni por estadística; los extras vienen de fichas/cartas de movimiento/cartas de clase). El terreno de cada hexágono modifica ese coste como ya estaba descrito.
 
 **Abiertas:**
@@ -203,7 +215,8 @@ Los apuntes técnicos (sistema de coordenadas, modelo de datos, algoritmos) se m
 ### Pendiente de concretar (checklist, para cuando toque implementar)
 - [ ] Diseñar el set inicial de "tiles" (grupos de hexágonos) para el sistema de generación por piezas, con sus reglas de conexión de bordes, cubriendo los 5 terrenos del prototipo, **y sus agrupaciones temáticas de fichas** (campamentos, salas — §2).
 - [x] Definir tabla de probabilidades de generación por terreno y por tipo de ficha → §2c (tabla A pesos de terreno, tabla B distribución de fichas). Falta balancear.
-- [x] Definir rango de visión base del personaje y cómo lo modifican clase/objetos/terreno → base 1 hex + Sabiduría (`../game-design.md` §2.3), −1 en Bosque (§3a), +1 con Ojo avizor/habilidades de exploración (abajo).
+- [x] Definir rango de visión base del personaje y cómo lo modifican clase/objetos/terreno → **dos radios** (`../game-design.md` §2.3): detalle `3 + mod SAB` (fichas) y terreno `detalle + 2` (silueta); −1 a ambos en Bosque (§3a), Montaña bloquea la línea de visión, +1 con Ojo avizor/habilidades de exploración (abajo). Falta afinar las cifras contra el tablero real.
+- [x] Definir el **hex de entrada** y las localizaciones garantizadas → §2c pasos 0 y 4: entrada en **una esquina**, con **1 Guarida** (boss, esquina opuesta) y **1 Pueblo** (mitad cercana) siempre presentes.
 - [x] Definir cómo interactúan mapa y combate → **Resuelto (`../game-design.md` §4b):** todo ocurre sobre el mismo tablero hex (sin pantalla aparte); se actúa por **adyacencia** (objetivo en hexágono contiguo, nunca en el propio).
 - [x] Definir contenido inicial del mazo de encuentro y cómo se combina con las fichas → [`cards/encounter.md`](../cards/encounter.md) (10 cartas de Combate + 10 de Suceso, cruce con las 6 fichas, mazo único base). Falta balancear frecuencias.
 - [ ] Definir número de capítulos del arco principal de la Campaña y el gancho narrativo propio y original (no LOTR literal) de cada uno.
@@ -216,4 +229,6 @@ Los apuntes técnicos (sistema de coordenadas, modelo de datos, algoritmos) se m
   - **Informante/Guía** (NPC, [`../characters/npcs.md`](../characters/npcs.md)): adelanta *Detectado* sin magia.
   - *(Futuro)* **Vista lejana** (hechizo de Mago): revela el terreno/contenido de un grupo *Detectado* sin entrar.
 
-  > **Nota (prototipo) — cartas que se desbloquean con el sistema de grupos:** la niebla del prototipo es **simple por rango de visión** (sin grupos/tiles, §2c). Por eso, todo efecto que manipule el estado *Detectado* de un **grupo vecino** (la mitad de *Ojo avizor*, *Mapa del cartógrafo*, *Espejo de acero*, el *Informante/Guía*, *Vista lejana*) queda **inactivo hasta que llegue el sistema de tiles/grupos** (§2). Lo que **sí** funciona ya en el prototipo: el **+1 de rango de visión** (*Ojo avizor*, *Herramientas de navegante*) y la **iluminación** en localizaciones oscuras (*Antorcha*). Es un caso de "carta presente en el catálogo pero desactivada hasta desbloquear su sistema".
+  > **Nota (prototipo) — cartas que se desbloquean con el sistema de grupos:** la niebla del prototipo es **por hexágono en dos capas** (terreno/detalle), sin grupos ni tiles (§2c). Por eso, todo efecto que manipule el estado *Detectado* de un **grupo vecino** (la mitad de *Ojo avizor*, *Mapa del cartógrafo*, *Espejo de acero*, el *Informante/Guía*, *Vista lejana*) queda **inactivo hasta que llegue el sistema de tiles/grupos** (§2). Lo que **sí** funciona ya en el prototipo: el **+1 de rango de visión** (*Ojo avizor*, *Herramientas de navegante*) y la **iluminación** en localizaciones oscuras (*Antorcha*). Es un caso de "carta presente en el catálogo pero desactivada hasta desbloquear su sistema".
+  >
+  > Con las dos capas de niebla, esos efectos tienen además una **traducción natural al prototipo** cuando se quiera activarlos antes de los tiles: "adelantar a *Detectado* un grupo vecino" ≈ "revelar el **contenido** de los hexes que ya tienes en visión de terreno" (es decir, aplicar la capa de detalle sobre la de terreno). No es la regla oficial todavía, pero deja la puerta abierta sin esperar a los tiles.

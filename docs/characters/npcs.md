@@ -19,10 +19,26 @@ Documento dedicado a los NPCs **no hostiles** que aparecen en el mapa mediante l
 | Mago/Encantador | Vende hechizos, pergaminos, encanta objetos existentes | Contrapunto arcano del vendedor; encaja con la localización Torre de mago (`../board/board-map.md` §3b) |
 | Capitán de mercenarios | **Vende cartas de Mercenario** por oro ([`../cards/mercenaries.md`](../cards/mercenaries.md) §2b) — la vía **segura**. Reclutarlas gratis (con riesgo de combate) es un **encuentro** en una ficha ambigua (`../cards/mercenaries.md` §2a), no este NPC | Cartas de tipo Acción que van a tu mazo; coste por Rareza (`../game-design.md` §6b.3). **Solo aparece en Pueblos** |
 | Informante/Guía | Revela información del mapa sin magia (ej. adelanta el estado "Detectado" de un grupo vecino) | Vía alternativa no arcana para la mecánica de exploración de `../board/board-map.md` §4 |
-| Herrero | **Vende cartas de Arma y Armadura** ([`../cards/weapons.md`](../cards/weapons.md), [`../cards/armor.md`](../cards/armor.md)) por oro, precios por Rareza (`../game-design.md` §6b.3) | Es quien cubre armas/armaduras (el Mercader solo vende Items). *(La reparación/mejora de equipo queda como idea futura, [`../ideas.md`](../ideas.md).)* |
+| Herrero | **Compra y vende cartas de Arma y Armadura** ([`../cards/weapons.md`](../cards/weapons.md), [`../cards/armor.md`](../cards/armor.md)) por oro, precios por Rareza (`../game-design.md` §6b.3, §2b) | Es quien cubre armas/armaduras (el Mercader solo lleva Items). **Es tu única salida para liquidar el equipo obsoleto**, que es la fuente de oro más regular. *(La reparación/mejora de equipo queda como idea futura, [`../ideas.md`](../ideas.md).)* |
 | Dador de misión *(solo Campaña)* | NPC con **historia propia**: da misiones ligadas al arco de la Campaña o **secundarias opcionales** (decides si aceptarlas o no), con recompensa narrativa/mecánica | Solo tiene sentido en Modo Campaña (necesita narrativa); ficha con mucho recorrido a futuro |
 
 > **Subconjunto del prototipo:** entran **todos** estos tipos salvo el *Dador de misión* (solo Campaña). El **Sacerdote/Sanador** hace de Templo del prototipo (limpia Maldiciones), ya que el Pueblo absorbe esa función (`../board/board-map.md` §8).
+
+## 2b. Comprar y vender: cada NPC compra lo que vende *(decidido)*
+
+No hay comprador universal. **El NPC que vende una categoría de carta también te la compra**, al ≈40 % de su precio (`../game-design.md` §6b.3-6b.4):
+
+| NPC | Vende y compra |
+|---|---|
+| Vendedor/Mercader | Items ([`../cards/items.md`](../cards/items.md)) |
+| Herrero | Armas y armaduras ([`../cards/weapons.md`](../cards/weapons.md), [`../cards/armor.md`](../cards/armor.md)) |
+| Capitán de mercenarios | Mercenarios ([`../cards/mercenaries.md`](../cards/mercenaries.md)) |
+| Mago/Encantador | Pergaminos y hechizos |
+| Tabernero · Sacerdote/Sanador · Informante/Guía · Dador de misión | **Nada** — solo servicios |
+
+- Las **Maldiciones no se venden** ([`../cards/curses.md`](../cards/curses.md)): se limpian pagando al Sacerdote/Sanador o con la prueba arriesgada.
+- **Vender armas/armaduras es la fuente de oro más estable** del juego: su colección es ilimitada y no ocupa Mazo (`../game-design.md` §4a), así que el equipo obsoleto se acumula sin coste y siempre hay algo que liquidar.
+- Por eso la generación de mapa garantiza **1 Pueblo** (`../board/board-map.md` §2c): es donde se concentran estos NPCs. Sin él no habría dónde vender, ni descanso largo, ni limpieza de Maldiciones.
 
 ## 3. Stock: cuántas cartas ofrece cada NPC
 
@@ -57,6 +73,7 @@ Consecuencia de diseño: la decisión de compra es "¿me lo llevo ahora o ahorro
 
 - [ ] **Colocación en el mapa** — mezcla ya perfilada: el **Capitán de mercenarios** solo en Pueblos; el **Tabernero** en Pueblo o en una posada suelta de camino; el **Informante/Guía** y el **Mercader** pueden salir sueltos; Sacerdote/Herrero/Mago tienden al Pueblo. El reparto fino se concreta al revisar la generación de fichas (`../board/board-map.md` §2c).
 - [x] Definir el sistema de precios/economía → **Oro** (`../game-design.md` §6b), precios por Rareza (§6b.3). Falta balancear cifras.
+- [x] Definir **quién compra** las cartas que te sobran → §2b: cada NPC compra lo que vende.
 - [x] Definir el stock/rotación concreto de cada tienda → **§3**: oferta aleatoria fijada al empezar el capítulo, sin rotación intracapítulo, renovada al cambiar de capítulo; 4/3/3/2 cartas y sin tope de rareza por ahora. Falta balancear si esas cantidades dan demasiada o poca elección.
 - [x] Subconjunto del prototipo → **7 de los 8 tipos** de §2 entran en el prototipo (incluido el nuevo Sacerdote/Sanador); solo el Dador de misión queda para Campaña.
 - [ ] Definir 2-3 NPCs de ejemplo con nombre propio para el prototipo (mínimo: un tabernero y un mercader).

@@ -8,6 +8,42 @@ Boceto de los héroes/clases jugables iniciales, previo a definir en detalle las
 
 `../game-design.md` §7 tiene pendiente "Definir lista de clases iniciales (2-3 para el prototipo) con sus cartas básicas" — este documento es el primer paso de esa tarea: fijar identidad y rol de cada héroe antes de diseñar cartas y números.
 
+## 1b. Fichas de héroe (pantalla de selección)
+
+Texto que se muestra al elegir héroe, paso 2 del setup (`../game-design.md` §1b): historia breve, puntos fuertes y débiles. Los números salen de §2b-§2d.
+
+### Guerrero — Enano *(Fighter)*
+
+> Sobrevivió al asalto que borró su guarnición del mapa. De los cuarenta que defendían la puerta salió él solo, y no le gusta hablar de cómo. Ahora recorre los caminos buscando algo que se parezca a una redención, o al menos a una pelea que sí pueda ganar.
+
+- **Fuerte:** el más resistente del roster (14 PV, d10) y el que impacta con más seguridad. *Golpe firme* ataca con ventaja de serie, y aguanta la armadura más pesada sin penalización.
+- **Débil:** lento de reflejos e Inteligencia mínima; sin nada a distancia, tiene que llegar hasta el enemigo. Con armadura pesada hace ruido: **desventaja para evitar detección**, así que el sigilo no es una opción.
+- **Para quien quiera:** entrar de frente y no morir.
+
+### Mago — Elfo *(Wizard)*
+
+> Exiliado de su torre arcana por leer lo que no debía. No discute la sentencia: discute que el conocimiento que buscaba siga ahí fuera, en ruinas y criptas que nadie ha catalogado. Viaja ligero porque lo único que necesita cabe en un libro.
+
+- **Fuerte:** el mejor daño a distancia (*Descarga arcana*, 4 hex) y el único control real del juego (*Enredo gélido* inmoviliza). *Bola de fuego* golpea a varios enemigos a la vez.
+- **Débil:** **8 PV, el más frágil con diferencia** — dos golpes de un élite y cae. Fuerza mínima: no puede blandir armas pesadas ni forzar nada. Si un enemigo llega a adyacencia, ya vas tarde.
+- **Para quien quiera:** matar antes de que le toquen. Posicionamiento sobre reflejos.
+
+### Pícaro — Mediano *(Rogue)*
+
+> Ex-contrabandista. Conoce los atajos porque los usó para mover mercancía que no era suya, y conoce los peligros porque alguna vez le pillaron. Cambió de oficio, no de costumbres.
+
+- **Fuerte:** el mejor en sigilo y exploración. *Ataque furtivo* pega +2d6 desde las sombras, *Desaparecer* le saca de cualquier combate, y **Oculto** le hace indetectable. Puede elegir qué peleas dar.
+- **Débil:** Fuerza mínima y solo 11 PV: en combate abierto y de frente pierde. **Y tiene la peor visión del roster** (Sabiduría 10) — irónico para el explorador, pero su ventaja es esconderse, no percibir.
+- **Para quien quiera:** evitar la mitad de los combates y ganar la otra mitad por emboscada.
+
+### Clérigo — Humano *(Cleric)*
+
+> Su templo ya no existe; su causa, sí. No predica y no explica a quién sirve. Se limita a aparecer donde hace falta, curar lo que puede curarse y quemar lo que no debería seguir caminando.
+
+- **Fuerte:** el único con **curación repetible** (*Palabra sanadora*), lo que alarga muchísimo la supervivencia entre descansos. **La mejor visión del roster** (Sabiduría 15). Su daño ☀️ radiante es devastador contra no-muertos, que es la Naturaleza de medio bestiario ([`enemies.md`](enemies.md) §3b).
+- **Débil:** Destreza 10 (el peor en iniciativa y sigilo) e Inteligencia mínima. Daño mediocre: mata despacio, y las peleas largas dan tiempo a que suba el Nivel de Amenaza.
+- **Para quien quiera:** partidas largas de desgaste, sin depender de pociones.
+
 ## 2. Roster inicial propuesto (4 arquetipos, punto de partida)
 
 | Héroe (clase D&D) | Raza (D&D) | Stat principal | Rol en combate | Gancho breve |
@@ -40,20 +76,46 @@ Notas de por qué cada uno dumpea lo que dumpea:
 - **Mago**: Fuerza al mínimo (arquetipo físicamente débil); Destreza en 14 como secundaria (esquiva, poca CON/PV).
 - **Clérigo**: Inteligencia al mínimo (fe, no estudio arcano); Constitución en 14 como secundaria (aguanta en primera línea de soporte).
 
-## 2c. Movimiento y Dado de Vida
+## 2c. Movimiento, Dado de Vida y visión
 
-Valores derivados según `../game-design.md` §2.2-§2.1 (movimiento estándar, PV = dado de vida + mod Constitución + **2 de aguante base** del prototipo, ver §2). El movimiento es **2 para todos** (estándar fijo, no varía por raza — ver `../game-design.md` §2.2); los extras vienen de fichas/cartas, no de la raza:
+Valores derivados según `../game-design.md` §2.2-§2.3 (movimiento estándar, PV = dado de vida + mod Constitución + **2 de aguante base** del prototipo, ver §2). El movimiento es **2 para todos** (estándar fijo, no varía por raza — ver `../game-design.md` §2.2); los extras vienen de fichas/cartas, no de la raza:
 
-| Héroe | Raza | Movimiento/turno | Dado de vida | PV nivel 1 (dado máx + mod CON + 2 base) |
-|---|---|---|---|---|
-| Guerrero | Enano | 2 | d10 | 10 + 2 + 2 = 14 |
-| Pícaro | Mediano | 2 | d8 | 8 + 1 + 2 = 11 |
-| Mago | Elfo | 2 | d6 | 6 + 0 + 2 = 8 |
-| Clérigo | Humano | 2 | d8 | 8 + 2 + 2 = 12 |
+| Héroe | Raza | Mov./turno | Dado de vida | PV nivel 1 (dado máx + mod CON + 2 base) | Visión detalle | Visión terreno |
+|---|---|---|---|---|---|---|
+| Guerrero | Enano | 2 | d10 | 10 + 2 + 2 = 14 | 4 | 6 |
+| Pícaro | Mediano | 2 | d8 | 8 + 1 + 2 = 11 | 3 | 5 |
+| Mago | Elfo | 2 | d6 | 6 + 0 + 2 = 8 | 4 | 6 |
+| Clérigo | Humano | 2 | d8 | 8 + 2 + 2 = 12 | 5 | 7 |
 
 El dado de vida sigue la convención D&D por rol (marcial > semi-marcial > caster puro): Guerrero d10 (el más resistente), Pícaro/Clérigo d8, Mago d6 (el más frágil, coherente con su Fuerza/Constitución bajas).
 
-Ese mismo dado son los **Dados de Vida (DV)** que se gastan al acampar para curarse (`../game-design.md` §4c.4): cada héroe tiene tantos DV como su nivel (a nivel 1, 1 DV), y el descanso largo los recupera.
+**Visión** = `3 + mod SAB` de detalle (fichas) y `+2` más de terreno (silueta del mapa), `../game-design.md` §2.3. El Clérigo ve más lejos y el **Pícaro es el que menos** (Sabiduría 10) — decidido a propósito: su ventaja exploradora es el sigilo y *Ojo avizor*, no la percepción bruta.
+
+**Dados de Vida:** en el prototipo **no se usan** — la Hoguera cura una cantidad fija (mitad de los PV máximos, `../game-design.md` §4c.4), porque a nivel 1 el héroe tendría 1 solo DV y el descanso corto sería inservible. Cuando llegue la progresión de nivel, cada héroe pasa a tener **DV = su nivel**, del tamaño de su dado de clase, recuperables en el descanso largo.
+
+## 2d. Kit inicial por héroe *(decidido)*
+
+Se otorga automáticamente al elegir héroe (paso 3 del setup, `../game-design.md` §1b). **El oro inicial es 0**, así que esto no se compra ni se elige del catálogo: es lo que llevas puesto al entrar al mapa.
+
+Criterio: **equipo modesto a propósito**. Nada de armadura pesada de salida — si el Guerrero empezara con Cota de malla y escudo tendría CA 18 y los enemigos Normales (ataque +1) le acertarían 1 vez de cada 5, con lo que el botín dejaría de importar. El equipo bueno es la recompensa de explorar, no el punto de partida.
+
+| Héroe | Equipado (2 manos + 1 armadura, §2.4) | CA resultante | Items al Mazo |
+|---|---|---|---|
+| **Guerrero** | Espada ✋ · Escudo ✋ · Cuero tachonado 🥼 (+2) | 10 +1 DES +2 +2 escudo = **15** | Poción de vida · Hoguera · Raciones de viaje · Martillo |
+| **Mago** | Bastón de mago ✋ · Libro de hechizos ✋ · Acolchada 🥼 (+1) | 10 +2 DES +1 = **13** | Poción de vida · Hoguera · Pergamino · Bota veloz |
+| **Pícaro** | Dagas ✋ · Ballesta de mano ✋ · Cuero 🥼 (+1) | 10 +2 DES +1 = **13** | Poción de vida · Hoguera · Ganzúas · Atajo del pícaro |
+| **Clérigo** | Maza bendita ✋ · Símbolo sagrado ✋ · Cota de escamas 👕 (+4) | 10 +0 DES +4 = **14** | Poción de vida · Hoguera · Antídoto · Raciones de viaje |
+
+Catálogos: armas y focos en [`../cards/weapons.md`](../cards/weapons.md), armaduras en [`../cards/armor.md`](../cards/armor.md), items en [`../cards/items.md`](../cards/items.md).
+
+**Notas de por qué cada kit es así:**
+- **Todos llevan Poción de vida + Hoguera.** No es sabor: son el sistema de recuperación entero (`../game-design.md` §4c) y sin ellos en el kit no se puede testear.
+- **Guerrero:** espada y escudo, el arquetipo. Armadura ligera de salida (la pesada es objetivo de loot). Martillo y Raciones le dan utilidad fuera de combate, que es donde está más pelado.
+- **Mago:** las dos manos ocupadas por Bastón + Libro (foco arcano, +1 a tiradas y CD de hechizos). Ojo: **no le queda mano para la Antorcha**, así que las localizaciones oscuras le cuestan de verdad. La Bota veloz es su salida de emergencia con 8 PV.
+- **Pícaro:** las dos manos con arma de **1 mano cada una** — Dagas para melee finesse y Ballesta de mano para 3 hex. Cubre las dos distancias, que es su forma de elegir peleas.
+- **Clérigo:** Maza bendita (usa **FUE o SAB**, la mejor de las dos) + Símbolo sagrado como foco divino. Es el único que arranca con armadura media: hace ruido (desventaja para evitar detección) y no le importa, porque no es un héroe de sigilo.
+
+> **Estos kits son la mitad del arreglo del Oteo.** 4 cartas de clase + 4 items = **8 cartas de Mazo**, lo que fija el tope de "en juego" en `techo(8 ÷ 2)` = **4 huecos** (`../game-design.md` §4). Con solo las 4 de clase el Mazo se vaciaba en 3 turnos y el Oteo dejaba de ser una decisión.
 
 ## 3. Cómo conecta cada héroe con el resto del diseño
 
@@ -68,4 +130,7 @@ Ese mismo dado son los **Dados de Vida (DV)** que se gastan al acampar para cura
 - [x] Roster del **prototipo** = **Guerrero + Mago** *(decidido)*: máximo contraste (melee/tanque 14 PV vs. distancia/frágil 8 PV). Pícaro y Clérigo entran justo después; el catálogo de los 4 sigue en [`../cards/class.md`](../cards/class.md).
 - [x] Diseñar las primeras Cartas Básicas de Clase (`../game-design.md` §3) para cada héroe → hechas para los **4 héroes** (Guerrero, Mago, Pícaro, Clérigo), cada uno con 3 Básicas + 1 Especial, en [`cards/class.md`](../cards/class.md). Falta balancear.
 - [x] Decidir si el jugador controla un héroe fijo por partida, o un grupo → **un solo héroe por partida** (decidido para el prototipo: simplifica combate, turno e iniciativa). El "grupo" queda como idea futura para Modo Campaña.
+- [x] Escribir la **ficha de cada héroe** para la pantalla de selección (historia + fuertes/débiles) → §1b.
+- [x] Definir el **kit inicial** de cada héroe (equipo + items de arranque) → §2d. Falta balancear.
 - [ ] Cuando quieras, ir añadiendo héroes de la lista de candidatos (§2) o nuevos, uno a uno.
+- [ ] Ampliar las **cartas de clase** de cada héroe (`../cards/class.md`): hoy son 3 Básicas + 1 Especial, y aunque el kit inicial ya arregla el tamaño de Mazo (§2d), más cartas de clase darían más identidad y variedad al Oteo.

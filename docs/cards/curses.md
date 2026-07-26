@@ -18,6 +18,8 @@ Carta de **efecto negativo persistente** que **ocupa un hueco del mazo personal*
 
 ## 2. Catálogo (boceto)
 
+<!-- cards: maldicion -->
+
 | Maldición | Efecto | Coste de limpieza | Severidad |
 |---|---|---|---|
 | Peso maldito | −1 Movimiento por turno | 30 oro | Leve |

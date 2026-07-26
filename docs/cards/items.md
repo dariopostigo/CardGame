@@ -6,12 +6,13 @@ Catálogo de cartas de **Item** — la categoría más amplia (tipo/icono en [`.
 
 Primer pase de efectos, sin balancear. La **Antorcha** ya es una carta de Arma ([`weapons.md`](weapons.md) §3) y la **Poción de vida**/**Pergamino** ya son Consumibles (§4) — no se repiten en esta tabla.
 
+<!-- cards: item -->
+
 | Objeto | Efecto | Rareza |
 |---|---|---|
-| Mochila | **+1 hueco** en el máximo del mazo personal (`../game-design.md` §4) | Común |
-| Catalejo | Mientras esté **en juego**, al **Otear** revelas **3 cartas y eliges 2** (en vez de 2 y 1): preparas cartas el doble de rápido (`../game-design.md` §4) | Poco común |
+| Catalejo | Mientras esté **en juego**, al **Otear** revelas **3 cartas y eliges 2** (en vez de 2 y 1): preparas cartas el doble de rápido (`../game-design.md` §4). Si "en juego" está **lleno**, cada carta que te quedes sustituye a una que ya tuvieras (2 sustituciones, misma regla 1-por-1 de §4) | Poco común |
 | Saco / bolsa | Sin efecto mecánico — almacenamiento de sabor, se vende por poco oro | Común |
-| Saco de dormir | Al jugar la Hoguera (§4b), recuperas **+1 Dado de Vida** extra | Común |
+| Saco de dormir | Al jugar la Hoguera (§4b), recuperas **+1 Dado de Vida** extra. *(En el prototipo no hay Dados de Vida —la Hoguera cura fijo, `../game-design.md` §4c.4—, así que de momento vale **+2 PV** al acampar.)* | Común |
 | Manta | Ignora el **−1 de movimiento** de Nieve/Tundra este turno (`../board/board-map.md` §3) | Común |
 | Cuerda de cáñamo | Acción rápida: cruzas un hexágono de Río/Lago sin la penalización de nadar | Común |
 | Yesca y pedernal | Enciendes la Antorcha o la Hoguera sin gastar tu Acción rápida ese turno | Común |
@@ -26,9 +27,13 @@ Primer pase de efectos, sin balancear. La **Antorcha** ya es una carta de Arma (
 | Martillo | Ventaja en pruebas de Fuerza para forzar puertas u objetos atrancados | Común |
 | Pala / pico | Sin efecto propio todavía — necesaria para recolectar mineral si se activa **Minería** (`../ideas.md`) | Común |
 
+> **Mochila — deshabilitada *(decidido)*.** Su efecto era "**+1 hueco** en el máximo del mazo personal", pero la carta **ocupa ella misma un hueco del Mazo** para darte uno: neto **0**, no hacía nada. Retirada del catálogo (y por tanto de la vista de cartas) hasta que tenga un efecto que funcione de verdad — candidatos: **+2 huecos**, o que el hueco extra sea **solo para items**, o convertirla en equipo fuera del Mazo como las armas (`../game-design.md` §4a).
+
 ## 2. Herramientas
 
 Primer pase de efectos, sin balancear.
+
+<!-- cards: item -->
 
 | Herramienta | Efecto | Rareza |
 |---|---|---|
@@ -47,6 +52,8 @@ Primer pase de efectos, sin balancear.
 
 Se **encuentran** (loot de Élite/Jefe, cofres de alta rareza) y, de momento, también pueden **salir en la oferta del Mercader** — no hay tope de rareza en tienda (`../game-design.md` §6b.3, `../characters/npcs.md` §3). Efectos = primer pase sin balancear. Las cartas de **arma** mágica (con nombre pero forma de arma: espadas, bastones...) viven en [`weapons.md`](weapons.md) §6 "Futuras implementaciones" en vez de aquí, para no mezclar los dos catálogos.
 
+<!-- cards: item -->
+
 | Objeto | Efecto | Rareza |
 |---|---|---|
 | Manto de invisibilidad | Acción: quedas **Oculto** ([`../effects.md`](../effects.md)) sin necesitar terreno; 1/combate | Legendario |
@@ -59,6 +66,8 @@ Se **encuentran** (loot de Élite/Jefe, cofres de alta rareza) y, de momento, ta
 
 Pociones (efecto instantáneo: curación, buff temporal), Pergaminos (lanzan un hechizo concreto — sostienen el modelo de hechizos-como-cartas, sin maná, de `../game-design.md` §4b.7). Se usan normalmente como **Acción rápida** en combate (`../game-design.md` §4b.3). Como cualquier carta del mazo personal, vuelven a estar disponibles después de jugarlas (`../game-design.md` §4).
 
+<!-- cards: item -->
+
 | Consumible | Tipo | Efecto | Rareza |
 |---|---|---|---|
 | Poción de vida | Acción rápida | Recuperas PV al instante (ej. 2d4+2) | Común |
@@ -69,15 +78,19 @@ Pociones (efecto instantáneo: curación, buff temporal), Pergaminos (lanzan un 
 
 Cartas ligadas al sistema de **Descanso y recuperación** (`../game-design.md` §4c). A diferencia de las pociones (se juegan en cualquier momento, incluido combate), la Hoguera solo se juega fuera de combate, arriesga una emboscada, y no puedes volver a jugarla hasta que ocurra algo (§4c.2).
 
+<!-- cards: item -->
+
 | Carta | Tipo | Efecto | Rareza |
 |---|---|---|---|
-| **Hoguera / Campamento** | Fuera de combate | **Descanso corto:** gastas Dados de Vida para curarte y reseteas habilidades 1/descanso. Acampar en terreno inseguro **arriesga una emboscada** (roba del [`encounter.md`](encounter.md)); Bosque es seguro. No re-acampable hasta que ocurra algo (`../game-design.md` §4c.2). | Común |
+| **Hoguera / Campamento** | Fuera de combate | **Descanso corto:** recuperas **la mitad de tus PV máximos** (redondeo arriba) y reseteas habilidades 1/descanso. Acampar en terreno inseguro **arriesga una emboscada** (roba del [`encounter.md`](encounter.md)); Bosque es seguro. No re-acampable hasta que ocurra algo (`../game-design.md` §4c.2). *(Cura fija en el prototipo; con la progresión de nivel pasa a gastar Dados de Vida, §4c.4.)* | Común |
 
 > El **descanso largo** (cura total, recupera Dados de Vida, retira estados) no es una carta: ocurre en localizaciones seguras — Pueblo/Taberna/Templo (`../board/board-map.md` §3b, `../characters/npcs.md`, `../game-design.md` §4c.3).
 
 ## 5. Cartas de movimiento
 
 Subtipo de Item que se juega para ganar **movimiento extra** ese turno, por encima del estándar de 2 (`../game-design.md` §2.2). Se usan como Acción rápida.
+
+<!-- cards: item -->
 
 | Carta | Tipo | Efecto | Rareza |
 |---|---|---|---|
@@ -90,7 +103,8 @@ Subtipo de Item que se juega para ganar **movimiento extra** ese turno, por enci
 - [x] Asignar Rareza a cada item.
 - [x] Definir el efecto de los objetos mágicos (§3) y de las cartas de movimiento (§5). Falta balancear.
 - [x] Definir el efecto de Equipo de aventurero (§1) y Herramientas (§2). Falta balancear.
-- [ ] Decidir qué subconjunto entra en el prototipo (probablemente 3-4 items básicos + 1-2 pociones/pergaminos).
+- [x] Decidir qué subconjunto entra en el prototipo → los **kits iniciales** de `../characters/heroes.md` §2d fijan el set mínimo: Poción de vida, Hoguera, Pergamino, Antídoto, Raciones de viaje, Martillo, Ganzúas, Bota veloz y Atajo del pícaro. El resto del catálogo entra como botín/tienda.
+- [x] **Mochila deshabilitada** *(decidido)*: su efecto era neto 0 (§1). Pendiente rediseñarla si se quiere recuperar.
 - [x] Separar, si conviene, los items "de sabor/exploración" (Saco/bolsa, Cadena, Juego de dados/cartas, Grilletes...) de los que tienen efecto mecánico real (marcados como "Sin efecto mecánico" en §1/§2).
 - [ ] Revisar si Manta/Saco de dormir y Cuerda/Kit de escalada se solapan demasiado una vez se testeen en el prototipo.
 - [ ] Balancear Rareza de §5 ahora que ninguna carta es de un solo uso: Zancada del viento (+3, Raro) ya no se diferencia de Bota veloz (+2, Común) por ser desechable, solo por la magnitud — revisar si sigue mereciendo Raro.

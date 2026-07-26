@@ -6,6 +6,8 @@ Catálogo de cartas de **Arma** (tipo/icono en [`../game-design.md`](../game-des
 
 *Columna Propiedades vacía a propósito — aparcada hasta que se revise el sistema de combate (§4b), ver checklist §6.*
 
+<!-- cards: arma -->
+
 | Arma | Manos | Daño | Tipo | Stat ataque | Propiedades | Rareza |
 |---|---|---|---|---|---|---|
 | Dagas | ✋ | 1d4 | 🏹 | FUE/DES (finesse) | — | Común |
@@ -21,6 +23,8 @@ Catálogo de cartas de **Arma** (tipo/icono en [`../game-design.md`](../game-des
 
 Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hueco ya es cuerpo a cuerpo (`../game-design.md` §4b.1). *Columna Propiedades vacía a propósito, ver nota de §1.*
 
+<!-- cards: arma -->
+
 | Arma | Manos | Daño | Tipo | Stat ataque | Alcance | Propiedades | Rareza |
 |---|---|---|---|---|---|---|---|
 | Arco | 🤲 | 1d8 | 🏹 | DES | 4 hex | — | Común |
@@ -29,6 +33,8 @@ Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hu
 | Bastón de mago | ✋ | 1d6 | 🔨 | INT | 2 hex | — | Común |
 
 ## 3. Armas de soporte
+
+<!-- cards: arma -->
 
 | Arma | Manos | Efecto | Rareza |
 |---|---|---|---|
@@ -64,6 +70,8 @@ Esto da progresión de loot dentro de un mismo arquetipo de arma en vez de una l
 ## 6. Futuras implementaciones (fuera de la v1)
 
 Aparcadero de cartas de **arma** concretas que se nos van ocurriendo pero que no entran en la primera versión del prototipo — mismo espíritu que [`../ideas.md`](../ideas.md), pero solo para cartas de arma ya bastante definidas (con nombre y efecto) en vez de ideas de sistema más abiertas. Se amplía esta tabla conforme surgen más, sin comprometerse a meterlas en la v1 todavía.
+
+<!-- cards: arma -->
 
 | Arma | Efecto | Rareza |
 |---|---|---|

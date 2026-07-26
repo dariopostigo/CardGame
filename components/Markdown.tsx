@@ -12,6 +12,8 @@ import type { RarityLevel } from "@/lib/rarity";
 import remarkSeverityChip from "@/lib/remark-severity-chip";
 import SeverityChip from "@/components/wiki/SeverityChip";
 import type { SeverityLevel } from "@/lib/severity";
+import remarkCardTable from "@/lib/remark-card-table";
+import CardTableView from "@/components/wiki/CardTableView";
 
 export default function Markdown({
   content,
@@ -70,11 +72,16 @@ export default function Markdown({
     "severity-chip"({ level }: { level: SeverityLevel }) {
       return <SeverityChip level={level} />;
     },
+    "card-table"({ spec, children }: { spec: string; children?: React.ReactNode }) {
+      return <CardTableView spec={spec}>{children}</CardTableView>;
+    },
   };
 
   return (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm, remarkIconTooltip, remarkRarityChip, remarkSeverityChip]}
+      // remarkCardTable va justo detrás de GFM: necesita las celdas de la
+      // tabla intactas, antes de que los plugins de chip las reescriban.
+      remarkPlugins={[remarkGfm, remarkCardTable, remarkIconTooltip, remarkRarityChip, remarkSeverityChip]}
       rehypePlugins={[rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]]}
       components={{ ...components, ...customComponents } as Components}
     >

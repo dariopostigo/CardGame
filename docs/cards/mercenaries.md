@@ -6,8 +6,28 @@ Carta de **Acción** que representa a una compañía de mercenarios a tu servici
 
 - **Todo es una carta:** en vez de simular un segundo personaje con estadísticas y mazo propios, un mercenario es una **carta de tipo Acción** que va a tu mazo personal. Con un solo héroe en el prototipo ([`../characters/heroes.md`](../characters/heroes.md)), te da "acciones de aliado" sin la complejidad de un compañero completo.
 - **Reutilizable, cuesta la Acción:** jugar la carta gasta tu **Acción** principal del turno ([`../game-design.md`](../game-design.md) §4b.3). Como cualquier carta del mazo personal, **no se consume** al jugarla (§4): vuelve a estar disponible. Es, en la práctica, un aliado al que "das la orden" una vez por turno.
-- **Cuenta para el máximo del mazo:** ocupa un hueco del mazo personal como cualquier carta del Mazo (`../game-design.md` §4). Se puede **vender por oro** (desagüe del exceso de mazo, §6b.4) igual que el equipo — a diferencia de una Maldición ([`curses.md`](curses.md)), que no se puede vender.
+- **Cuenta para el máximo del mazo:** ocupa un hueco del mazo personal como cualquier carta del Mazo (`../game-design.md` §4). Se puede **vender por oro al Capitán de mercenarios**, el mismo NPC que las vende (regla "cada NPC compra lo que vende", `../game-design.md` §6b.4) — a diferencia de una Maldición ([`curses.md`](curses.md)), que no se puede vender.
 - **Usa Rareza:** (`../game-design.md` §3.3) marca su potencia; a mayor rareza, más fuerte el efecto.
+
+### 1b. Alcance: el mercenario no es una ficha del tablero *(decidido)*
+
+Un mercenario **no ocupa un hexágono** ni se mueve por el mapa: es una carta de acción, igual que una carta de clase. Por tanto **su alcance se mide desde tu hexágono**, exactamente como si atacaras tú.
+
+| Alcance | Requisito | Ejemplos |
+|---|---|---|
+| **Melee** | Enemigo **adyacente a ti** (mismo requisito que tu propio ataque cuerpo a cuerpo, `../game-design.md` §4b.1) | Mercenarios de las Llanuras, Bruto, Espadachín, Grifa Negra |
+| **A distancia (N hex)** | Enemigo dentro de N hexágonos **desde tu posición**, con el mínimo de 2 hex de todo ataque a distancia (§4b.1) | Arquero a sueldo (4 hex) |
+| **—** | Sin objetivo enemigo: te afecta a ti o a un aliado | Curandera errante |
+
+**Tiran ataque como todo lo demás *(decidido)*:** `1d20 + bono fijo` vs la **CA** del objetivo (`../game-design.md` §4b.4), con el bono según Rareza:
+
+| Rareza | Bono de ataque |
+|---|---|
+| Común | +2 |
+| Poco común | +3 |
+| Raro / Épico | +4 |
+
+Motivo: antes hacían **daño automático sin tirada**, y como jugar la carta cuesta la **misma Acción** que atacar tú —que sí puedes fallar—, el mercenario era estrictamente mejor que tu propio ataque en todos los casos. Con tirada quedan dentro de la misma matemática que héroes y enemigos. *(Si al balancear se prefiere volver al daño garantizado, la compensación sería bajarles el dado un escalón para pagar la certeza.)*
 
 ## 2. Cómo se consiguen
 
@@ -22,24 +42,28 @@ Dos vías, con el mismo trade-off que el resto del juego (gratis-pero-arriesgado
 
 ### 2b. Comprar — NPC *(vía segura, cuesta oro)*
 
-- El **Capitán de mercenarios** (aparece **solo en Pueblos** — [`../characters/npcs.md`](../characters/npcs.md)) **vende cartas de Mercenario por oro** según su Rareza (`../game-design.md` §6b.3). Es el **único** NPC que las vende (el Mercader solo vende Items). Sin prueba ni riesgo: la alternativa cara y segura a reclutarlas.
+- El **Capitán de mercenarios** (aparece **solo en Pueblos** — [`../characters/npcs.md`](../characters/npcs.md)) **compra y vende cartas de Mercenario por oro** según su Rareza (`../game-design.md` §6b.3-6b.4). Es el **único** NPC que las trata (el Mercader solo lleva Items). Sin prueba ni riesgo: la alternativa cara y segura a reclutarlas.
 
 ## 3. Catálogo (boceto)
 
-| Mercenario | Tipo | Efecto | Rareza |
-|---|---|---|---|
-| Mercenarios de las Llanuras | Acción | Un mercenario ataca a un enemigo adyacente: **1d6+2 🗡️** | Común |
-| Arquero a sueldo | Acción | Disparo a distancia (alcance 4 hex): **1d6 🏹** | Común |
-| Bruto de taberna | Acción | Ataque melee **1d8 🔨**; **+2 de daño** si el objetivo está por debajo del 50 % de PV | Poco común |
-| Curandera errante | Acción | Los mercenarios te asisten: recuperas **1d8 PV** | Poco común |
-| Espadachín veterano | Acción | Ataque melee **1d10 🗡️ con ventaja** ([`../effects.md`](../effects.md)) | Raro |
-| Compañía de la Grifa Negra | Acción | Dos mercenarios atacan: **2× (1d8 🗡️)** repartidos entre uno o dos enemigos | Épico |
+<!-- cards: mercenario -->
 
-- **El efecto escala con la Rareza** (mismo espíritu que la progresión por familia de [`weapons.md`](weapons.md) §5 / [`armor.md`](armor.md) §6): a mayor rareza, más daño/efecto.
-- Los mercenarios **atacan con el valor fijo de su carta**, no con tus estadísticas — no dependen de tu FUE/DES. Cada uno lleva **su tipo de daño** (🗡️🏹🔨…) que se compara con la Naturaleza del objetivo (`../game-design.md` §4b.10, [`../characters/enemies.md`](../characters/enemies.md) §3b) como cualquier ataque.
+| Mercenario | Tipo | Alcance | Efecto | Rareza |
+|---|---|---|---|---|
+| Mercenarios de las Llanuras | Acción | Melee | Un mercenario ataca a un enemigo adyacente a ti: **+2** al ataque, **1d6+2 🗡️** | Común |
+| Arquero a sueldo | Acción | 4 hex | Disparo a distancia: **+2** al ataque, **1d6 🏹** | Común |
+| Bruto de taberna | Acción | Melee | **+3** al ataque, **1d8 🔨**; **+2 de daño** si el objetivo está por debajo del 50 % de PV | Poco común |
+| Curandera errante | Acción | — | Los mercenarios te asisten: recuperas **1d8 PV** (sin tirada, no es un ataque) | Poco común |
+| Espadachín veterano | Acción | Melee | **+4** al ataque **con ventaja** ([`../effects.md`](../effects.md)), **1d10 🗡️** | Raro |
+| Compañía de la Grifa Negra | Acción | Melee | Dos mercenarios atacan: **2 ataques a +4**, **1d8 🗡️** cada uno, repartidos entre uno o dos enemigos adyacentes a ti | Épico |
+
+- **El efecto escala con la Rareza** (mismo espíritu que la progresión por familia de [`weapons.md`](weapons.md) §5 / [`armor.md`](armor.md) §6): a mayor rareza, más daño, mejor bono de ataque y más efecto.
+- Los mercenarios **usan los valores fijos de su carta**, no tus estadísticas — no dependen de tu FUE/DES ni se benefician de tus armas. Cada uno lleva **su tipo de daño** (🗡️🏹🔨…) que se compara con la Naturaleza del objetivo (`../game-design.md` §4b.10, [`../characters/enemies.md`](../characters/enemies.md) §3b) como cualquier ataque.
+- **Su alcance se mide desde tu hexágono** (§1b): no hay ficha de mercenario en el tablero que posicionar.
 
 ## 4. Próximos pasos
 
+- [x] Definir **alcance** (melee / a distancia, medido desde tu hexágono) y si tiran ataque → §1b: **sí tiran**, `1d20 + bono por rareza` vs CA. Falta balancear.
 - [ ] Balancear dados/bonos por rareza y la CD de reclutamiento (§2a).
 - [ ] Decidir si los mercenarios más potentes (Épico/Legendario) pasan a uso **1/combate** en vez de reutilizable, como palanca de balance.
 - [x] Definir el NPC concreto que los vende (§2b) y su stock/rotación → **Capitán de mercenarios**, **2 cartas** sorteadas al empezar el capítulo y fijas hasta el siguiente (`../characters/npcs.md` §3).

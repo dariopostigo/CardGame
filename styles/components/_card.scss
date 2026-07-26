@@ -29,6 +29,21 @@ $sub-chip-left: chip-center-left($chip-sub-size);
   initial-value: 0deg;
 }
 
+// Sprite de <defs> de los marcos vectoriales: se emite una vez por página
+// (CardFrameDefs) y todas las cartas referencian sus gradientes y paths por id.
+// No debe pintar ni ocupar sitio.
+// Colapsado a 0×0 en lugar de display:none, que en varios navegadores deja de
+// resolver las referencias url(#…) de los <defs>.
+// Fuera del scope .card-lab a propósito: en la wiki el sprite se emite una vez
+// por documento (app/docs/[[...slug]]/page.tsx), no dentro de cada apartado con
+// cartas.
+.card-lab__defs {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 .card-lab {
   // --- Geometría (cada tema la puede pisar a nivel de .card) --------------
   --card-w: #{$card-width};
@@ -83,22 +98,10 @@ $sub-chip-left: chip-center-left($chip-sub-size);
     }
   }
 
-  // Sprite de <defs> de los marcos vectoriales: se emite una vez por página
-  // (CardFrameDefs) y todas las cartas referencian sus gradientes y paths por
-  // id. No debe pintar ni ocupar sitio.
-  // Colapsado a 0×0 en lugar de display:none, que en varios navegadores deja
-  // de resolver las referencias url(#…) de los <defs>.
-  .card-lab__defs {
-    display: block;
-    width: 0;
-    height: 0;
-    overflow: hidden;
-  }
-
   // --- Marco vectorial ----------------------------------------------------
   // Lienzo SVG a sangre (components/design/card-frames.tsx) que dibuja marco,
   // ola y ornamentos. Oculto por defecto, igual que .card__cost-line: cada
-  // tema decide si su marco es SVG o puro CSS (Pergamino es CSS).
+  // tema lo activa en su parcial cuando su marco es SVG.
   .card__frame {
     display: none;
     position: absolute;

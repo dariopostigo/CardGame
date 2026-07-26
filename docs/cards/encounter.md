@@ -19,6 +19,8 @@ El terreno del hexágono aplica **además** su propio efecto (`../board/board-ma
 
 ## 3. Cartas de Combate (boceto, ~10)
 
+<!-- cards: encuentro icono=⚔️ fichas="Combate" -->
+
 | Carta | Efecto |
 |---|---|
 | Emboscada enemiga | Si el héroe iba expuesto (Llanura/Camino, no Oculto), el enemigo actúa primero e ignora la iniciativa el primer turno |
@@ -33,6 +35,8 @@ El terreno del hexágono aplica **además** su propio efecto (`../board/board-ma
 | Botín inesperado | Al ganar, **oro extra** o una carta de Tesoro adicional (`../game-design.md` §6b.1) |
 
 ## 4. Cartas de Suceso (boceto, ~10)
+
+<!-- cards: encuentro icono=❓ fichas="Suceso" -->
 
 | Carta | Efecto |
 |---|---|

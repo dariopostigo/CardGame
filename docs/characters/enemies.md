@@ -19,7 +19,7 @@ Esta distinción da dos sabores de encuentro: la sorpresa de la Amenaza (tensió
   - **Latente:** anclado en su hexágono, **no patrulla**, mientras no detecte al héroe. (Se conserva la idea de "no deambula por el mapa" del prototipo.)
   - **Activo:** una vez **detectado** el héroe (prueba de sigilo fallada, §2b), se mueve hacia él por el mapa (persecución), inicia combate al quedar adyacente y se sigue moviendo dentro del combate.
 - **¿Detección activa?** → **Sí, es el disparador del movimiento.** Cuando el héroe entra en el **rango de detección** del enemigo se resuelve una **prueba de sigilo** (§2b): el enemigo solo pasa a Activo si la falla (o si el héroe no puede ser sigiloso). Reglas del rango (los detalles de la prueba, en §2b):
-  - **Rango de detección** = **2 hex base + 1 por cada +2 de modificador de Sabiduría** del enemigo (misma lógica que la visión del héroe, `../game-design.md` §2.3, pero con base 2 porque el enemigo está alerta en su puesto).
+  - **Rango de detección** = **2 hex base + 1 por punto de modificador de Sabiduría** del enemigo (misma escala que la visión del héroe, `../game-design.md` §2.3, pero con base 2 frente a la base 3 del héroe: el enemigo está alerta en su puesto, pero el héroe **debe** ver primero — es el invariante de §2b).
   - **Reducción por terreno/sigilo:** la ocultación del terreno del héroe resta al rango (**Bosque −1**; Llanura/Camino sin reducción — `../board/board-map.md` §3/§4). El estado **Oculto** ([`../effects.md`](../effects.md)) hace al héroe **indetectable** hasta que actúe.
   - **Persecución (leash):** si el héroe sale del rango de detección y de la línea de visión del enemigo durante **2 turnos seguidos**, el enemigo **desiste**, vuelve a su hexágono ancla, recupera sus PV y pasa de nuevo a Latente. Esto da sentido mecánico a huir/ocultarse.
   - *(Idea futura, aún sin decidir — nota del diseñador:* enemigos o eventos "cazadores" que busquen proactivamente al héroe por el mapa **antes** de detectarlo por visión. Por ahora la activación es siempre reactiva, por detección. **No se engancha al Nivel de Amenaza** (`../game-design.md` §6c.3) — los umbrales de Amenaza no cambian el comportamiento de detección/movimiento de los enemigos, solo los hacen más peligrosos en combate y más perceptivos, ver §6c.3.)
@@ -29,9 +29,11 @@ Esta distinción da dos sabores de encuentro: la sorpresa de la Amenaza (tensió
 
 Formaliza cómo el héroe se acerca a un enemigo **Latente** antes de que empiece el combate, y define la **prueba de evitar detección** que ya asumían varias cartas (armadura ruidosa, *Escabullirse* del Pícaro, *Marca del cazador*, estado *Oculto*) pero que no estaba escrita.
 
-**Los alcances en juego** (independientes: normalmente ves al enemigo antes de que él pueda detectarte):
-- **Visión del héroe** (base 1 + SAB, `../game-design.md` §2.3): revela al enemigo en el mapa.
-- **Detección del enemigo** (2 + SAB del enemigo, §2), reducida por la ocultación del terreno del héroe (Bosque −1).
+**Los alcances en juego** (independientes: **normalmente ves al enemigo antes de que él pueda detectarte**, y eso es un invariante de balance a preservar, no una casualidad — `../game-design.md` §2.3):
+- **Visión de detalle del héroe** (`3 + mod SAB`, `../game-design.md` §2.3): revela al enemigo en el mapa. En el roster actual va de **3** (Pícaro) a **5** (Clérigo).
+- **Detección del enemigo** (`2 + mod SAB` del enemigo, §2), reducida por la ocultación del terreno del héroe (Bosque −1). En el bestiario actual va de **1** (Bandido) a **4** (jefe final).
+
+> Con los radios anteriores (visión del héroe 1 vs. detección enemiga 2) pasaba **exactamente lo contrario**: el enemigo te detectaba antes de que tú lo vieras, así que la fase de aproximación de abajo casi nunca podía dispararse y todo el sistema de sigilo quedaba muerto sobre el papel. Arreglado en `../game-design.md` §2.3.
 
 **Fases al acercarte a un enemigo que ya ves** (ficha de Enemigo, o ya detectado):
 
@@ -129,7 +131,7 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 | **Bono de ataque** | `mod de la stat del ataque` (FUE melee; DES para ataques a distancia, armas ligeras/finesse y **ataques naturales ágiles de bestias** —mordiscos, zarpazos rápidos—). **Sin bono de competencia**, igual que los héroes (§4b.4) — ver nota de balance abajo. |
 | **Daño** | `dado del ataque + mod stat`, con su tipo de daño (🗡️🏹🔨 y otros — `../game-design.md` §4b.10). |
 | **Velocidad** | **2 hex para todos** (igualado al movimiento del héroe, `../game-design.md` §2.2; se personalizará por tipo más adelante —algunos más rápidos "cazadores", otros más lentos—, `../ideas.md`). Movimiento en combate según §4b.5. |
-| **Detección** | `2 hex + 1 por cada +2 de mod SAB`, reducida por ocultación del héroe (§2). |
+| **Detección** | `2 hex + 1 por punto de mod SAB`, reducida por ocultación del héroe (§2). Debe quedar **por debajo** de la visión de detalle del héroe (`../game-design.md` §2.3). |
 | **Bono de jefe** | Solo categorías Jefe: **+2 a ataque y a CA** (representa su prestancia sobrenatural), ya incluido en sus bloques. |
 
 > **Nota de balance (accuracy):** como ni héroes ni enemigos tienen bono de competencia, la precisión sale solo de los modificadores + cartas. Si al testear la sensación de "fallo mucho" es alta, la solución es añadir un **bono de competencia global** (+2) a ambos lados — decisión aplazada al balance, no ahora.
@@ -139,10 +141,12 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 | Enemigo | Naturaleza | PV | CA | Vel | Det | Ataque | Habilidad |
 |---|---|---|---|---|---|---|---|
 | Lobo de las lindes | Bestia | 12 | 12 | 2 | 2 | Mordisco +1 / 1d6+1 🏹 / melee | **Cazador de manada:** ventaja al atacar si otro Lobo está adyacente al objetivo |
-| Bandido merodeador | Humanoide | 10 | 12 | 2 | 2 | Cimitarra +1 / 1d6+1 🗡️ / melee | **Escurridizo:** por debajo del 50 % de PV, en su turno roba un objeto (si adyacente) o **huye** (prueba enfrentada de DES, §5b.6) en vez de atacar |
+| Bandido merodeador | Humanoide | 10 | 12 | 2 | **1** | Cimitarra +1 / 1d6+1 🗡️ / melee | **Escurridizo:** por debajo del 50 % de PV, en su turno roba un objeto (si adyacente) o **huye** (Desengancharse, §5b.6) en vez de atacar |
 | Trasgo de pantano | Humanoide | 6 | 12 | 2 | 2 | Daga emponzoñada +1 / 1d4+1 🏹 / melee | **Veneno:** al impactar aplica Envenenado (salvación CON CD 12, [`../effects.md`](../effects.md)) |
 | Esqueleto errante | No-muerto | 10 | 12 | 2 | 2 | Espada mellada +1 / 1d6+1 🗡️ / melee | Resistencias/vulnerabilidades de su Naturaleza (§3b): resistente a 🏹, vulnerable a 🔨 y ☀️ |
-| Araña cavernaria | Bestia | 10 | 12 | 2 | 2 | Mordisco +1 / 1d6+1 🏹 + Envenenado (CON CD 12) / melee · Telaraña (alcance 2) | **Telaraña:** aplica Inmovilizado (salvación DES CD 12) sin daño |
+| Araña cavernaria | Bestia | 10 | 12 | 2 | **3** | Mordisco +1 / 1d6+1 🏹 + Envenenado (CON CD 12) / melee · Telaraña (alcance 2) | **Telaraña:** aplica Inmovilizado (salvación DES CD 12) sin daño |
+
+> **Detección recalculada:** los valores de la columna Det salen de `2 + mod SAB` (§5b.1), así que varían por criatura: Bandido (SAB 9) **1**, Lobo/Trasgo/Esqueleto (SAB 10-11) **2**, Araña cavernaria (SAB 12) **3**. Antes la columna decía 2 para todos, que era la base sin aplicar el modificador.
 
 > **Nota — Dados de Vida variables:** el Trasgo de pantano usa **1 DV** (por su gancho *bajo HP*), de ahí sus 6 PV en vez de ~12; el resto de Normales usan los 2 DV de la sección. Es la excepción "ajustable por criatura" de §5b.1.
 
@@ -151,18 +155,18 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 | Enemigo | Naturaleza | PV | CA | Vel | Det | Ataque | Habilidad |
 |---|---|---|---|---|---|---|---|
 | Capitán bandido | Humanoide | 30 | 13 | 2 | 2 | Espada +3 / 1d8+3 🗡️ / melee | **Comandante:** llega con 1-2 Normales de refuerzo; mientras el Capitán viva, los refuerzos atacan con +1 |
-| Trol de las minas | Gigante | 35 | 13 | 2 | 2 | Garras +3 / 1d10+3 🔨 / melee (ignora el bono de armadura ligera del objetivo) | **Regeneración:** +2 PV al inicio de su turno, salvo que recibiera daño de **🔥 (fuego)** ese turno (Antorcha, Bola de fuego) — habilidad propia, no una vulnerabilidad de su Naturaleza (§3b) |
-| Araña matriarca | Bestia | 35 | 14 | 2 | 2 | Mordisco +3 / 1d8+3 🏹 + Veneno fuerte (2d4, CON CD 14) · Telaraña (alcance 3, DES CD 14) | **Veneno potente + Telaraña** (versión dura de la cavernaria) |
+| Trol de las minas | Gigante | 35 | 13 | 2 | **3** | Garras +3 / 1d10+3 🔨 / melee (ignora el bono de armadura ligera del objetivo) | **Regeneración:** +2 PV al inicio de su turno, salvo que recibiera daño de **🔥 (fuego)** ese turno (Antorcha, Bola de fuego) — habilidad propia, no una vulnerabilidad de su Naturaleza (§3b) |
+| Araña matriarca | Bestia | 35 | 14 | 2 | **3** | Mordisco +3 / 1d8+3 🏹 + Veneno fuerte (2d4, CON CD 14) · Telaraña (alcance 3, DES CD 14) | **Veneno potente + Telaraña** (versión dura de la cavernaria) |
 
 ### 5b.4 Jefes (con Bono de jefe +2 ya incluido)
 
 **Jefe de capítulo — "El Heraldo Ceniciento"** (9 DV) — Naturaleza **No-muerto de alto rango** (§3b): resistente a 🏹, vulnerable a 🔨 y ☀️
-- **PV** 72 · **CA** 16 · **Vel** 2 · **Det** 2
+- **PV** 72 · **CA** 16 · **Vel** 2 · **Det** 3
 - **Ataque:** Guadaña cenicienta +5 / 2d6+3 💀 / alcance 2
 - **Habilidades:** (1) *Aura de corrupción* — al empezar el combate y cada 3 turnos, el héroe salva SAB CD 14 o queda **Asustado** ([`../effects.md`](../effects.md)); (2) *Invocar* — cada 2 turnos aparece 1 Esqueleto errante.
 
 **Jefe final — "La Sombra que Devora"** (14 DV, **diseño multifase — boceto**) — Naturaleza **Sombrío** (§3b): resistente a 🗡️/🏹, vulnerable a ☀️
-- **PV** 140 · **CA** 18 · **Vel** 2 · **Det** 3
+- **PV** 140 · **CA** 18 · **Vel** 2 · **Det** 4
 - **Ataque:** Zarpa devoradora +6 / 2d8+4 💀 / alcance 2, y **Drenar** (se cura la mitad del daño infligido)
 - **Habilidades:** combate **multifase** (al 66 % y al 33 % de PV gana un nuevo efecto / invoca sombras). Un jefe final merece diseño a medida cuando se escriba la Campaña — esto es solo el bloque base.
 
@@ -190,9 +194,9 @@ Cómo decide un enemigo **Activo** (§2) qué hacer en su turno. Es **determinis
 4. **¿Acercarse?** Si el objetivo está fuera de alcance, gasta **Movimiento** para acercarse por la ruta transitable más corta (coste de terreno, `../board/board-map.md` §3a). Si tras moverse queda en alcance, ataca (paso 3).
 5. **Sin nada útil** (bloqueado, sin ruta): se acerca lo máximo posible y termina el turno.
 
-**Huida — prueba enfrentada *(decidido)*:** el enemigo que huye tira `1d20 + mod DES` **enfrentado** a `1d20 + mod DES` del héroe:
-- **Gana el enemigo** → se desengancha: usa su Movimiento para alejarse **sin golpe de oportunidad**.
-- **Gana el héroe** → no logra soltarse: se queda adyacente y actúa normal (ataca).
+**Huida — es la regla de Desengancharse *(decidido)*:** el enemigo que huye usa la **misma** tirada enfrentada `1d20 + mod DES` que el héroe cuando huye él (`../game-design.md` §4b.11 — una sola regla para los dos sentidos, en vez de las dos distintas que había antes):
+- **Gana el enemigo** → se desengancha limpio: usa su Movimiento para alejarse.
+- **Gana el héroe** → el enemigo **recibe el daño del ataque básico del héroe sin tirada de ataque** y **se aleja igualmente**. *(Antes esto era "no logra soltarse y se queda"; ahora ambos bandos siguen la misma resolución: huir siempre funciona, pero puede costarte un golpe.)*
 - Si el enemigo se mantiene fuera de tu detección y visión durante el **leash (2 turnos, §2)**, **escapa del combate** y **se pierde su loot** (se llevó lo robado, en el caso del Bandido).
 
 **Disparadores de habilidad (unificados):** cada habilidad de un bloque (§5b) se cuelga de uno de estos momentos, para que la IA sepa cuándo evaluarla:
@@ -233,7 +237,7 @@ El balance fino (cuántos a la vez, con qué stats exactas) se ajusta al testear
 ## 6. Próximos pasos / preguntas abiertas
 
 - [x] Decidir estático vs. patrulla para el prototipo — **activación por detección** (latente hasta ver al héroe, luego persigue; §2). No patrulla; los "cazadores" proactivos quedan como idea futura.
-- [x] Concretar el **rango de detección del enemigo** → 2 hex base + SAB scaling (§2, §5b.1).
+- [x] Concretar el **rango de detección del enemigo** → `2 hex + 1 por punto de mod SAB` (§2, §5b.1), con la columna Det de los bloques recalculada por criatura (1-4). Debe quedar **por debajo** de la visión de detalle del héroe (`../game-design.md` §2.3).
 - [x] Concretar la **persecución (leash)** → desiste y vuelve a su ancla tras 2 turnos fuera de detección/visión (§2).
 - [x] Concretar cómo la **ocultación del terreno** reduce la detección → Bosque −1; estado Oculto = indetectable (§2).
 - [x] Definir la **fase de aproximación y la prueba de sigilo** (evitar detección) → §2b: `1d20 + mod DES` vs `10 + mod SAB` del enemigo, re-tirada al moverte dentro del rango, y **emboscada** (ventaja + iniciativa) si te cuelas sin ser visto.

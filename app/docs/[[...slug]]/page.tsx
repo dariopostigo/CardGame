@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Markdown from "@/components/Markdown";
 import DocsIndex from "@/components/wiki/DocsIndex";
+import { CardFrameDefs } from "@/components/design/card-frames";
 import { getAllParams, getDocBySlug } from "@/lib/docs";
 
 // Los docs viven en docs/*.md y se leen del disco con fs.readFileSync (lib/docs.ts).
@@ -37,6 +38,10 @@ export default async function DocPage({
 
   return (
     <article className="wiki-prose prose">
+      {/* Gradientes y trazados comunes de los marcos de carta: una sola vez por
+          documento, los referencien uno o varios apartados con vista cartas
+          (lib/remark-card-table.ts). */}
+      {doc.hasCards && <CardFrameDefs />}
       <Markdown content={doc.content} docDir={doc.dir} />
     </article>
   );

@@ -14,6 +14,8 @@ La Destreza aporta a la Defensa/CA distinto según el peso de la armadura:
 
 ## 2. Ligeras 🥼 (Destreza completa)
 
+<!-- cards: armadura peso=ligera -->
+
 | Armadura | Bono CA | Notas | Rareza |
 |---|---|---|---|
 | Acolchada | +1 | — | Común |
@@ -22,6 +24,8 @@ La Destreza aporta a la Defensa/CA distinto según el peso de la armadura:
 
 ## 3. Medias 👕 (Destreza máx. +2)
 
+<!-- cards: armadura peso=media -->
+
 | Armadura | Bono CA | Notas | Rareza |
 |---|---|---|---|
 | Pieles | +2 | — | Común |
@@ -29,6 +33,8 @@ La Destreza aporta a la Defensa/CA distinto según el peso de la armadura:
 | Media cota | +5 | Desventaja para evitar detección | Común |
 
 ## 4. Pesadas 🧥 (sin Destreza)
+
+<!-- cards: armadura peso=pesada -->
 
 | Armadura | Bono CA | Requisito | Notas | Rareza |
 |---|---|---|---|---|

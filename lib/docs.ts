@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { cache } from "react";
 import { docPathToRoute } from "@/lib/markdown-link";
+import { hasCardDirective } from "@/lib/card-table";
 
 const DOCS_ROOT = path.join(process.cwd(), "docs");
 
@@ -18,7 +19,14 @@ export type SearchDoc = {
   headings: SearchHeading[];
   text: string;
 };
-export type Doc = { slug: string[]; content: string; dir: string; title: string };
+export type Doc = {
+  slug: string[];
+  content: string;
+  dir: string;
+  title: string;
+  /** Trae tablas de catálogo con vista cartas (lib/card-table.ts). */
+  hasCards: boolean;
+};
 
 type FileRec = { abs: string; rel: string; dir: string; slug: string[] };
 
@@ -149,6 +157,7 @@ export const getDocBySlug = cache((slug: string[]): Doc | null => {
         content: preprocess(raw),
         dir: dirRel === "." ? "" : dirRel,
         title: firstH1(raw) ?? metaFor(slug).label,
+        hasCards: hasCardDirective(raw),
       };
     }
   }
@@ -175,6 +184,7 @@ function slugifyHeading(text: string, used: Map<string, number>): string {
 
 function stripMarkdown(raw: string): string {
   return raw
+    .replace(/<!--[\s\S]*?-->/g, " ") // comentarios (p. ej. las directivas de cartas)
     .replace(/```[\s\S]*?```/g, " ") // bloques de código
     .replace(/`[^`]*`/g, " ")
     .replace(/[|>#*_~\[\]()-]/g, " ")
