@@ -32,7 +32,8 @@ export type CanvasCellKind = "hex" | "candidate";
 export type CanvasCell = {
   coord: HexCoord;
   kind: CanvasCellKind;
-  terrain?: TerrainId | null;
+  /** Solo las de tipo "hex" lo llevan; un hueco de la rejilla no tiene terreno. */
+  terrain?: TerrainId;
 };
 
 type Props = {
@@ -170,7 +171,7 @@ export default function TileCanvas({
               className="tile-canvas__hex"
               points={Hex.polygonPoints(x, y, hexSize)}
               data-kind={cell.kind}
-              data-terrain={cell.kind === "hex" ? (cell.terrain ?? "libre") : undefined}
+              data-terrain={cell.kind === "hex" ? cell.terrain : undefined}
               data-selected={selected && Hex.equals(selected, cell.coord) ? "true" : undefined}
               data-interactive={onCellClick ? "true" : undefined}
               onClick={onCellClick ? () => onCellClick(cell.coord) : undefined}

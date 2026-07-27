@@ -10,7 +10,12 @@
 // mantener la lista de pendientes en otro sitio.
 // =========================================================================
 
-export type LabStatus = "listo" | "en-curso" | "planificado";
+import { BUILD_STATUS_LABEL, type BuildStatus } from "./sections";
+
+// El estado de construcción es el mismo concepto aquí y en los repositorios de
+// componentes (lib/repository.ts), así que vive una sola vez, en el registro de
+// apartados. El alias se queda para no reescribir a los consumidores de /dev.
+export type LabStatus = BuildStatus;
 
 export type DevLab = {
   /** Segmento de URL: /dev/<slug>. */
@@ -25,11 +30,7 @@ export type DevLab = {
   readonly doc?: { href: string; label: string };
 };
 
-export const LAB_STATUS_LABEL: Record<LabStatus, string> = {
-  listo: "Listo",
-  "en-curso": "En curso",
-  planificado: "Planificado",
-};
+export const LAB_STATUS_LABEL = BUILD_STATUS_LABEL;
 
 // El orden importa: primero la pieza, luego el tablero que se monta con ella.
 export const DEV_LABS: readonly DevLab[] = [
@@ -37,7 +38,7 @@ export const DEV_LABS: readonly DevLab[] = [
     slug: "losetas",
     label: "Losetas",
     summary:
-      "La pieza: su forma en uno de los cinco tamaños, el terreno de cada hexágono y las anclas por las que se une a otra. Catálogo girando en vivo y boceto para maquetar losetas nuevas.",
+      "La pieza: su forma en uno de los cinco tamaños, el terreno de cada hexágono y las anclas por las que se une a otra. Biblioteca de tipos y variantes, editable: se guarda en disco.",
     icon: "pi pi-box",
     status: "en-curso",
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §2" },

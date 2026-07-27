@@ -9,12 +9,18 @@
 // suben como callback (onHexClick), nunca como setter.
 //
 // Se pinta en capas, no hexágono a hexágono, porque el contorno de una loseta
-// y el trazo de un sendero tienen que quedar POR ENCIMA del relleno de todos
-// los hexágonos, no solo del suyo:
+// tiene que quedar POR ENCIMA del relleno de todos los hexágonos, no solo del
+// suyo:
 //   1. relleno de los hexágonos
-//   2. senderos
-//   3. contorno de cada loseta (el lado que da a otra loseta o al vacío)
-//   4. fichas, localizaciones y entrada
+//   2. contorno de cada loseta (el lado que da a otra loseta o al vacío)
+//   3. fichas, localizaciones y entrada
+//
+// El sendero no tiene capa: el Camino es un terreno como los demás y se ve por
+// su color, igual que en el catálogo de /dev/losetas. Antes se le dibujaba
+// encima un trazo de centro a centro, de cuando el terreno se sorteaba hexágono
+// a hexágono y el camino había que "seguirlo"; hoy la loseta lo trae pintado y
+// el trazo solo tapaba el terreno de debajo, se cruzaba consigo mismo en las
+// encrucijadas y salía al vacío por las anclas sin pareja.
 // =========================================================================
 
 import { useMemo } from "react";
@@ -103,30 +109,7 @@ export default function HexBoard({
         })}
       </g>
 
-      {/* 2. Senderos: del centro del hexágono al punto medio de cada lado por
-          el que sigue el camino. Los de dos hexágonos contiguos se encuentran
-          en la junta, así que el trazo sale continuo entre losetas. */}
-      <g className="board__roads">
-        {cells.map((cell) => {
-          if (!(revealAll || cell.terrainRevealed) || cell.roadLinks.length === 0) return null;
-          const { x, y } = center(cell);
-          return cell.roadLinks.map((dir) => {
-            const end = Hex.edgeMidpoint(x, y, hexSize, dir);
-            return (
-              <line
-                key={`${Hex.key(cell.coord)}-${dir}`}
-                className="board__road"
-                x1={x}
-                y1={y}
-                x2={end.x}
-                y2={end.y}
-              />
-            );
-          });
-        })}
-      </g>
-
-      {/* 3. Contorno de cada loseta */}
+      {/* 2. Contorno de cada loseta */}
       {showTiles && (
         <g className="board__tiles">
           {cells.flatMap((cell) => {
@@ -153,7 +136,7 @@ export default function HexBoard({
         </g>
       )}
 
-      {/* 4. Marcas */}
+      {/* 3. Marcas */}
       <g>
         {cells.map((cell) => {
           const { x, y } = center(cell);

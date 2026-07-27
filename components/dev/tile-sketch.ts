@@ -8,9 +8,9 @@
 // se pueden comprobar sin montar una pantalla.
 //
 // No es motor de reglas: no vive en lib/rules/ porque el juego no conoce los
-// bocetos. Es una herramienta de taller, y su salida es TEXTO para pegar en
-// lib/rules/tiles.ts — la biblioteca entra por commit revisado, nunca por
-// formulario.
+// bocetos. Es una herramienta de taller, y lo que produce es una LOSETA
+// (`toDef`), que el laboratorio guarda como variante de un tipo en
+// data/tile-library.json.
 // =========================================================================
 
 import * as Hex from "@/lib/rules/hex";
@@ -21,7 +21,6 @@ import {
   TILE_SIZES,
   type TileCell,
   type TileDef,
-  type TileDrawing,
   type TileSize,
   direction,
 } from "@/lib/rules/tiles";
@@ -29,12 +28,20 @@ import {
 /** Un borde del boceto: `${hexKey}|${dir}`, el formato de bordes del motor. */
 export type EdgeKey = string;
 
-/** Un hexágono del boceto. `terrain: null` = lo sortea el tablero al colocarla. */
-export type SketchCell = { readonly hex: HexKey; readonly terrain: TerrainId | null };
+/** Un hexágono del boceto. Lleva terreno siempre: no hay hexágono sin pintar. */
+export type SketchCell = { readonly hex: HexKey; readonly terrain: TerrainId };
 
 export type Sketch = {
   readonly id: string;
   readonly label: string;
+  /** El tipo del que va a ser variante; el boceto siempre pertenece a alguno. */
+  readonly typeId: string;
+  /** Nota de maquetado: por qué se dibuja así. */
+  readonly note: string;
+  /**
+   * El peso que le va a tocar, solo informativo: el peso lo pone el TIPO y se
+   * reparte entre sus variantes, así que aquí no se edita.
+   */
   readonly weight: number;
   /** Nivel de TILE_SIZES: fija el tope de hexágonos y la rejilla del editor. */
   readonly sizeLevel: number;
@@ -50,17 +57,23 @@ const ROOT: HexKey = "0,0";
  * hexágonos en línea con un ancla en cada punta. Se arranca de algo válido y no
  * de un hexágono suelto para que los avisos de validación signifiquen siempre
  * "has roto algo", y no "todavía no has empezado".
+ *
+ * @param {string} typeId - Tipo al que se va a añadir la variante.
+ * @param {TerrainId} terrain - Terreno con el que nace pintada; la del tipo, normalmente.
+ * @param {number} sizeLevel - Tamaño del papel donde se dibuja.
  */
-export function initialSketch(sizeLevel = 1): Sketch {
+export function initialSketch(typeId: string, terrain: TerrainId, sizeLevel = 1): Sketch {
   return {
-    id: "loseta-nueva",
-    label: "Loseta nueva",
-    weight: 3,
+    id: `${typeId}-nueva`,
+    label: "Variante nueva",
+    typeId,
+    note: "",
+    weight: 1,
     sizeLevel,
     cells: [
-      { hex: ROOT, terrain: null },
-      { hex: "1,0", terrain: null },
-      { hex: "2,0", terrain: null },
+      { hex: ROOT, terrain },
+      { hex: "1,0", terrain },
+      { hex: "2,0", terrain },
     ],
     anchors: ["0,0|3", "2,0|0"],
   };
@@ -83,9 +96,10 @@ export function hasHex(sketch: Sketch, coord: HexCoord): boolean {
   return sketch.cells.some((c) => c.hex === k);
 }
 
-export function terrainAt(sketch: Sketch, coord: HexCoord): TerrainId | null {
+/** El terreno de un hexágono del boceto; `undefined` si ese hueco no es suyo. */
+export function terrainAt(sketch: Sketch, coord: HexCoord): TerrainId | undefined {
   const k = Hex.key(coord);
-  return sketch.cells.find((c) => c.hex === k)?.terrain ?? null;
+  return sketch.cells.find((c) => c.hex === k)?.terrain;
 }
 
 export function hasAnchor(sketch: Sketch, coord: HexCoord, dir: number): boolean {
@@ -95,7 +109,8 @@ export function hasAnchor(sketch: Sketch, coord: HexCoord, dir: number): boolean
 // --- Transiciones ----------------------------------------------------------
 
 /**
- * Meter o sacar un hexágono de la forma, hasta el tope del tamaño elegido.
+ * Meter o sacar un hexágono de la forma, hasta el tope del tamaño elegido. El que
+ * entra nace con el terreno del pincel, porque un hexágono sin terreno no existe.
  *
  * Las dos direcciones arrastran anclas: sacarlo se lleva las suyas, y METERLO
  * se lleva las que acaba de tapar (el ancla del vecino que ahora da a un
@@ -103,13 +118,13 @@ export function hasAnchor(sketch: Sketch, coord: HexCoord, dir: number): boolean
  *
  * @returns {Sketch} El boceto resultante; el mismo si la acción no aplica.
  */
-export function toggleHex(sketch: Sketch, coord: HexCoord): Sketch {
+export function toggleHex(sketch: Sketch, coord: HexCoord, terrain: TerrainId): Sketch {
   const k = Hex.key(coord);
   if (k === ROOT) return sketch;
 
   if (!hasHex(sketch, coord)) {
     if (sketch.cells.length >= sizeOfSketch(sketch).capacity) return sketch;
-    const cells = [...sketch.cells, { hex: k, terrain: null }];
+    const cells = [...sketch.cells, { hex: k, terrain }];
     return { ...sketch, cells, anchors: pruneAnchors(cells, sketch.anchors) };
   }
 
@@ -118,16 +133,11 @@ export function toggleHex(sketch: Sketch, coord: HexCoord): Sketch {
 }
 
 /**
- * Pintar el terreno de un hexágono de la loseta. `null` lo devuelve al sorteo
- * de la tabla A, que no es un terreno más: es dejar que el tablero decida.
+ * Pintar el terreno de un hexágono de la loseta.
  *
  * @returns {Sketch} El boceto resultante; el mismo si el hexágono no es suyo.
  */
-export function paintTerrain(
-  sketch: Sketch,
-  coord: HexCoord,
-  terrain: TerrainId | null,
-): Sketch {
+export function paintTerrain(sketch: Sketch, coord: HexCoord, terrain: TerrainId): Sketch {
   const k = Hex.key(coord);
   if (!hasHex(sketch, coord)) return sketch;
   return {
@@ -174,12 +184,12 @@ export function setSizeLevel(sketch: Sketch, sizeLevel: number): Sketch {
 
 /**
  * Rellenar hasta el tope del tamaño, creciendo desde el hexágono raíz hacia
- * fuera. Es un atajo del editor, no una regla: maquetar una loseta Enorme a 64
- * clics no es trabajo de diseño, es tecleo.
+ * fuera, con el terreno del pincel. Es un atajo del editor, no una regla:
+ * maquetar una loseta Enorme a 64 clics no es trabajo de diseño, es tecleo.
  *
  * @returns {Sketch} El boceto con la forma completa (compacta).
  */
-export function fillToCapacity(sketch: Sketch): Sketch {
+export function fillToCapacity(sketch: Sketch, terrain: TerrainId): Sketch {
   const size = sizeOfSketch(sketch);
   const present = new Set(sketch.cells.map((c) => c.hex));
   const cells = [...sketch.cells];
@@ -192,18 +202,15 @@ export function fillToCapacity(sketch: Sketch): Sketch {
     if (cells.length >= size.capacity) break;
     if (present.has(candidate.k)) continue;
     present.add(candidate.k);
-    cells.push({ hex: candidate.k, terrain: null });
+    cells.push({ hex: candidate.k, terrain });
   }
 
   return { ...sketch, cells, anchors: pruneAnchors(cells, sketch.anchors) };
 }
 
-/** Pintar de golpe todos los hexágonos que están al sorteo. */
-export function paintAllFree(sketch: Sketch, terrain: TerrainId | null): Sketch {
-  return {
-    ...sketch,
-    cells: sketch.cells.map((c) => (c.terrain === null ? { hex: c.hex, terrain } : c)),
-  };
+/** Pintar de golpe la loseta entera con un terreno. */
+export function paintAll(sketch: Sketch, terrain: TerrainId): Sketch {
+  return { ...sketch, cells: sketch.cells.map((c) => ({ hex: c.hex, terrain })) };
 }
 
 /**
@@ -230,6 +237,8 @@ export function fromDef(def: TileDef): Sketch {
   return {
     id: def.id,
     label: def.label,
+    typeId: def.typeId,
+    note: def.note,
     weight: def.weight,
     sizeLevel: size.level,
     cells: cells.map((c) => ({ hex: Hex.key(c.hex), terrain: c.terrain })),
@@ -238,9 +247,9 @@ export function fromDef(def: TileDef): Sketch {
 }
 
 /**
- * Cargar una loseta como COPIA, con otro id: el literal que salga se añade a la
- * biblioteca en vez de sustituir a la original. Es para probar una variante sin
- * perder la pieza de la que salió.
+ * Cargar una loseta como COPIA: mismo tipo, otro id. Lo que se guarde se añade
+ * como una variante MÁS de ese tipo en vez de sustituir a la original, que es la
+ * forma normal de dibujar el segundo peñasco: partiendo del primero.
  */
 export function copyOfDef(def: TileDef): Sketch {
   const sketch = fromDef(def);
@@ -271,6 +280,8 @@ export function toDef(sketch: Sketch): TileDef {
   return {
     id: sketch.id.trim() || "sin-id",
     label: sketch.label.trim() || "Sin etiqueta",
+    typeId: sketch.typeId,
+    note: sketch.note.trim(),
     cells: sketch.cells.map((c) => ({ hex: Hex.fromKey(c.hex), terrain: c.terrain })),
     anchors: sketch.anchors.map((edge) => {
       const [k, dir] = edge.split("|");
@@ -295,99 +306,4 @@ function pruneAnchors(
     const outside = Hex.add(Hex.fromKey(k as HexKey), direction(Number(dir)));
     return !present.has(Hex.key(outside));
   });
-}
-
-/** El carácter con el que se dibuja cada terreno en la biblioteca. */
-const TERRAIN_CHAR: Readonly<Record<TerrainId, string>> = {
-  llanura: "L",
-  camino: "C",
-  bosque: "B",
-  pantano: "P",
-  montana: "M",
-};
-
-/**
- * La loseta DIBUJADA, en el mismo formato con el que se maqueta la biblioteca:
- * una cadena por fila de hexágonos, un carácter por hexágono, y las anclas como
- * [columna, fila, dirección] de ese mismo dibujo. Es la inversa de `drawn()`.
- *
- * El dibujo va en la rejilla escalonada de hex.ts (`axialToOffset`), y de ahí
- * sale la única rareza: la primera fila puede quedar VACÍA. Las filas impares
- * van medio hexágono a la derecha, así que subir el dibujo una fila no lo
- * movería, lo convertiría en otra forma; cuando la loseta empieza en fila impar
- * hay que dejar la par de encima en blanco.
- *
- * @returns {TileDrawing} El dibujo, listo para `drawn()` o para escribirlo.
- */
-export function toDrawing(def: TileDef): TileDrawing {
-  const cells = def.cells.map((c) => ({ ...Hex.axialToOffset(c.hex), terrain: c.terrain }));
-  if (cells.length === 0) {
-    return { id: def.id, label: def.label, weight: def.weight, art: [], anchors: [] };
-  }
-
-  const minRow = Math.min(...cells.map((c) => c.row));
-  const minCol = Math.min(...cells.map((c) => c.col));
-  // El desplazamiento de filas tiene que ser PAR, por lo del escalonado.
-  const rowShift = minRow - Math.abs(minRow % 2);
-
-  const grid: string[][] = [];
-  for (const cell of cells) {
-    const row = cell.row - rowShift;
-    grid[row] ??= [];
-    grid[row][cell.col - minCol] = cell.terrain === null ? "." : TERRAIN_CHAR[cell.terrain];
-  }
-
-  // Con índices y no con map: la fila 0 puede no existir (es el hueco del
-  // escalonado) y hay que escribirla igual, como cadena vacía.
-  const art: string[] = [];
-  for (let row = 0; row < grid.length; row++) {
-    const chars = grid[row] ?? [];
-    let line = "";
-    for (let col = 0; col < chars.length; col++) line += chars[col] ?? " ";
-    art.push(line);
-  }
-
-  return {
-    id: def.id,
-    label: def.label,
-    weight: def.weight,
-    art,
-    anchors: def.anchors.map((a) => {
-      const { col, row } = Hex.axialToOffset(a.hex);
-      return [col - minCol, row - rowShift, a.dir] as const;
-    }),
-  };
-}
-
-/**
- * El literal TypeScript de la loseta, con el mismo formato que la biblioteca
- * para poder pegarlo sin retocar: una llamada a `drawn()` con el dibujo. Las
- * direcciones salen con su nombre (E, NE…), que son las constantes que ya
- * existen en tiles.ts.
- *
- * @returns {string} La entrada lista para pegar en TILES.
- */
-export function toSource(def: TileDef): string {
-  const drawing = toDrawing(def);
-  if (drawing.art.length === 0) return "  // Loseta vacía: no hay nada que pegar.";
-
-  return [
-    "  drawn({",
-    `    id: "${drawing.id}",`,
-    `    label: "${drawing.label}",`,
-    `    weight: ${drawing.weight},`,
-    "    art: [",
-    ...drawing.art.map((line) => `      "${line}",`),
-    "    ],",
-    ...(drawing.anchors.length === 0
-      ? ["    anchors: [],"]
-      : [
-          "    anchors: [",
-          ...drawing.anchors.map(
-            ([col, row, dir]) => `      [${col}, ${row}, ${Hex.DIR_LABELS[dir]}],`,
-          ),
-          "    ],",
-        ]),
-    "  }),",
-  ].join("\n");
 }

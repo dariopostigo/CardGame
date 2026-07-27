@@ -28,6 +28,8 @@ $skin-light: (
   "callout-bg": #eef2ff,
   "callout-border": #4f46e5,
   "code-bg": #f1f5f9,
+  "danger": #b91c1c,        // acción destructiva de la UI (borrar de data/)
+  "danger-soft": #fee2e2,
 );
 
 // --- Skin: tema oscuro ----------------------------------------------------
@@ -46,6 +48,8 @@ $skin-dark: (
   "callout-bg": #1e2340,
   "callout-border": #818cf8,
   "code-bg": #0f1526,
+  "danger": #f87171,
+  "danger-soft": #3b1618,
 );
 
 // --- Rareza (game-design.md §3.3) -----------------------------------------
@@ -71,22 +75,21 @@ $rarity-levels: ("comun", "poco-comun", "raro", "epico", "legendario");
 // Constantes de diseño, como la rareza: NO cambian con el tema claro/oscuro,
 // porque son la identidad del mapa (una llanura es verde en los dos temas).
 // "base" rellena el hexágono, "line" pinta su borde.
-// Espejo de TerrainId en lib/rules/terrain.ts: mismas 5 claves, mismos nombres.
+// Espejo de TerrainId en lib/rules/terrain.ts: mismas 6 claves, mismos nombres.
+// La Cueva es el más oscuro del mapa, y tiene que serlo: es un agujero en la
+// roca, así que se lee por contraste contra la Montaña que la rodea.
 $terrain: (
   "llanura": ("base": #9cb46a, "line": #7c9150),
   "camino": ("base": #d8bb86, "line": #b2966a),
   "bosque": ("base": #2f6b41, "line": #245132),
   "pantano": ("base": #5a6b62, "line": #43514a),
   "montana": ("base": #8b8896, "line": #6c697a),
+  "cueva": ("base": #43382f, "line": #2a221c),
 );
 
 // Halo claro detrás de las fichas del tablero: sin él, los glifos oscuros son
 // ilegibles sobre Bosque y Pantano.
 $board-glyph-halo: rgba(255, 255, 255, 0.78);
-
-// Trazo del sendero. Más oscuro que el relleno del Camino para que el trazado
-// se lea por encima del hexágono.
-$board-road: #8a6a3c;
 
 // Contorno de cada loseta. Es lo que hace que el tablero se lea como piezas
 // encajadas y no como una rejilla continua.

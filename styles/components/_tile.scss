@@ -42,13 +42,6 @@
   }
 }
 
-// Al sorteo: la loseta no fija este terreno, lo decide el tablero al colocarla.
-// Gris del tema y no un color de terreno, porque no ES ningún terreno.
-.tile-canvas__hex[data-terrain="libre"] {
-  fill: skin("surface-2");
-  stroke: skin("border");
-}
-
 // Hueco vecino: se ve que está ahí, pero no es de la loseta.
 .tile-canvas__hex[data-kind="candidate"] {
   fill: transparent;

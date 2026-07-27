@@ -52,14 +52,14 @@ Para el **primer prototipo**, generación **hexágono-a-hexágono con pesos** (l
   Esto da el mismo escalón conceptual que los 3 estados de niebla por grupo (§4) —intuyes antes de saber— **sin necesitar el sistema de tiles**. La niebla por grupo llega con los tiles y sustituirá a esto.
 
 **Algoritmo mínimo:**
-0. Elegir el **hex de entrada**: **una esquina del mapa** *(decidido)* — la "puerta" por la que se accede al mapa completo. Puede caer en cualquier terreno transitable (entras a una llanura, a un bosque, directamente a unas ruinas…), lo que ya da variedad de arranque sin lógica extra. Colocar el héroe ahí.
+0. Elegir el **hex de entrada**: **una esquina del mapa** *(decidido)* — la "puerta" por la que se accede al mapa completo. Puede caer en cualquier terreno transitable (entras a una llanura, a un bosque, directamente a unas ruinas…), lo que ya da variedad de arranque sin lógica extra. Colocar el héroe ahí. *(Adaptado al sistema de losetas: la silueta es irregular y no tiene esquinas, así que la entrada se elige dentro de la **primera** loseta —el borde por el que empezó a crecer el tablero— y con preferencia por la **boca de su camino**: un camino cruza su loseta de lado a lado y se ancla por sus bocas, así que ya está mirando afuera, y entrar al mapa por el camino es lo natural. Sale así en el 48 % de los tableros, los que siembran con una loseta que trae sendero; en el resto, el hexágono transitable más alejado del centro. **Nunca en Montaña ni en Cueva**.)*
 1. Elegir tamaño (ej. 12×12 para partidas cortas) y semilla.
-2. Rellenar cada hex por **peso de terreno** (tabla A).
-3. Garantizar **conectividad**: debe existir camino transitable de la entrada al resto. La Montaña ya es transitable aunque muy costosa (§3a); aun así conviene que no encierre zonas tras un coste casi prohibitivo.
+2. Rellenar cada hex por **peso de terreno** (tabla A). *(Superado por el sistema de losetas: ver la nota bajo la tabla A.)*
+3. Garantizar **conectividad**: debe existir camino transitable de la entrada al resto. La Montaña ya es transitable aunque muy costosa (§3a); aun así conviene que no encierre zonas tras un coste casi prohibitivo. *(Con losetas es el **único** paso que puede repintar terreno maquetado, así que se hace con el mínimo daño: de todas las bolsas incomunicadas se abre primero la que cuesta menos roca, y por la ruta que menos roca cruza —no la más corta—. Y el aviso de maquetado que salta cuando la roca de una variante parte su propio terreno transitable dejó el número donde debe estar: **0 hexágonos abiertos en 300 tableros**. `/dev/tablero` lo enseña como «Maquetado roto» por si vuelve a subir.)*
 4. Colocar las **localizaciones especiales garantizadas** *(decidido)*:
    - **1 Guarida** (§3b) con el **boss élite** —**uno de los 3 Élite elegido al azar** (`../characters/enemies.md` §5b)— en el hex transitable **más lejano** a la entrada. Con entrada en esquina, eso lo pone en la esquina opuesta: la travesía máxima del mapa.
-   - **1 Pueblo** (§3b), en la **mitad cercana** a la entrada. **Garantizado, no opcional:** el Pueblo concentra los NPCs de tienda, el descanso largo y la limpieza de Maldiciones (`../characters/npcs.md`), así que si la generación no lo coloca, **tres sistemas enteros quedan inaccesibles** en esa partida — y con oro inicial 0 tampoco habría forma de gastar el oro que ganas.
-   - **1 Mazmorra opcional** (§3b), según densidad — en el prototipo, **un solo hexágono reforzado, sin sub-mapa** (§3b).
+   - **1 Pueblo** (§3b), en la **mitad cercana** a la entrada. **Garantizado, no opcional:** el Pueblo concentra los NPCs de tienda, el descanso largo y la limpieza de Maldiciones (`../characters/npcs.md`), así que si la generación no lo coloca, **tres sistemas enteros quedan inaccesibles** en esa partida — y con oro inicial 0 tampoco habría forma de gastar el oro que ganas. Se asienta **en el camino** si hay alguno a mano (91 % de los tableros) y **nunca dentro de una Cueva**; las dos son preferencias, no requisitos: antes pueblo raro que tablero sin pueblo.
+   - **1 Mazmorra opcional** (§3b), según densidad — en el prototipo, **un solo hexágono reforzado, sin sub-mapa** (§3b). Si la mitad lejana tiene una **Cueva**, se entra por ahí (~20 % de las mazmorras): es la contrapartida del Pueblo en el camino, y le da a la Cueva algo que hacer además de su tabla de fichas.
 5. Sembrar **fichas** según densidad y distribución (tabla B).
 
 **Tabla A — Pesos de terreno (prototipo):**
@@ -67,6 +67,12 @@ Para el **primer prototipo**, generación **hexágono-a-hexágono con pesos** (l
 | Llanura | Camino | Bosque | Pantano | Montaña |
 |---|---|---|---|---|
 | 40 % | 20 % | 20 % | 10 % | 10 % |
+
+**La tabla A ya no se sortea: es un OBJETIVO** *(decidido)*. Con el sistema de losetas implementado, **todo hexágono de una loseta lleva terreno obligatoriamente** —no existe "este lo decide el tablero"—, así que el paso 2 no se ejecuta: cada hexágono llega pintado por la pieza que lo trae. La tabla A pasa a ser el reparto de terreno **al que apunta el maquetado de la biblioteca**, y el laboratorio (`/dev/losetas`) enseña el que sale medido al lado de la cuota.
+
+Por qué: si el terreno de un hexágono se sortea al colocar la pieza, lo que se ve al maquetarla no es lo que sale en la partida, y una loseta deja de ser una decisión de diseño para ser una plantilla. La variedad entre partidas la dan las **variantes** de cada tipo (el mismo sitio dibujado de varias maneras) y el giro, no el azar hexágono a hexágono.
+
+La **Cueva** es la única que no tiene cuota en la tabla A: es terreno de **lugar** (§3a) y aparece donde el maquetado la ponga. Medido sobre 300 tableros con la biblioteca de hoy: Llanura 39 % · Bosque 22 % · Camino 16 % · Pantano 10 % · Montaña 12 % · Cueva 1 %. El Camino es el que más se resiste, y no por los pesos: una pieza de camino solo entra donde encuentra un ancla de camino libre.
 
 **Tabla B — Distribución de fichas por terreno** (pesos relativos; ~15-20 % de los hexes transitables llevan ficha, densidad configurable). Montaña no lleva ficha:
 
@@ -76,6 +82,7 @@ Para el **primer prototipo**, generación **hexágono-a-hexágono con pesos** (l
 | Bosque | 1 | 3 | 2 | 2 | **1** | 1 |
 | Pantano | 2 | 3 | 1 | 0 | 2 | 0 |
 | Camino | 1 | 2 | 1 | 0 | 0 | 3 |
+| Cueva | 2 | 1 | **3** | **3** | 0 | 0 |
 
 Con estos pesos, un mapa 12×12 lleva **~23 fichas** repartidas así: ~4,5 Enemigo · ~6,7 Amenaza · ~3,5 Tesoro · ~5,3 Personaje · ~2,4 Exploración · ~1,2 Terreno. Es el reparto sobre el que están calibradas la **tabla de loot** y la **duración de 40 turnos** (`../game-design.md` §6b.6, §6c.1), así que tocar esta tabla obliga a revisar los dos.
 
@@ -83,13 +90,13 @@ Las **localizaciones especiales** (§3b) colocan sus propias fichas (ej. Pueblo 
 
 ## 3. Tipos de terreno
 
-> **Los 5 terrenos del prototipo ya tienen mecánicas oficiales** (§3a). La tabla grande de más abajo pasa a ser la referencia **ilustrativa** de los terrenos futuros (Colinas, Río/Lago, Ruinas/Cueva, Nieve/Tundra, Desierto/Erial), aún sin cerrar.
+> **Los 6 terrenos del prototipo ya tienen mecánicas oficiales** (§3a). La tabla grande de más abajo pasa a ser la referencia **ilustrativa** de los terrenos futuros (Colinas, Río/Lago, Nieve/Tundra, Desierto/Erial), aún sin cerrar.
 >
 > El rango de visión base lo gobierna la Sabiduría (`../game-design.md` §2.3); las mecánicas de terreno de abajo son bonus/penalizaciones encima de eso.
 >
-> **Set confirmado para el prototipo (5 terrenos):** Llanura, Bosque, Pantano, Montaña y Camino/Sendero.
+> **Set confirmado para el prototipo (6 terrenos):** Llanura, Bosque, Pantano, Montaña, Camino/Sendero y **Cueva**.
 
-### 3a. Mecánicas oficiales de los 5 terrenos del prototipo
+### 3a. Mecánicas oficiales de los 6 terrenos del prototipo
 
 Cada terreno toca los sistemas que ya diseñamos: movimiento (`../game-design.md` §2.2), detección enemiga (`../characters/enemies.md` §2), combate (`../game-design.md` §4b) y descanso (`../game-design.md` §4c). Valores = primer pase, sin balancear.
 
@@ -100,8 +107,10 @@ Cada terreno toca los sistemas que ya diseñamos: movimiento (`../game-design.md
 | **Pantano** | Coste 2 (difícil) | Normal | — | Inseguro | Al cruzar: salvación CON CD 12 o **Envenenado** ([`../effects.md`](../effects.md)) | Bajo |
 | **Montaña** | **Transitable pero muy difícil:** coste **3** (con el pool base de 2 necesitas movimiento extra —Camino, carta de movimiento o Kit de escalada, [`../cards/items.md`](../cards/items.md)— para entrar) | Bloquea línea de visión | — | Inseguro (expuesto) | — | Bajo (relieve, semi-barrera) |
 | **Camino/Sendero** | Coste 1, y **+1 de movimiento** el turno que te desplazas por camino | Expuesto (como Llanura) | — | Inseguro | — | Medio (conecta puntos; candidato a hexágono conector §4) |
+| **Cueva** | Coste 2 (entrar a oscuras) | **A oscuras:** tu visión **−2** (el terreno que más ciega); detección enemiga **−1** (dentro no te ven llegar) | **Cobertura:** +1 CA contra ataques a distancia; permite **emboscada** | **Seguro** (refugio a cubierto) | — | **Sin cuota** (§2c) |
 
 **Notas:**
+- **Cueva** es un **lugar, no ambiente**: como el Camino, cruza o perfora el fondo del mapa en vez de ser el fondo, y es la única sin cuota en la tabla A —sale donde el maquetado la ponga (`lib/rules/tile-library.ts`)—. Por eso puede permitirse ser generosa en la tabla B —es el único terreno donde el Tesoro pesa más que la Amenaza— sin desbalancear el reparto: hay pocas y hay que ir a buscarlas. Sus dos cifras fuertes van en sentidos contrarios a propósito: se acampa seguro, pero ciega.
 - **Bosque** es el terreno clave del sigilo: te esconde de los enemigos (detección −1, emboscada) pero también te ciega (visión −1) y te da cobertura a distancia. Es el contrapunto natural a Llanura/Camino (rápidos pero expuestos).
 - **Montaña (coste alto)** actúa como relieve/semi-barrera para dar forma al mapa; ya no es un muro absoluto (se puede cruzar con movimiento extra).
 - El estado **Oculto** ([`../effects.md`](../effects.md)) del Pícaro se apila sobre la ocultación de Bosque (indetectable hasta actuar).
@@ -111,14 +120,14 @@ Cada terreno toca los sistemas que ya diseñamos: movimiento (`../game-design.md
 | Terreno | Efecto de ejemplo (no oficial) | Notas |
 |---|---|---|
 | Colinas | +Alcance de visión (ves más hexágonos alrededor) | Bueno para explorar, malo para ocultarte |
+| Ruinas | Punto de interés especial: alta probabilidad de ficha de evento (tesoro o enemigo oculto) | Entrada a "mini-mazmorra" opcional. La otra mitad de esta fila, la **Cueva**, ya es terreno oficial (§3a) |
 | Río/Lago | Intransitable salvo puente/vado, o -2 movimiento si se cruza a nado | Puede generarse como "línea" que conecta varios hexágonos, no solo una casilla suelta |
-| Ruinas/Cueva | Punto de interés especial: alta probabilidad de ficha de evento (tesoro o enemigo oculto) | Entrada a "mini-mazmorra" opcional |
 | Nieve/Tundra | -1 movimiento | Zona de clima extremo; un posible efecto de frío acumulativo que aplique el estado **Miedo** ([`../effects.md`](../effects.md)) queda como idea futura |
 | Desierto/Erial | -1 movimiento, recursos (agua/pociones) se consumen más rápido | Tensión de supervivencia |
 
 ## 3b. Localizaciones especiales (edificaciones)
 
-Al ser un mapa hexagonal, estas localizaciones se pueden **predefinir sin problema** como hexágonos concretos (no aleatorios como el terreno base) que, al entrar en ellos, dan acceso a un sub-mapa o pantalla propia — mismo patrón que "Ruinas/Cueva" de la tabla anterior, pero llevado más lejos con más variedad e identidad propia.
+Al ser un mapa hexagonal, estas localizaciones se pueden **predefinir sin problema** como hexágonos concretos (no aleatorios como el terreno base) que, al entrar en ellos, dan acceso a un sub-mapa o pantalla propia — mismo patrón que la Cueva (§3a), pero llevado más lejos con más variedad e identidad propia.
 
 **Confirmado: no hay "sistema aparte" para estos sub-mapas.** Todo el juego usa el mismo sistema hexagonal descrito en este documento (grupos, niebla, fichas de evento); una Mazmorra o una Mina son simplemente un mapa hexagonal más pequeño con su propio conjunto de grupos/hexágonos, no una pantalla con reglas distintas. El tamaño varía libremente según la localización, pero la arquitectura es una sola. El diseño visual/UI de cada tipo de localización (cómo se ve un Pueblo vs. una Mazmorra) queda pendiente como tarea de arte más adelante (probablemente con ayuda de una IA generativa de imágenes), no es una decisión de arquitectura.
 
@@ -126,7 +135,7 @@ Al ser un mapa hexagonal, estas localizaciones se pueden **predefinir sin proble
 |---|---|---|
 | Pueblo/Aldea | Zona segura: tienda, **descanso largo** (`../game-design.md` §4c.3), NPCs con misiones | Punto de respiro entre exploración; no hay combate salvo que la historia lo dicte |
 | Castillo/Fortaleza | Hub de misiones importantes, o guarida de un enemigo relevante (mini-jefe de capítulo) | Puede estar controlado por aliados o por el enemigo según la historia |
-| Mazmorra | Sub-mapa de combate denso, alta probabilidad de loot bueno | Igual concepto que "Ruinas/Cueva" pero más grande y con varias salas/encuentros encadenados. **En el prototipo: 1 hexágono reforzado, sin sub-mapa — ver §3b-bis** |
+| Mazmorra | Sub-mapa de combate denso, alta probabilidad de loot bueno | Igual concepto que la Cueva (§3a) pero más grande y con varias salas/encuentros encadenados. **En el prototipo: 1 hexágono reforzado, sin sub-mapa — ver §3b-bis** |
 | Mina | Sub-mapa de recolección de materiales/recursos (para crafteo futuro) + posible peligro (derrumbe, criaturas de cueva) | Buena vía para introducir un sistema de crafteo más adelante sin comprometernos ya a ello |
 | Templo/Santuario *(añadido, sabor D&D)* | Bendición temporal, curación, o misión de fe/moralidad | Encaja con Sabiduría/Carisma del personaje |
 | Torre de mago *(añadido, sabor D&D)* | Tienda arcana (hechizos, pergaminos), posible prueba de Inteligencia | Contrapunto arcano al pueblo/tienda genérica |
@@ -230,7 +239,7 @@ Los apuntes técnicos (sistema de coordenadas, modelo de datos, algoritmos) se m
 1. ~~Contradicción en §4 sobre si explorar un grupo revela todo de golpe~~ → **Resuelto:** "Explorado" solo exige haber entrado en al menos 1 hexágono del grupo (no vale estar cerca desde el grupo anterior); a partir de ahí el rango de visión del personaje decide qué contenido se ve según su posición exacta, revelándose progresivamente al moverse por dentro del grupo.
 2. ~~Si el sub-mapa de las localizaciones especiales (3b) usa el mismo sistema hexagonal~~ → **Resuelto:** sí, todo el juego (mapa principal y localizaciones como Mazmorra/Mina/Pueblo) usa la misma arquitectura hexagonal, solo cambia el tamaño. El diseño visual/UI de cada localización queda como tarea de arte aparte (pendiente encontrar herramienta de IA generativa de imágenes), no afecta a la arquitectura.
 3. ~~§5 (Enemigos ocultos en el mapa) desactualizada~~ → **Resuelto:** se reemplazó por una taxonomía de 6 fichas del tablero (Exploración, Amenaza, Tesoro, Terreno, Personaje, Enemigo — sección "Fichas del tablero") y se creó [`../characters/enemies.md`](../characters/enemies.md) como documento dedicado a tipos de enemigo, comportamiento en el mapa y jefes.
-4. ~~Duplicado entre "Ruinas/Cueva" (§3) y "Construcción/Ruina genérica" (§3b)~~ → **Resuelto:** se mantiene "Ruinas/Cueva" como terreno en §3 y se quitó "Construcción/Ruina genérica" de §3b para no tener el mismo concepto dos veces.
+4. ~~Duplicado entre "Ruinas/Cueva" (§3) y "Construcción/Ruina genérica" (§3b)~~ → **Resuelto:** se mantiene como terreno en §3 y se quitó "Construcción/Ruina genérica" de §3b para no tener el mismo concepto dos veces. La **Cueva** se separó después de esa fila y ya es terreno oficial con mecánicas propias (§3a); "Ruinas" sigue en la tabla ilustrativa.
 5. ~~Número de terrenos para el prototipo~~ → **Resuelto:** set confirmado de 5 — Llanura, Bosque, Pantano, Montaña, Camino/Sendero (marcados en la tabla de §3). El resto queda para pases de contenido posteriores.
 
 **Resueltas (desbloqueadas por game-design.md):**
@@ -244,7 +253,7 @@ Los apuntes técnicos (sistema de coordenadas, modelo de datos, algoritmos) se m
 ### Pendiente de concretar (checklist, para cuando toque implementar)
 - [x] **Reglas de la ficha de Terreno** *(decidido)* → §4b: atajo arriesgado, `1d20 + FUE/DES` vs CD 12; éxito = cruzas gratis y +1 movimiento, fallo = pierdes el movimiento y sufres el peligro del hex. Era la única de las 6 fichas sin ninguna regla. Peso 1 en Bosque añadido para que aparezca más de 0,6 veces por mapa.
 - [x] **Mazmorra del prototipo** *(decidido)* → §3b-bis: **1 hexágono reforzado, sin sub-mapa** (1 Élite distinto al boss + 2 cartas de loot de Élite; sin luz, te embosca). El sub-mapa sigue siendo el objetivo, pero exigía un segundo generador entero sin añadir mecánica nueva.
-- [ ] Diseñar el set inicial de "tiles" (grupos de hexágonos) para el sistema de generación por piezas, con sus reglas de conexión de bordes, cubriendo los 5 terrenos del prototipo, **y sus agrupaciones temáticas de fichas** (campamentos, salas — §2).
+- [ ] Diseñar el set inicial de "tiles" (grupos de hexágonos) para el sistema de generación por piezas, con sus reglas de conexión de bordes, cubriendo los 6 terrenos del prototipo, **y sus agrupaciones temáticas de fichas** (campamentos, salas — §2).
 - [x] Definir tabla de probabilidades de generación por terreno y por tipo de ficha → §2c (tabla A pesos de terreno, tabla B distribución de fichas). Falta balancear.
 - [x] Definir rango de visión base del personaje y cómo lo modifican clase/objetos/terreno → **dos radios** (`../game-design.md` §2.3): detalle `3 + mod SAB` (fichas) y terreno `detalle + 2` (silueta); −1 a ambos en Bosque (§3a), Montaña bloquea la línea de visión, +1 con Ojo avizor/habilidades de exploración (abajo). Falta afinar las cifras contra el tablero real.
 - [x] Definir el **hex de entrada** y las localizaciones garantizadas → §2c pasos 0 y 4: entrada en **una esquina**, con **1 Guarida** (boss, esquina opuesta) y **1 Pueblo** (mitad cercana) siempre presentes.

@@ -1,0 +1,71 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Vitrina de los repositorios de componentes (components/repository/Showcase).
+//
+// El lienzo va sobre "bg" y no sobre "surface" para que quede a distinto tono
+// que la tarjeta que lo envuelve: sin ese salto no se distingue el margen del
+// componente del aire de la ficha, y un botón con padding de más pasa por
+// bueno. Es la misma razón por la que el lienzo lleva su propio borde.
+// -------------------------------------------------------------------------
+
+.repo-specimen-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+}
+
+.repo-specimen {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid skin("border");
+  border-radius: radius("lg");
+  background: skin("surface");
+
+  &__canvas {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 5.5rem;
+    padding: 1.25rem;
+    background: skin("bg");
+    border-bottom: 1px solid skin("border");
+  }
+
+  // Un especimen puede pedir que su lienzo respire distinto: los textos largos
+  // se leen en columna, no centrados en una fila.
+  &--stacked &__canvas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  &__caption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem 1rem 0.75rem;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: skin("text");
+  }
+
+  &__hint {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: skin("muted");
+
+    code {
+      padding: 0.05rem 0.3rem;
+      border-radius: radius("xs");
+      background: skin("code-bg");
+      font-size: 0.95em;
+    }
+  }
+}

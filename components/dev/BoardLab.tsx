@@ -25,16 +25,17 @@ import * as Hex from "@/lib/rules/hex";
 import { generateBoard } from "@/lib/rules/board-gen";
 import type { BoardToken, Hex as HexCell } from "@/lib/rules/state";
 import { TERRAINS, TERRAIN_IDS, type TerrainId } from "@/lib/rules/terrain";
-import { TILES_BY_ID } from "@/lib/rules/tiles";
+import { TILES_BY_ID } from "@/lib/rules/tile-library";
 import { ELITE_LABEL, LOCATION_GLYPH, TOKEN_GLYPH } from "@/components/game/board/board-glyphs";
 import HexBoard from "@/components/game/board/HexBoard";
+import { buttonClass } from "@/components/ui/Button";
 
 // Semilla inicial fija: si fuera aleatoria, el servidor y el cliente
 // generarían tableros distintos y la hidratación se quejaría.
 const INITIAL_SEED = "guarida-1";
 
-// Pocas losetas y grandes: la bolsa va de 3 a 21 hexágonos por pieza, así que
-// 9 losetas ya dan las ~65 casillas de un tablero de Partida rápida.
+// Pocas losetas y grandes: la bolsa va de 4 a 21 hexágonos por pieza (media 8,4),
+// así que 9 losetas ya dan las ~72 casillas de un tablero de Partida rápida.
 const TILE_COUNTS = [6, 9, 12];
 const DENSITIES = [0.12, 0.17, 0.22];
 const SHAPES: Array<{ label: string; sprawl: number }> = [
@@ -52,7 +53,7 @@ export default function BoardLab() {
   const [showTiles, setShowTiles] = useState(true);
   const [selected, setSelected] = useState<HexCell | null>(null);
 
-  const { board, chapter } = useMemo(
+  const { board, chapter, openedPasses } = useMemo(
     () => generateBoard({ seed, tileCount, tokenDensity, sprawl }),
     [seed, tileCount, tokenDensity, sprawl],
   );
@@ -63,12 +64,9 @@ export default function BoardLab() {
     [board],
   );
 
-  const btn = (active: boolean) =>
-    `rounded-md border px-3 py-1.5 text-sm transition-colors ${
-      active
-        ? "border-[var(--wiki-accent)] bg-[var(--wiki-accent-soft)] font-medium text-[var(--wiki-accent)]"
-        : "border-[var(--wiki-border)] text-[var(--wiki-text)] hover:bg-[var(--wiki-surface-2)]"
-    }`;
+  // Las clases salen de components/ui/Button.tsx: mismo botón que documenta
+  // /repository-dev/buttons, para que retocarlo se vea aquí sin copiar nada.
+  const btn = (active: boolean) => buttonClass({ active });
 
   const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
 
@@ -90,6 +88,11 @@ export default function BoardLab() {
         que el tablero solo crece por donde la pieza se ofrece. Aquí se prueba el <b>encaje</b>:
         cuántas losetas, hacia dónde crece y dónde caen las localizaciones y las fichas. La misma
         semilla da siempre el mismo tablero.
+      </p>
+      <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
+        El <b>terreno no se sortea</b>: cada hexágono llega pintado por su loseta, así que esto es
+        exactamente lo maquetado. La única excepción es la <b>Montaña que hay que abrir</b> cuando
+        deja una bolsa incomunicada —se cuenta arriba, y lo normal es que no haga falta ninguna—.
       </p>
 
       {/* Controles */}
@@ -183,6 +186,12 @@ export default function BoardLab() {
         </span>
         <span>
           <b>Fichas:</b> {stats.tokenTotal}
+        </span>
+        <span title="Montañas que la generación ha tenido que convertir en Llanura para no dejar una bolsa aislada. Son los únicos hexágonos del tablero que no llevan el terreno que maquetó su loseta, así que cuantos menos, mejor.">
+          <b>Maquetado roto:</b>{" "}
+          {openedPasses.length === 0
+            ? "nada"
+            : `${openedPasses.length} ${openedPasses.length === 1 ? "montaña abierta" : "montañas abiertas"}`}
         </span>
       </div>
 

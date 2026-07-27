@@ -2,22 +2,37 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import ThemeControls from "@/components/wiki/ThemeControls";
 import { DEV_LABS, isAvailable } from "@/lib/dev-labs";
+import { REPO_DEV_GROUPS, REPO_PRO_GROUPS, isBuilt } from "@/lib/repository";
+import { SECTIONS, type SectionId } from "@/lib/sections";
 
-// Portada: las dos puertas del proyecto. Server Component; lo único de
-// cliente es el interruptor de tema.
+// Portada: las cuatro puertas del proyecto. Salen de lib/sections.ts; lo único
+// que se escribe aquí es el contador de cada una, porque cada apartado cuenta
+// una cosa distinta (labs, familias de componentes) y no cabe en el registro.
+// Server Component; lo único de cliente es el interruptor de tema.
 
 export const metadata: Metadata = {
   title: { absolute: "CardGame" },
   description:
-    "Juego de cartas y tablero hexagonal. Documentación de diseño y laboratorio de desarrollo.",
+    "Juego de cartas y tablero hexagonal. Wiki de diseño, laboratorios del motor y los dos repositorios de componentes.",
 };
 
 const DOOR =
   "group flex flex-col gap-3 rounded-xl border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-6 transition-colors hover:border-[var(--wiki-accent)] hover:bg-[var(--wiki-surface-2)]";
 
-export default function Home() {
-  const readyLabs = DEV_LABS.filter(isAvailable).length;
+function progressOf(id: SectionId): string | null {
+  switch (id) {
+    case "dev":
+      return `${DEV_LABS.filter(isAvailable).length} de ${DEV_LABS.length} laboratorios en marcha.`;
+    case "repository-dev":
+      return `${REPO_DEV_GROUPS.filter(isBuilt).length} de ${REPO_DEV_GROUPS.length} familias documentadas.`;
+    case "repository-pro":
+      return `${REPO_PRO_GROUPS.length} familias por construir.`;
+    default:
+      return null;
+  }
+}
 
+export default function Home() {
   return (
     <div className="min-h-screen">
       <header className="flex h-14 items-center px-4">
@@ -39,31 +54,31 @@ export default function Home() {
         </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          <Link href="/docs" className={DOOR}>
-            <span className="flex items-center gap-3">
-              <i className="pi pi-book text-2xl text-[var(--wiki-accent)]" />
-              <span className="text-lg font-semibold text-[var(--wiki-text)]">Wiki</span>
-              <i className="pi pi-arrow-right ml-auto text-[var(--wiki-muted)] transition-transform group-hover:translate-x-1" />
-            </span>
-            <span className="text-sm text-[var(--wiki-muted)]">
-              La documentación oficial del juego: reglas, héroes, enemigos, catálogo de cartas y
-              tablero. Es la fuente de verdad del diseño.
-            </span>
-          </Link>
-
-          <Link href="/dev" className={DOOR}>
-            <span className="flex items-center gap-3">
-              <i className="pi pi-code text-2xl text-[var(--wiki-accent)]" />
-              <span className="text-lg font-semibold text-[var(--wiki-text)]">Dev</span>
-              <i className="pi pi-arrow-right ml-auto text-[var(--wiki-muted)] transition-transform group-hover:translate-x-1" />
-            </span>
-            <span className="text-sm text-[var(--wiki-muted)]">
-              Los laboratorios donde se construye el videojuego: losetas, generación de tablero,
-              semillas, fichas, baraja, combate y animaciones. {readyLabs} de {DEV_LABS.length} en
-              marcha.
-            </span>
-          </Link>
+          {SECTIONS.map((section) => {
+            const progress = progressOf(section.id);
+            return (
+              <Link key={section.id} href={section.href} className={DOOR}>
+                <span className="flex items-center gap-3">
+                  <i className={`${section.icon} text-2xl text-[var(--wiki-accent)]`} />
+                  <span className="text-lg font-semibold text-[var(--wiki-text)]">
+                    {section.label}
+                  </span>
+                  <i className="pi pi-arrow-right ml-auto text-[var(--wiki-muted)] transition-transform group-hover:translate-x-1" />
+                </span>
+                <span className="text-sm text-[var(--wiki-muted)]">
+                  {section.summary}
+                  {progress && <> {progress}</>}
+                </span>
+              </Link>
+            );
+          })}
         </div>
+
+        <p className="mt-8 max-w-2xl text-xs text-[var(--wiki-muted)]">
+          Los dos primeros apartados documentan <b>qué</b> es el juego —sobre papel y en el motor—;
+          los dos repositorios documentan <b>cómo se ve</b>: uno la piel sobria de estas
+          herramientas, el otro la piel medieval que verá el jugador.
+        </p>
       </main>
     </div>
   );

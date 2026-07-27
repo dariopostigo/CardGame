@@ -2,15 +2,15 @@
 // Generación del TABLERO: encaje de losetas
 //
 // Aquí se monta el tablero de una partida; la loseta que se encaja es una
-// pieza ya maquetada en lib/rules/tiles.ts. Son dos problemas separados a
-// propósito (state.ts, "vocabulario"): esto no decide cómo es una loseta,
-// solo cuántas, dónde y con qué giro.
+// pieza ya maquetada en la biblioteca (lib/rules/tile-library.ts). Son dos
+// problemas separados a propósito (state.ts, "vocabulario"): esto no decide
+// cómo es una loseta, solo cuántas, dónde y con qué giro.
 //
 // El tablero se construye encajando losetas borde con borde, como en un tablero
 // modular: es el sistema de losetas de docs/board/board-map.md §2, adelantado
 // desde la "versión rica". La silueta sale irregular porque depende de por dónde
 // encajen, no de una rejilla. Las losetas no son todas del mismo tamaño (van de
-// 3 a 21 hexágonos), así que POCAS losetas grandes dan tablero de sobra: lo que
+// 4 a 21 hexágonos), así que POCAS losetas grandes dan tablero de sobra: lo que
 // hay que mirar es el total de hexágonos, no el número de piezas.
 //
 // Reglas de encaje: el tablero solo crece por las ANCLAS. Un ancla libre de una
@@ -18,8 +18,14 @@
 // se toquen sin ancla tienen que ser pared contra pared: un ancla nunca queda
 // pegada al contorno ciego de otra. Eso es lo único que decide qué encaja.
 //
-// El terreno lo trae la loseta hexágono a hexágono; los que deja sin fijar
-// (`terrain: null`) se sortean aquí con los pesos de la tabla A (§2c).
+// El terreno lo trae la loseta hexágono a hexágono, y viene ENTERO: aquí no se
+// sortea ni un hexágono. Lo que decide el terreno del tablero es el maquetado de
+// la biblioteca; la tabla A (§2c) es el objetivo al que ese maquetado apunta.
+//
+// Y como el maquetado es lo que manda, este archivo lo REPINTA lo menos posible:
+// el único terreno que puede cambiar es la Montaña que hay que abrir para que no
+// quede una bolsa aislada (paso 4), y se abre por el punto más estrecho que haya.
+// Lo que se ve en el catálogo de /dev/losetas es lo que sale en la partida.
 //
 // Lo que se conserva del generador anterior, porque no depende de la forma
 // del tablero: conectividad garantizada, Guarida en el hexágono más lejano,
@@ -41,13 +47,14 @@ import {
   type LocationId,
   type PlacedTile,
 } from "./state";
-import { TERRAIN_GEN_WEIGHTS, TERRAINS, type TerrainId, isOpenGround } from "./terrain";
-import { TILES, type TileInstance, direction, instantiate, opposite } from "./tiles";
+import { TERRAINS, type TerrainId, isOpenGround } from "./terrain";
+import { TILES } from "./tile-library";
+import { type TileInstance, direction, instantiate, opposite } from "./tiles";
 
 export type BoardConfig = {
   /** Semilla legible; la misma semilla da el mismo tablero. */
   readonly seed: string;
-  /** Losetas a colocar. 9 × ~7,5 hexágonos ≈ 65 hexágonos. */
+  /** Losetas a colocar. 9 × ~8,4 hexágonos ≈ 72 hexágonos. */
   readonly tileCount: number;
   /** Fracción de hexes transitables con ficha: ~15-20 % (§2c tabla B). */
   readonly tokenDensity: number;
@@ -105,12 +112,19 @@ const TOKEN_WEIGHTS: Readonly<Record<TerrainId, ReadonlyArray<readonly [BoardTok
     ["personaje", 3],
   ],
   montana: [],
+  // La Cueva es el único terreno donde el Tesoro pesa más que la Amenaza: es un
+  // hallazgo, y si no premiara no valdría la pena entrar. Sale poco porque no se
+  // sortea (peso 0 en la tabla A), así que puede ser generosa sin desbalancear
+  // el reparto: solo hay cuevas donde una loseta las dibuja.
+  cueva: [
+    ["enemigo", 2],
+    ["amenaza", 1],
+    ["tesoro", 3],
+    ["exploracion", 3],
+    ["terreno", 0],
+    ["personaje", 0],
+  ],
 };
-
-// El Camino no se sortea: o lo fija la loseta o no lo hay. El relleno de los
-// hexágonos sin terreno sale de la tabla A sin esa fila, manteniendo las
-// proporciones entre las otras cuatro.
-const FILLER_WEIGHTS = TERRAIN_GEN_WEIGHTS.filter(([id]) => id !== "camino");
 
 // Losetas que pueden ser la primera del tablero: las que dejan más de un punto
 // de unión libre después de recibir a la segunda.
@@ -125,6 +139,14 @@ const ELITES: readonly EliteId[] = ["capitan-bandido", "trol-de-las-minas", "ara
 export type GeneratedBoard = {
   readonly board: Board;
   readonly chapter: Chapter;
+  /**
+   * Las Montañas que hubo que abrir para no dejar una bolsa aislada (paso 4):
+   * los únicos hexágonos del tablero cuyo terreno NO es el que maquetó su
+   * loseta. Sale en el informe porque es la única grieta entre el catálogo y la
+   * partida, y conviene poder mirarla (/dev/tablero la cuenta); vacía es lo
+   * normal y lo deseable.
+   */
+  readonly openedPasses: readonly HexCoord[];
 };
 
 // Hexágono mutable, solo dentro de este módulo. Lo que sale es readonly.
@@ -134,7 +156,6 @@ type Draft = {
   location: LocationId | null;
   token: BoardToken | null;
   tileId: string;
-  roadLinks: number[];
   isEntrance: boolean;
 };
 
@@ -155,9 +176,11 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
   // --- 1. Colocar las losetas -----------------------------------------------
   // El encaje puede cerrarse antes de tiempo: si la siembra deja pocas anclas y
   // ninguna loseta cabe en las que quedan, el tablero se queda en 3 ó 4 piezas.
-  // Pasa en ~1 semilla de 40, y no se puede arreglar desde dentro del bucle
-  // (ahí ya no hay sitio), así que se vuelve a sembrar con el generador ya
-  // avanzado. Se queda el mejor intento, no el último.
+  // No se puede arreglar desde dentro del bucle (ahí ya no hay sitio), así que se
+  // vuelve a sembrar con el generador ya avanzado y se queda el mejor intento, no
+  // el último. Con la biblioteca de hoy no llega a pasar en 300 semillas ni con
+  // 12 losetas, pero depende del reparto de anclas de la bolsa: cada loseta nueva
+  // puede volver a provocarlo, así que la red se queda puesta.
   let layout = layoutTiles(cfg, rng);
   for (
     let attempt = 1;
@@ -169,59 +192,42 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
   }
   rng = layout.rng;
 
-  // --- 2. Rellenar el terreno que la loseta dejó sin fijar ------------------
+  // --- 2. El terreno, tal cual lo trae cada loseta --------------------------
+  // No se sortea nada: la loseta llega pintada entera (`TileCell.terrain` es
+  // obligatorio), así que el terreno del tablero lo decide el maquetado de la
+  // biblioteca. Lo único que puede cambiarlo después es abrir un paso o arreglar
+  // la entrada, más abajo, y eso son reparaciones de conectividad, no azar.
   const drafts = new Map<HexKey, Draft>();
   for (const [k, cell] of layout.cells) {
-    let terrain: TerrainId;
-    if (cell.terrain !== null) {
-      terrain = cell.terrain;
-    } else {
-      const [picked, r] = Rng.pickWeighted(rng, FILLER_WEIGHTS);
-      rng = r;
-      terrain = picked;
-    }
     drafts.set(k, {
       coord: cell.coord,
-      terrain,
+      terrain: cell.terrain,
       location: null,
       token: null,
       tileId: cell.tileId,
-      roadLinks: [],
       isEntrance: false,
     });
   }
 
   // --- 3. La entrada --------------------------------------------------------
   // La "puerta" del tablero (§2c paso 0). Con losetas no hay esquinas, así que
-  // se usa el equivalente: el hexágono de la PRIMERA loseta más alejado del
-  // centro, que es el borde por el que empezó a crecer todo.
+  // se elige dentro de la PRIMERA loseta, que es por donde empezó a crecer todo,
+  // y con preferencia por la boca de su camino (ver `pickEntrance`).
   const entranceDraft = pickEntrance(drafts, layout.tiles[0]);
   entranceDraft.isEntrance = true;
-  // No puede ser Montaña: con el pool base de 2 no podrías ni salir del hex.
+  // Último recurso: si la primera loseta es TODA roca no hay puerta posible, y
+  // con el pool base de 2 no podrías ni salir del hexágono. Es el único sitio
+  // fuera del paso 4 donde se repinta maquetado, y con la biblioteca de hoy no
+  // llega a pasar nunca.
   if (!isOpenGround(entranceDraft.terrain)) entranceDraft.terrain = "llanura";
   const entrance = entranceDraft.coord;
 
   // --- 4. Conectividad ------------------------------------------------------
-  rng = carveConnectivity(drafts, entrance, rng);
+  const carved = carveConnectivity(drafts, entrance, rng);
+  rng = carved.rng;
   const dist = bfsDistances(drafts, entrance);
 
-  // --- 5. Trazado de los senderos ------------------------------------------
-  // Se calcula después del carvado, porque abrir un paso puede convertir una
-  // Montaña en Llanura pero nunca crea ni destruye Camino.
-  for (const draft of drafts.values()) {
-    if (draft.terrain !== "camino") continue;
-    for (let dir = 0; dir < 6; dir++) {
-      const neighbor = drafts.get(Hex.key(Hex.add(draft.coord, direction(dir))));
-      if (neighbor) {
-        if (neighbor.terrain === "camino") draft.roadLinks.push(dir);
-      } else if (layout.edges.get(edgeKey(draft.coord, dir)) === true) {
-        // Ancla que se quedó sin pareja: el sendero se pierde en el borde.
-        draft.roadLinks.push(dir);
-      }
-    }
-  }
-
-  // --- 6. Localizaciones garantizadas (§2c paso 4) -------------------------
+  // --- 5. Localizaciones garantizadas (§2c paso 4) -------------------------
   const placeable = [...drafts.values()].filter(
     (d) => !d.isEntrance && isOpenGround(d.terrain) && Number.isFinite(dist.get(Hex.key(d.coord))!),
   );
@@ -239,9 +245,14 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
     (d) => d.location === null && dist.get(Hex.key(d.coord))! <= maxDist / 2,
   );
   const villagePool = nearHalf.length > 0 ? nearHalf : placeable.filter((d) => d.location === null);
-  // Los pueblos se asientan en el camino: si hay alguno a mano, va ahí.
-  const onRoad = villagePool.filter((d) => d.terrain === "camino");
-  const [village, r2] = Rng.pick(rng, onRoad.length > 0 ? onRoad : villagePool);
+  // Nadie funda un pueblo dentro de una cueva; y los pueblos se asientan en el
+  // camino, así que si hay alguno a mano va ahí. Las dos son preferencias, no
+  // requisitos: si la única opción es una cueva, pueblo en la cueva antes que
+  // tablero sin pueblo (que dejaría tienda y descanso largo inaccesibles).
+  const outdoors = villagePool.filter((d) => d.terrain !== "cueva");
+  const settleable = outdoors.length > 0 ? outdoors : villagePool;
+  const onRoad = settleable.filter((d) => d.terrain === "camino");
+  const [village, r2] = Rng.pick(rng, onRoad.length > 0 ? onRoad : settleable);
   rng = r2;
   village.location = "pueblo";
 
@@ -257,7 +268,11 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
         Hex.distance(d.coord, lair.coord) > 1,
     );
     if (farHalf.length > 0) {
-      const [dungeon, r4] = Rng.pick(rng, farHalf);
+      // Una mazmorra se entra por un agujero en la roca: si la mitad lejana
+      // tiene una cueva, es ahí. Es la contrapartida del pueblo en el camino, y
+      // le da a la Cueva algo que hacer más allá de su tabla de fichas.
+      const caves = farHalf.filter((d) => d.terrain === "cueva");
+      const [dungeon, r4] = Rng.pick(rng, caves.length > 0 ? caves : farHalf);
       rng = r4;
       dungeon.location = "mazmorra";
     } else {
@@ -265,14 +280,14 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
     }
   }
 
-  // --- 7. Fichas (tabla B) --------------------------------------------------
+  // --- 6. Fichas (tabla B) --------------------------------------------------
   rng = seedTokens(drafts, cfg, rng);
 
-  // --- 8. Élites: boss y, si hay, el de la Mazmorra ------------------------
+  // --- 7. Élites: boss y, si hay, el de la Mazmorra ------------------------
   const [shuffledElites, r5] = Rng.shuffle(rng, ELITES);
   rng = r5;
 
-  // --- 9. Congelar ----------------------------------------------------------
+  // --- 8. Congelar ----------------------------------------------------------
   const hexes = new Map<HexKey, HexTile>();
   for (const [k, d] of drafts) {
     hexes.set(k, {
@@ -281,7 +296,6 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
       location: d.location,
       token: d.token,
       tileId: d.tileId,
-      roadLinks: d.roadLinks,
       isEntrance: d.isEntrance,
       // La niebla arranca cerrada; abrirla es trabajo de la visión del héroe.
       terrainRevealed: false,
@@ -291,6 +305,7 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
 
   return {
     board: { hexes, tiles: layout.tiles, entrance, distanceFromEntrance: dist },
+    openedPasses: carved.opened,
     chapter: {
       turn: 1,
       threat: 0,
@@ -304,7 +319,7 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
 
 // --- Colocación de losetas -------------------------------------------------
 
-type Cell = { coord: HexCoord; tileId: string; terrain: TerrainId | null };
+type Cell = { coord: HexCoord; tileId: string; terrain: TerrainId };
 
 type Layout = {
   cells: Map<HexKey, Cell>;
@@ -450,8 +465,18 @@ function fits(
 }
 
 /**
- * Elegir la entrada dentro de la primera loseta: su hexágono más alejado del
- * centro del tablero, que es el que queda mirando afuera.
+ * Elegir la entrada dentro de la primera loseta.
+ *
+ * Con losetas maquetadas hay un candidato mejor que "el hexágono de más afuera":
+ * la BOCA DEL CAMINO. Un camino cruza su loseta de lado a lado y se ancla por sus
+ * bocas (lib/rules/tile-library.ts), así que un hexágono de Camino de la primera
+ * loseta ya está mirando al vacío, y entrar al mapa por el camino es lo que haría
+ * cualquiera. Sale así en ~la mitad de los tableros, los que siembran con una
+ * loseta que trae sendero.
+ *
+ * Cuando no hay camino, se vuelve al criterio de antes: el más alejado del centro
+ * del tablero. Y se ordena por terreno para no tener que repintar nada después,
+ * que es lo que hacía la versión anterior el 18 % de las veces.
  *
  * @returns {Draft} El hexágono de entrada (se marca fuera de esta función).
  */
@@ -462,9 +487,19 @@ function pickEntrance(drafts: ReadonlyMap<HexKey, Draft>, firstTile: PlacedTile)
     r: all.reduce((s, d) => s + d.coord.r, 0) / all.length,
   };
   const candidates = firstTile.hexes.map((c) => drafts.get(Hex.key(c))!);
-  return candidates.reduce((best, d) =>
-    squaredDistance(d.coord, center) > squaredDistance(best.coord, center) ? d : best,
-  );
+  return candidates.reduce((best, d) => {
+    const diff = doorRank(d.terrain) - doorRank(best.terrain);
+    if (diff !== 0) return diff < 0 ? d : best;
+    return squaredDistance(d.coord, center) > squaredDistance(best.coord, center) ? d : best;
+  });
+}
+
+/** Lo buena que es una puerta cada terreno; cuanto más bajo, mejor. */
+function doorRank(terrain: TerrainId): number {
+  if (terrain === "camino") return 0; // la boca del sendero
+  if (terrain === "cueva") return 2; // al mapa no se entra saliendo de un agujero
+  if (!isOpenGround(terrain)) return 3; // Montaña: no hay puerta, hay que abrirla
+  return 1;
 }
 
 // Distancia euclídea (al cuadrado) en el plano de píxeles, para comparar
@@ -509,15 +544,30 @@ function bfsDistances(drafts: ReadonlyMap<HexKey, Draft>, from: HexCoord): Map<H
 
 /**
  * Garantizar que todo hexágono transitable es alcanzable desde la entrada
- * (§2c paso 3). Cuando queda una bolsa aislada, se abre un paso convirtiendo
- * en Llanura las Montañas del camino más corto hasta ella.
+ * (§2c paso 3). Cuando una masa de Montaña deja una bolsa aislada, se abre un
+ * paso convirtiendo en Llanura las Montañas que hagan falta.
+ *
+ * Con el terreno maquetado esto es lo ÚNICO que repinta una loseta, así que abre
+ * el paso MÁS ESTRECHO que haya: de todas las bolsas aisladas se conecta primero
+ * la que cuesta menos roca, y por la ruta que menos roca cruza.
+ *
+ * Con la biblioteca de hoy no llega a hacer falta ni una vez en 300 tableros, y no
+ * por suerte: la bolsa aislada aparecía cuando una variante tenía su terreno
+ * transitable partido por su propia roca, y de eso avisa ahora `typeNotes`. Esto
+ * es la red de seguridad, no el caso normal.
  *
  * Muta `drafts` a propósito: es un paso de construcción, no una regla de juego.
  *
- * @returns {Rng.Rng} El generador tras los sorteos de desempate.
+ * @returns {{rng: Rng.Rng, opened: HexCoord[]}} El generador tras los sorteos de
+ * desempate y las Montañas repintadas, para poder contarlas.
  */
-function carveConnectivity(drafts: Map<HexKey, Draft>, entrance: HexCoord, rng: Rng.Rng): Rng.Rng {
+function carveConnectivity(
+  drafts: Map<HexKey, Draft>,
+  entrance: HexCoord,
+  rng: Rng.Rng,
+): { rng: Rng.Rng; opened: HexCoord[] } {
   let r = rng;
+  const opened: HexCoord[] = [];
   // Cada iteración conecta una bolsa. El bucle termina porque cada pasada
   // reduce en al menos uno el número de hexes inalcanzables.
   for (let guard = 0; guard < drafts.size; guard++) {
@@ -525,51 +575,92 @@ function carveConnectivity(drafts: Map<HexKey, Draft>, entrance: HexCoord, rng: 
     const stranded = [...drafts.values()].filter(
       (d) => isOpenGround(d.terrain) && !Number.isFinite(dist.get(Hex.key(d.coord))!),
     );
-    if (stranded.length === 0) return r;
+    if (stranded.length === 0) return { rng: r, opened };
 
-    // Se elige una bolsa al azar (no siempre la primera) para que el tablero no
-    // tenga un sesgo de forma según el orden de recorrido.
-    const [target, nextR] = Rng.pick(r, stranded);
+    const search = mountainCosts(drafts, entrance);
+    const rockOf = (d: Draft) => search.cost.get(Hex.key(d.coord)) ?? Infinity;
+    const cheapest = Math.min(...stranded.map(rockOf));
+    // No puede pasar —el tablero es conexo por construcción, que para eso se
+    // encajan las losetas—, pero si pasara, repintar nada dejaría el bucle
+    // dando vueltas hasta el guard.
+    if (!Number.isFinite(cheapest)) return { rng: r, opened };
+
+    // Entre las bolsas que empatan a roca se sortea, para que el tablero no
+    // herede un sesgo de forma del orden de recorrido.
+    const [target, nextR] = Rng.pick(
+      r,
+      stranded.filter((d) => rockOf(d) === cheapest),
+    );
     r = nextR;
-    for (const coord of pathThroughMountains(drafts, entrance, target.coord)) {
+    for (const coord of pathTo(search, target.coord)) {
       const draft = drafts.get(Hex.key(coord))!;
-      if (!isOpenGround(draft.terrain)) draft.terrain = "llanura";
+      if (isOpenGround(draft.terrain)) continue;
+      draft.terrain = "llanura";
+      opened.push(coord);
     }
   }
-  return r;
+  return { rng: r, opened };
+}
+
+/** Lo que cuesta llegar a cada hexágono en Montañas abiertas, y por dónde. */
+type PassSearch = {
+  readonly cost: ReadonlyMap<HexKey, number>;
+  readonly cameFrom: ReadonlyMap<HexKey, HexCoord | null>;
+};
+
+/**
+ * Coste de llegar a cada hexágono medido en ROCA ROTA: entrar en terreno
+ * transitable es gratis y entrar en Montaña cuesta uno. No busca la ruta más
+ * corta, busca la que destroza menos maquetado —rodea la sierra hasta su punto
+ * más estrecho y la cruza por ahí—, que es la diferencia entre abrir un paso y
+ * hacerle un agujero.
+ *
+ * Dijkstra a mano, buscando el mínimo con un recorrido lineal: el tablero son
+ * ~70 hexágonos, así que una cola de prioridad costaría más de leer que de correr.
+ *
+ * @returns {PassSearch} Coste y predecesor de cada hexágono del tablero.
+ */
+function mountainCosts(drafts: ReadonlyMap<HexKey, Draft>, from: HexCoord): PassSearch {
+  const cost = new Map<HexKey, number>([[Hex.key(from), 0]]);
+  const cameFrom = new Map<HexKey, HexCoord | null>([[Hex.key(from), null]]);
+  const pending = new Set<HexKey>([Hex.key(from)]);
+  const settled = new Set<HexKey>();
+
+  while (pending.size > 0) {
+    let current: HexKey | null = null;
+    for (const k of pending) {
+      if (current === null || cost.get(k)! < cost.get(current)!) current = k;
+    }
+    pending.delete(current!);
+    settled.add(current!);
+
+    const coord = drafts.get(current!)!.coord;
+    for (const n of Hex.neighbors(coord)) {
+      const nk = Hex.key(n);
+      const draft = drafts.get(nk);
+      if (!draft || settled.has(nk)) continue;
+      const next = cost.get(current!)! + (isOpenGround(draft.terrain) ? 0 : 1);
+      if (next >= (cost.get(nk) ?? Infinity)) continue;
+      cost.set(nk, next);
+      cameFrom.set(nk, coord);
+      pending.add(nk);
+    }
+  }
+  return { cost, cameFrom };
 }
 
 /**
- * Camino más corto de `from` a `to` pudiendo atravesar Montaña.
- * Solo se usa para abrir pasos: devuelve la ruta, no la modifica.
+ * Rehacer la ruta hasta `to` desde una búsqueda ya hecha.
  *
- * @returns {HexCoord[]} La ruta incluyendo extremos, o vacía si no existe.
+ * @returns {HexCoord[]} La ruta incluyendo extremos, o vacía si no se alcanzó.
  */
-function pathThroughMountains(
-  drafts: ReadonlyMap<HexKey, Draft>,
-  from: HexCoord,
-  to: HexCoord,
-): HexCoord[] {
-  const cameFrom = new Map<HexKey, HexCoord | null>([[Hex.key(from), null]]);
-  const queue: HexCoord[] = [from];
-
-  for (let head = 0; head < queue.length; head++) {
-    const current = queue[head];
-    if (Hex.equals(current, to)) break;
-    for (const n of Hex.neighbors(current)) {
-      const nk = Hex.key(n);
-      if (!drafts.has(nk) || cameFrom.has(nk)) continue;
-      cameFrom.set(nk, current);
-      queue.push(n);
-    }
-  }
-
-  if (!cameFrom.has(Hex.key(to))) return [];
+function pathTo(search: PassSearch, to: HexCoord): HexCoord[] {
+  if (!search.cameFrom.has(Hex.key(to))) return [];
   const path: HexCoord[] = [];
   let step: HexCoord | null = to;
   while (step) {
     path.push(step);
-    step = cameFrom.get(Hex.key(step)) ?? null;
+    step = search.cameFrom.get(Hex.key(step)) ?? null;
   }
   return path.reverse();
 }

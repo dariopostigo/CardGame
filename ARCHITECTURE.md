@@ -14,7 +14,7 @@
 | Framework | **Next.js 16.2.11, App Router** | Breaking changes respecto a versiones anteriores: **leer `node_modules/next/dist/docs/` antes de programar** ([`AGENTS.md`](AGENTS.md)) |
 | React | **19.2.4** | Server Components por defecto; `"use client"` es una excepción explícita |
 | Lenguaje | **TypeScript `strict`** | [`tsconfig.json`](tsconfig.json). Sin `any` sin justificación escrita |
-| UI kit | **PrimeReact 11** + `@primeuix/themes` (preset Aura, acento ámbar) | Configurado en [`app/providers.tsx`](app/providers.tsx) |
+| UI kit | **PrimeReact 11** (`@primeuix/themes` preset Aura) — **solo comportamiento** | En esta versión los componentes llegan **sin CSS**: el preset trae los tokens pero su hoja de estilo está vacía y la librería no registra las clases `p-*`. Sirve para accesibilidad y teclado; **el aspecto es nuestro** (`components/ui/`, `styles/components/`). Configurado en [`app/providers.tsx`](app/providers.tsx) |
 | Estilos | **Tailwind 4 + SCSS/ITCSS** | Reglas completas en [`AGENTS.md`](AGENTS.md). **No se repiten aquí** |
 | Formularios | `react-hook-form` | Solo donde haga falta (lab de diseño) |
 | Contenido | **Markdown en [`docs/`](docs/)** parseado en build | No hay CMS ni base de datos |
@@ -29,22 +29,30 @@ Consecuencia directa: **las capas de transporte, servicios thin, `ApiResponse<T>
 
 ## 0-bis. Vocabulario
 
-Cuatro cosas distintas que es fácil llamar "mapa" a todas. **En el código, en la UI y en los documentos se llaman siempre así:**
+Seis cosas distintas que es fácil llamar "mapa" a todas. **En el código, en la UI y en los documentos se llaman siempre así:**
 
 | Concepto | Qué es | En el código | Dónde se trabaja |
 |---|---|---|---|
 | **hexágono** | Una casilla: terreno, ficha, niebla | `Hex` ([`lib/rules/state.ts`](lib/rules/state.ts)) | — |
-| **loseta** | Pieza predefinida de hexágonos con su forma, el terreno de cada uno y sus anclas. Se **maqueta a mano** | `TileDef`, `PlacedTile` ([`lib/rules/tiles.ts`](lib/rules/tiles.ts)) | `/dev/losetas` |
+| **loseta** / **variante** | Pieza predefinida de hexágonos con su forma, el terreno de cada uno y sus anclas. Se **maqueta a mano** | `TileDef`, `PlacedTile` ([`lib/rules/tiles.ts`](lib/rules/tiles.ts)) | `/dev/losetas` |
+| **tipo de loseta** | Un **sitio** del mundo (un peñasco, una ciénaga, una cueva), definido por **un terreno**, con su peso en la bolsa y sus variantes dentro | `TileType` ([`lib/rules/tiles.ts`](lib/rules/tiles.ts)) | `/dev/losetas` |
+| **biblioteca** | Todos los tipos que existen. **Vive en datos**, no en código | [`data/tile-library.json`](data/tile-library.json) → `TILE_TYPES` ([`lib/rules/tile-library.ts`](lib/rules/tile-library.ts)) | `/dev/losetas` |
 | **ancla** | Borde exterior por el que una loseta se une a otra. Solo en el contorno; el resto del borde es pared | `TileDef.anchors` ([`lib/rules/tiles.ts`](lib/rules/tiles.ts)) | `/dev/losetas`, modo Anclas |
 | **tablero** | El mapa completo de **una** partida rápida o capítulo, resultado de unir losetas por sus anclas. Se **genera** con una semilla | `Board` ([`lib/rules/board-gen.ts`](lib/rules/board-gen.ts)) | `/dev/tablero` |
 
 Por qué separarlos: son dos problemas de diseño que se afinan con criterios distintos. Cambiar la forma de una loseta afecta a cómo se ve el terreno de cerca; cambiar cuántas se colocan afecta a la duración de la partida. Mezclarlos en un solo laboratorio —como estaba al principio— hace que no se sepa qué se está tocando. La palabra **"mapa"** queda solo para el documento de diseño ([`docs/board/board-map.md`](docs/board/board-map.md)) y para el sentido coloquial.
 
-**Los tres grados de libertad de una loseta**, y solo tres: su **forma** (dentro del tope de su tamaño), el **terreno** de cada hexágono y sus **anclas**. Un hexágono puede quedarse *al sorteo* (`terrain: null`): entonces su terreno lo pone el tablero al colocar la loseta, con los pesos de la tabla A, y cambia en cada partida. Eso es lo que permite tener piezas con carácter fijo (un paso de montaña, un vado) sin que el tablero se repita.
+**Tipo y variante.** Lo que se sortea al construir el tablero es el TIPO —el sitio—, y la variante es solo el dibujo que le toca: dos peñascos distintos son el mismo sitio dibujado de otra manera. Por eso el peso es del tipo y se reparte entre sus variantes (`TileDef.weight` es una fracción, no un número a mano): añadir un peñasco más no hace que salgan más peñascos, hace que se repitan menos. A cada tipo lo define **un** terreno, que es su identidad y no una restricción: las excepciones son legítimas cuando el sitio las pide —el Camino que cruza el paso de montaña, el Pantano al que baja el vado— y `typeNotes` avisa de las que parecen un descuido, sin bloquear.
 
-**Los cinco tamaños** (`TILE_SIZES`) doblan capacidad en cada nivel: Mínima 4, Pequeña 8, Mediana 16, Grande 32, Enorme 64 hexágonos. El tamaño no se guarda en la loseta, se deriva de cuántos hexágonos tiene (`sizeOf`), para que no puedan discrepar. La biblioteca de hoy cubre cuatro de los cinco: 5 Mínimas, 5 Pequeñas, 4 Medianas y 2 Grandes, con una media de 7,7 hexágonos por pieza (por peso de bolsa). No hay ninguna Enorme a propósito: 64 hexágonos son un tablero entero, no una pieza. Por eso `tileCount` bajó de 15 a **9** — lo que fija el tamaño del tablero es el total de hexágonos (~68), no el número de piezas.
+**Los tres grados de libertad de una loseta**, y solo tres: su **forma** (dentro del tope de su tamaño), el **terreno** de cada hexágono y sus **anclas**. El terreno es **obligatorio en todos**: no existe "este lo sortea el tablero", así que una loseta llega pintada entera y lo que se ve al maquetarla es lo que sale en la partida. Consecuencia directa: **el reparto de terreno del tablero lo decide la biblioteca y nada más**, y la tabla A (§2c) pasa de ser un sorteo a ser el objetivo al que apunta el maquetado —`/dev/losetas` enseña el medido junto a la cuota—. La variedad entre partidas la dan las variantes y el giro.
 
-**Las losetas se maquetan DIBUJADAS** (`drawn()`): una cadena por fila de hexágonos y un carácter por hexágono (espacio hueco, `.` al sorteo, `L C B P M` los terrenos), sobre la rejilla escalonada de `hex.ts`. Veinte hexágonos escritos como literales `{q, r}` esconden un duplicado o un hueco; dibujados se ven. El editor de `/dev/losetas` devuelve el literal en ese mismo formato (`toDrawing`/`toSource`), así que lo que sale se pega tal cual. Ojo con una trampa del escalonado: subir un dibujo una fila no lo mueve, lo convierte en otra forma, y por eso el literal generado puede empezar con una fila en blanco.
+Y al revés: **la generación no repinta lo maquetado.** `board-gen.ts` no sortea terreno y no lo corrige; su único permiso es abrir una Montaña cuando encierra una bolsa incomunicada, y lo hace por el punto más estrecho y lo devuelve contado (`GeneratedBoard.openedPasses`, que `/dev/tablero` enseña como «Maquetado roto»). Con la biblioteca de hoy no hace falta en ninguno de 300 tableros, porque el aviso de `typeNotes` no deja pasar una variante cuya roca parta su propio terreno transitable.
+
+**Los cinco tamaños** (`TILE_SIZES`) doblan capacidad en cada nivel: Mínima 4, Pequeña 8, Mediana 16, Grande 32, Enorme 64 hexágonos. El tamaño no se guarda en la loseta, se deriva de cuántos hexágonos tiene (`sizeOf`), para que no puedan discrepar. Es de la **variante**, no del tipo: un mismo tipo puede tener un peñasco Mínimo y otro Pequeño. La biblioteca de hoy son **17 tipos y 22 variantes** que cubren cuatro de los cinco tamaños (6 Mínimas, 9 Pequeñas, 5 Medianas, 2 Grandes), con una media de 8 hexágonos por pieza (por peso de bolsa). No hay ninguna Enorme a propósito: 64 hexágonos son un tablero entero, no una pieza. Por eso `tileCount` es **9** — lo que fija el tamaño del tablero es el total de hexágonos (~72), no el número de piezas.
+
+**Las losetas se maquetan DIBUJADAS** (`drawn()`): una cadena por fila de hexágonos y un carácter por hexágono (espacio hueco y `L C B P M V` los terrenos; todos llevan el suyo), sobre la rejilla escalonada de `hex.ts`. Veinte hexágonos escritos como literales `{q, r}` esconden un duplicado o un hueco; dibujados se ven. `toDrawing` es la inversa y da el dibujo **canónico**: la misma loseta siempre el mismo dibujo, esté donde esté en el papel, y por eso abrirla en el editor y guardarla sin tocar nada no mueve el fichero. Cuidado con el orden: hay que trasladar en coordenadas **axiales** y pasar a la rejilla escalonada después, porque mover el dibujo por el papel un número impar de filas no lo traslada, lo deforma (las filas impares van medio hexágono a la derecha).
+
+**La biblioteca vive en `data/tile-library.json`, y `/dev/losetas` la ESCRIBE** (por `app/api/dev/tile-library`, una ruta que responde 404 fuera de desarrollo). Antes era un literal de TypeScript y la salida del editor había que copiarla y pegarla a mano; ahí es donde se colaban los errores. El JSON se sigue revisando en el diff igual que se revisaba el código —el dibujo ASCII se lee—, y lo que no cabe en un JSON, el *por qué* de cada pieza, va en el campo `note` de cada tipo y de cada variante. Se valida al arrancar (`parseLibrary` + `validateTileTypes`) y **antes de escribir**, con la misma función: si no pasa, no se escribe nada.
 
 ---
 
@@ -82,6 +90,27 @@ La wiki ya hace lo correcto (servidor + `fs` + `cache` de React) y **no se toca*
 
 ---
 
+## 2-bis. Los cuatro apartados
+
+Dos mitades de **aplicación**, pero **cuatro** puertas de primer nivel ([`lib/sections.ts`](lib/sections.ts), fuente única de la portada y de las cuatro cabeceras). Se distinguen por dos preguntas distintas que conviene no mezclar: **qué documentan** y **a quién visten**.
+
+| Apartado | Ruta | Qué documenta | Piel |
+|---|---|---|---|
+| **Wiki** | [`app/docs/`](app/docs/) | el juego **sobre papel**: reglas, cartas, tablero | herramienta |
+| **Dev** | [`app/dev/`](app/dev/) | el **motor**: un laboratorio por pieza ([`lib/dev-labs.ts`](lib/dev-labs.ts)) | herramienta |
+| **Repositorio de desarrollo** | [`app/repository-dev/`](app/repository-dev/) | la **interfaz de las herramientas**: botones, campos, títulos | herramienta (`--wiki-*`) |
+| **Repositorio de producción** | [`app/repository-pro/`](app/repository-pro/) | la **interfaz del juego**, tema medieval. Vacío: es el índice de lo pendiente | producto (`--game-*`, por crear) |
+
+Los dos repositorios salen los dos de [`lib/repository.ts`](lib/repository.ts) y comparten marco (`RepoShell`), porque son **el mismo instrumento con dos pieles**. Tres decisiones que sostienen esto:
+
+1. **Un repositorio de componentes es una herramienta, aunque documente producción.** El jugador no ve una galería. Por eso `repository-pro` es un apartado de desarrollo y está al mismo nivel que los otros tres, no dentro de una hipotética sección de producción.
+2. **El marco nunca se viste con el tema que muestra.** Cabecera, menú y ficha son siempre `--wiki-*`; lo medieval va **dentro** del lienzo del especimen. Un botón de hierro sobre una página ya maquillada de pergamino no se puede juzgar.
+3. **Una galería enseña los componentes de verdad, nunca copias.** Un especimen con marcado propio deja de documentar en cuanto el componente cambie. Consecuencia: los componentes de producción vivirán en `components/game/ui/` —del lado del juego, por la frontera de la §3— y los genéricos de herramienta en `components/ui/` cuando se saquen de `components/wiki/`.
+
+Los `--game-*` **no son los `--wiki-*` con otros valores**: el skin de las herramientas es *chrome* y conmuta claro/oscuro en runtime; el del juego es diegético, forma parte de la ficción y no tiene modo claro. Son dos mapas separados en `styles/settings/`, como ya lo están la rareza y el skin.
+
+---
+
 ## 3. Estructura de carpetas
 
 Estado actual, con lo que se añade marcado:
@@ -90,7 +119,8 @@ Estado actual, con lo que se añade marcado:
 app/
 ├── layout.tsx              # raíz: fuentes, metadata, script anti-FOUC de tema
 ├── providers.tsx           # "use client" — PrimeReactProvider
-├── page.tsx                # portada: las dos puertas (Wiki / Dev)
+├── page.tsx                # portada: las cuatro puertas (sale de lib/sections.ts)
+├── api/dev/                # solo en desarrollo: escribe data/ (404 en producción)
 ├── docs/                   # wiki (server components)
 ├── dev/                    # LABORATORIOS de desarrollo
 │   ├── layout.tsx          #   DevShell: cabecera + menú de labs
@@ -98,20 +128,41 @@ app/
 │   ├── losetas/            #   la pieza: forma, terreno y anclas
 │   ├── tablero/            #   el encaje: generación de la partida
 │   └── mapas/              #   redirección histórica → /dev/tablero
+├── repository-dev/         # REPOSITORIO de componentes de las HERRAMIENTAS
+│   ├── layout.tsx          #   RepoShell side="dev"
+│   ├── page.tsx            #   hub, sale de lib/repository.ts
+│   ├── typography/         #   títulos, textos, prosa
+│   ├── buttons/            #   Button de PrimeReact 11
+│   └── forms/              #   campos, select, radios, casillas, deslizador
+├── repository-pro/         # REPOSITORIO de componentes del JUEGO (medieval)
+│   ├── layout.tsx          #   RepoShell side="pro"
+│   └── page.tsx            #   solo el índice: no hay ni un componente aún
 └── play/                   # redirección histórica → /dev/tablero
 
 components/
 ├── wiki/                   # wiki
+├── nav/                    # SectionLinks: navegación entre los cuatro apartados
 ├── design/                 # lab de diseño de carta (vive dentro de la wiki)
 ├── dev/                    # marco de /dev y paneles de mando de cada lab
 │                           #   TileLab + TileCanvas (loseta), BoardLab (tablero)
+│                           #   tile-sketch (el boceto), tile-library-store (editar)
+├── repository/             # marco y VITRINA de los dos repositorios
+│   ├── RepoShell/Sidebar   #   un solo marco para los dos lados
+│   ├── RepoIndex.tsx       #   hub compartido
+│   ├── Showcase.tsx        #   Specimen, Family, SpecimenGrid (la vitrina)
+│   └── dev/                #   especímenes que necesitan estado (FormShowcase)
+├── ui/                     # genéricos de herramienta
+│   └── Button.tsx          #   el botón de todo el proyecto (+ buttonClass)
 └── game/                   # componentes presentacionales del JUEGO
     ├── board/              #   hexágonos, niebla, fichas
+    ├── ui/                 #   kit medieval: botón, panel…    (por construir)
     ├── hand/               #   Oteo, zona "en juego", mazo   (por construir)
     ├── combat/             #   iniciativa, objetivos, log     (por construir)
     └── hud/                #   PV, Amenaza, oro, estados      (por construir)
 
 lib/
+├── sections.ts             # los cuatro apartados: portada + cabeceras
+├── repository.ts           # familias de componentes de los dos repositorios
 ├── dev-labs.ts             # registro de laboratorios: hub + menú de /dev
 ├── card-table.ts           # parseo de tablas de carta en markdown
 ├── card-catalog.ts         # catálogo completo (solo servidor: node:fs)
@@ -120,9 +171,14 @@ lib/
 
 styles/                     # ITCSS — ver AGENTS.md
 docs/                       # diseño del juego = contenido (fuente de verdad)
+data/                       # datos del juego editables desde /dev (tile-library.json)
 ```
 
 **La frontera lab / juego.** `components/game/` es el juego de verdad: componentes que acabarán en la partida. `components/dev/` es instrumental: los paneles de mando que solo existen para probar el motor. Un lab **usa** componentes de juego, nunca al revés — así ningún atajo de laboratorio se cuela en el producto. Cuando llegue la pantalla de juego será `app/play/` otra vez, montando los mismos componentes de `components/game/` que hoy prueban los labs.
+
+`components/repository/` está del lado instrumental y no la cruza: es la **vitrina**, no las piezas. Los especímenes del repositorio medieval importarán de `components/game/ui/` exactamente igual que un lab importa de `components/game/board/`.
+
+**Sobre `data/`:** contenido del juego que el motor lee pero no es código, y que se edita desde un laboratorio. Hoy solo está la biblioteca de losetas. Se distingue de `docs/` en que `docs/` lo escribe una persona y lo lee otra, y `data/` lo escribe una herramienta y lo lee el motor: por eso es JSON con formato fijo (`lib/tile-library-file.ts`) y no markdown.
 
 **Sobre agrupar `lib/`:** hoy son 12 archivos planos y el pipeline de contenido (`card-table`, `card-catalog`, `docs`, `remark-*`, `markdown-link`) se distingue mal de los helpers. Cuando `lib/rules/` empiece a crecer, merece la pena mover ese pipeline a `lib/content/`. Es un `git mv` y arreglar imports; **no es urgente y no se hace "de paso"**.
 
@@ -156,8 +212,9 @@ Nada más. Sin React, sin `fs`, sin `Date.now()`, sin `Math.random()`.
 | `enemy-ai.ts` | Árbol de prioridades determinista (`docs/characters/enemies.md` §5b.6) |
 | `threat.ts` | Reloj 0→40, umbrales con histéresis |
 | `loot.ts` | `rollLoot(fuente)` — un solo sitio, lo llaman seis (§6b.6) |
-| `tiles.ts` | Biblioteca de **losetas**: forma, terreno por hexágono, anclas y los cinco tamaños. Catálogo dibujado a mano (`drawn()`), no generado |
-| `board-gen.ts` | Generación del **tablero**: unión de losetas por anclas + conectividad + localizaciones garantizadas + fichas |
+| `tiles.ts` | Qué **es** una loseta: forma, terreno por hexágono, anclas, tamaños, tipos y el ida y vuelta con el dibujo (`drawn`/`toDrawing`) |
+| `tile-library.ts` | **Cuáles** hay: lee `data/tile-library.json`, lo valida al arrancar y publica `TILE_TYPES` / `TILES` |
+| `board-gen.ts` | Generación del **tablero**: unión de losetas por anclas + entrada por la boca del camino + conectividad + localizaciones garantizadas + fichas |
 
 ### Reglas duras del motor
 

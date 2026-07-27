@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import type { NavGroup } from "@/lib/docs";
+import SectionLinks from "@/components/nav/SectionLinks";
 import Sidebar from "./Sidebar";
 import SearchBox from "./SearchBox";
 import ThemeControls from "./ThemeControls";
@@ -33,15 +34,9 @@ export default function Shell({
             CardGame <span className="text-[var(--wiki-muted)]">Wiki</span>
           </span>
         </Link>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1">
           <SearchBox />
-          <Link
-            href="/dev"
-            className="hidden items-center gap-2 rounded-md px-3 py-1.5 text-sm text-[var(--wiki-text)] hover:bg-[var(--wiki-surface-2)] sm:inline-flex"
-          >
-            <i className="pi pi-code text-[0.85em] opacity-80" />
-            Dev
-          </Link>
+          <SectionLinks current="wiki" />
           <ThemeControls />
         </div>
       </header>

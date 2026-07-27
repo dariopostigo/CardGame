@@ -12,8 +12,9 @@
 //   · hexágono (`Hex`)      — una casilla. Tiene terreno, ficha y niebla.
 //   · loseta   (`TileDef` / `PlacedTile`) — pieza predefinida de hexágonos con
 //     su forma, el terreno de cada uno y sus anclas. Cinco tamaños, de 4 a 64
-//     hexágonos. Se maqueta a mano en lib/rules/tiles.ts y se prueba en
-//     /dev/losetas.
+//     hexágonos. Se maqueta a mano en la biblioteca (lib/rules/tile-library.ts)
+//     y se edita en /dev/losetas. Las variantes de un mismo TIPO son el mismo
+//     sitio dibujado de otra manera (`TileType` en lib/rules/tiles.ts).
 //   · ancla    (`TileEdge` en `TileDef.anchors`) — borde exterior por el que una
 //     loseta se une a otra. Solo existen en el contorno, y una loseta solo se
 //     une ancla contra ancla: el resto de su borde es pared.
@@ -49,12 +50,6 @@ export type Hex = {
   readonly token: BoardToken | null;
   /** Loseta a la que pertenece — board-map.md §2. */
   readonly tileId: string;
-  /**
-   * Direcciones (0-5) por las que sale sendero de este hexágono: hacia un
-   * hexágono de Camino vecino, o fuera del mapa si el camino se pierde en el
-   * borde. Vacío si no es Camino. Es el trazado del sendero, no una regla.
-   */
-  readonly roadLinks: readonly number[];
   /** Hexágono de entrada al mapa (§2c paso 0). */
   readonly isEntrance: boolean;
   /** Capa 1 de niebla: se conoce el tipo de terreno (visión de terreno). */
@@ -72,7 +67,7 @@ export type EliteId = "capitan-bandido" | "trol-de-las-minas" | "arana-matriarca
 export type PlacedTile = {
   /** Identificador de la instancia: "t0", "t1"… Es el tileId de sus hexágonos. */
   readonly id: string;
-  /** Loseta de la biblioteca de la que sale (lib/rules/tiles.ts). */
+  /** Loseta de la biblioteca de la que sale (lib/rules/tile-library.ts). */
   readonly defId: string;
   /** Pasos de 60° con los que se colocó. */
   readonly rotation: number;

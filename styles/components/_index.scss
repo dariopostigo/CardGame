@@ -3,9 +3,11 @@
 // Los temas de carta van al final: son la capa más específica
 // (.card-lab[data-theme="…"]) y deben poder pisar el esqueleto.
 @use "prose";
+@use "button";
 @use "callout";
 @use "icon-tip";
 @use "chip";
+@use "specimen";
 @use "tile";
 @use "board";
 @use "card";

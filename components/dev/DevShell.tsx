@@ -9,6 +9,7 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import ThemeControls from "@/components/wiki/ThemeControls";
+import SectionLinks from "@/components/nav/SectionLinks";
 import DevSidebar from "./DevSidebar";
 
 export default function DevShell({ children }: { children: ReactNode }) {
@@ -30,14 +31,8 @@ export default function DevShell({ children }: { children: ReactNode }) {
             CardGame <span className="text-[var(--wiki-muted)]">Dev</span>
           </span>
         </Link>
-        <div className="ml-auto flex items-center gap-2">
-          <Link
-            href="/docs"
-            className="hidden items-center gap-2 rounded-md px-3 py-1.5 text-sm text-[var(--wiki-text)] hover:bg-[var(--wiki-surface-2)] sm:inline-flex"
-          >
-            <i className="pi pi-book text-[0.85em] opacity-80" />
-            Wiki
-          </Link>
+        <div className="ml-auto flex items-center gap-1">
+          <SectionLinks current="dev" />
           <ThemeControls />
         </div>
       </header>

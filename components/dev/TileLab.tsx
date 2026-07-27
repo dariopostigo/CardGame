@@ -7,55 +7,76 @@
 // problemas distintos y por eso son dos laboratorios: cambiar la forma de una
 // loseta no es lo mismo que cambiar cuántas se colocan.
 //
-// Una loseta fija tres cosas (lib/rules/tiles.ts):
-//   · su FORMA    — hexágonos conexos con el (0,0) dentro, hasta el tope de su
-//     TAMAÑO (5 niveles, de 4 a 64 hexágonos)
-//   · su TERRENO  — el de cada hexágono, o "al sorteo" para dejar que el
-//     tablero lo decida al colocarla
-//   · sus ANCLAS  — los bordes exteriores por los que se une a otra loseta
+// Todo hexágono de una loseta lleva TERRENO, obligatorio: aquí no hay «al
+// sorteo». Lo que se dibuja es lo que sale en la partida.
 //
-// Dos mitades:
-//   1. el catálogo, que es la biblioteca real girando en vivo
-//   2. el editor, que es papel cuadriculado: dibuja un boceto, lo valida con
-//      la misma función que el script de verificación y escupe el literal
-//      para pegar en lib/rules/tiles.ts. No escribe en disco a propósito —
-//      la biblioteca se revisa a mano y entra por commit, no por formulario.
+// La biblioteca tiene dos niveles (lib/rules/tiles.ts):
+//   · TIPO     — un sitio del mundo, definido por UN terreno, con su peso en la
+//     bolsa. Es lo que se sortea al construir el tablero.
+//   · VARIANTE — una loseta concreta de ese tipo: su forma, el terreno de cada
+//     hexágono y sus anclas. Varios peñascos distintos son variantes del mismo
+//     tipo, y al tablero le da igual cuál le toque.
+//
+// Y este laboratorio ESCRIBE en data/tile-library.json (por la ruta de
+// app/api/dev/tile-library, que solo existe en desarrollo). Antes la salida era
+// un literal para copiar y pegar a mano, y ahí es donde se colaban los errores:
+// dibujas veinte hexágonos bien y te equivocas al trasladarlos. Cada acción
+// —crear, guardar, eliminar— valida la biblioteca entera con la misma función
+// que la valida al arrancar, y si no pasa, el fichero se queda como estaba.
 // =========================================================================
 
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import Link from "next/link";
 import { InputText } from "primereact/inputtext";
+import { Textarea } from "primereact/textarea";
 import * as Hex from "@/lib/rules/hex";
 import type { HexCoord } from "@/lib/rules/hex";
-import { TERRAINS, TERRAIN_IDS, type TerrainId } from "@/lib/rules/terrain";
+import { TERRAINS, TERRAIN_IDS, targetShare, type TerrainId } from "@/lib/rules/terrain";
+import { STORED_LIBRARY } from "@/lib/rules/tile-library";
 import {
   ORIGIN,
-  TILES,
   TILE_SIZES,
-  bagWeight,
+  allVariants,
   distinctRotations,
-  freeCount,
   instantiate,
+  parseLibrary,
   roadsOf,
   sizeOf,
+  terrainCounts,
+  toStoredVariant,
+  typeHexes,
+  typeNotes,
   validateTileLibrary,
+  type StoredLibrary,
   type TileDef,
+  type TileType,
 } from "@/lib/rules/tiles";
+import { formatJson } from "@/lib/tile-library-format";
 import TileCanvas, { type CanvasCell } from "@/components/dev/TileCanvas";
+import { buttonClass } from "@/components/ui/Button";
 import {
-  initialSketch,
+  addType,
+  freeId,
+  putVariant,
+  removeType,
+  removeVariant,
+  saveLibrary,
+  updateType,
+  variantIds,
+} from "@/components/dev/tile-library-store";
+import {
   copyOfDef,
   fillToCapacity,
   fromDef,
   hasHex,
-  paintAllFree,
+  initialSketch,
+  paintAll,
   paintTerrain,
   setSizeLevel,
   sizeOfSketch,
   sketchGrid,
   terrainAt,
   toDef,
-  toSource,
   toggleAnchor,
   toggleHex,
   type Sketch,
@@ -72,7 +93,7 @@ const MODES: ReadonlyArray<{ id: EditorMode; label: string; help: string }> = [
   {
     id: "terreno",
     label: "Terreno",
-    help: "Elige un terreno y pinta los hexágonos. «Al sorteo» los devuelve a la tabla A: los decide el tablero al colocar la loseta.",
+    help: "Elige un terreno y pinta los hexágonos. Todos llevan terreno: no hay hexágono sin pintar, así que en el modo Forma el que añades nace con el del pincel.",
   },
   {
     id: "anclas",
@@ -81,84 +102,243 @@ const MODES: ReadonlyArray<{ id: EditorMode; label: string; help: string }> = [
   },
 ];
 
-/** La paleta del editor: los 5 terrenos, más «al sorteo», que no es un terreno. */
-const PALETTE: ReadonlyArray<{ id: TerrainId | null; label: string }> = [
-  { id: null, label: "Al sorteo" },
-  ...TERRAIN_IDS.map((id) => ({ id, label: TERRAINS[id].label })),
-];
+/** La paleta del editor: los terrenos, y nada más. Todo hexágono lleva uno. */
+const PALETTE: ReadonlyArray<{ id: TerrainId; label: string }> = TERRAIN_IDS.map((id) => ({
+  id,
+  label: TERRAINS[id].label,
+}));
+
+const WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8];
+
+/** El boceto en curso y qué variante va a sustituir cuando se guarde. */
+type Draft = { readonly sketch: Sketch; readonly replaces: string | null };
+
+/**
+ * Un boceto en blanco, listo para dibujar. El papel cuadriculado está SIEMPRE
+ * abierto al entrar: es la mitad del laboratorio, y esconderlo hasta que se
+ * abriera una variante del catálogo dejaba la página sin sitio donde dibujar una
+ * loseta nueva. El tipo se elige luego, con los botones del propio boceto.
+ */
+function blankDraft(typeId: string, terrain: TerrainId): Draft {
+  return {
+    sketch: { ...initialSketch(typeId, terrain), id: "loseta-nueva", label: "Loseta nueva" },
+    replaces: null,
+  };
+}
+
+/** El formulario del tipo. `original` es su id antes de editarlo. */
+type TypeForm = {
+  readonly original: string;
+  readonly id: string;
+  readonly label: string;
+  readonly terrain: TerrainId;
+  readonly weight: number;
+  readonly note: string;
+};
+
+type Status = { readonly tone: "ok" | "error" | "busy"; readonly text: string };
 
 export default function TileLab() {
+  // La biblioteca de trabajo. Arranca con la del disco y solo cambia cuando el
+  // servidor confirma que ha escrito: así lo que se ve es siempre lo que hay
+  // guardado, que en una herramienta importa más que ir rápido.
+  const [library, setLibrary] = useState<StoredLibrary>(STORED_LIBRARY);
+  const [status, setStatus] = useState<Status | null>(null);
+
   // --- Catálogo -----------------------------------------------------------
   const [rotation, setRotation] = useState(0);
   const [showCoords, setShowCoords] = useState(false);
+  const [typeForm, setTypeForm] = useState<TypeForm | null>(null);
 
   // --- Editor -------------------------------------------------------------
+  const [draft, setDraft] = useState<Draft | null>(() =>
+    blankDraft(STORED_LIBRARY.types[0]?.id ?? "", STORED_LIBRARY.types[0]?.terrain ?? "llanura"),
+  );
   const [mode, setMode] = useState<EditorMode>("forma");
-  const [brush, setBrush] = useState<TerrainId | null>("camino");
-  const [sketch, setSketch] = useState<Sketch>(() => initialSketch());
-  const [copied, setCopied] = useState(false);
-  // El catálogo es largo: al mandar una loseta al editor hay que llevar también
-  // la vista, o el clic parece no haber hecho nada.
+  const [brush, setBrush] = useState<TerrainId>("llanura");
+  // El catálogo es largo: al mandar una variante al editor hay que llevar
+  // también la vista, o el clic parece no haber hecho nada.
   const editorRef = useRef<HTMLHeadingElement>(null);
 
-  const bag = useMemo(() => bagWeight(), []);
-  const stats = useMemo(() => bagStats(), []);
-  const span = useMemo(() => catalogSpan(TILES), []);
+  const parsed = useMemo(() => {
+    try {
+      return { types: parseLibrary(library), error: null as string | null };
+    } catch (error) {
+      return { types: [] as TileType[], error: error instanceof Error ? error.message : String(error) };
+    }
+  }, [library]);
 
-  const draft = useMemo(() => toDef(sketch), [sketch]);
-  const draftInstance = useMemo(() => instantiate(draft, 0, ORIGIN), [draft]);
-  const problems = useMemo(() => validateTileLibrary([draft]), [draft]);
-  const snippet = useMemo(() => toSource(draft), [draft]);
-  const grid = useMemo(() => sketchGrid(sketch.sizeLevel), [sketch.sizeLevel]);
+  const types = parsed.types;
+  const tiles = useMemo(() => allVariants(types), [types]);
+  const bag = types.reduce((sum, type) => sum + type.weight, 0);
+  const stats = useMemo(() => bagStats(types), [types]);
+  const span = useMemo(() => catalogSpan(tiles), [tiles]);
 
-  const size = sizeOfSketch(sketch);
-  const roadHexes = roadsOf(draft).length;
+  const sketch = draft?.sketch ?? null;
+  const editing = useMemo(() => (sketch ? toDef(sketch) : null), [sketch]);
+  const editingInstance = useMemo(
+    () => (editing ? instantiate(editing, 0, ORIGIN) : null),
+    [editing],
+  );
+  const grid = useMemo(() => sketchGrid(sketch?.sizeLevel ?? 1), [sketch?.sizeLevel]);
 
-  const btn = (active: boolean) =>
-    `rounded-md border px-3 py-1.5 text-sm transition-colors ${
-      active
-        ? "border-[var(--wiki-accent)] bg-[var(--wiki-accent-soft)] font-medium text-[var(--wiki-accent)]"
-        : "border-[var(--wiki-border)] text-[var(--wiki-text)] hover:bg-[var(--wiki-surface-2)]"
-    }`;
+  // Los problemas del boceto: los de la loseta, más el id repetido, que no es
+  // cosa de la loseta sino de la biblioteca donde va a entrar.
+  const problems = useMemo(() => {
+    if (!editing || !draft) return [];
+    const own = validateTileLibrary([editing]).map((p) => p.replace(`${editing.id}: `, ""));
+    if (variantIds(library).some((id) => id === editing.id && id !== draft.replaces)) {
+      own.unshift(`el id "${editing.id}" ya lo usa otra variante`);
+    }
+    // Puede pasar si se elimina el tipo con el boceto abierto: sin tipo no hay
+    // dónde guardarla, y guardar sin sitio la perdería sin decir nada.
+    if (!types.some((type) => type.id === editing.typeId)) {
+      own.unshift("elige el tipo al que pertenece");
+    }
+    return own;
+  }, [editing, draft, library, types]);
+
+  // Las clases salen de components/ui/Button.tsx: mismo botón que documenta
+  // /repository-dev/buttons, para que retocarlo se vea aquí sin copiar nada.
+  const btn = (active: boolean) => buttonClass({ active });
 
   const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
+
+  // --- Guardar ------------------------------------------------------------
+
+  /**
+   * Mandar la biblioteca al disco. Si el servidor la rechaza, se queda la que
+   * había: no hay estado a medias que luego no se sepa si está guardado.
+   */
+  const commit = async (next: StoredLibrary, done: string): Promise<boolean> => {
+    setStatus({ tone: "busy", text: "Guardando…" });
+    const result = await saveLibrary(next);
+    if (!result.ok) {
+      setStatus({ tone: "error", text: result.problems.join(" · ") });
+      return false;
+    }
+    setLibrary(result.library);
+    setStatus({ tone: "ok", text: done });
+    return true;
+  };
+
+  // --- Acciones sobre los tipos -------------------------------------------
+
+  const newType = async () => {
+    const { library: next, type } = addType(library);
+    if (await commit(next, `Tipo «${type.label}» creado`)) {
+      setTypeForm({ ...type, original: type.id });
+    }
+  };
+
+  const saveType = async () => {
+    if (!typeForm) return;
+    const next = updateType(library, typeForm.original, {
+      id: typeForm.id.trim(),
+      label: typeForm.label.trim(),
+      terrain: typeForm.terrain,
+      weight: typeForm.weight,
+      note: typeForm.note.trim(),
+    });
+    if (await commit(next, `Tipo «${typeForm.label}» guardado`)) setTypeForm(null);
+  };
+
+  const deleteType = async (type: TileType) => {
+    const what = `«${type.label}» y sus ${type.variants.length} variante${
+      type.variants.length === 1 ? "" : "s"
+    }`;
+    if (!window.confirm(`¿Eliminar el tipo ${what}?`)) return;
+    if (typeForm?.original === type.id) setTypeForm(null);
+    if (draft?.sketch.typeId === type.id) setDraft(null);
+    await commit(removeType(library, type.id), `Tipo «${type.label}» eliminado`);
+  };
+
+  // --- Acciones sobre las variantes ---------------------------------------
+
+  const openDraft = (next: Sketch, replaces: string | null, terrain: TerrainId) => {
+    setDraft({ sketch: next, replaces });
+    setMode("forma");
+    setBrush(terrain);
+    editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // Editar trabaja sobre la variante de la biblioteca (mismo id: al guardar la
+  // sustituye); copiar saca otra variante del MISMO tipo a partir de ella.
+  const editVariant = (type: TileType, def: TileDef) => openDraft(fromDef(def), def.id, type.terrain);
+
+  const copyVariant = (type: TileType, def: TileDef) => {
+    const copy = copyOfDef(def);
+    openDraft({ ...copy, id: freeId(copy.id, variantIds(library)) }, null, type.terrain);
+  };
+
+  const addVariant = (type: TileType) => {
+    const fresh = initialSketch(type.id, type.terrain);
+    openDraft(
+      {
+        ...fresh,
+        id: freeId(fresh.id, variantIds(library)),
+        label: `${type.label} nuevo`,
+        weight: type.weight / (type.variants.length + 1),
+      },
+      null,
+      type.terrain,
+    );
+  };
+
+  const deleteVariant = async (type: TileType, def: TileDef) => {
+    if (type.variants.length === 1) {
+      setStatus({
+        tone: "error",
+        text: `«${def.label}» es la única variante de ${type.label}: elimina el tipo entero o dibuja otra antes`,
+      });
+      return;
+    }
+    if (!window.confirm(`¿Eliminar la variante «${def.label}»?`)) return;
+    if (draft?.replaces === def.id) setDraft(null);
+    await commit(removeVariant(library, type.id, def.id), `Variante «${def.label}» eliminada`);
+  };
+
+  const saveDraft = async () => {
+    if (!draft || !editing) return;
+    const next = putVariant(
+      library,
+      draft.sketch.typeId,
+      toStoredVariant(editing),
+      draft.replaces ?? undefined,
+    );
+    if (await commit(next, `Variante «${editing.label}» guardada`)) {
+      // Queda abierta, pero ya sustituyendo a la que se acaba de escribir: si se
+      // sigue tocando y se guarda otra vez, no aparece una variante duplicada.
+      setDraft({ sketch: draft.sketch, replaces: editing.id });
+    }
+  };
 
   // --- Interacción del editor --------------------------------------------
 
   // Cada modo es una transición distinta sobre el mismo boceto; las cascadas
   // (quitar o añadir un hexágono arrastra anclas) viven en tile-sketch.ts.
-  const clickHex = (coord: HexCoord) => {
-    setSketch((s) => (mode === "terreno" ? paintTerrain(s, coord, brush) : toggleHex(s, coord)));
-  };
+  const patch = (fn: (s: Sketch) => Sketch) =>
+    setDraft((current) => (current ? { ...current, sketch: fn(current.sketch) } : current));
 
-  const clickEdge = (hex: HexCoord, dir: number) => {
-    setSketch((s) => toggleAnchor(s, hex, dir));
-  };
+  const clickHex = (coord: HexCoord) =>
+    patch((s) => (mode === "terreno" ? paintTerrain(s, coord, brush) : toggleHex(s, coord, brush)));
 
-  // Editar es trabajar sobre la loseta de la biblioteca (mismo id: el literal
-  // que salga la sustituye); copiar es sacar una variante nueva a partir de ella.
-  const loadIntoEditor = (def: TileDef, asCopy: boolean) => {
-    setSketch(asCopy ? copyOfDef(def) : fromDef(def));
-    setMode("forma");
-    setCopied(false);
-    editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const copySnippet = () => {
-    void navigator.clipboard?.writeText(snippet).then(() => setCopied(true));
-  };
+  const clickEdge = (hex: HexCoord, dir: number) => patch((s) => toggleAnchor(s, hex, dir));
 
   // Celdas del editor: la loseta con su terreno, y el resto de la rejilla como
   // huecos que se pueden añadir.
-  const editorCells: CanvasCell[] = grid.map((coord) =>
-    hasHex(sketch, coord)
-      ? { coord, kind: "hex", terrain: terrainAt(sketch, coord) }
-      : { coord, kind: "candidate" },
-  );
+  const editorCells: CanvasCell[] = sketch
+    ? grid.map((coord) =>
+        hasHex(sketch, coord)
+          ? { coord, kind: "hex", terrain: terrainAt(sketch, coord) }
+          : { coord, kind: "candidate" },
+      )
+    : [];
 
   // Una rejilla de radio 5 o 6 no cabe en media pantalla y volvería los
   // hexágonos inclicables: a partir de Grande el lienzo va a todo el ancho.
-  const wide = sketch.sizeLevel >= 4;
+  const wide = (sketch?.sizeLevel ?? 1) >= 4;
+  const size = sketch ? sizeOfSketch(sketch) : TILE_SIZES[0];
 
   return (
     <div>
@@ -169,8 +349,20 @@ export default function TileLab() {
           Tablero y mapa §2
         </Link>
         ). Fija tres cosas: su <b>forma</b>, el <b>terreno</b> de cada hexágono y sus{" "}
-        <b>anclas</b>. Un hexágono puede quedarse <b>al sorteo</b>: entonces su terreno lo decide el
-        tablero al colocar la loseta, con los pesos de la tabla A, y cambia en cada partida.
+        <b>anclas</b>. El terreno es <b>obligatorio en todos</b>: una loseta llega pintada entera,
+        no hay hexágono que decida el tablero. Así lo que se ve aquí es exactamente lo que sale en
+        la partida, y el reparto de terreno del mapa lo decide el maquetado —la tabla A pasa a ser
+        el objetivo al que apuntar, no un sorteo—. La variedad entre partidas la dan las{" "}
+        <b>variantes</b> de cada tipo y el giro.
+      </p>
+      <p className="mb-4 max-w-3xl text-sm text-[var(--wiki-muted)]">
+        La biblioteca tiene dos niveles. Un <b>tipo</b> es un sitio del mundo —un peñasco, una
+        ciénaga, una cueva—, lo define <b>un terreno</b> y es lo que se sortea al construir el
+        tablero; sus <b>variantes</b> son las maneras de dibujar ese mismo sitio. El peso es del
+        tipo y se reparte entre sus variantes: añadir un peñasco más no hace que salgan más
+        peñascos, hace que se repitan menos. Que un tipo tenga terreno propio no impide las
+        excepciones que el sitio pida —el camino que cruza el paso de montaña—; solo avisa de las
+        que parecen un descuido.
       </p>
       <p className="mb-4 max-w-3xl text-sm text-[var(--wiki-muted)]">
         Las <b>anclas</b> son las flechitas que apuntan a un lado del hexágono: el único punto por
@@ -183,32 +375,24 @@ export default function TileLab() {
         .
       </p>
       <p className="mb-6 max-w-3xl text-sm text-[var(--wiki-muted)]">
-        Hay cinco <b>tamaños</b>, y cada uno dobla al anterior:{" "}
-        {TILE_SIZES.map((s, i) => (
-          <span key={s.level}>
-            {i > 0 && " · "}
-            {s.label} <b>{s.capacity}</b>
-          </span>
-        ))}{" "}
-        hexágonos.
+        Lo que se edita aquí <b>se guarda en disco</b> (
+        <code className="rounded bg-[var(--wiki-code-bg)] px-1.5 py-0.5 text-[0.8em]">
+          data/tile-library.json
+        </code>
+        ), y de ahí lo lee el juego. Cada cambio se valida con la misma función que valida la
+        biblioteca al arrancar: si no pasa, no se escribe nada.
       </p>
 
       {/* --- La bolsa: qué hay en la biblioteca hoy ------------------------ */}
-      <div className="mb-6 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm text-[var(--wiki-text)]">
+      <div className="mb-3 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm text-[var(--wiki-text)]">
         <span>
-          <b>Biblioteca:</b> {TILES.length} losetas
+          <b>Biblioteca:</b> {types.length} tipos · {tiles.length} variantes
         </span>
         <span>
           <b>Tamaño medio:</b> {stats.meanHexes.toFixed(1)} hexágonos
         </span>
         <span>
-          <b>Con sendero:</b> {stats.withRoad} de {TILES.length} ({percent(stats.roadTileShare)})
-        </span>
-        <span title="Media ponderada por peso de la bolsa. En el tablero sale por debajo, porque una loseta con sendero solo entra donde encuentra un ancla libre que le sirva.">
-          <b>Camino en la bolsa:</b> {percent(stats.expectedRoadShare)}
-        </span>
-        <span title="Hexágonos cuyo terreno no fija la loseta: los sortea el tablero con la tabla A.">
-          <b>Al sorteo:</b> {percent(stats.freeShare)}
+          <b>Con sendero:</b> {stats.withRoad} de {tiles.length} ({percent(stats.roadTileShare)})
         </span>
         <span>
           <b>Anclas por loseta:</b> {stats.meanAnchors.toFixed(1)}
@@ -217,6 +401,30 @@ export default function TileLab() {
           <b>Peso de la bolsa:</b> {bag}
         </span>
       </div>
+
+      {/* El terreno que produce la bolsa contra el objetivo de la tabla A. Desde
+          que no se sortea nada, ESTE es el reparto de terreno del tablero: si
+          aquí sobra bosque, en la partida sobra bosque. */}
+      <div
+        className="mb-6 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--wiki-muted)]"
+        title="Hexágonos de cada terreno que produce la bolsa, ponderados por peso, y entre paréntesis la cuota de la tabla A (§2c). Ya no se sortea terreno: lo que sale en la partida sale de aquí."
+      >
+        <span>Terreno de la bolsa:</span>
+        {TERRAIN_IDS.map((id) => (
+          <span key={id} className="flex items-center gap-1.5">
+            <span className="tile-swatch" data-terrain={id} />
+            {TERRAINS[id].label} <b>{percent(stats.hexShare[id] ?? 0)}</b>
+            {targetShare(id) > 0 ? ` (objetivo ${percent(targetShare(id))})` : " (sin cuota)"}
+          </span>
+        ))}
+      </div>
+
+      {parsed.error !== null && (
+        <p className="mb-6 rounded-md border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm text-[var(--wiki-text)]">
+          <i className="pi pi-exclamation-triangle mr-2 text-[var(--wiki-muted)]" />
+          La biblioteca no se puede leer: {parsed.error}
+        </p>
+      )}
 
       {/* --- Catálogo ----------------------------------------------------- */}
       <div className="mb-3 flex flex-wrap items-end gap-x-6 gap-y-3">
@@ -243,28 +451,85 @@ export default function TileLab() {
             Coordenadas
           </button>
         </div>
+
+        <div className="flex flex-col gap-1">
+          <span className={label}>Dibujar</span>
+          <div className="flex items-center gap-2">
+            <button
+              className={btn(false)}
+              onClick={() => {
+                const first = types[0];
+                const terrain = first?.terrain ?? "llanura";
+                openDraft(blankDraft(first?.id ?? "", terrain).sketch, null, terrain);
+              }}
+              title="Papel en blanco: dibujar una loseta desde cero y elegir su tipo al guardarla"
+            >
+              Boceto en blanco
+            </button>
+            <button className={btn(false)} onClick={newType} title="Crear un tipo de loseta nuevo">
+              Nuevo tipo
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--wiki-muted)]">
-        <span>Tamaños en la biblioteca:</span>
+      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--wiki-muted)]">
+        <span>Variantes por tamaño:</span>
         {TILE_SIZES.map((s) => (
           <span key={s.level}>
             {s.label} · {stats.bySize[s.level] ?? 0}
           </span>
         ))}
+        {status !== null && (
+          <span
+            className={`ml-auto ${
+              status.tone === "error" ? "text-[var(--wiki-text)]" : "text-[var(--wiki-accent)]"
+            }`}
+          >
+            <i
+              className={`mr-1.5 pi ${
+                status.tone === "error"
+                  ? "pi-exclamation-triangle"
+                  : status.tone === "busy"
+                    ? "pi-spinner"
+                    : "pi-check"
+              }`}
+            />
+            {status.text}
+          </span>
+        )}
       </div>
 
-      <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {TILES.map((def) => (
-          <TileCard
-            key={def.id}
-            def={def}
+      <div className="mb-10 grid gap-6">
+        {types.map((type) => (
+          <TypeSection
+            key={type.id}
+            type={type}
+            bag={bag}
             rotation={rotation}
             showCoords={showCoords}
-            bag={bag}
             span={span}
-            onEdit={() => loadIntoEditor(def, false)}
-            onCopy={() => loadIntoEditor(def, true)}
+            form={typeForm?.original === type.id ? typeForm : null}
+            btn={btn}
+            labelClass={label}
+            onForm={setTypeForm}
+            onEditType={() =>
+              setTypeForm({
+                original: type.id,
+                id: type.id,
+                label: type.label,
+                terrain: type.terrain,
+                weight: type.weight,
+                note: type.note,
+              })
+            }
+            onSaveType={saveType}
+            onCancelType={() => setTypeForm(null)}
+            onDeleteType={() => deleteType(type)}
+            onAddVariant={() => addVariant(type)}
+            onEditVariant={(def) => editVariant(type, def)}
+            onCopyVariant={(def) => copyVariant(type, def)}
+            onDeleteVariant={(def) => deleteVariant(type, def)}
           />
         ))}
       </div>
@@ -273,148 +538,333 @@ export default function TileLab() {
       <h2 ref={editorRef} className="mb-1 scroll-mt-4 text-lg font-semibold text-[var(--wiki-text)]">
         Boceto
       </h2>
-      <p className="mb-4 max-w-3xl text-sm text-[var(--wiki-muted)]">
-        Papel cuadriculado para dibujar una loseta nueva o una variante de otra —los botones{" "}
-        <b>Editar</b> y <b>Copiar</b> de cada tarjeta la traen aquí—. Se valida con la misma función
-        que el script de verificación, y lo que sale es la loseta dibujada, en el mismo formato que
-        el resto de la biblioteca, para pegarla en{" "}
-        <code className="rounded bg-[var(--wiki-code-bg)] px-1.5 py-0.5 text-[0.8em]">
-          lib/rules/tiles.ts
-        </code>
-        : la biblioteca entra por commit revisado, no por formulario.
-      </p>
 
-      {/* Tamaño: cambia el tope de hexágonos y el papel donde se dibuja */}
-      <div className="mb-4 flex flex-wrap items-end gap-x-6 gap-y-3">
-        <div className="flex flex-col gap-1">
-          <span className={label}>Tamaño del boceto</span>
-          <div className="flex flex-wrap items-center gap-2">
-            {TILE_SIZES.map((s) => (
-              <button
-                key={s.level}
-                className={btn(sketch.sizeLevel === s.level)}
-                onClick={() => setSketch((current) => setSizeLevel(current, s.level))}
-                title={`Hasta ${s.capacity} hexágonos`}
-              >
-                {s.label} · {s.capacity}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <span className={label}>Atajos</span>
-          <div className="flex items-center gap-2">
-            <button
-              className={btn(false)}
-              onClick={() => setSketch((s) => fillToCapacity(s))}
-              title="Crecer desde el (0,0) hasta el tope del tamaño"
-            >
-              Rellenar
-            </button>
-            <button
-              className={btn(false)}
-              onClick={() => setSketch((s) => paintAllFree(s, brush))}
-              title="Pintar con el terreno elegido todos los hexágonos que están al sorteo"
-            >
-              Pintar el resto
-            </button>
-            <button
-              className={btn(false)}
-              onClick={() => setSketch((s) => initialSketch(s.sizeLevel))}
-            >
-              Empezar de cero
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className={wide ? "grid gap-4" : "grid gap-4 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]"}>
-        {/* Lienzo */}
-        <div className="rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
-            {MODES.map((m) => (
-              <button key={m.id} className={btn(mode === m.id)} onClick={() => setMode(m.id)}>
-                {m.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Paleta de terreno: se enseña siempre, porque también es la leyenda
-              de los colores del lienzo, pero solo pinta en el modo Terreno —y
-              por eso se apaga cuando no toca. */}
-          <div
-            className={`mb-3 flex flex-wrap items-center gap-2 ${
-              mode === "terreno" ? "" : "opacity-60"
-            }`}
-          >
-            {PALETTE.map((p) => (
-              <button
-                key={p.id ?? "libre"}
-                className={`flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors ${
-                  brush === p.id
-                    ? "border-[var(--wiki-accent)] bg-[var(--wiki-accent-soft)] font-medium text-[var(--wiki-accent)]"
-                    : "border-[var(--wiki-border)] text-[var(--wiki-text)] hover:bg-[var(--wiki-surface-2)]"
-                }`}
-                onClick={() => {
-                  setBrush(p.id);
-                  setMode("terreno");
-                }}
-              >
-                <span className="tile-swatch" data-terrain={p.id ?? "libre"} />
-                {p.label}
-              </button>
-            ))}
-          </div>
-
-          <TileCanvas
-            cells={editorCells}
-            edges={draftInstance.edges}
-            frame={grid}
-            hexSize={30}
-            showCoords={showCoords}
-            onCellClick={mode === "anclas" ? undefined : clickHex}
-            onEdgeClick={mode === "anclas" ? clickEdge : undefined}
-            ariaLabel="Boceto de loseta"
-          />
-
-          <p className="mt-2 text-xs text-[var(--wiki-muted)]">
-            {MODES.find((m) => m.id === mode)!.help}
+      {sketch === null || editing === null || editingInstance === null ? (
+        <p className="max-w-3xl text-sm text-[var(--wiki-muted)]">
+          Papel cuadriculado para dibujar, ahora cerrado. Se abre con <b>Boceto en blanco</b>, ahí
+          arriba, o desde cualquier tarjeta del catálogo: <b>Editar</b> trae una variante tal cual
+          (al guardar la sustituye), <b>Copiar</b> saca otra variante del mismo tipo a partir de
+          ella, y <b>Añadir variante</b> empieza de cero dentro de un tipo.
+        </p>
+      ) : (
+        <>
+          <p className="mb-4 max-w-3xl text-sm text-[var(--wiki-muted)]">
+            {draft?.replaces === null ? (
+              <>
+                Loseta <b>nueva</b>: dibújala, elige en <b>Tipo</b> qué sitio es y al guardar entra
+                en la biblioteca como una variante más de ese tipo.
+              </>
+            ) : (
+              <>
+                Editando <b>{draft?.replaces}</b>: al guardar la sustituye.
+              </>
+            )}{" "}
+            Se valida con la misma función que el script de verificación, y el peso no se toca aquí
+            —lo pone el tipo y se reparte entre sus variantes—.
           </p>
-        </div>
 
-        {/* Datos, validación y salida */}
-        <div className="grid content-start gap-4">
+          {/* Tamaño: cambia el tope de hexágonos y el papel donde se dibuja */}
+          <div className="mb-4 flex flex-wrap items-end gap-x-6 gap-y-3">
+            <div className="flex flex-col gap-1">
+              <span className={label}>Tamaño del boceto</span>
+              <div className="flex flex-wrap items-center gap-2">
+                {TILE_SIZES.map((s) => (
+                  <button
+                    key={s.level}
+                    className={btn(sketch.sizeLevel === s.level)}
+                    onClick={() => patch((current) => setSizeLevel(current, s.level))}
+                    title={`Hasta ${s.capacity} hexágonos`}
+                  >
+                    {s.label} · {s.capacity}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className={label}>Atajos</span>
+              <div className="flex items-center gap-2">
+                <button
+                  className={btn(false)}
+                  onClick={() => patch((s) => fillToCapacity(s, brush))}
+                  title="Crecer desde el (0,0) hasta el tope del tamaño, con el terreno del pincel"
+                >
+                  Rellenar
+                </button>
+                <button
+                  className={btn(false)}
+                  onClick={() => patch((s) => paintAll(s, brush))}
+                  title="Pintar la loseta entera con el terreno elegido"
+                >
+                  Pintar todo
+                </button>
+                <button
+                  className={btn(false)}
+                  onClick={() =>
+                    patch((s) => ({
+                      ...initialSketch(s.typeId, brush, s.sizeLevel),
+                      id: s.id,
+                      label: s.label,
+                    }))
+                  }
+                >
+                  Empezar de cero
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className={
+              wide ? "grid gap-4" : "grid gap-4 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]"
+            }
+          >
+            {/* Lienzo */}
+            <div className="rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                {MODES.map((m) => (
+                  <button key={m.id} className={btn(mode === m.id)} onClick={() => setMode(m.id)}>
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Paleta de terreno: se enseña siempre, porque también es la leyenda
+                  de los colores del lienzo, pero solo pinta en el modo Terreno —y
+                  por eso se apaga cuando no toca. */}
+              <div
+                className={`mb-3 flex flex-wrap items-center gap-2 ${
+                  mode === "terreno" ? "" : "opacity-60"
+                }`}
+              >
+                {PALETTE.map((p) => (
+                  <button
+                    key={p.id}
+                    className={buttonClass({ active: brush === p.id, size: "sm" })}
+                    onClick={() => {
+                      setBrush(p.id);
+                      setMode("terreno");
+                    }}
+                  >
+                    <span className="tile-swatch" data-terrain={p.id} />
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+
+              <TileCanvas
+                cells={editorCells}
+                edges={editingInstance.edges}
+                frame={grid}
+                hexSize={30}
+                showCoords={showCoords}
+                onCellClick={mode === "anclas" ? undefined : clickHex}
+                onEdgeClick={mode === "anclas" ? clickEdge : undefined}
+                ariaLabel="Boceto de loseta"
+              />
+
+              <p className="mt-2 text-xs text-[var(--wiki-muted)]">
+                {MODES.find((m) => m.id === mode)!.help}
+              </p>
+            </div>
+
+            {/* Datos, validación y guardado */}
+            <div className="grid content-start gap-4">
+              <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
+                <div className="flex flex-col gap-1">
+                  <span className={label}>Id</span>
+                  <InputText
+                    value={sketch.id}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      patch((s) => ({ ...s, id: e.target.value }))
+                    }
+                    className="w-44"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className={label}>Nombre</span>
+                  <InputText
+                    value={sketch.label}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      patch((s) => ({ ...s, label: e.target.value }))
+                    }
+                    className="w-52"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className={label}>Tipo</span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {types.map((t) => (
+                      <button
+                        key={t.id}
+                        className={btn(sketch.typeId === t.id)}
+                        onClick={() => patch((s) => ({ ...s, typeId: t.id }))}
+                        title={`Guardar esta variante en ${t.label}`}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <span className={label}>Nota de maquetado</span>
+                <Textarea
+                  value={sketch.note}
+                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+                    patch((s) => ({ ...s, note: e.target.value }))
+                  }
+                  rows={2}
+                  className="w-full"
+                  placeholder="Por qué está dibujada así: es lo único que no se deduce mirándola."
+                />
+              </div>
+
+              <div className="text-sm text-[var(--wiki-muted)]">
+                {size.label}: {sketch.cells.length} de {size.capacity} hexágonos ·{" "}
+                {roadsOf(editing).length} de sendero · {sketch.anchors.length} anclas ·{" "}
+                {problems.length === 0 ? `${distinctRotations(editing).length} giros distintos` : "—"}
+              </div>
+
+              {/* Validación: la misma que impide que una loseta rota llegue al juego */}
+              {problems.length === 0 ? (
+                <p className="rounded-md border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm text-[var(--wiki-text)]">
+                  <i className="pi pi-check mr-2 text-[var(--wiki-accent)]" />
+                  Loseta válida: se puede guardar.
+                </p>
+              ) : (
+                <ul className="grid gap-1 rounded-md border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm text-[var(--wiki-text)]">
+                  {problems.map((p) => (
+                    <li key={p}>
+                      <i className="pi pi-exclamation-triangle mr-2 text-[var(--wiki-muted)]" />
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  className={buttonClass({ active: problems.length === 0 })}
+                  onClick={saveDraft}
+                  disabled={problems.length > 0}
+                >
+                  Guardar en la biblioteca
+                </button>
+                <button className={btn(false)} onClick={() => setDraft(null)}>
+                  Cerrar
+                </button>
+              </div>
+
+              <div>
+                <span className={label}>Así se guarda</span>
+                <pre className="mt-2 max-h-72 overflow-auto rounded-md border border-[var(--wiki-border)] bg-[var(--wiki-code-bg)] p-3 text-xs text-[var(--wiki-text)]">
+                  {formatJson(toStoredVariant(editing))}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// --- Un tipo, con sus variantes -------------------------------------------
+
+function TypeSection({
+  type,
+  bag,
+  rotation,
+  showCoords,
+  span,
+  form,
+  btn,
+  labelClass,
+  onForm,
+  onEditType,
+  onSaveType,
+  onCancelType,
+  onDeleteType,
+  onAddVariant,
+  onEditVariant,
+  onCopyVariant,
+  onDeleteVariant,
+}: {
+  type: TileType;
+  bag: number;
+  rotation: number;
+  showCoords: boolean;
+  span: number;
+  form: TypeForm | null;
+  btn: (active: boolean) => string;
+  labelClass: string;
+  onForm: (form: TypeForm) => void;
+  onEditType: () => void;
+  onSaveType: () => void;
+  onCancelType: () => void;
+  onDeleteType: () => void;
+  onAddVariant: () => void;
+  onEditVariant: (def: TileDef) => void;
+  onCopyVariant: (def: TileDef) => void;
+  onDeleteVariant: (def: TileDef) => void;
+}) {
+  const notes = typeNotes(type);
+  const small = "rounded-md border border-[var(--wiki-border)] px-2.5 py-1 text-xs text-[var(--wiki-text)] transition-colors hover:bg-[var(--wiki-surface-2)]";
+
+  return (
+    <section className="rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3">
+      {form === null ? (
+        <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="flex items-center gap-1.5 font-semibold text-[var(--wiki-text)]">
+            <span className="tile-swatch" data-terrain={type.terrain} />
+            {type.label}
+          </span>
+          <code className="text-[0.7rem] text-[var(--wiki-muted)]">{type.id}</code>
+          <span className="text-xs text-[var(--wiki-muted)]">
+            {TERRAINS[type.terrain].label} · peso {type.weight} · {percent(type.weight / bag)} de la
+            bolsa · {type.variants.length} variante{type.variants.length === 1 ? "" : "s"} ·{" "}
+            {typeHexes(type)} hexágonos dibujados
+          </span>
+          <span className="ml-auto flex items-center gap-2">
+            <button className={small} onClick={onEditType} title="Cambiar nombre, terreno o peso">
+              Editar tipo
+            </button>
+            <button className={small} onClick={onAddVariant} title="Dibujar otra variante de este tipo">
+              Añadir variante
+            </button>
+            <button className={small} onClick={onDeleteType} title="Quitar el tipo y todas sus variantes">
+              Eliminar
+            </button>
+          </span>
+        </div>
+      ) : (
+        <div className="mb-3 grid gap-3 rounded-md border border-[var(--wiki-accent)] p-3">
           <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
             <div className="flex flex-col gap-1">
-              <span className={label}>Id</span>
+              <span className={labelClass}>Id</span>
               <InputText
-                value={sketch.id}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setSketch((s) => ({ ...s, id: e.target.value }))
-                }
+                value={form.id}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => onForm({ ...form, id: e.target.value })}
                 className="w-44"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <span className={label}>Etiqueta</span>
+              <span className={labelClass}>Nombre</span>
               <InputText
-                value={sketch.label}
+                value={form.label}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setSketch((s) => ({ ...s, label: e.target.value }))
+                  onForm({ ...form, label: e.target.value })
                 }
                 className="w-52"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <span className={label}>Peso</span>
+              <span className={labelClass}>Peso en la bolsa</span>
               <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((w) => (
-                  <button
-                    key={w}
-                    className={btn(sketch.weight === w)}
-                    onClick={() => setSketch((s) => ({ ...s, weight: w }))}
-                  >
+                {WEIGHTS.map((w) => (
+                  <button key={w} className={btn(form.weight === w)} onClick={() => onForm({ ...form, weight: w })}>
                     {w}
                   </button>
                 ))}
@@ -422,64 +872,94 @@ export default function TileLab() {
             </div>
           </div>
 
-          <div className="text-sm text-[var(--wiki-muted)]">
-            {size.label}: {sketch.cells.length} de {size.capacity} hexágonos · {roadHexes} de
-            sendero · {freeCount(draft)} al sorteo · {sketch.anchors.length} anclas ·{" "}
-            {problems.length === 0 ? `${distinctRotations(draft).length} giros distintos` : "—"}
+          <div className="flex flex-col gap-1">
+            <span className={labelClass}>Terreno que define el tipo</span>
+            <div className="flex flex-wrap items-center gap-2">
+              {TERRAIN_IDS.map((id) => (
+                <button
+                  key={id}
+                  className={buttonClass({ active: form.terrain === id, size: "sm" })}
+                  onClick={() => onForm({ ...form, terrain: id })}
+                >
+                  <span className="tile-swatch" data-terrain={id} />
+                  {TERRAINS[id].label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Validación: la misma que impide que una loseta rota llegue al juego */}
-          {problems.length === 0 ? (
-            <p className="rounded-md border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm text-[var(--wiki-text)]">
-              <i className="pi pi-check mr-2 text-[var(--wiki-accent)]" />
-              Loseta válida: se puede pegar en la biblioteca.
-            </p>
-          ) : (
-            <ul className="grid gap-1 rounded-md border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm text-[var(--wiki-text)]">
-              {problems.map((p) => (
-                <li key={p}>
-                  <i className="pi pi-exclamation-triangle mr-2 text-[var(--wiki-muted)]" />
-                  {p.replace(`${draft.id}: `, "")}
-                </li>
-              ))}
-            </ul>
-          )}
+          <div className="flex flex-col gap-1">
+            <span className={labelClass}>Qué sitio es</span>
+            <Textarea
+              value={form.note}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onForm({ ...form, note: e.target.value })}
+              rows={2}
+              className="w-full"
+            />
+          </div>
 
-          <div>
-            <div className="mb-2 flex items-center gap-2">
-              <span className={label}>Para pegar en la biblioteca</span>
-              <button className={btn(false)} onClick={copySnippet}>
-                {copied ? "Copiado" : "Copiar"}
-              </button>
-            </div>
-            <pre className="max-h-96 overflow-auto rounded-md border border-[var(--wiki-border)] bg-[var(--wiki-code-bg)] p-3 text-xs text-[var(--wiki-text)]">
-              {snippet}
-            </pre>
+          <div className="flex items-center gap-2">
+            <button className={btn(true)} onClick={onSaveType}>
+              Guardar tipo
+            </button>
+            <button className={btn(false)} onClick={onCancelType}>
+              Cancelar
+            </button>
           </div>
         </div>
+      )}
+
+      {type.note !== "" && form === null && (
+        <p className="mb-3 max-w-3xl text-xs text-[var(--wiki-muted)]">{type.note}</p>
+      )}
+
+      {notes.length > 0 && (
+        <ul className="mb-3 grid gap-1 text-xs text-[var(--wiki-muted)]">
+          {notes.map((note) => (
+            <li key={note}>
+              <i className="pi pi-info-circle mr-1.5" />
+              {note}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {type.variants.map((def) => (
+          <VariantCard
+            key={def.id}
+            def={def}
+            rotation={rotation}
+            showCoords={showCoords}
+            span={span}
+            onEdit={() => onEditVariant(def)}
+            onCopy={() => onCopyVariant(def)}
+            onDelete={() => onDeleteVariant(def)}
+          />
+        ))}
       </div>
-    </div>
+    </section>
   );
 }
 
-// --- Tarjeta del catálogo --------------------------------------------------
+// --- Tarjeta de variante ---------------------------------------------------
 
-function TileCard({
+function VariantCard({
   def,
   rotation,
   showCoords,
-  bag,
   span,
   onEdit,
   onCopy,
+  onDelete,
 }: {
   def: TileDef;
   rotation: number;
   showCoords: boolean;
-  bag: number;
   span: number;
   onEdit: () => void;
   onCopy: () => void;
+  onDelete: () => void;
 }) {
   const instance = useMemo(() => instantiate(def, rotation, ORIGIN), [def, rotation]);
 
@@ -490,17 +970,21 @@ function TileCard({
   }));
 
   const size = sizeOf(def);
-  const roads = roadsOf(def).length;
+  const small =
+    "rounded-md border border-[var(--wiki-border)] px-2.5 py-1 text-xs text-[var(--wiki-text)] transition-colors hover:bg-[var(--wiki-surface-2)]";
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3">
-      {/* Etiqueta y peso en una línea, el id debajo: si van los tres juntos, los
+    <div className="flex flex-col gap-2 rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-bg)] p-3">
+      {/* Nombre y peso en una línea, el id debajo: si van los tres juntos, los
           nombres largos parten la línea y las tarjetas dejan de estar alineadas. */}
       <div>
         <div className="flex items-baseline gap-2">
           <span className="font-semibold text-[var(--wiki-text)]">{def.label}</span>
-          <span className="ml-auto whitespace-nowrap text-xs text-[var(--wiki-muted)]">
-            peso {def.weight} · {percent(def.weight / bag)}
+          <span
+            className="ml-auto whitespace-nowrap text-xs text-[var(--wiki-muted)]"
+            title="El peso del tipo repartido entre sus variantes"
+          >
+            peso {trim(def.weight)}
           </span>
         </div>
         <code className="text-[0.7rem] text-[var(--wiki-muted)]">{def.id}</code>
@@ -522,9 +1006,7 @@ function TileCard({
         <li>
           {size.label} · {def.cells.length} de {size.capacity} hexágonos
         </li>
-        <li>
-          {roads} de sendero · {freeCount(def)} al sorteo
-        </li>
+        <li>{terrainLine(def)}</li>
         <li>
           Anclas:{" "}
           {instance.anchors.length === 0
@@ -534,20 +1016,21 @@ function TileCard({
         <li>{distinctRotations(def).length} giros distintos de 6</li>
       </ul>
 
+      {def.note !== "" && <p className="text-xs text-[var(--wiki-muted)]">{def.note}</p>}
+
       <div className="mt-auto flex items-center gap-2">
-        <button
-          className="rounded-md border border-[var(--wiki-border)] px-2.5 py-1 text-xs text-[var(--wiki-text)] transition-colors hover:bg-[var(--wiki-surface-2)]"
-          onClick={onEdit}
-          title="Llevar esta loseta al boceto con su mismo id: lo que salga la sustituye en la biblioteca"
-        >
+        <button className={small} onClick={onEdit} title="Traerla al boceto: al guardar la sustituye">
           Editar
         </button>
         <button
-          className="rounded-md border border-[var(--wiki-border)] px-2.5 py-1 text-xs text-[var(--wiki-text)] transition-colors hover:bg-[var(--wiki-surface-2)]"
+          className={small}
           onClick={onCopy}
-          title="Empezar una loseta nueva a partir de esta: lo que salga se añade a la biblioteca"
+          title="Empezar otra variante del mismo tipo a partir de esta"
         >
           Copiar
+        </button>
+        <button className={small} onClick={onDelete} title="Quitarla de la biblioteca">
+          Eliminar
         </button>
       </div>
     </div>
@@ -561,54 +1044,64 @@ type BagStats = {
   withRoad: number;
   /** Parte de la bolsa, POR PESO, que trae sendero. */
   roadTileShare: number;
-  /** Fracción de hexágonos de Camino de la bolsa, ponderada por peso. */
-  expectedRoadShare: number;
-  /** Fracción de hexágonos que la bolsa deja al sorteo de la tabla A. */
-  freeShare: number;
   meanAnchors: number;
-  /** Cuántas losetas hay de cada nivel de tamaño. */
+  /** Cuántas variantes hay de cada nivel de tamaño. */
   bySize: Record<number, number>;
+  /** Fracción de hexágonos de cada terreno que produce la bolsa, por peso. */
+  hexShare: Partial<Record<TerrainId, number>>;
 };
 
 /**
- * Lo que dice la bolsa antes de generar nada. `expectedRoadShare` es el número
- * que importa: es el % de Camino que trae la biblioteca, y el que hay que mover
- * para acercarse al 20 % de la tabla A (board-map.md §2c). En el tablero real
- * sale por debajo, porque el encaje no reparte las losetas de forma uniforme:
- * una con sendero necesita un ancla libre que le sirva donde caer.
+ * Lo que dice la bolsa antes de generar nada. `hexShare` es el número que
+ * importa, y desde que todo hexágono lleva terreno lo es del todo: ya no se
+ * sortea nada, así que el terreno del tablero SALE DE AQUÍ. Es lo que hay que
+ * mover para acercarse a la tabla A (board-map.md §2c).
+ *
+ * En el tablero real cambia un poco, porque el encaje no reparte las losetas de
+ * forma uniforme: una con sendero solo entra donde encuentra un ancla de camino
+ * libre que le sirva.
  */
-function bagStats(): BagStats {
+function bagStats(types: readonly TileType[]): BagStats {
   let weightedHexes = 0;
-  let weightedRoads = 0;
   let roadWeight = 0;
   let withRoad = 0;
   let hexes = 0;
-  let free = 0;
   let anchors = 0;
+  let count = 0;
   const bySize: Record<number, number> = {};
+  const weighted: Partial<Record<TerrainId, number>> = {};
 
-  for (const def of TILES) {
-    const roads = roadsOf(def).length;
-    weightedHexes += def.weight * def.cells.length;
-    weightedRoads += def.weight * roads;
-    hexes += def.cells.length;
-    free += freeCount(def);
-    anchors += def.anchors.length;
-    bySize[sizeOf(def).level] = (bySize[sizeOf(def).level] ?? 0) + 1;
-    if (roads > 0) {
-      withRoad++;
-      roadWeight += def.weight;
+  for (const type of types) {
+    for (const def of type.variants) {
+      const roads = roadsOf(def).length;
+      count++;
+      weightedHexes += def.weight * def.cells.length;
+      hexes += def.cells.length;
+      anchors += def.anchors.length;
+      bySize[sizeOf(def).level] = (bySize[sizeOf(def).level] ?? 0) + 1;
+      for (const [terrain, n] of terrainCounts(def)) {
+        weighted[terrain] = (weighted[terrain] ?? 0) + def.weight * n;
+      }
+      if (roads > 0) {
+        withRoad++;
+        roadWeight += def.weight;
+      }
     }
   }
 
+  const bag = types.reduce((sum, type) => sum + type.weight, 0) || 1;
+  const hexShare: Partial<Record<TerrainId, number>> = {};
+  for (const [terrain, n] of Object.entries(weighted) as Array<[TerrainId, number]>) {
+    hexShare[terrain] = n / (weightedHexes || 1);
+  }
+
   return {
-    meanHexes: hexes / TILES.length,
+    meanHexes: hexes / (count || 1),
     withRoad,
-    roadTileShare: roadWeight / bagWeight(),
-    expectedRoadShare: weightedRoads / weightedHexes,
-    freeShare: free / hexes,
-    meanAnchors: anchors / TILES.length,
+    roadTileShare: roadWeight / bag,
+    meanAnchors: anchors / (count || 1),
     bySize,
+    hexShare,
   };
 }
 
@@ -637,6 +1130,19 @@ function catalogSpan(defs: readonly TileDef[]): number {
   return span + 0.4;
 }
 
+/** De qué está hecha una loseta, del terreno que más tiene al que menos. */
+function terrainLine(def: TileDef): string {
+  return [...terrainCounts(def)]
+    .sort((a, b) => b[1] - a[1])
+    .map(([terrain, n]) => `${n} ${TERRAINS[terrain].label}`)
+    .join(" · ");
+}
+
 function percent(fraction: number): string {
   return `${Math.round(fraction * 100)} %`;
+}
+
+/** Un peso repartido: con decimales solo si los tiene (1,5 sí; 2,00 no). */
+function trim(weight: number): string {
+  return weight.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
 }

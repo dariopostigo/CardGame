@@ -1,0 +1,395 @@
+{
+  "types": [
+    {
+      "id": "paramo",
+      "label": "Páramo",
+      "terrain": "llanura",
+      "weight": 3,
+      "note": "Campo abierto. Es la pieza que da aire al tablero: sin ella todo son árboles y roca.",
+      "variants": [
+        {
+          "id": "paramo",
+          "label": "Páramo",
+          "note": "Dos sotos y una hondonada encharcada en medio del llano: doce hexágonos de Llanura seguidos, que es lo que ninguna otra pieza da.",
+          "art": ["LLLLB", "LLLBB", "LLPLB", " LPPL", "  LL"],
+          "anchors": [
+            [1, 0, "NO"],
+            [4, 1, "E"],
+            [0, 2, "O"],
+            [2, 4, "SO"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trocha",
+      "label": "Trocha",
+      "terrain": "camino",
+      "weight": 7,
+      "note": "El eslabón de la red: tres hexágonos de camino de un borde al otro. Es el tipo más común de la bolsa porque es lo que hace que el sendero llegue a algún sitio.",
+      "variants": [
+        {
+          "id": "trocha",
+          "label": "Trocha",
+          "note": "Recta, con un hexágono de tierra colgando.",
+          "art": ["CCC", " L"],
+          "anchors": [
+            [0, 0, "O"],
+            [2, 0, "E"]
+          ]
+        },
+        {
+          "id": "trocha-revuelta",
+          "label": "Trocha revuelta",
+          "note": "La misma trocha, pero doblando: entra por poniente y sale al sureste. Sin curvas, la red de caminos sale toda en línea recta.",
+          "art": ["CCL", " C"],
+          "anchors": [
+            [0, 0, "O"],
+            [1, 1, "SE"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vega-del-camino",
+      "label": "Vega del camino",
+      "terrain": "camino",
+      "weight": 5,
+      "note": "El camino recto por el fondo del valle, con el bosque en la ladera alta.",
+      "variants": [
+        {
+          "id": "vega-del-camino",
+          "label": "Vega del camino",
+          "note": "Cuatro hexágonos de camino seguidos: el tramo largo que ordena media partida.",
+          "art": ["BBBL", "CCCC", "LLL"],
+          "anchors": [
+            [0, 1, "O"],
+            [3, 1, "E"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "camino-del-bosque",
+      "label": "Camino del bosque",
+      "terrain": "camino",
+      "weight": 4,
+      "note": "El camino entra en la espesura y sale por el otro lado. Tiene más Bosque que Camino a propósito: el sendero es un hilo, no la masa.",
+      "variants": [
+        {
+          "id": "camino-del-bosque",
+          "label": "Camino del bosque",
+          "note": "Dos hexágonos de camino metidos entre árboles: se cruza rápido pero a ciegas.",
+          "art": ["BCB", "LCBB", " B"],
+          "anchors": [
+            [1, 0, "NO"],
+            [1, 1, "SE"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vado",
+      "label": "Vado",
+      "terrain": "camino",
+      "weight": 4,
+      "note": "El camino cruza la charca por el único sitio donde se puede pasar.",
+      "variants": [
+        {
+          "id": "vado",
+          "label": "Vado",
+          "note": "Mínima: dos hexágonos de paso y el agua al lado.",
+          "art": ["PCL", " C"],
+          "anchors": [
+            [1, 0, "NO"],
+            [1, 1, "SE"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "encrucijada",
+      "label": "Encrucijada",
+      "terrain": "camino",
+      "weight": 3,
+      "note": "Tres bocas de camino: es el único tipo que RAMIFICA la red. Sin él el sendero es una línea y no un mapa.",
+      "variants": [
+        {
+          "id": "encrucijada",
+          "label": "Encrucijada",
+          "note": "Cruce en Y con las tres salidas por camino.",
+          "art": [" CB", "LCC", " LC"],
+          "anchors": [
+            [1, 0, "NO"],
+            [2, 1, "E"],
+            [2, 2, "SE"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "soto",
+      "label": "Soto",
+      "terrain": "bosque",
+      "weight": 4,
+      "note": "Bosquete al borde de un claro. Es la argamasa del tablero: pequeño, se encaja en cualquier hueco y esconde al héroe sin cegarlo del todo.",
+      "variants": [
+        {
+          "id": "soto",
+          "label": "Soto",
+          "note": "Dos árboles y un claro: la pieza más común de la bolsa.",
+          "art": ["BB", "LL"],
+          "anchors": [
+            [0, 0, "O"],
+            [1, 0, "NE"],
+            [1, 1, "E"]
+          ]
+        },
+        {
+          "id": "soto-ralo",
+          "label": "Soto ralo",
+          "note": "Los mismos árboles, más abiertos: se ve entre ellos y se puede rodear.",
+          "art": ["BLB", "LB"],
+          "anchors": [
+            [0, 0, "O"],
+            [1, 0, "NE"],
+            [1, 1, "E"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bosque-cerrado",
+      "label": "Bosque cerrado",
+      "terrain": "bosque",
+      "weight": 2,
+      "note": "Corona de árboles alrededor de un claro. Pesa poco: seis hexágonos de Bosque seguidos son mucho tablero sin visibilidad.",
+      "variants": [
+        {
+          "id": "bosque-cerrado",
+          "label": "Bosque cerrado",
+          "note": "El claro del centro es Llanura: es el sitio donde se acampa, rodeado de árboles por los seis lados.",
+          "art": [" BB", "BLB", " BB"],
+          "anchors": [
+            [1, 0, "NO"],
+            [2, 1, "E"],
+            [1, 2, "SO"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "robledal",
+      "label": "Robledal",
+      "terrain": "bosque",
+      "weight": 1,
+      "note": "Bosque grande con dos claros dentro: se cruza, pero a ciegas. Pesa 1 porque uno solo ya marca el carácter de la partida.",
+      "variants": [
+        {
+          "id": "robledal",
+          "label": "Robledal",
+          "note": "Catorce hexágonos y cuatro anclas: es una región, no un accidente. Los dos claros de dentro son Llanura.",
+          "art": ["BBBB", "BBBB", "BLLB", " LB"],
+          "anchors": [
+            [1, 0, "NO"],
+            [3, 1, "E"],
+            [0, 2, "O"],
+            [1, 3, "SO"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "juncal",
+      "label": "Juncal",
+      "terrain": "pantano",
+      "weight": 2,
+      "note": "Un rincón encharcado; se ancla siempre por el lado seco.",
+      "variants": [
+        {
+          "id": "juncal",
+          "label": "Juncal",
+          "note": "Mínima: dos hexágonos de agua y dos de tierra firme por la que rodearla.",
+          "art": ["PL", "PL"],
+          "anchors": [
+            [1, 0, "NE"],
+            [1, 0, "E"],
+            [1, 1, "SE"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marisma",
+      "label": "Marisma",
+      "terrain": "pantano",
+      "weight": 2,
+      "note": "Pantano abierto con un borde firme por el que rodearlo.",
+      "variants": [
+        {
+          "id": "marisma",
+          "label": "Marisma",
+          "note": "Cuatro hexágonos de agua en diagonal: cortan el paso sin cerrarlo.",
+          "art": ["LPP", "PPL", " L"],
+          "anchors": [
+            [0, 0, "O"],
+            [2, 1, "E"],
+            [1, 2, "SE"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cienaga",
+      "label": "Ciénaga",
+      "terrain": "pantano",
+      "weight": 2,
+      "note": "Charca grande con la orilla arbolada. El agua manda y los árboles son el borde: por ahí se ancla, nunca por el agua.",
+      "variants": [
+        {
+          "id": "cienaga",
+          "label": "Ciénaga",
+          "note": "Seis hexágonos de agua con los árboles al norte: rodearla cuesta un turno entero.",
+          "art": ["LBBL", "BPPB", "PPPP", " B"],
+          "anchors": [
+            [1, 0, "NO"],
+            [3, 1, "E"],
+            [1, 3, "SE"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "penasco",
+      "label": "Peñasco",
+      "terrain": "montana",
+      "weight": 4,
+      "note": "Un risco suelto: el accidente que rompe la línea de visión sin cerrar el paso.",
+      "variants": [
+        {
+          "id": "penasco",
+          "label": "Peñasco",
+          "note": "Mínima: dos hexágonos de roca con su falda debajo. Se ancla por la falda, nunca por la roca.",
+          "art": ["MM", "LL"],
+          "anchors": [
+            [0, 1, "O"],
+            [0, 1, "SO"],
+            [1, 1, "E"]
+          ]
+        },
+        {
+          "id": "penasco-doble",
+          "label": "Peñasco doble",
+          "note": "Dos rocas con un paso entre ellas: se cruza, pero se ve venir poco. El paso las une de verdad —los dos hexágonos de falda se tocan—, y por eso el tablero no tiene que abrir la roca para conectarlos.",
+          "art": ["MLM", "LM"],
+          "anchors": [
+            [1, 0, "NE"],
+            [0, 1, "O"],
+            [0, 1, "SO"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cresta",
+      "label": "Cresta",
+      "terrain": "montana",
+      "weight": 3,
+      "note": "Pared de roca con su falda: corta la vista de lado a lado. Por la roca no se une nada.",
+      "variants": [
+        {
+          "id": "cresta",
+          "label": "Cresta",
+          "note": "Tres hexágonos de pared alineados, con la falda al sur.",
+          "art": ["MMM", "LLL"],
+          "anchors": [
+            [0, 1, "O"],
+            [2, 1, "E"],
+            [1, 1, "SO"]
+          ]
+        },
+        {
+          "id": "cresta-rota",
+          "label": "Cresta rota",
+          "note": "La misma pared, doblada: tapa dos direcciones en vez de una. La falda recorre toda la base para que el hexágono del codo no quede detrás de la roca.",
+          "art": ["MMM", "MML", "LLL"],
+          "anchors": [
+            [2, 1, "E"],
+            [0, 2, "SO"],
+            [2, 2, "E"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sierra",
+      "label": "Sierra",
+      "terrain": "montana",
+      "weight": 2,
+      "note": "Dos macizos y un paso de tierra entre ellos: un cuello de botella.",
+      "variants": [
+        {
+          "id": "sierra",
+          "label": "Sierra",
+          "note": "El paso va por dentro y sin camino: cuesta 3 por hexágono salir de él.",
+          "art": ["MLMM", "MLMM", "MLL", " M"],
+          "anchors": [
+            [1, 0, "NO"],
+            [1, 2, "SO"],
+            [2, 2, "SE"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paso-de-montana",
+      "label": "Paso de montaña",
+      "terrain": "montana",
+      "weight": 1,
+      "note": "El camino serpentea entre dos macizos. Veinte hexágonos y solo dos bocas: cuando sale, el tablero entero se organiza alrededor de ella.",
+      "variants": [
+        {
+          "id": "paso-de-montana",
+          "label": "Paso de montaña",
+          "note": "La excepción que justifica la regla: es un tipo de Montaña con Camino dentro, porque el paso no existe sin el sendero que lo cruza.",
+          "art": ["MMMMM", "CCMMM", "MCMM", " CCMM", "  LC"],
+          "anchors": [
+            [0, 1, "O"],
+            [3, 4, "SE"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cueva",
+      "label": "Cueva",
+      "terrain": "cueva",
+      "weight": 3,
+      "note": "Un agujero en la roca: el único sitio del mapa donde se acampa a cubierto, y el que más ciega. No se ancla NUNCA por la boca de la cueva: se entra desde dentro de la loseta, porque una cueva es un destino y no un paso.",
+      "variants": [
+        {
+          "id": "boca-de-cueva",
+          "label": "Boca de cueva",
+          "note": "La pared de roca y la boca abriéndose al terreno llano.",
+          "art": ["MMM", "VLL"],
+          "anchors": [
+            [1, 1, "SO"],
+            [2, 1, "E"]
+          ]
+        },
+        {
+          "id": "cueva-honda",
+          "label": "Cueva honda",
+          "note": "Dos cámaras metidas en el macizo: dos hexágonos de Cueva seguidos, y hay que entrar a los dos para saber qué guardan. Se llega bajando por la izquierda, que además evita que ese hexágono quede aislado detrás del macizo.",
+          "art": ["LMMM", "LVVM", "LLL"],
+          "anchors": [
+            [0, 0, "O"],
+            [0, 2, "SO"],
+            [1, 2, "SE"],
+            [2, 2, "E"]
+          ]
+        }
+      ]
+    }
+  ]
+}

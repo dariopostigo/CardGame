@@ -1,14 +1,27 @@
 // =========================================================================
-// Los 5 terrenos del prototipo
+// Los 6 terrenos del prototipo
 //
 // Espejo en código de la tabla de mecánicas oficiales de
 // docs/board/board-map.md §3a y del peso de generación de la tabla A (§2c).
 // Si cambia el documento, cambia este archivo en el mismo commit.
 //
+// NADA de terreno se sortea. Cada hexágono del tablero llega pintado por la
+// loseta que lo trae (lib/rules/tile-library.ts), así que la tabla A ya no
+// reparte terreno en tiempo de generación: es el OBJETIVO al que apunta el
+// maquetado de la biblioteca, y el laboratorio de losetas enseña lo que sale de
+// verdad al lado de esa cifra.
+//
+// Aun así, los terrenos no son todos la misma clase de cosa. Hay AMBIENTE
+// —llanura, bosque, pantano, montaña—, que es el fondo del mapa y del que se
+// espera que mande en la loseta donde aparece; y hay LUGAR —Camino y Cueva—, que
+// son una red y un hallazgo: cruzan o perforan el fondo, y nunca son la masa. La
+// Cueva además no tiene cuota en la tabla A (`genWeight: 0`): sale donde el
+// maquetado quiera ponerla, y ni una vez más.
+//
 // TODAS las cifras son primer pase sin balancear (docs/status.md §4).
 // =========================================================================
 
-export type TerrainId = "llanura" | "bosque" | "pantano" | "montana" | "camino";
+export type TerrainId = "llanura" | "bosque" | "pantano" | "montana" | "camino" | "cueva";
 
 /** Prueba de salvación que exige un terreno al cruzarlo. */
 export type Hazard = {
@@ -38,8 +51,19 @@ export type TerrainDef = {
   readonly allowsAmbush: boolean;
   /** Peligro al cruzarlo, si tiene. */
   readonly hazard: Hazard | null;
-  /** Peso de la tabla A de generación (§2c). Suman 100. */
+  /**
+   * Cuota de la tabla A (§2c), en porcentaje; los cinco que tienen cuota suman
+   * 100. Ya no se sortea nada con ella —las losetas llegan pintadas—, así que es
+   * el reparto de terreno al que APUNTA la biblioteca, y contra el que se compara
+   * el que sale medido (`/dev/losetas`).
+   */
   readonly genWeight: number;
+  /**
+   * Terreno de LUGAR: una red (el Camino) o un hallazgo (la Cueva), no el fondo
+   * del mapa. No tiene cuota que cumplir en la tabla A y no se espera que MANDE
+   * en su tipo de loseta: un hilo o un agujero nunca son la masa (`typeNotes`).
+   */
+  readonly isPlace: boolean;
 };
 
 export const TERRAINS: Readonly<Record<TerrainId, TerrainDef>> = {
@@ -55,6 +79,7 @@ export const TERRAINS: Readonly<Record<TerrainId, TerrainDef>> = {
     allowsAmbush: false,
     hazard: null,
     genWeight: 40,
+    isPlace: false,
   },
   camino: {
     id: "camino",
@@ -68,6 +93,7 @@ export const TERRAINS: Readonly<Record<TerrainId, TerrainDef>> = {
     allowsAmbush: false,
     hazard: null,
     genWeight: 20,
+    isPlace: true, // el sendero cruza el fondo, no es el fondo
   },
   bosque: {
     id: "bosque",
@@ -81,6 +107,7 @@ export const TERRAINS: Readonly<Record<TerrainId, TerrainDef>> = {
     allowsAmbush: true,
     hazard: null,
     genWeight: 20,
+    isPlace: false,
   },
   pantano: {
     id: "pantano",
@@ -94,6 +121,7 @@ export const TERRAINS: Readonly<Record<TerrainId, TerrainDef>> = {
     allowsAmbush: false,
     hazard: { save: "CON", cd: 12, effect: "Envenenado" },
     genWeight: 10,
+    isPlace: false,
   },
   montana: {
     id: "montana",
@@ -107,15 +135,38 @@ export const TERRAINS: Readonly<Record<TerrainId, TerrainDef>> = {
     allowsAmbush: false,
     hazard: null,
     genWeight: 10,
+    isPlace: false,
+  },
+  // La Cueva es un refugio a oscuras, y sus dos cifras fuertes van en sentidos
+  // contrarios a propósito: es el único sitio del mapa donde se acampa seguro
+  // sin ser Bosque, y el que más te ciega. Entras a cubierto pagando con no ver
+  // venir nada. No bloquea la línea de visión: la boca de la cueva no tapa, lo
+  // que tapa es la montaña en la que se abre.
+  cueva: {
+    id: "cueva",
+    label: "Cueva",
+    moveCost: 2,
+    enemyDetectionMod: -1,
+    heroVisionMod: -2,
+    coverVsRanged: 1,
+    blocksLineOfSight: false,
+    safeToCamp: true,
+    allowsAmbush: true,
+    hazard: null,
+    genWeight: 0, // no tiene cuota: sale donde la maquetes
+    isPlace: true,
   },
 };
 
 export const TERRAIN_IDS = Object.keys(TERRAINS) as TerrainId[];
 
-/** Pesos de la tabla A, listos para rng.pickWeighted. */
-export const TERRAIN_GEN_WEIGHTS: ReadonlyArray<readonly [TerrainId, number]> = TERRAIN_IDS.map(
-  (id) => [id, TERRAINS[id].genWeight] as const,
-);
+/**
+ * La cuota de la tabla A como fracción, para comparar con lo medido. `0` = ese
+ * terreno no tiene cuota (ver `genWeight`).
+ */
+export function targetShare(terrain: TerrainId): number {
+  return TERRAINS[terrain].genWeight / 100;
+}
 
 /**
  * El Camino da +1 de movimiento el turno que te desplazas por él

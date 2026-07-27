@@ -64,19 +64,11 @@
   stroke-width: 3;
 }
 
-// --- Senderos y contorno de loseta ----------------------------------------
+// --- Contorno de loseta ---------------------------------------------------
 
-// Ninguna de las dos capas debe robar el clic al hexágono de debajo.
-.board__roads,
+// La capa no debe robar el clic al hexágono de debajo.
 .board__tiles {
   pointer-events: none;
-}
-
-.board__road {
-  stroke: $board-road;
-  stroke-width: 3.5;
-  stroke-linecap: round;
-  fill: none;
 }
 
 // Solo se pinta el lado que da a otra loseta o al vacío, así que el resultado

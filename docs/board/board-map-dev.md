@@ -13,13 +13,15 @@ Documento técnico complementario a [`board-map.md`](board-map.md) (el diseño d
 ```
 Hex {
   q, r                // coordenadas axiales
-  terrain             // Llanura | Bosque | Pantano | Montaña | Camino (board-map.md §3a)
+  terrain             // Llanura | Bosque | Pantano | Montaña | Camino | Cueva (board-map.md §3a)
+                      // Obligatorio: lo trae pintado la loseta, no se sortea (§2c, tabla A)
   groupId?            // a qué grupo/tile pertenece (board-map.md §2; null en prototipo hex-por-hex)
   isConnector: bool   // si es un hexágono "puerta" entre dos grupos (board-map.md §4)
   location?           // Pueblo | Mazmorra | Guarida | null  (localización especial, board-map.md §3b)
                       // En el prototipo NINGUNA abre sub-mapa: se resuelven en su hex (§3b-bis)
   boardToken?         // Exploracion | Amenaza | Tesoro | Terreno | Personaje | Enemigo | null
-  isEntrance: bool    // hex de entrada, en una esquina (board-map.md §2c paso 0)
+  isEntrance: bool    // hex de entrada: la boca del camino de la primera loseta,
+                      // o su hex más exterior si no trae camino (board-map.md §2c paso 0)
   terrainRevealed: bool   // capa 1 de niebla: se conoce el tipo de terreno (visión de terreno)
   contentRevealed: bool   // capa 2: se conoce su contenido/ficha (visión de detalle)
 }                         // dos capas, no un solo `revealed` (board-map.md §2c, game-design.md §2.3)

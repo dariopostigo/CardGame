@@ -1,0 +1,139 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Botón de las herramientas (components/ui/Button.tsx).
+//
+// Es el botón que ya usaban los laboratorios escrito a mano —mismo radio,
+// mismo alto, mismos colores—, con una diferencia: aquí hay UN solo sitio
+// donde vive. Antes era una función `btn(active)` copiada en TileLab y en
+// BoardLab, y dos copias de un estilo divergen en cuanto una se retoca.
+//
+// No usamos el Button de PrimeReact 11: en esta versión los componentes
+// llegan sin CSS (el preset Aura de @primeuix/themes 3 trae los tokens pero
+// su hoja de estilo está vacía), así que un <Button> se pinta como texto
+// pelado. Un <button> nuestro con estas clases es más corto y más honesto.
+//
+// El texto del botón primario es skin("bg") a propósito: sobre el acento
+// índigo del tema claro sale blanco y sobre el acento pálido del oscuro sale
+// oscuro, sin necesidad de un token "sobre-acento" que habría que mantener.
+// -------------------------------------------------------------------------
+
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: radius("md");
+  font-size: 0.875rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  // Los iconos de PrimeIcons van un punto más pequeños que el rótulo: a la
+  // par pesan más que la palabra y descolocan la línea de base.
+  .pi {
+    font-size: 0.85em;
+  }
+
+  &:focus-visible {
+    outline: 2px solid skin("accent");
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  // --- Variantes ---------------------------------------------------------
+
+  // Neutra: la de los paneles de mando. Es la que había en los labs.
+  &--neutral {
+    border-color: skin("border");
+    background: transparent;
+    color: skin("text");
+
+    &:hover:not(:disabled) {
+      background: skin("surface-2");
+    }
+  }
+
+  // Primaria: la acción que el panel existe para ejecutar. Una por pantalla.
+  &--primary {
+    border-color: skin("accent");
+    background: skin("accent");
+    color: skin("bg");
+
+    &:hover:not(:disabled) {
+      border-color: skin("callout-border");
+      background: skin("callout-border");
+    }
+  }
+
+  // Fantasma: acción terciaria, sin caja hasta que se pasa por encima.
+  &--ghost {
+    background: transparent;
+    color: skin("muted");
+
+    &:hover:not(:disabled) {
+      background: skin("surface-2");
+      color: skin("text");
+    }
+  }
+
+  // Destructiva: solo para lo que borra datos de data/.
+  &--danger {
+    border-color: skin("danger");
+    background: transparent;
+    color: skin("danger");
+
+    &:hover:not(:disabled) {
+      background: skin("danger-soft");
+    }
+  }
+
+  // --- Estado activo (botón de conmutación) ------------------------------
+  // No es una variante, es un estado: un botón de «Giro 60°» sigue siendo
+  // neutro cuando está apagado. Pisa a la variante, por eso va después.
+  &--active {
+    border-color: skin("accent");
+    background: skin("accent-soft");
+    color: skin("accent");
+    font-weight: 500;
+
+    &:hover:not(:disabled) {
+      background: skin("accent-soft");
+    }
+  }
+
+  // --- Tamaños y formas --------------------------------------------------
+  &--sm {
+    gap: 0.35rem;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  // Solo icono: cuadrado, para que una fila de ellos quede a la misma altura
+  // que los botones con rótulo.
+  &--icon {
+    padding: 0.375rem;
+    width: 2.125rem;
+    height: 2.125rem;
+
+    &.ui-button--sm {
+      padding: 0.2rem;
+      width: 1.65rem;
+      height: 1.65rem;
+    }
+  }
+
+  &--block {
+    width: 100%;
+  }
+}

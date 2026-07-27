@@ -1,21 +1,32 @@
 // =========================================================================
-// Biblioteca de LOSETAS
+// Qué es una LOSETA
 //
 // Una loseta es una pieza predefinida de hexágonos con su forma, su terreno y
 // sus anclas. Es la unidad con la que se construye el tablero, y se maqueta a
-// mano: este archivo es el catálogo, no un generador. Quien las encaja es
-// board-gen.ts; quien las enseña y las dibuja es /dev/losetas.
+// mano. Este archivo dice qué es una loseta y qué se puede hacer con ella;
+// CUÁLES hay está en tile-library.ts, que lee data/tile-library.json. Quien las
+// encaja es board-gen.ts; quien las enseña y las edita es /dev/losetas.
 //
 // El tablero no es una rejilla: se construye encajando losetas, como en los
 // juegos de tablero modular. Es el sistema de docs/board/board-map.md §2.
 //
+// TRES palabras, y conviene no mezclarlas:
+//   · BIBLIOTECA — todo lo que existe (tile-library.ts).
+//   · TIPO       — un sitio del mundo: un Peñasco, una Ciénaga, una Cueva. Lo
+//     define UN terreno, tiene un peso en la bolsa y agrupa sus variantes.
+//   · VARIANTE   — una loseta concreta de ese tipo. Varios peñascos distintos,
+//     de formas y tamaños distintos, son variantes del mismo tipo, y al tablero
+//     le da igual cuál le toque: son el mismo sitio dibujado de otra manera.
+//
 // Una loseta fija TRES cosas:
 //   · FORMA   — qué hexágonos la componen, en coordenadas locales con (0,0)
 //     dentro. Cuántos puede tener lo dice su TAMAÑO (TILE_SIZES).
-//   · TERRENO — el de cada uno de sus hexágonos. `null` no es un terreno: es
-//     "este lo sortea el tablero al colocarme" (pesos de la tabla A, §2c). Así
-//     una misma loseta puede tener partes fijas (el sendero, una montaña que
-//     corta la vista) y partes que cambian en cada partida.
+//   · TERRENO — el de cada uno de sus hexágonos, y es OBLIGATORIO: no existe
+//     "este lo sortea el tablero". Una loseta llega pintada entera, así que lo
+//     que se ve en el catálogo es exactamente lo que va a salir en la partida, y
+//     el terreno del tablero lo decide el maquetado y nada más. La variedad
+//     entre partidas la dan las variantes de cada tipo y el giro, no el azar
+//     hexágono a hexágono.
 //   · ANCLAS  — los bordes exteriores por los que se une a otra loseta.
 //
 // ANCLAS. Una loseta solo se une a otra ancla contra ancla; el resto de su
@@ -31,22 +42,36 @@
 
 import * as Hex from "./hex";
 import type { HexCoord } from "./hex";
-import type { TerrainId } from "./terrain";
+import { TERRAINS, type TerrainId, isOpenGround } from "./terrain";
 
-/** Un hexágono de la loseta. `terrain: null` = lo sortea el tablero al colocarla. */
-export type TileCell = { readonly hex: HexCoord; readonly terrain: TerrainId | null };
+/** Un hexágono de la loseta. Todos llevan terreno; no hay hexágono sin pintar. */
+export type TileCell = { readonly hex: HexCoord; readonly terrain: TerrainId };
 
 /** Un borde de un hexágono: quién y hacia dónde (dirección 0-5). */
 export type TileEdge = { readonly hex: HexCoord; readonly dir: number };
 
+/** Una loseta concreta: una VARIANTE de un tipo, lista para el tablero. */
 export type TileDef = {
   readonly id: string;
   readonly label: string;
+  /** El tipo del que es variante (`TileType.id`). */
+  readonly typeId: string;
+  /**
+   * Por qué está dibujada así. El juego no la usa: es la nota de maquetado, y
+   * está en el dato porque la biblioteca vive en un JSON, que no admite
+   * comentarios, y perder el "por qué" de una pieza es perder lo único que no se
+   * puede deducir mirándola.
+   */
+  readonly note: string;
   /** Hexágonos con su terreno, en coordenadas locales; siempre incluye (0,0). */
   readonly cells: readonly TileCell[];
   /** Bordes exteriores por los que esta loseta se une a otra. */
   readonly anchors: readonly TileEdge[];
-  /** Frecuencia relativa en la bolsa. */
+  /**
+   * Frecuencia relativa en la bolsa. No se maqueta por loseta: es el peso de su
+   * TIPO repartido entre sus variantes, porque lo que se elige es el sitio y no
+   * el dibujo (`tileTypeToDefs`).
+   */
   readonly weight: number;
 };
 
@@ -112,36 +137,42 @@ export function roadsOf(def: TileDef): HexCoord[] {
   return def.cells.filter((c) => c.terrain === "camino").map((c) => c.hex);
 }
 
-/** Cuántos hexágonos deja al sorteo de la tabla A. */
-export function freeCount(def: TileDef): number {
-  return def.cells.filter((c) => c.terrain === null).length;
+/** Cuántos hexágonos tiene la loseta de cada terreno. */
+export function terrainCounts(def: TileDef): Map<TerrainId, number> {
+  const counts = new Map<TerrainId, number>();
+  for (const cell of def.cells) {
+    counts.set(cell.terrain, (counts.get(cell.terrain) ?? 0) + 1);
+  }
+  return counts;
 }
 
 // --- Losetas dibujadas -----------------------------------------------------
 
-// Direcciones, para que las anclas se lean sin contar índices.
-// El orden es el de hex.ts: 0=E, 1=NE, 2=NO, 3=O, 4=SO, 5=SE.
-const E = 0;
-const NE = 1;
-const NO = 2;
-const O = 3;
-const SO = 4;
-const SE = 5;
-
-/** Qué terreno pone cada carácter del dibujo. */
-const TERRAIN_CHARS: ReadonlyMap<string, TerrainId | null> = new Map<string, TerrainId | null>([
-  [".", null], // al sorteo: lo decide el tablero al colocar la loseta
+/**
+ * El carácter con el que se dibuja cada terreno. Fuente única de la letra: la
+ * lee `drawn()` para leer un dibujo y `TERRAIN_CHAR` para escribirlo.
+ * La Cueva es "V" (cue-V-a) porque la C ya la tenía pedida el Camino.
+ */
+export const TERRAIN_CHARS: ReadonlyMap<string, TerrainId> = new Map<string, TerrainId>([
   ["L", "llanura"],
   ["C", "camino"],
   ["B", "bosque"],
   ["P", "pantano"],
   ["M", "montana"],
+  ["V", "cueva"],
 ]);
+
+/** La inversa: el carácter de cada terreno, para escribir un dibujo. */
+export const TERRAIN_CHAR: Readonly<Record<TerrainId, string>> = Object.fromEntries(
+  [...TERRAIN_CHARS].map(([char, id]) => [id, char]),
+) as Record<TerrainId, string>;
 
 /** Una loseta tal y como se maqueta: dibujada, con sus anclas sobre el dibujo. */
 export type TileDrawing = {
   readonly id: string;
   readonly label: string;
+  readonly typeId: string;
+  readonly note: string;
   readonly weight: number;
   /** Una cadena por fila de hexágonos, un carácter por hexágono. */
   readonly art: readonly string[];
@@ -153,8 +184,9 @@ export type TileDrawing = {
  * Convertir un dibujo en una loseta.
  *
  * El dibujo es el formato de maquetado de la biblioteca: cada cadena es una
- * fila de hexágonos y cada carácter uno de ellos —espacio para el hueco, punto
- * para "al sorteo" y L/C/B/P/M para los cinco terrenos—. Las filas impares van
+ * fila de hexágonos y cada carácter uno de ellos —espacio para el hueco y una
+ * letra por terreno (`TERRAIN_CHARS`); todo hexágono lleva la suya, no hay
+ * hexágono sin pintar—. Las filas impares van
  * medio hexágono a la derecha, que es la rejilla escalonada de hex.ts
  * (`offsetToAxial`), así que el dibujo se lee como el trozo de mapa que
  * representa. Se maqueta mirándolo, y no contando coordenadas: veinte
@@ -174,6 +206,15 @@ export function drawn(drawing: TileDrawing): TileDef {
     for (let col = 0; col < line.length; col++) {
       const char = line[col];
       if (char === " ") continue;
+      if (char === ".") {
+        // El punto era "al sorteo", y ya no existe: todo hexágono lleva terreno.
+        // Se avisa aparte porque la biblioteca vieja está llena de puntos y el
+        // mensaje genérico no diría qué hacer.
+        throw new Error(
+          `Loseta ${drawing.id}: el "." era «al sorteo» y ya no existe; ` +
+            `pinta ese hexágono con un terreno (${[...TERRAIN_CHARS.keys()].join(" ")})`,
+        );
+      }
       if (!TERRAIN_CHARS.has(char)) {
         // Error de maquetado, no de datos: mejor que reviente el build.
         throw new Error(`Loseta ${drawing.id}: "${char}" no es un terreno del dibujo`);
@@ -191,6 +232,8 @@ export function drawn(drawing: TileDrawing): TileDef {
   return {
     id: drawing.id,
     label: drawing.label,
+    typeId: drawing.typeId,
+    note: drawing.note,
     weight: drawing.weight,
     cells: marks.map((c) => ({ hex: shift(c.hex), terrain: c.terrain })),
     anchors: drawing.anchors.map(([col, row, dir]) => ({
@@ -201,237 +244,273 @@ export function drawn(drawing: TileDrawing): TileDef {
 }
 
 /**
- * La biblioteca.
+ * La loseta DIBUJADA: la inversa de `drawn()`. Una cadena por fila de hexágonos,
+ * un carácter por hexágono, y las anclas como [columna, fila, dirección] de ese
+ * mismo dibujo.
  *
- * Cada loseta es un TROZO DE PAISAJE reconocible, no un puñado de hexágonos con
- * terreno al azar: un peñasco, un bosque cerrado con su claro, una ciénaga con
- * la orilla arbolada, un paso entre dos crestas. De ahí salen los criterios de
- * maquetado:
+ * El dibujo es CANÓNICO: la misma loseta da el mismo dibujo esté donde esté en el
+ * papel, y por eso abrirla en el editor y guardarla sin tocar nada no mueve el
+ * fichero. Para conseguirlo, la loseta se traslada primero en coordenadas
+ * AXIALES —arrimarla a la fila 0 y a la columna 0— y solo después se pasa a la
+ * rejilla escalonada. El orden importa: mover el dibujo por el papel (mover filas
+ * dejando las columnas donde están) un número impar de filas no lo traslada, lo
+ * deforma, porque las filas impares van medio hexágono a la derecha. Trasladar en
+ * axiales y recalcular las columnas después es lo único que sale bien siempre.
  *
- *   · El terreno va en MASAS coherentes. Un bosque es una mancha compacta y una
- *     sierra es una cresta; el terreno salteado hexágono a hexágono no se lee
- *     como paisaje, se lee como ruido.
- *   · Las orillas se dejan AL SORTEO. Así la pieza se funde con sus vecinas y
- *     no sale idéntica en cada partida (§2c tabla A).
- *   · El camino CRUZA la loseta de un borde a otro y esquiva la roca y el agua,
- *     como en un mapa de verdad. Y las anclas de una loseta con camino están
- *     SOLO en las bocas de ese camino: así una pieza de camino se une siempre
- *     por donde el camino continúa, no por un lado cualquiera.
- *   · Las demás anclan en terreno abierto, nunca en una pared de roca ni en
- *     medio del pantano: el ancla es una invitación a seguir, y una montaña no
- *     invita a nada.
- *
- * Los TAMAÑOS hacen dos trabajos distintos. Las Mínimas y Pequeñas son la
- * argamasa —accidentes del terreno que rellenan y doblan el tablero—; las
- * Medianas y Grandes son regiones con interior propio, y pesan poco porque una
- * sola ya marca el carácter de la partida. No hay ninguna Enorme a propósito:
- * 64 hexágonos son un tablero entero, no una pieza.
+ * @param {TileDef} def - Una loseta cualquiera, esté donde esté.
+ * @returns {TileDrawing} El dibujo, listo para `drawn()` o para escribirlo.
  */
-export const TILES: readonly TileDef[] = [
-  // --- Mínimas: accidentes del terreno -------------------------------------
-  drawn({
-    id: "penasco",
-    label: "Peñasco",
-    weight: 4,
-    // Un risco suelto y dos hexágonos de lo que haya alrededor.
-    art: ["M.", "."],
-    anchors: [
-      [1, 0, E],
-      [0, 1, SE],
-      [0, 1, SO],
-    ],
-  }),
-  drawn({
-    id: "soto",
-    label: "Soto",
-    weight: 5,
-    // Bosquete al borde de un claro: la pieza más común de la bolsa.
-    art: ["BB", "L."],
-    anchors: [
-      [0, 0, O],
-      [1, 0, NE],
-      [1, 1, E],
-    ],
-  }),
-  drawn({
-    id: "trocha",
-    label: "Trocha",
-    weight: 6,
-    // Tres hexágonos de camino de un borde al otro: el eslabón de la red.
-    art: ["CCC", " L"],
-    anchors: [
-      [0, 0, O],
-      [2, 0, E],
-    ],
-  }),
-  drawn({
-    id: "juncal",
-    label: "Juncal",
-    weight: 2,
-    // Un rincón encharcado; se ancla por el lado seco.
-    art: ["P.", "P."],
-    anchors: [
-      [1, 0, NE],
-      [1, 0, E],
-      [1, 1, SE],
-    ],
-  }),
-  drawn({
-    id: "vado",
-    label: "Vado",
-    weight: 4,
-    // El camino cruza la charca por el único sitio donde se puede pasar.
-    art: ["PC.", " C"],
-    anchors: [
-      [1, 0, NO],
-      [1, 1, SE],
-    ],
-  }),
+export function toDrawing(def: TileDef): TileDrawing {
+  const head = {
+    id: def.id,
+    label: def.label,
+    typeId: def.typeId,
+    note: def.note,
+    weight: def.weight,
+  };
+  if (def.cells.length === 0) return { ...head, art: [], anchors: [] };
 
-  // --- Pequeñas ------------------------------------------------------------
-  drawn({
-    id: "bosque-cerrado",
-    label: "Bosque cerrado",
-    weight: 2,
-    // Corona de árboles alrededor de un claro. Pesa poco: seis hexágonos de
-    // Bosque seguidos son mucho tablero sin visibilidad.
-    art: [" BB", "B.B", " BB"],
-    anchors: [
-      [1, 0, NO],
-      [2, 1, E],
-      [1, 2, SO],
-    ],
-  }),
-  drawn({
-    id: "camino-del-bosque",
-    label: "Camino del bosque",
-    weight: 4,
-    // El camino entra en la espesura y sale por el otro lado.
-    art: ["BC.", "LCBB", " B"],
-    anchors: [
-      [1, 0, NO],
-      [1, 1, SE],
-    ],
-  }),
-  drawn({
-    id: "cresta",
-    label: "Cresta",
-    weight: 3,
-    // Pared de roca con su falda al sur; por la roca no se une nada.
-    art: ["MMM", "LL."],
-    anchors: [
-      [0, 1, O],
-      [2, 1, E],
-      [1, 1, SO],
-    ],
-  }),
-  drawn({
-    id: "marisma",
-    label: "Marisma",
-    weight: 2,
-    // Pantano abierto con un borde firme por el que rodearlo.
-    art: [".PP", "PP.", " L"],
-    anchors: [
-      [0, 0, O],
-      [2, 1, E],
-      [1, 2, SE],
-    ],
-  }),
-  drawn({
-    id: "encrucijada",
-    label: "Encrucijada",
-    weight: 3,
-    // Tres bocas de camino: es la única pieza que ramifica la red.
-    art: [" C.", ".CC", " .C"],
-    anchors: [
-      [1, 0, NO],
-      [2, 1, E],
-      [2, 2, SE],
-    ],
-  }),
+  // 1. Traslación en axiales, para arrimar la loseta a la esquina del papel.
+  const minR = Math.min(...def.cells.map((c) => c.hex.r));
+  const shift = (hex: HexCoord): HexCoord => ({ q: hex.q, r: hex.r - minR });
+  const cells = def.cells.map((c) => ({ ...Hex.axialToOffset(shift(c.hex)), terrain: c.terrain }));
+  const minCol = Math.min(...cells.map((c) => c.col));
 
-  // --- Medianas: regiones con interior -------------------------------------
-  drawn({
-    id: "vega-del-camino",
-    label: "Vega del camino",
-    weight: 5,
-    // Camino recto por el fondo del valle, con el bosque en la ladera alta.
-    art: ["BB..", "CCCC", "LL."],
-    anchors: [
-      [0, 1, O],
-      [3, 1, E],
-    ],
-  }),
-  drawn({
-    id: "robledal",
-    label: "Robledal",
-    weight: 1,
-    // Bosque grande con dos claros dentro: se cruza, pero a ciegas.
-    art: [".BB.", "BBBB", "BL.B", " LB"],
-    anchors: [
-      [1, 0, NO],
-      [3, 1, E],
-      [0, 2, O],
-      [1, 3, SO],
-    ],
-  }),
-  drawn({
-    id: "sierra",
-    label: "Sierra",
-    weight: 2,
-    // Dos macizos y un paso de tierra entre ellos: un cuello de botella.
-    art: ["MLM.", "MLMM", "ML.", " M"],
-    anchors: [
-      [1, 0, NO],
-      [1, 2, SO],
-      [2, 2, SE],
-    ],
-  }),
-  drawn({
-    id: "cienaga",
-    label: "Ciénaga",
-    weight: 2,
-    // Charca grande con la orilla arbolada; el agua nunca toca el contorno.
-    art: [".BB.", "BPPB", "LPP", " B"],
-    anchors: [
-      [1, 0, NO],
-      [3, 1, E],
-      [1, 3, SE],
-    ],
-  }),
+  // 2. Y ahora sí, el dibujo.
+  const grid: string[][] = [];
+  for (const cell of cells) {
+    grid[cell.row] ??= [];
+    grid[cell.row][cell.col - minCol] = TERRAIN_CHAR[cell.terrain];
+  }
 
-  // --- Grandes: una sola ya marca la partida -------------------------------
-  drawn({
-    id: "paso-de-montana",
-    label: "Paso de montaña",
-    weight: 1,
-    // El camino serpentea entre dos macizos. Veinte hexágonos y solo dos
-    // bocas: cuando sale, el tablero entero se organiza alrededor de ella.
-    art: ["MMM..", "CCMMM", "MCMM", " CC.M", "  .C"],
-    anchors: [
-      [0, 1, O],
-      [3, 4, SE],
-    ],
-  }),
-  drawn({
-    id: "paramo",
-    label: "Páramo",
-    weight: 3,
-    // Campo abierto con dos sotos y una hondonada encharcada. Es la pieza que
-    // da aire al tablero: sin ella todo son árboles y roca.
-    art: [".LLL.", "LLLBB", "LL.LB", " LPP.", "  LL"],
-    anchors: [
-      [1, 0, NO],
-      [4, 1, E],
-      [0, 2, O],
-      [2, 4, SO],
-    ],
-  }),
-];
+  const art: string[] = [];
+  for (let row = 0; row < grid.length; row++) {
+    const chars = grid[row] ?? [];
+    let line = "";
+    for (let col = 0; col < chars.length; col++) line += chars[col] ?? " ";
+    art.push(line);
+  }
 
-export const TILES_BY_ID: Readonly<Record<string, TileDef>> = Object.fromEntries(
-  TILES.map((t) => [t.id, t]),
-);
+  return {
+    ...head,
+    art,
+    anchors: def.anchors.map((a) => {
+      const { col, row } = Hex.axialToOffset(shift(a.hex));
+      return [col - minCol, row, a.dir] as const;
+    }),
+  };
+}
+
+// --- Tipos de loseta -------------------------------------------------------
+
+/**
+ * Un TIPO de loseta: un sitio del mundo con todas las maneras de dibujarlo.
+ *
+ * El tipo es lo que se elige al construir el tablero ("aquí va un peñasco") y la
+ * variante es solo el dibujo que le toca. De ahí sale el reparto del peso: la
+ * bolsa sortea TIPOS, y dentro del tipo las variantes salen a partes iguales.
+ * Añadir un peñasco nuevo no hace que salgan más peñascos, hace que se repitan
+ * menos, que es justo para lo que sirven las variantes.
+ */
+export type TileType = {
+  readonly id: string;
+  readonly label: string;
+  /**
+   * El terreno que define el tipo: un Peñasco es Montaña, una Ciénaga es
+   * Pantano. Es su IDENTIDAD, no una restricción — una variante puede meter
+   * cualquier otro terreno cuando el sitio lo pide (el Camino que cruza el paso
+   * de montaña, el Pantano al que baja el vado), y para eso están los avisos de
+   * `typeNotes`: que la excepción sea una decisión y no un descuido.
+   */
+  readonly terrain: TerrainId;
+  /** Frecuencia relativa del TIPO en la bolsa. Se reparte entre sus variantes. */
+  readonly weight: number;
+  /** Qué sitio es y por qué existe en la bolsa (ver `TileDef.note`). */
+  readonly note: string;
+  readonly variants: readonly TileDef[];
+};
+
+/** Todas las variantes de todos los tipos: la bolsa como lista plana. */
+export function allVariants(types: readonly TileType[]): TileDef[] {
+  return types.flatMap((type) => [...type.variants]);
+}
+
+/** Cuántos hexágonos tiene cada variante, sumados. Mide el tamaño real de un tipo. */
+export function typeHexes(type: TileType): number {
+  return type.variants.reduce((sum, def) => sum + def.cells.length, 0);
+}
+
+// --- La biblioteca guardada ------------------------------------------------
+
+/**
+ * Un ancla en el dibujo: columna, fila y el NOMBRE de la dirección ("E", "NE"…).
+ * En el fichero va el nombre y no el índice a propósito: `[3, 4, "SE"]` se
+ * entiende leyéndolo y `[3, 4, 5]` hay que ir a buscarlo.
+ */
+export type StoredAnchor = readonly [col: number, row: number, dir: string];
+
+/** Una variante tal y como se guarda: el dibujo y sus anclas, nada derivado. */
+export type StoredVariant = {
+  readonly id: string;
+  readonly label: string;
+  /** Nota de maquetado; el JSON no tiene comentarios y este campo los sustituye. */
+  readonly note: string;
+  readonly art: readonly string[];
+  readonly anchors: readonly StoredAnchor[];
+};
+
+export type StoredType = {
+  readonly id: string;
+  readonly label: string;
+  readonly terrain: TerrainId;
+  readonly weight: number;
+  readonly note: string;
+  readonly variants: readonly StoredVariant[];
+};
+
+/** El contenido de data/tile-library.json. */
+export type StoredLibrary = { readonly types: readonly StoredType[] };
+
+/**
+ * Leer la biblioteca guardada.
+ *
+ * Comprueba el JSON a mano, campo a campo, porque este mismo parser recibe lo
+ * que manda el editor de /dev/losetas por la ruta de guardado: los datos vienen
+ * de fuera del compilador, así que un fichero a medias tiene que dar un error
+ * que se entienda y no un `undefined` tres capas más abajo.
+ *
+ * @param {unknown} data - El JSON ya parseado.
+ * @returns {TileType[]} Los tipos con sus variantes ya dibujadas.
+ */
+export function parseLibrary(data: unknown): TileType[] {
+  if (typeof data !== "object" || data === null || !Array.isArray((data as StoredLibrary).types)) {
+    throw new Error("La biblioteca tiene que ser un objeto { types: [...] }");
+  }
+  return (data as { types: readonly unknown[] }).types.map(parseType);
+}
+
+function parseType(raw: unknown, index: number): TileType {
+  const where = `tipo #${index + 1}`;
+  const type = asObject(raw, where);
+  const id = asString(type.id, `${where}: id`);
+  const label = asString(type.label, `tipo ${id}: label`);
+  const terrain = asString(type.terrain, `tipo ${id}: terrain`);
+  const weight = asNumber(type.weight, `tipo ${id}: weight`);
+
+  if (!(terrain in TERRAINS)) {
+    throw new Error(`tipo ${id}: "${terrain}" no es un terreno de terrain.ts`);
+  }
+  const variants = asArray(type.variants, `tipo ${id}: variants`);
+  if (variants.length === 0) {
+    throw new Error(`tipo ${id}: sin variantes; un tipo sin dibujos no es nada`);
+  }
+
+  // El peso del tipo, repartido: lo que se sortea es el sitio.
+  const share = weight / variants.length;
+
+  return {
+    id,
+    label,
+    terrain: terrain as TerrainId,
+    weight,
+    note: asNote(type.note),
+    variants: variants.map((variant, i) => parseVariant(variant, i, id, share)),
+  };
+}
+
+function parseVariant(raw: unknown, index: number, typeId: string, weight: number): TileDef {
+  const where = `${typeId}, variante #${index + 1}`;
+  const variant = asObject(raw, where);
+  const id = asString(variant.id, `${where}: id`);
+  const label = asString(variant.label, `variante ${id}: label`);
+
+  const art = asArray(variant.art, `variante ${id}: art`).map((line, row) =>
+    asString(line, `variante ${id}: art[${row}]`),
+  );
+  const anchors = asArray(variant.anchors, `variante ${id}: anchors`).map((anchor, i) => {
+    const parts = asArray(anchor, `variante ${id}: anchors[${i}]`);
+    if (parts.length !== 3) {
+      throw new Error(`variante ${id}: el ancla #${i + 1} no es [columna, fila, dirección]`);
+    }
+    const dir = Hex.DIR_LABELS.indexOf(asString(parts[2], `variante ${id}: anchors[${i}][2]`));
+    if (dir < 0) {
+      throw new Error(
+        `variante ${id}: "${parts[2]}" no es una dirección (${Hex.DIR_LABELS.join(", ")})`,
+      );
+    }
+    return [
+      asNumber(parts[0], `variante ${id}: anchors[${i}][0]`),
+      asNumber(parts[1], `variante ${id}: anchors[${i}][1]`),
+      dir,
+    ] as const;
+  });
+
+  return drawn({ id, label, typeId, weight, note: asNote(variant.note), art, anchors });
+}
+
+/** La nota es opcional: una loseta sin explicar es peor, pero no está rota. */
+function asNote(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
+/**
+ * La vuelta: de tipos a lo que se escribe en el fichero. Es la inversa de
+ * `parseLibrary`, y se usa para dos cosas —guardar lo que edita /dev/losetas y
+ * tener la forma guardada sin castear el JSON importado—, así que el ida y vuelta
+ * tiene que ser exacto: lo que se lee y se vuelve a escribir sin tocar nada no
+ * puede salir distinto, o cada guardado ensuciaría el diff.
+ *
+ * @returns {StoredLibrary} El contenido del fichero.
+ */
+export function toStoredLibrary(types: readonly TileType[]): StoredLibrary {
+  return { types: types.map(toStoredType) };
+}
+
+export function toStoredType(type: TileType): StoredType {
+  return {
+    id: type.id,
+    label: type.label,
+    terrain: type.terrain,
+    weight: type.weight,
+    note: type.note,
+    variants: type.variants.map(toStoredVariant),
+  };
+}
+
+export function toStoredVariant(def: TileDef): StoredVariant {
+  const drawing = toDrawing(def);
+  return {
+    id: drawing.id,
+    label: drawing.label,
+    note: drawing.note,
+    art: drawing.art,
+    anchors: drawing.anchors.map(([col, row, dir]) => [col, row, Hex.DIR_LABELS[dir]] as const),
+  };
+}
+
+function asObject(value: unknown, where: string): Record<string, unknown> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new Error(`${where}: se esperaba un objeto`);
+  }
+  return value as Record<string, unknown>;
+}
+
+function asArray(value: unknown, where: string): readonly unknown[] {
+  if (!Array.isArray(value)) throw new Error(`${where}: se esperaba una lista`);
+  return value;
+}
+
+function asString(value: unknown, where: string): string {
+  if (typeof value !== "string") throw new Error(`${where}: se esperaba texto`);
+  return value;
+}
+
+function asNumber(value: unknown, where: string): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    throw new Error(`${where}: se esperaba un número`);
+  }
+  return value;
+}
 
 // --- Rotación --------------------------------------------------------------
 
@@ -518,7 +597,7 @@ export function instantiate(def: TileDef, rotation: number, origin: HexCoord): T
 export const ORIGIN: HexCoord = { q: 0, r: 0 };
 
 /** Peso total de la bolsa: el denominador de la probabilidad de cada loseta. */
-export function bagWeight(tiles: readonly TileDef[] = TILES): number {
+export function bagWeight(tiles: readonly TileDef[]): number {
   return tiles.reduce((sum, t) => sum + t.weight, 0);
 }
 
@@ -586,14 +665,113 @@ export function opposite(dir: number): number {
 // --- Validación de la biblioteca ------------------------------------------
 
 /**
- * Comprobar que una biblioteca de losetas es coherente. La usa el script de
- * verificación (una loseta mal definida no debe llegar a producción y el
- * compilador no puede pillarlo) y también el editor de /dev/losetas, que la
- * llama sobre el boceto en curso para avisar en caliente.
+ * Comprobar que los TIPOS de la biblioteca son coherentes. Es la puerta por la
+ * que pasa todo lo que se guarda: la llama la ruta de /dev/losetas antes de
+ * escribir el fichero y el script de verificación sobre lo que hay en disco.
+ *
+ * Valida lo que es del tipo —identidad, peso y variantes— y delega en
+ * `validateTileLibrary` lo que es de cada loseta.
+ *
+ * @param {readonly TileType[]} types - La biblioteca entera.
+ * @returns {string[]} Lista de problemas; vacía si todo está bien.
+ */
+export function validateTileTypes(types: readonly TileType[]): string[] {
+  const problems: string[] = [];
+  const typeIds = new Set<string>();
+  const variantIds = new Set<string>();
+
+  for (const type of types) {
+    if (!/^[a-z0-9-]+$/.test(type.id)) {
+      problems.push(`tipo ${type.id || "(sin id)"}: el id va en minúsculas y guiones`);
+    }
+    if (typeIds.has(type.id)) problems.push(`tipo ${type.id}: id repetido`);
+    typeIds.add(type.id);
+
+    if (type.label.trim() === "") problems.push(`tipo ${type.id}: sin nombre`);
+    if (!(type.terrain in TERRAINS)) {
+      problems.push(`tipo ${type.id}: "${type.terrain}" no es un terreno`);
+    }
+    if (type.weight <= 0) problems.push(`tipo ${type.id}: peso ${type.weight}`);
+    if (type.variants.length === 0) problems.push(`tipo ${type.id}: sin variantes`);
+
+    for (const def of type.variants) {
+      // El id de variante es único en TODA la biblioteca, no solo en su tipo:
+      // el tablero guarda `defId` a secas para reconstruir lo que colocó.
+      if (variantIds.has(def.id)) problems.push(`variante ${def.id}: id repetido`);
+      variantIds.add(def.id);
+      if (def.typeId !== type.id) {
+        problems.push(`variante ${def.id}: dice ser del tipo ${def.typeId}`);
+      }
+    }
+  }
+
+  return [...problems, ...validateTileLibrary(allVariants(types))];
+}
+
+/**
+ * Avisos de maquetado de un tipo: lo que probablemente esté mal pero puede ser
+ * deliberado, así que NO es un problema de validación. El terreno del tipo es su
+ * identidad y las excepciones son legítimas —el Camino cruza el paso de montaña,
+ * el Vado baja al pantano—, pero una variante en la que el terreno del tipo no
+ * aparece o no manda casi siempre es un descuido, o una variante archivada en el
+ * tipo equivocado.
+ *
+ * El otro aviso es de la roca: si la Montaña de la variante parte su terreno
+ * transitable en trozos, el tablero puede acabar teniendo que ABRIR esa montaña
+ * para no dejar una bolsa aislada (board-gen.ts, paso 4), y eso es lo único que
+ * repinta una loseta ya maquetada. Vale la pena saberlo aquí, que es donde se
+ * decide, y no descubrirlo como un hexágono de Llanura en medio de la sierra.
+ *
+ * @returns {string[]} Avisos; vacía si el tipo se lee como lo que dice ser.
+ */
+export function typeNotes(type: TileType): string[] {
+  const notes: string[] = [];
+  const label = TERRAINS[type.terrain]?.label ?? type.terrain;
+  // Los terrenos de LUGAR (`isPlace`: Camino y Cueva) no tienen por qué mandar en
+  // su loseta. Un camino es un hilo que cruza otra cosa y una cueva es un agujero
+  // en la roca: pedirles que sean mayoría sería pedirles que dejaran de ser lo
+  // que son. Del terreno de ambiente sí se espera que domine.
+  const mustDominate = !TERRAINS[type.terrain]?.isPlace;
+
+  for (const def of type.variants) {
+    // La Montaña de la loseta no puede dejar terreno transitable a un lado y a
+    // otro: dentro de la loseta no hay manera de ir de uno al otro.
+    const open = def.cells.filter((c) => isOpenGround(c.terrain)).map((c) => c.hex);
+    if (!isConnected(open)) {
+      notes.push(
+        `${def.label}: la roca parte su terreno transitable en trozos; si la loseta vecina no ` +
+          `los une por fuera, el tablero tendrá que abrir la Montaña`,
+      );
+    }
+
+    const own = def.cells.filter((c) => c.terrain === type.terrain).length;
+    if (own === 0) {
+      notes.push(`${def.label}: no tiene ni un hexágono de ${label}`);
+      continue;
+    }
+    if (!mustDominate) continue;
+
+    // Contra el terreno más numeroso de la loseta.
+    for (const [terrain, count] of terrainCounts(def)) {
+      if (count > own) {
+        notes.push(
+          `${def.label}: tiene más ${TERRAINS[terrain].label} (${count}) que ${label} (${own})`,
+        );
+      }
+    }
+  }
+
+  return notes;
+}
+
+/**
+ * Comprobar que unas losetas son coherentes, una a una. La usa
+ * `validateTileTypes` y también el editor de /dev/losetas, que la llama sobre el
+ * boceto en curso para avisar en caliente.
  *
  * @returns {string[]} Lista de problemas; vacía si todo está bien.
  */
-export function validateTileLibrary(tiles: readonly TileDef[] = TILES): string[] {
+export function validateTileLibrary(tiles: readonly TileDef[]): string[] {
   const problems: string[] = [];
 
   for (const def of tiles) {

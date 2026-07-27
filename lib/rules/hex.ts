@@ -239,17 +239,3 @@ export function edgeEndpoints(
   const d = ((dir % 6) + 6) % 6;
   return [corner(cx, cy, size, 6 - d), corner(cx, cy, size, 7 - d)];
 }
-
-/**
- * Punto medio del lado que da a `dir`. Es a donde llega el trazo del sendero,
- * para que el de un hexágono y el del vecino se encuentren en la junta.
- */
-export function edgeMidpoint(
-  cx: number,
-  cy: number,
-  size: number,
-  dir: number,
-): { x: number; y: number } {
-  const [a, b] = edgeEndpoints(cx, cy, size, dir);
-  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-}
