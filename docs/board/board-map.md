@@ -16,6 +16,12 @@ Mapa de **hexágonos**, inspirado en los tableros modulares de juegos de mesa de
 - **Preset/histórico (futuro):** mapas fijos diseñados a mano, con eventos y narrativa scriptada (una "campaña" o escenario concreto), igual que los escenarios de un juego de tablero tipo LOTR.
 - Parámetros configurables antes de empezar: tamaño del mapa, densidad de fichas de evento, densidad de enemigos ocultos, semilla aleatoria (para poder repetir/compartir un mapa concreto).
 
+**Los huecos cerrados son parte del mapa** *(decidido)*. Al encajar losetas por sus anclas, dos piezas se tocan pared contra pared y a veces dejan un rincón de vacío **rodeado de tablero por todos lados**. Son permanentes —la loseta más pequeña son 3 hexágonos y aun así tendría que encajar ancla contra ancla, así que ahí ya no entra nada— y se quedan **como terreno intransitable**: una sima, una laguna, un derrumbe. No son hexágonos del tablero: no tienen terreno, ni ficha, ni niebla, y no se puede entrar en ellos; son el negativo del mapa.
+
+Por qué se aceptan en vez de prohibirlos al colocar: son lo que hace que la silueta no parezca una rejilla, y prohibirlos costaría encajes válidos a cambio de un tablero más macizo y más aburrido. Medido sobre 300 tableros: aparecen en el **51 %**, con **1,6 hexágonos** de vacío por tablero. Casi siempre son de **1 ó 2 hexágonos**, y de vez en cuando sale una cuenca de verdad —la mayor medida, 18 hexágonos—. Las piezas grandes dejan más hueco que las pequeñas, así que la cifra sube con cada loseta Grande que entra en la bolsa. El generador los localiza al terminar (`Board.voids`) y `/dev/tablero` los cuenta.
+
+Consecuencia en la biblioteca: una **loseta con un agujero dentro** (un anillo) es válida por la misma razón, y no hay que avisar de ella.
+
 ## 2b. Modos de juego: Partida rápida vs. Campaña
 
 Con esto queda **validada la generación de mapa** para los dos modos que necesitamos:
@@ -72,7 +78,11 @@ Para el **primer prototipo**, generación **hexágono-a-hexágono con pesos** (l
 
 Por qué: si el terreno de un hexágono se sortea al colocar la pieza, lo que se ve al maquetarla no es lo que sale en la partida, y una loseta deja de ser una decisión de diseño para ser una plantilla. La variedad entre partidas la dan las **variantes** de cada tipo (el mismo sitio dibujado de varias maneras) y el giro, no el azar hexágono a hexágono.
 
-La **Cueva** es la única que no tiene cuota en la tabla A: es terreno de **lugar** (§3a) y aparece donde el maquetado la ponga. Medido sobre 300 tableros con la biblioteca de hoy: Llanura 39 % · Bosque 22 % · Camino 16 % · Pantano 10 % · Montaña 12 % · Cueva 1 %. El Camino es el que más se resiste, y no por los pesos: una pieza de camino solo entra donde encuentra un ancla de camino libre.
+La **Cueva** es la única que no tiene cuota en la tabla A: es terreno de **lugar** (§3a) y aparece donde el maquetado la ponga.
+
+**Dónde se cumple la tabla A y dónde no.** El peso de cada tipo de loseta se ajusta para que **la bolsa** dé en la cuota, y ahí da: Llanura 39,2 · Bosque 20,0 · Camino 19,8 · Pantano 9,8 · Montaña 9,8 (Cueva 1,4, sin cuota). Lo que sale **medido en el tablero** sobre 300 partidas se separa un poco: Llanura 41,3 · Bosque 20,6 · Camino 16,7 · Pantano 11,1 · Montaña 8,9 · Cueva 1,5.
+
+La diferencia no es de maquetado, es de **encaje**, y afecta justo a los dos terrenos con anclas restringidas: una pieza de camino solo se une por la boca de su camino, y en la roca no se ancla nunca (§2). Al tener menos sitios donde encajar, Camino y Montaña pierden presencia en el tablero respecto a la bolsa, y Bosque y Llanura la ganan. Se corrige subiendo pesos (mentiría la bolsa) o dando preferencia al ancla de camino al colocar (cambiaría la regla de encaje): **pendiente de decidir**.
 
 **Tabla B — Distribución de fichas por terreno** (pesos relativos; ~15-20 % de los hexes transitables llevan ficha, densidad configurable). Montaña no lleva ficha:
 
@@ -164,6 +174,8 @@ En el **prototipo** la Mazmorra **no genera un mapa interior**. Se resuelve ente
 Todos los terrenos deben tener como mínimo: **coste de movimiento**, **modificador de ocultación/defensa** (puede ser 0), y **probabilidad de aparición** en la generación aleatoria.
 
 ## 4. Fichas de evento y niebla de guerra
+
+> **En espera, a propósito** *(decidido)*. Las losetas ya existen, así que la niebla por grupo **se podría** construir ya (§2c dice que sustituirá a la de dos capas por hexágono). Se aparca hasta que estén listas las losetas, el lote de semillas y **las fichas de personaje**: lo que decide si la niebla por grupo es la buena es cómo interactúa la ficha del héroe con el entorno —qué ve al entrar, qué le obliga a asomarse—, y eso no se puede juzgar sin fichas en el tablero. Mientras tanto sigue la niebla de dos capas por hexágono, que ya funciona.
 
 ### Niebla de guerra a nivel de grupo (tile), no hexágono a hexágono
 

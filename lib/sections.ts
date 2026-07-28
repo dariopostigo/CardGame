@@ -59,7 +59,7 @@ export const SECTIONS: readonly Section[] = [
     label: "Dev",
     short: "Dev",
     summary:
-      "Los laboratorios del motor: losetas, generación de tablero, semillas, fichas, baraja, combate y animaciones. Cada pieza aislada del resto.",
+      "Los laboratorios del motor: losetas, generación de tablero, fichas, baraja, combate y animaciones. Cada pieza aislada del resto.",
     icon: "pi pi-code",
   },
   {

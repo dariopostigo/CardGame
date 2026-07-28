@@ -20,8 +20,9 @@
 //   · UN terreno define el tipo, y el resto de la loseta lo acompaña. El terreno
 //     va en MASAS: un bosque es una mancha compacta y una sierra es una cresta;
 //     salteado hexágono a hexágono no se lee como paisaje, se lee como ruido.
-//   · Las orillas se dejan AL SORTEO. Así la pieza se funde con sus vecinas y no
-//     sale idéntica en cada partida (§2c tabla A).
+//   · Las ORILLAS se pintan también, hexágono a hexágono: no hay "esto lo decide
+//     el tablero". Lo que hace que una pieza no salga idéntica en cada partida no
+//     es el azar dentro de ella, son sus VARIANTES y el giro (§2c tabla A).
 //   · Las EXCEPCIONES son legítimas cuando el sitio las pide: el Camino que cruza
 //     el paso de montaña, el Pantano al que baja el vado. `typeNotes` avisa de
 //     las que probablemente no lo sean.
@@ -35,8 +36,15 @@
 // Los TAMAÑOS hacen dos trabajos distintos. Las Mínimas y Pequeñas son la
 // argamasa —accidentes del terreno que rellenan y doblan el tablero—; las
 // Medianas y Grandes son regiones con interior propio, y pesan poco porque una
-// sola ya marca el carácter de la partida. No hay ninguna Enorme a propósito: 64
-// hexágonos son un tablero entero, no una pieza.
+// sola ya marca el carácter de la partida. Hay UNA Enorme (el Robledal viejo, 37
+// hexágonos) y con eso basta: al tope de 64 le cabe un tablero entero, así que una
+// Enorme no es una pieza grande, es media partida decidida de golpe.
+//
+// El PESO de cada tipo no es una intuición: se ajusta para que el reparto de
+// terreno de la bolsa dé en la tabla A (§2c). Con la biblioteca de hoy la bolsa
+// sale a Llanura 39,2 · Bosque 20,0 · Camino 19,8 · Pantano 9,8 · Montaña 9,8,
+// contra el objetivo 40/20/20/10/10. Tocar un dibujo mueve esas cifras, así que
+// después de maquetar hay que volver a mirarlas en /dev/losetas.
 // =========================================================================
 
 import data from "@/data/tile-library.json";

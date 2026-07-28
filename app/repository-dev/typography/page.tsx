@@ -104,8 +104,8 @@ export default function TipografiaPage() {
           </Specimen>
           <Specimen label="Deshabilitado" hint="Lo planificado se lista apagado, no se esconde">
             <span className="flex items-center gap-2 text-sm text-[var(--wiki-muted)] opacity-70">
-              <i className="pi pi-hashtag text-[0.85em] opacity-60" />
-              Semillas y determinismo
+              <i className="pi pi-circle-fill text-[0.85em] opacity-60" />
+              Diseño de fichas
               <i className="pi pi-clock text-[0.7rem]" />
             </span>
           </Specimen>

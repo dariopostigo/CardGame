@@ -91,6 +91,11 @@ $terrain: (
 // ilegibles sobre Bosque y Pantano.
 $board-glyph-halo: rgba(255, 255, 255, 0.78);
 
+// Hueco cerrado: el vacío que deja el encaje de las losetas y ya no se puede
+// rellenar. Va más oscuro que cualquier terreno a propósito —es un agujero, no
+// un sitio— y no depende del skin, como el resto del mapa.
+$board-void: #17120f;
+
 // Contorno de cada loseta. Es lo que hace que el tablero se lea como piezas
 // encajadas y no como una rejilla continua.
 $board-tile-edge: rgba(24, 20, 12, 0.62);

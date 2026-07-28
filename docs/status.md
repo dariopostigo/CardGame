@@ -2,6 +2,8 @@
 
 Foto única y honesta de qué está definido y qué no, para no perderse entre los checklists repartidos por cada documento. Los detalles finos siguen viviendo en cada doc; esto solo consolida.
 
+Es también el **punto de continuación** del proyecto: la §6 dice por dónde se sigue. Lo que no está aquí es la parte técnica —stack, capas, motor de reglas y decisiones de arquitectura—, que vive en `ARCHITECTURE.md` en la raíz del repositorio.
+
 **Leyenda:** ✅ Definido · 🟡 Parcial / boceto · ⭕ Abierto / sin empezar
 
 > **"Definido" = hay una regla clara sobre el papel.** NO significa *balanceado* ni *implementado en código* — eso son fases aparte (ver "Transversal"). Casi todas las cifras actuales son un "primer pase" sin balancear.
@@ -47,8 +49,8 @@ Foto única y honesta de qué está definido y qué no, para no perderse entre l
 
 | Área | Estado | Nota |
 |---|---|---|
-| Tablero: hexágonos, niebla, fichas | ✅ (concepto) | `board/board-map.md` |
-| Generación de mapa | ✅ (prototipo) | Hex-por-hex con pesos + tablas de probabilidad (terreno y fichas) en `board/board-map.md` §2c, con **entrada en una esquina** y **1 Pueblo + 1 Guarida garantizados** (sin Pueblo garantizado, tienda/descanso largo/limpiar maldiciones podían quedar inaccesibles). El sistema por **tiles** queda para post-prototipo. Enemigos **no reaparecen** (`characters/enemies.md` §2) |
+| Tablero: hexágonos, niebla, fichas | ✅ (concepto) | `board/board-map.md`. Hexágonos y fichas **ya construidos**; la niebla, todavía no |
+| Generación de mapa | ✅ **y construida** | **Por losetas**, no hex-por-hex: el sistema de *tiles* se adelantó y ya funciona (`board/board-map.md` §2c). Cada hexágono llega pintado por su pieza, así que la tabla A pasó de sorteo a **objetivo del maquetado**; la conectividad es el único paso que puede repintar terreno (0 hexágonos abiertos en 300 tableros). Con **entrada por la boca del camino** de la primera loseta, **1 Pueblo + 1 Guarida garantizados** (sin Pueblo garantizado, tienda/descanso largo/limpiar maldiciones podían quedar inaccesibles) y los **huecos cerrados** aceptados como negativo del mapa (§2). Enemigos **no reaparecen** (`characters/enemies.md` §2) |
 | Terrenos (set de 5) | ✅ | Mecánicas oficiales (movimiento/detección/combate/descanso/peligro) en `board/board-map.md` §3a. Falta balancear |
 | Localizaciones especiales | ✅ (prototipo) | Prototipo = Pueblo + Mazmorra + Guarida. **Ninguna abre sub-mapa**: se resuelven en su hexágono (`board/board-map.md` §3b-bis) — la Mazmorra es 1 hex reforzado (1 Élite distinto al boss + 2 cartas de loot; sin luz te embosca). El sub-mapa llega con los tiles |
 | Fichas del tablero (las 6) | ✅ | Las 6 tienen resolución: Enemigo/Amenaza/Exploración vía mazo de encuentro (`cards/encounter.md` §5), Tesoro vía tabla de loot (`game-design.md` §6b.6), Personaje vía `characters/npcs.md`, y **Terreno** = atajo arriesgado con prueba `1d20 + FUE/DES` vs CD 12 (`board/board-map.md` §4b), que era la única sin regla |
@@ -66,7 +68,8 @@ Foto única y honesta de qué está definido y qué no, para no perderse entre l
 | **Modelo de interacción / UX** | ⭕ | **No está escrito en ninguna parte, y no es arte.** Cómo se presentan las 2 cartas del Oteo y la elección, cómo se ve "en juego" y la sustitución con el tope lleno, cómo apuntas a un hexágono, cómo se distinguen las dos capas de niebla. En un juego de cartas es la mitad de la experiencia; se decidirá construyendo, pero conviene saber que se está **inventando**, no implementando |
 | **Balance** (todas las cifras) | ⭕ | Todo es "primer pase"; se afina con el prototipo |
 | Arte / UI / visual | ⭕ | Diferido a fase de arte (IA generativa) |
-| Implementación / código | ⭕ | Nada de app todavía |
+| Implementación / código | 🟡 | **Hay app.** Wiki de diseño + repositorios de componentes funcionando, y del motor están **hexágonos, azar con semilla, terrenos, losetas y generación de tablero**, con dos laboratorios en curso (`/dev/losetas` y `/dev/tablero`). Falta todo lo que toca la partida en sí: turno, mazo, movimiento, visión, combate, fichas y reloj. Detalle y orden en la §6 |
+| **Tests del motor** | ⭕ | Sin runner instalado y sin un solo test, con el motor ya en cuatro dígitos de líneas. Es la deuda que más crece: `node:test` o Vitest, sin decidir |
 | Modelo de datos / técnico | ✅ | Modelo alineado con el diseño (Hex, Terreno, Character, Enemy, Card) en `board/board-map-dev.md`; el código en sí es la fase de build |
 
 ## 5. Resumen honesto
@@ -101,21 +104,26 @@ Las dos tandas de revisión que cerraron esto arreglaron, además de rellenar hu
 2. **Modelo de interacción / UX** (§4) — se inventa construyendo, pero no está escrito.
 3. **Progresión más allá del nivel 1** — aparcada por decisión del usuario. Arrastra los Dados de Vida y las cartas de clase de nivel 2+.
 4. **Contenido de Campaña** (narrativa, capítulos, historias) — fase posterior al prototipo.
-5. **Arte / UI** y **código** — fases propias.
+5. **Arte / UI** — fase propia.
 6. **Ampliar catálogos** (más cartas de clase, más enemigos, Épico/Legendario en armas y armaduras) — deseable, nunca bloqueante.
 
-## 6. Punto de inflexión
+## 6. Por dónde se sigue
 
-**No queda ningún bloqueante de reglas: se puede empezar a construir.** Lo que queda requiere o bien un prototipo jugable (todo el balance), o bien decisiones aparcadas (niveles) o pospuestas (campaña y arte).
+**Ya no queda ningún bloqueante de reglas y la construcción está en marcha.** Lo que falta requiere o bien un prototipo jugable (todo el balance), o bien decisiones aparcadas (niveles) o pospuestas (campaña y arte).
 
-**El siguiente paso natural es construir el prototipo de la Partida rápida**: implementar el mapa hex con las dos capas de niebla (`board/board-map.md` §2c), un puñado de enemigos (`characters/enemies.md` §5b), el Guerrero y el Mago con su kit y sus cartas (`characters/heroes.md` §2d, `cards/class.md`) y el bucle de combate (`game-design.md` §4b), para poder empezar a balancear jugando.
+**Construido hasta hoy:** el tablero. Hexágonos y coordenadas, azar con semilla, los terrenos, el sistema de **losetas** con su biblioteca editable (17 tipos y 39 variantes, los cinco tamaños) y la **generación del tablero** completa: encaje por anclas, entrada, conectividad, Pueblo y Guarida garantizados, siembra de fichas y huecos cerrados. Se trabaja en `/dev/losetas` y `/dev/tablero`.
 
-**Decisiones que se pueden tomar sobre la marcha con valores provisionales** (no hace falta cerrarlas antes de empezar): qué enemigo concreto sale en cada ficha dentro de su categoría, la definición de "zona cerca/media/lejana" en hexes, los nombres propios de 2-3 NPCs y una CD 12 por defecto para las pruebas de ficha.
+**Lo inmediato, dentro del tablero:**
+- **El lote de semillas** — cientos de tableros de golpe en `/dev/tablero`, para mirar el reparto y no el ejemplar. Las cifras que este documento y `board/board-map.md` §2c citan ("300 tableros") se midieron a mano; hasta que el lote exista, cada afirmación sobre el reparto hay que volver a medirla igual.
+- **Decisión abierta:** Camino y Montaña salen en el tablero por debajo de su cuota de bolsa (16,7 vs 19,8 · 8,9 vs 9,8) porque tienen anclas restringidas. Subir pesos o dar preferencia al ancla de camino al colocar (`board/board-map.md` §2c).
+- **Tests del motor** (§4) — elegir runner y cubrir los invariantes del encaje antes de que el motor doble de tamaño.
 
-**Orden sugerido de construcción**, de lo que desbloquea más a lo que menos:
-1. Mapa hex + coordenadas + generación con pesos + las **dos capas de niebla** (`board/board-map.md` §2c) — sin esto no hay nada que ver.
+**Decisiones que se pueden tomar sobre la marcha con valores provisionales** (no hace falta cerrarlas antes de seguir): qué enemigo concreto sale en cada ficha dentro de su categoría, la definición de "zona cerca/media/lejana" en hexes, los nombres propios de 2-3 NPCs y una CD 12 por defecto para las pruebas de ficha.
+
+**Orden de lo que queda**, de lo que desbloquea más a lo que menos:
+1. **Fichas** en el tablero por orden de frecuencia: Amenaza y Personaje (~6,7 y ~5,3 por mapa) → Enemigo y Tesoro → Exploración → **Terreno al final** (~1,2 por mapa, `board/board-map.md` §4b).
 2. Turno, movimiento y **Oteo** (`game-design.md` §4) con el Guerrero y sus 8 cartas: es el bucle mínimo jugable.
 3. **Combate** (`game-design.md` §4b) contra 1 Normal, y luego el tope de 2.
-4. **Fichas** por orden de frecuencia: Amenaza y Personaje (~6,7 y ~5,3 por mapa) → Enemigo y Tesoro → Exploración → **Terreno al final** (~1,2 por mapa, `board/board-map.md` §4b).
-5. **Tabla de loot** (§6b.6) y **reloj de Amenaza** (§6c) — con esto la partida ya se gana y se pierde.
-6. Pueblo, tiendas y descanso; el **Mago** como segundo héroe (es el que más estresa el sistema: 16 PV, alcance, bocajarro).
+4. **Tabla de loot** (`game-design.md` §6b.6) y **reloj de Amenaza** (§6c) — con esto la partida ya se gana y se pierde.
+5. Pueblo, tiendas y descanso; el **Mago** como segundo héroe (es el que más estresa el sistema: 16 PV, alcance, bocajarro).
+6. **La niebla, al final y a propósito** (`board/board-map.md` §4): la de dos capas por hexágono está escrita y la de grupo se podría construir ya, pero cuál es la buena depende de cómo se comporte la **ficha del héroe** en el tablero, así que espera a las fichas de personaje.

@@ -43,22 +43,21 @@ export const DEV_LABS: readonly DevLab[] = [
     status: "en-curso",
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §2" },
   },
+  // El LOTE de semillas no es un laboratorio aparte: es este mismo generador con
+  // estos mismos mandos, mirando el reparto de cientos de tableros en vez del
+  // ejemplar que tienes delante. Duplicarlo en su propia pantalla sería duplicar
+  // el panel de mandos. Y "misma semilla → mismo tablero" no es una pantalla, es
+  // una comprobación de una línea. Lo que sí es de otro sitio es "misma semilla →
+  // misma PARTIDA" (robo de cartas, loot, IA, reloj): eso lo prueba el simulador,
+  // porque son partidas y no tableros.
   {
     slug: "tablero",
     label: "Generación de tablero",
     summary:
-      "El encaje: cuántas losetas, cómo se unen por sus anclas, hacia dónde crece la silueta, Guarida y Pueblo garantizados y siembra de fichas.",
+      "El encaje: cuántas losetas, cómo se unen por sus anclas, hacia dónde crece la silueta, Guarida y Pueblo garantizados y siembra de fichas. Aquí entra también el lote de semillas —cientos de tableros de golpe para ver el reparto y no el ejemplar—, que es lo que queda por construir.",
     icon: "pi pi-map",
     status: "en-curso",
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §2c" },
-  },
-  {
-    slug: "semillas",
-    label: "Semillas y determinismo",
-    summary:
-      "Comparador de semillas: generar en lote, medir travesía, reparto de terreno y fichas, y comprobar que una semilla reproduce la partida exacta.",
-    icon: "pi pi-hashtag",
-    status: "planificado",
   },
   {
     slug: "fichas",
@@ -108,7 +107,7 @@ export const DEV_LABS: readonly DevLab[] = [
     slug: "simulador",
     label: "Simulador de balance",
     summary:
-      "Miles de partidas sin pantalla para cerrar las cifras: tasa de muerte por héroe, turnos hasta el boss y si el reloj llega antes que el jugador.",
+      "Miles de partidas sin pantalla para cerrar las cifras: tasa de muerte por héroe, turnos hasta el boss y si el reloj llega antes que el jugador. Es también donde se comprueba el determinismo de verdad: que una semilla reproduce la partida exacta, robo de cartas y loot incluidos.",
     icon: "pi pi-chart-bar",
     status: "planificado",
     doc: { href: "/docs/status", label: "Estado del diseño" },

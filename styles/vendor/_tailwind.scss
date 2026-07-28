@@ -8,10 +8,19 @@
 // El import se escribe "tailwindcss/index.css" (y no "tailwindcss"): con la
 // extensión .css Sass lo deja pasar tal cual en lugar de intentar resolverlo
 // como módulo Sass, y ya lo inlinea el plugin PostCSS de Tailwind.
+//
+// Y se escribe `@#{""}import` en vez de `@import` por un motivo tonto pero
+// crítico: Sass sube TODO @import de CSS plano a la primera línea del fichero
+// emitido, por encima de la declaración de capas de aquí abajo. Entonces el
+// `@layer theme, base, components, utilities;` que trae Tailwind se procesa
+// primero, fija ese orden, y `primereact` —que Tailwind no nombra— se crea
+// como capa NUEVA, o sea la ÚLTIMA: pasaría por delante de las utilidades y
+// un `pl-8` de Tailwind sobre un <InputText> dejaría de tener efecto. Con la
+// interpolación Sass ya no lo reconoce como @import y lo deja donde está.
 // =========================================================================
 
 @layer theme, base, primereact, components, utilities;
-@import "tailwindcss/index.css";
+@#{""}import "tailwindcss/index.css";
 @plugin "@tailwindcss/typography";
 
 // La clase .dark la pone el script antiFOUC de app/layout.tsx sobre <html>.

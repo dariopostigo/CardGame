@@ -34,8 +34,8 @@ import { buttonClass } from "@/components/ui/Button";
 // generarían tableros distintos y la hidratación se quejaría.
 const INITIAL_SEED = "guarida-1";
 
-// Pocas losetas y grandes: la bolsa va de 4 a 21 hexágonos por pieza (media 8,4),
-// así que 9 losetas ya dan las ~72 casillas de un tablero de Partida rápida.
+// Pocas losetas y grandes: la bolsa va de 4 a 37 hexágonos por pieza (media 8,6
+// por peso), así que 9 losetas ya dan las ~78 casillas de una Partida rápida.
 const TILE_COUNTS = [6, 9, 12];
 const DENSITIES = [0.12, 0.17, 0.22];
 const SHAPES: Array<{ label: string; sprawl: number }> = [
@@ -186,6 +186,12 @@ export default function BoardLab() {
         </span>
         <span>
           <b>Fichas:</b> {stats.tokenTotal}
+        </span>
+        <span title="Vacío rodeado de tablero por todos lados: lo deja el encaje y ya no se puede rellenar, así que es terreno intransitable. Forma parte del mapa, no es un fallo.">
+          <b>Huecos cerrados:</b>{" "}
+          {board.voids.length === 0
+            ? "ninguno"
+            : `${board.voids.length} ${board.voids.length === 1 ? "hexágono" : "hexágonos"}`}
         </span>
         <span title="Montañas que la generación ha tenido que convertir en Llanura para no dejar una bolsa aislada. Son los únicos hexágonos del tablero que no llevan el terreno que maquetó su loseta, así que cuantos menos, mejor.">
           <b>Maquetado roto:</b>{" "}

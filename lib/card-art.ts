@@ -6,7 +6,7 @@
 // tiene sitio en una tabla. Por eso el arte vive aquí, indexado por nombre de
 // carta, y es lo único de la carta que no sale del markdown.
 //
-// Es un puesto provisional para la fase de arte (PENDIENTE.md §4): cuando
+// Es un puesto provisional para la fase de arte (docs/status.md §4): cuando
 // haya ilustraciones de verdad, este mapa pasa a apuntar a los assets y el
 // resto del pipeline no se entera.
 //

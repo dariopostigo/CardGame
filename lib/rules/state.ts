@@ -80,6 +80,13 @@ export type Board = {
   readonly hexes: ReadonlyMap<HexKey, Hex>;
   /** Las losetas colocadas, en orden de colocación. */
   readonly tiles: readonly PlacedTile[];
+  /**
+   * Huecos cerrados: vacío rodeado de tablero por todos lados. NO son hexágonos
+   * —no están en `hexes`, no se puede entrar ni ver contenido en ellos— sino el
+   * negativo del mapa: una sima, una laguna, un derrumbe. Los deja el encaje de
+   * las losetas y ya no se pueden rellenar (board-map.md §2, `findVoids`).
+   */
+  readonly voids: readonly HexCoord[];
   readonly entrance: HexCoord;
   /** Distancia en pasos desde la entrada, esquivando Montaña. Infinity si es inalcanzable. */
   readonly distanceFromEntrance: ReadonlyMap<HexKey, number>;

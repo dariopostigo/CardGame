@@ -8,7 +8,7 @@ import { DEV_LABS, LAB_STATUS_LABEL, isAvailable, type DevLab } from "@/lib/dev-
 export const metadata: Metadata = {
   title: "Laboratorios",
   description:
-    "Laboratorios de desarrollo de CardGame: losetas, generación de tablero, semillas, fichas, baraja, combate y animaciones.",
+    "Laboratorios de desarrollo de CardGame: losetas, generación de tablero, fichas, baraja, combate y animaciones.",
 };
 
 export default function DevIndexPage() {

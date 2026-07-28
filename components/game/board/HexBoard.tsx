@@ -11,9 +11,10 @@
 // Se pinta en capas, no hexágono a hexágono, porque el contorno de una loseta
 // tiene que quedar POR ENCIMA del relleno de todos los hexágonos, no solo del
 // suyo:
-//   1. relleno de los hexágonos
-//   2. contorno de cada loseta (el lado que da a otra loseta o al vacío)
-//   3. fichas, localizaciones y entrada
+//   1. huecos cerrados (el negativo del mapa: simas y lagunas)
+//   2. relleno de los hexágonos
+//   3. contorno de cada loseta (el lado que da a otra loseta o al vacío)
+//   4. fichas, localizaciones y entrada
 //
 // El sendero no tiene capa: el Camino es un terreno como los demás y se ve por
 // su color, igual que en el catálogo de /dev/losetas. Antes se le dibujaba
@@ -87,7 +88,26 @@ export default function HexBoard({
       role="img"
       aria-label={`Tablero de ${cells.length} hexágonos en ${board.tiles.length} losetas`}
     >
-      {/* 1. Relleno */}
+      {/* 1. Huecos cerrados. No son hexágonos del tablero —no llevan terreno, ni
+          ficha, ni niebla— así que se pintan aparte y no reciben el clic: son el
+          agujero que dejó el encaje, y se ven siempre porque no hay nada que
+          descubrir en ellos. */}
+      <g className="board__voids">
+        {board.voids.map((coord) => {
+          const { x, y } = Hex.toPixel(coord, hexSize);
+          return (
+            <polygon
+              key={Hex.key(coord)}
+              className="board__void"
+              points={Hex.polygonPoints(x, y, hexSize)}
+            >
+              <title>Intransitable</title>
+            </polygon>
+          );
+        })}
+      </g>
+
+      {/* 2. Relleno */}
       <g>
         {cells.map((cell) => {
           const { x, y } = center(cell);
@@ -109,7 +129,7 @@ export default function HexBoard({
         })}
       </g>
 
-      {/* 2. Contorno de cada loseta */}
+      {/* 3. Contorno de cada loseta */}
       {showTiles && (
         <g className="board__tiles">
           {cells.flatMap((cell) => {
@@ -136,7 +156,7 @@ export default function HexBoard({
         </g>
       )}
 
-      {/* 3. Marcas */}
+      {/* 4. Marcas */}
       <g>
         {cells.map((cell) => {
           const { x, y } = center(cell);

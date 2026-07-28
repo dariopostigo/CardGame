@@ -3,7 +3,7 @@
 > Arquitectura **concreta** de este proyecto. Sin placeholders: aquí el stack está decidido y las capas que no existen (transporte, roles, i18n) no se documentan.
 > Deriva de una plantilla genérica de arquitectura React/Next, recortada a lo que aplica y **ampliada** con lo que un juego por turnos necesita y un panel de administración no: motor de reglas puro, determinismo y simulación de balance.
 >
-> Documentos hermanos: [`AGENTS.md`](AGENTS.md) (estilos + aviso de Next), [`PENDIENTE.md`](PENDIENTE.md) (punto de continuación), [`docs/`](docs/) (diseño del juego, que es la **fuente de verdad del contenido**), [`docs/board/board-map-dev.md`](docs/board/board-map-dev.md) (modelo de datos y algoritmos).
+> Documentos hermanos: [`AGENTS.md`](AGENTS.md) (estilos + aviso de Next), [`docs/status.md`](docs/status.md) (estado del diseño y punto de continuación), [`docs/`](docs/) (diseño del juego, que es la **fuente de verdad del contenido**), [`docs/board/board-map-dev.md`](docs/board/board-map-dev.md) (modelo de datos y algoritmos).
 
 ---
 
@@ -48,7 +48,7 @@ Por qué separarlos: son dos problemas de diseño que se afinan con criterios di
 
 Y al revés: **la generación no repinta lo maquetado.** `board-gen.ts` no sortea terreno y no lo corrige; su único permiso es abrir una Montaña cuando encierra una bolsa incomunicada, y lo hace por el punto más estrecho y lo devuelve contado (`GeneratedBoard.openedPasses`, que `/dev/tablero` enseña como «Maquetado roto»). Con la biblioteca de hoy no hace falta en ninguno de 300 tableros, porque el aviso de `typeNotes` no deja pasar una variante cuya roca parta su propio terreno transitable.
 
-**Los cinco tamaños** (`TILE_SIZES`) doblan capacidad en cada nivel: Mínima 4, Pequeña 8, Mediana 16, Grande 32, Enorme 64 hexágonos. El tamaño no se guarda en la loseta, se deriva de cuántos hexágonos tiene (`sizeOf`), para que no puedan discrepar. Es de la **variante**, no del tipo: un mismo tipo puede tener un peñasco Mínimo y otro Pequeño. La biblioteca de hoy son **17 tipos y 22 variantes** que cubren cuatro de los cinco tamaños (6 Mínimas, 9 Pequeñas, 5 Medianas, 2 Grandes), con una media de 8 hexágonos por pieza (por peso de bolsa). No hay ninguna Enorme a propósito: 64 hexágonos son un tablero entero, no una pieza. Por eso `tileCount` es **9** — lo que fija el tamaño del tablero es el total de hexágonos (~72), no el número de piezas.
+**Los cinco tamaños** (`TILE_SIZES`) doblan capacidad en cada nivel: Mínima 4, Pequeña 8, Mediana 16, Grande 32, Enorme 64 hexágonos. El tamaño no se guarda en la loseta, se deriva de cuántos hexágonos tiene (`sizeOf`), para que no puedan discrepar. Es de la **variante**, no del tipo: un mismo tipo puede tener un peñasco Mínimo y otro Pequeño. La biblioteca de hoy son **17 tipos y 39 variantes** que cubren **los cinco tamaños** (7 Mínimas, 13 Pequeñas, 13 Medianas, 5 Grandes y 1 Enorme, el Robledal viejo de 37 hexágonos), con una media de 8,6 hexágonos por pieza (por peso de bolsa) y **todos los tipos con dos variantes o más**, que es lo que evita que un sitio salga siempre igual dibujado. Cada familia de terreno llega a pieza grande: Llanura el Páramo, Montaña el Paso, Bosque el Robledal viejo, y Camino, Pantano y Cueva sus Grandes propias. Por eso `tileCount` es **9** — lo que fija el tamaño del tablero es el total de hexágonos (~78), no el número de piezas.
 
 **Las losetas se maquetan DIBUJADAS** (`drawn()`): una cadena por fila de hexágonos y un carácter por hexágono (espacio hueco y `L C B P M V` los terrenos; todos llevan el suyo), sobre la rejilla escalonada de `hex.ts`. Veinte hexágonos escritos como literales `{q, r}` esconden un duplicado o un hueco; dibujados se ven. `toDrawing` es la inversa y da el dibujo **canónico**: la misma loseta siempre el mismo dibujo, esté donde esté en el papel, y por eso abrirla en el editor y guardarla sin tocar nada no mueve el fichero. Cuidado con el orden: hay que trasladar en coordenadas **axiales** y pasar a la rejilla escalonada después, porque mover el dibujo por el papel un número impar de filas no lo traslada, lo deforma (las filas impares van medio hexágono a la derecha).
 
@@ -323,7 +323,7 @@ docs/cards/*.md  ──[ card-table.ts ]──▶  CardRecord  ──[ card-cata
 
 **Esta sección es la razón de ser de toda la arquitectura anterior.**
 
-Según [`PENDIENTE.md`](PENDIENTE.md) §5 y [`docs/status.md`](docs/status.md) §4, el prototipo existe **para balancear**, y todas las cifras son un primer pase que "solo se cierra jugando". Hay decisiones abiertas concretas esperando datos: si activar el +2 global de precisión (B3), si el reloj de 40 turnos cuadra con un mapa 12×12 (B4), la economía y el oro inicial (B5), y el residual de kiting con armas de alcance 4.
+Según [`docs/status.md`](docs/status.md) §4-§6, el prototipo existe **para balancear**, y todas las cifras son un primer pase que "solo se cierra jugando". Hay decisiones abiertas concretas esperando datos: si activar un +2 global de precisión en ambos lados, si el reloj de 40 turnos cuadra con el tamaño real del tablero, los precios de la economía, y el residual de kiting con armas de alcance 4.
 
 Con las reglas en funciones puras y deterministas se pueden responder **sin jugar a mano**:
 

@@ -4,7 +4,7 @@
       "id": "paramo",
       "label": "Páramo",
       "terrain": "llanura",
-      "weight": 3,
+      "weight": 6,
       "note": "Campo abierto. Es la pieza que da aire al tablero: sin ella todo son árboles y roca.",
       "variants": [
         {
@@ -18,6 +18,29 @@
             [0, 2, "O"],
             [2, 4, "SO"]
           ]
+        },
+        {
+          "id": "paramo-corto",
+          "label": "Páramo corto",
+          "note": "El mismo llano en pequeño: un puñado de hexágonos abiertos y un árbol solo. Es la pieza que estira el tablero cuando no cabe el páramo grande.",
+          "art": ["LLLL", "LLB", " L"],
+          "anchors": [
+            [0, 0, "NO"],
+            [3, 0, "E"],
+            [1, 2, "SE"]
+          ]
+        },
+        {
+          "id": "paramo-de-la-charca",
+          "label": "Páramo de la charca",
+          "note": "Llano con una charca en medio: obliga a rodear sin cortar el paso, y da al páramo una razón para no ser siempre la pieza fácil.",
+          "art": ["LLLL", "LLPL", "LPPL", " LL"],
+          "anchors": [
+            [0, 0, "NO"],
+            [3, 1, "E"],
+            [0, 2, "O"],
+            [2, 3, "SE"]
+          ]
         }
       ]
     },
@@ -25,7 +48,7 @@
       "id": "trocha",
       "label": "Trocha",
       "terrain": "camino",
-      "weight": 7,
+      "weight": 9,
       "note": "El eslabón de la red: tres hexágonos de camino de un borde al otro. Es el tipo más común de la bolsa porque es lo que hace que el sendero llegue a algún sitio.",
       "variants": [
         {
@@ -47,6 +70,16 @@
             [0, 0, "O"],
             [1, 1, "SE"]
           ]
+        },
+        {
+          "id": "trocha-quebrada",
+          "label": "Trocha quebrada",
+          "note": "La curva contraria a la revuelta: entra por el suroeste y sale al este. El giro no la sustituye —una loseta girada no se refleja—, así que hacen falta las dos para que la red doble a los dos lados.",
+          "art": ["LCC", "C"],
+          "anchors": [
+            [2, 0, "E"],
+            [0, 1, "SO"]
+          ]
         }
       ]
     },
@@ -54,7 +87,7 @@
       "id": "vega-del-camino",
       "label": "Vega del camino",
       "terrain": "camino",
-      "weight": 5,
+      "weight": 6,
       "note": "El camino recto por el fondo del valle, con el bosque en la ladera alta.",
       "variants": [
         {
@@ -66,6 +99,16 @@
             [0, 1, "O"],
             [3, 1, "E"]
           ]
+        },
+        {
+          "id": "vega-en-cuesta",
+          "label": "Vega en cuesta",
+          "note": "Los mismos cuatro hexágonos de camino, pero bajando: el bosque queda arriba y el llano abajo. Es el tramo largo que no va de este a oeste.",
+          "art": ["BCB", "BCB", "LLCL", " LCL"],
+          "anchors": [
+            [1, 0, "NO"],
+            [2, 3, "SE"]
+          ]
         }
       ]
     },
@@ -73,7 +116,7 @@
       "id": "camino-del-bosque",
       "label": "Camino del bosque",
       "terrain": "camino",
-      "weight": 4,
+      "weight": 3,
       "note": "El camino entra en la espesura y sale por el otro lado. Tiene más Bosque que Camino a propósito: el sendero es un hilo, no la masa.",
       "variants": [
         {
@@ -85,6 +128,16 @@
             [1, 0, "NO"],
             [1, 1, "SE"]
           ]
+        },
+        {
+          "id": "camino-del-soto",
+          "label": "Camino del soto",
+          "note": "El camino pasa rozando la espesura en vez de meterse en ella: se cruza de lado a lado con árboles a los dos lados.",
+          "art": ["BBB", "CCC", " BB"],
+          "anchors": [
+            [0, 1, "O"],
+            [2, 1, "E"]
+          ]
         }
       ]
     },
@@ -92,7 +145,7 @@
       "id": "vado",
       "label": "Vado",
       "terrain": "camino",
-      "weight": 4,
+      "weight": 3,
       "note": "El camino cruza la charca por el único sitio donde se puede pasar.",
       "variants": [
         {
@@ -104,6 +157,16 @@
             [1, 0, "NO"],
             [1, 1, "SE"]
           ]
+        },
+        {
+          "id": "vado-largo",
+          "label": "Vado largo",
+          "note": "El paso cruza la charca entera: tres hexágonos con agua a los dos lados, y ni uno de más por donde escaparse.",
+          "art": ["PCP", "PCP", " C"],
+          "anchors": [
+            [1, 0, "NO"],
+            [1, 2, "SO"]
+          ]
         }
       ]
     },
@@ -111,7 +174,7 @@
       "id": "encrucijada",
       "label": "Encrucijada",
       "terrain": "camino",
-      "weight": 3,
+      "weight": 5,
       "note": "Tres bocas de camino: es el único tipo que RAMIFICA la red. Sin él el sendero es una línea y no un mapa.",
       "variants": [
         {
@@ -124,6 +187,30 @@
             [2, 1, "E"],
             [2, 2, "SE"]
           ]
+        },
+        {
+          "id": "encrucijada-de-cuatro",
+          "label": "Encrucijada de cuatro",
+          "note": "Cuatro bocas en vez de tres: es la pieza que convierte el sendero en una red de verdad. Sale poco a propósito, porque dos de estas seguidas dejan el tablero lleno de cruces.",
+          "art": [" C", "CCC", "LLC", " LL"],
+          "anchors": [
+            [1, 0, "NO"],
+            [0, 1, "O"],
+            [2, 1, "E"],
+            [2, 2, "E"]
+          ]
+        },
+        {
+          "id": "encrucijada-del-valle",
+          "label": "Encrucijada del valle",
+          "note": "La encrucijada hecha región: ocho hexágonos de camino en cruz con cuatro bocas, y el llano alrededor. Cuando sale, es el nudo del tablero —todo el sendero pasa por aquí—, y de paso reparte cuatro anclas de camino, que es lo que le hace falta a la red para no morirse en las juntas.",
+          "art": ["  C", "LLCLL", "CCCCC", " LLCLL", "  LL"],
+          "anchors": [
+            [2, 0, "NO"],
+            [0, 2, "O"],
+            [4, 2, "E"],
+            [3, 3, "SE"]
+          ]
         }
       ]
     },
@@ -131,7 +218,7 @@
       "id": "soto",
       "label": "Soto",
       "terrain": "bosque",
-      "weight": 4,
+      "weight": 7,
       "note": "Bosquete al borde de un claro. Es la argamasa del tablero: pequeño, se encaja en cualquier hueco y esconde al héroe sin cegarlo del todo.",
       "variants": [
         {
@@ -162,7 +249,7 @@
       "id": "bosque-cerrado",
       "label": "Bosque cerrado",
       "terrain": "bosque",
-      "weight": 2,
+      "weight": 1,
       "note": "Corona de árboles alrededor de un claro. Pesa poco: seis hexágonos de Bosque seguidos son mucho tablero sin visibilidad.",
       "variants": [
         {
@@ -174,6 +261,18 @@
             [1, 0, "NO"],
             [2, 1, "E"],
             [1, 2, "SO"]
+          ]
+        },
+        {
+          "id": "bosque-de-los-claros",
+          "label": "Bosque de los claros",
+          "note": "Dos claros dentro de la misma masa de árboles, sin verse el uno al otro: dos sitios donde acampar y ninguno desde el que vigilar el otro.",
+          "art": [" BBB", "BLBLB", " BBB"],
+          "anchors": [
+            [1, 0, "NO"],
+            [0, 1, "O"],
+            [4, 1, "E"],
+            [2, 2, "SE"]
           ]
         }
       ]
@@ -188,13 +287,26 @@
         {
           "id": "robledal",
           "label": "Robledal",
-          "note": "Catorce hexágonos y cuatro anclas: es una región, no un accidente. Los dos claros de dentro son Llanura.",
+          "note": "Catorce hexágonos y cuatro anclas: es una región, no un accidente. El claro de dentro son tres hexágonos de Llanura, que es donde se acampa.",
           "art": ["BBBB", "BBBB", "BLLB", " LB"],
           "anchors": [
             [1, 0, "NO"],
             [3, 1, "E"],
             [0, 2, "O"],
             [1, 3, "SO"]
+          ]
+        },
+        {
+          "id": "robledal-viejo",
+          "label": "Robledal viejo",
+          "note": "La única loseta Enorme de la biblioteca: treinta y siete hexágonos de bosque con un claro que serpentea por dentro. No es un accidente del terreno, es una región —se entra y se tarda en salir—, y por eso pesa la mitad de un robledal normal.",
+          "art": [" BBBB", "BBBBBB", "BBLLBBB", "BBBLBB", "BBLLBB", "BBBBB", " BBB"],
+          "anchors": [
+            [1, 0, "NO"],
+            [5, 1, "E"],
+            [0, 2, "O"],
+            [2, 6, "SO"],
+            [3, 6, "SE"]
           ]
         }
       ]
@@ -203,7 +315,7 @@
       "id": "juncal",
       "label": "Juncal",
       "terrain": "pantano",
-      "weight": 2,
+      "weight": 4,
       "note": "Un rincón encharcado; se ancla siempre por el lado seco.",
       "variants": [
         {
@@ -215,6 +327,17 @@
             [1, 0, "NE"],
             [1, 0, "E"],
             [1, 1, "SE"]
+          ]
+        },
+        {
+          "id": "juncal-largo",
+          "label": "Juncal largo",
+          "note": "El mismo rincón encharcado, estirado: el agua ocupa el lado corto y la tierra firme baja por el otro. Se ancla siempre por el lado seco.",
+          "art": ["PL", "PPL", " PL"],
+          "anchors": [
+            [1, 0, "NE"],
+            [2, 1, "E"],
+            [2, 2, "SE"]
           ]
         }
       ]
@@ -236,6 +359,18 @@
             [2, 1, "E"],
             [1, 2, "SE"]
           ]
+        },
+        {
+          "id": "marisma-abierta",
+          "label": "Marisma abierta",
+          "note": "Marisma grande con la orilla en dos lados. El agua manda y deja un hexágono seco al otro lado, al que solo se llega mojándose: es la loseta que enseña para qué sirve el coste 2 del Pantano.",
+          "art": ["LLPP", "LPPP", " LPL"],
+          "anchors": [
+            [0, 0, "NO"],
+            [0, 1, "O"],
+            [1, 2, "SO"],
+            [3, 2, "E"]
+          ]
         }
       ]
     },
@@ -243,7 +378,7 @@
       "id": "cienaga",
       "label": "Ciénaga",
       "terrain": "pantano",
-      "weight": 2,
+      "weight": 1,
       "note": "Charca grande con la orilla arbolada. El agua manda y los árboles son el borde: por ahí se ancla, nunca por el agua.",
       "variants": [
         {
@@ -256,6 +391,29 @@
             [3, 1, "E"],
             [1, 3, "SE"]
           ]
+        },
+        {
+          "id": "cienaga-partida",
+          "label": "Ciénaga partida",
+          "note": "La charca cortada por una lengua de árboles: se puede cruzar por el medio, pero pisando el único hexágono que no es agua.",
+          "art": ["BPPB", "PPBP", " PPB"],
+          "anchors": [
+            [0, 0, "NO"],
+            [3, 0, "E"],
+            [3, 2, "E"]
+          ]
+        },
+        {
+          "id": "cienaga-grande",
+          "label": "Ciénaga grande",
+          "note": "Diez hexágonos de agua con la orilla arbolada: rodearla cuesta dos turnos y cruzarla, una salvación por hexágono. Es la pieza que convierte el Pantano en una decisión de ruta y no en un peaje.",
+          "art": [" BBB", "BPPPB", "BPPPPB", " PPPB"],
+          "anchors": [
+            [1, 0, "NO"],
+            [0, 1, "O"],
+            [4, 1, "E"],
+            [4, 3, "SE"]
+          ]
         }
       ]
     },
@@ -263,7 +421,7 @@
       "id": "penasco",
       "label": "Peñasco",
       "terrain": "montana",
-      "weight": 4,
+      "weight": 3,
       "note": "Un risco suelto: el accidente que rompe la línea de visión sin cerrar el paso.",
       "variants": [
         {
@@ -294,7 +452,7 @@
       "id": "cresta",
       "label": "Cresta",
       "terrain": "montana",
-      "weight": 3,
+      "weight": 2,
       "note": "Pared de roca con su falda: corta la vista de lado a lado. Por la roca no se une nada.",
       "variants": [
         {
@@ -325,7 +483,7 @@
       "id": "sierra",
       "label": "Sierra",
       "terrain": "montana",
-      "weight": 2,
+      "weight": 1,
       "note": "Dos macizos y un paso de tierra entre ellos: un cuello de botella.",
       "variants": [
         {
@@ -337,6 +495,17 @@
             [1, 0, "NO"],
             [1, 2, "SO"],
             [2, 2, "SE"]
+          ]
+        },
+        {
+          "id": "sierra-corta",
+          "label": "Sierra corta",
+          "note": "El cuello de botella en pequeño: la pared arriba y un hexágono de tierra metido entre la roca, al que solo se llega por la falda.",
+          "art": ["MMM", "MLM", " LL"],
+          "anchors": [
+            [1, 2, "O"],
+            [1, 2, "SO"],
+            [2, 2, "E"]
           ]
         }
       ]
@@ -356,6 +525,16 @@
           "anchors": [
             [0, 1, "O"],
             [3, 4, "SE"]
+          ]
+        },
+        {
+          "id": "paso-estrecho",
+          "label": "Paso estrecho",
+          "note": "El paso sin el macizo entero alrededor: tres hexágonos de camino pegados a la pared. Cabe donde no cabe el paso grande, que es casi en cualquier sitio.",
+          "art": ["MMM", "CMM", " CM", " CM"],
+          "anchors": [
+            [0, 1, "O"],
+            [1, 3, "SE"]
           ]
         }
       ]
@@ -387,6 +566,18 @@
             [0, 2, "SO"],
             [1, 2, "SE"],
             [2, 2, "E"]
+          ]
+        },
+        {
+          "id": "cueva-profunda",
+          "label": "Cueva profunda",
+          "note": "El macizo entero con cuatro cámaras dentro: la única loseta grande de Cueva, y el sitio natural de una Mazmorra (la generación la prefiere ahí). Se ancla solo por el llano del pie, así que a las cámaras se entra desde dentro de la loseta.",
+          "art": ["MMMM", "MVVMM", "MMVVM", " LLLL"],
+          "anchors": [
+            [1, 3, "O"],
+            [1, 3, "SO"],
+            [3, 3, "SE"],
+            [4, 3, "E"]
           ]
         }
       ]

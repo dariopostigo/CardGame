@@ -64,6 +64,20 @@
   stroke-width: 3;
 }
 
+// --- Hueco cerrado --------------------------------------------------------
+
+// El negativo del mapa: no es un hexágono, es el agujero que dejó el encaje.
+// Sin `pointer-events` propios: no hay nada que seleccionar dentro.
+.board__voids {
+  pointer-events: none;
+}
+
+.board__void {
+  fill: $board-void;
+  stroke: $board-void;
+  stroke-width: 1;
+}
+
 // --- Contorno de loseta ---------------------------------------------------
 
 // La capa no debe robar el clic al hexágono de debajo.

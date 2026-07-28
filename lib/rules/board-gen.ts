@@ -10,7 +10,7 @@
 // modular: es el sistema de losetas de docs/board/board-map.md §2, adelantado
 // desde la "versión rica". La silueta sale irregular porque depende de por dónde
 // encajen, no de una rejilla. Las losetas no son todas del mismo tamaño (van de
-// 4 a 21 hexágonos), así que POCAS losetas grandes dan tablero de sobra: lo que
+// 4 a 37 hexágonos), así que POCAS losetas grandes dan tablero de sobra: lo que
 // hay que mirar es el total de hexágonos, no el número de piezas.
 //
 // Reglas de encaje: el tablero solo crece por las ANCLAS. Un ancla libre de una
@@ -54,7 +54,7 @@ import { type TileInstance, direction, instantiate, opposite } from "./tiles";
 export type BoardConfig = {
   /** Semilla legible; la misma semilla da el mismo tablero. */
   readonly seed: string;
-  /** Losetas a colocar. 9 × ~8,4 hexágonos ≈ 72 hexágonos. */
+  /** Losetas a colocar. 9 × ~8,6 hexágonos ≈ 78 hexágonos. */
   readonly tileCount: number;
   /** Fracción de hexes transitables con ficha: ~15-20 % (§2c tabla B). */
   readonly tokenDensity: number;
@@ -304,7 +304,13 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
   }
 
   return {
-    board: { hexes, tiles: layout.tiles, entrance, distanceFromEntrance: dist },
+    board: {
+      hexes,
+      tiles: layout.tiles,
+      entrance,
+      distanceFromEntrance: dist,
+      voids: findVoids(hexes),
+    },
     openedPasses: carved.opened,
     chapter: {
       turn: 1,
@@ -315,6 +321,59 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
       seed: cfg.seed,
     },
   };
+}
+
+// --- Huecos cerrados -------------------------------------------------------
+
+/**
+ * Los huecos cerrados del tablero: vacío rodeado de losetas por todos lados.
+ *
+ * Aparecen solos al encajar —dos losetas se tocan pared contra pared y dejan un
+ * rincón sin cubrir— y son PERMANENTES: la loseta más pequeña son 3 hexágonos y
+ * aun así tendría que encajar ancla contra ancla, así que ahí ya no entra nada.
+ * Son terreno intransitable, y están DECIDIDOS como parte del mapa (§2): una
+ * sima, una laguna, un derrumbe. Salen en la mitad de los tableros y ocupan ~1,6
+ * hexágonos, que es justo lo que hace que la silueta no parezca una rejilla.
+ *
+ * No hay que confundirlos con el exterior: se distinguen inundando el vacío
+ * DESDE FUERA. Se rodea el tablero con un anillo de margen —que es todo vacío y
+ * está conectado consigo mismo—, se llena desde ahí, y el vacío al que el
+ * exterior no llega es un hueco cerrado.
+ *
+ * @returns {HexCoord[]} Los hexágonos de vacío encerrados, sin orden particular.
+ */
+function findVoids(hexes: ReadonlyMap<HexKey, HexTile>): HexCoord[] {
+  const coords = [...hexes.values()].map((h) => h.coord);
+  if (coords.length === 0) return [];
+
+  const minQ = Math.min(...coords.map((c) => c.q)) - 1;
+  const maxQ = Math.max(...coords.map((c) => c.q)) + 1;
+  const minR = Math.min(...coords.map((c) => c.r)) - 1;
+  const maxR = Math.max(...coords.map((c) => c.r)) + 1;
+  const inside = (c: HexCoord) => c.q >= minQ && c.q <= maxQ && c.r >= minR && c.r <= maxR;
+
+  const outside = new Set<HexKey>();
+  const start = { q: minQ, r: minR };
+  outside.add(Hex.key(start));
+  const queue: HexCoord[] = [start];
+  for (let head = 0; head < queue.length; head++) {
+    for (const n of Hex.neighbors(queue[head])) {
+      const nk = Hex.key(n);
+      if (!inside(n) || hexes.has(nk) || outside.has(nk)) continue;
+      outside.add(nk);
+      queue.push(n);
+    }
+  }
+
+  const voids: HexCoord[] = [];
+  for (let q = minQ; q <= maxQ; q++) {
+    for (let r = minR; r <= maxR; r++) {
+      const coord = { q, r };
+      const k = Hex.key(coord);
+      if (!hexes.has(k) && !outside.has(k)) voids.push(coord);
+    }
+  }
+  return voids;
 }
 
 // --- Colocación de losetas -------------------------------------------------

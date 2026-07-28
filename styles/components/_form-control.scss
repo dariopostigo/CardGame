@@ -1,0 +1,104 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Densidad de los controles de PrimeReact.
+//
+// El tema Lara los dibuja para una app de escritorio holgada: 1rem de letra
+// y 0.75rem de relleno, casi 47px de alto. Los paneles de mando de los labs
+// son columnas estrechas donde un campo va pegado a un botón en la MISMA
+// fila, así que aquí se igualan al alto de .ui-button (_button.scss): mismo
+// relleno, misma letra, misma línea. Si se retoca uno, retocar el otro.
+//
+// Estas reglas van sin @layer, como todo lo de styles/, y el tema vive en
+// `@layer primereact`: lo sin capa gana a lo de cualquier capa pase lo que
+// pase con la especificidad, así que no hace falta ni !important ni alargar
+// los selectores para copiar los del tema.
+// -------------------------------------------------------------------------
+
+$control-padding-y: 0.375rem;
+$control-padding-x: 0.75rem;
+$control-font-size: 0.875rem;
+$control-line-height: 1.4;
+
+// .p-inputtext es la clase común: la llevan InputText, InputTextarea, el
+// rótulo del Dropdown y el campo del InputNumber. Con vestir esta se igualan
+// todos de golpe.
+.p-inputtext {
+  padding: $control-padding-y $control-padding-x;
+  font-size: $control-font-size;
+  line-height: $control-line-height;
+}
+
+// --- Campo con icono delante ---------------------------------------------
+// El hueco para el icono lo abre el CAMPO, y tiene que salir de aquí: con un
+// `pl-8` de Tailwind no bastaría, porque el relleno de .p-inputtext de arriba
+// va sin @layer y las utilidades sí llevan capa, así que perderían siempre
+// (es la regla de AGENTS.md, aquí vista desde el otro lado). Sin este hueco
+// el texto del campo arranca encima del icono.
+//
+// El icono no necesita z-index: va posicionado y el campo no, así que pinta
+// por encima de su fondo de todos modos.
+.ui-field-icon {
+  position: relative;
+
+  .p-inputtext {
+    padding-left: 2rem;
+  }
+
+  &__mark {
+    position: absolute;
+    top: 50%;
+    left: 0.6rem;
+    translate: 0 -50%;
+    color: skin("muted");
+    font-size: 0.8rem;
+    pointer-events: none;
+  }
+}
+
+// --- Desplegable ---------------------------------------------------------
+.p-dropdown {
+  // La flecha se lleva 3rem en Lara, casi el ancho de un rótulo corto.
+  .p-dropdown-trigger {
+    width: 2rem;
+  }
+}
+
+// El panel se monta en <body>, fuera del contenedor: si no se ajusta también,
+// se abre una lista de opciones al doble de alto que el campo que la abrió.
+.p-dropdown-panel {
+  .p-dropdown-header {
+    padding: $control-padding-y $control-padding-x;
+  }
+
+  .p-dropdown-items .p-dropdown-item {
+    padding: $control-padding-y $control-padding-x;
+    font-size: $control-font-size;
+    line-height: $control-line-height;
+  }
+}
+
+// --- Número con pasos ----------------------------------------------------
+.p-inputnumber {
+  // Un <input> no baja de su ancho intrínseco (el que le da el atributo
+  // `size`) dentro de un flex, porque su min-width:auto lo sostiene. Con los
+  // dos botones al lado eso son ~250px que se salen de una columna estrecha
+  // por mucho w-full que lleve la raíz. La librería lo resuelve solo dentro
+  // de .p-fluid; aquí vale para cualquier uso.
+  max-width: 100%;
+
+  .p-inputnumber-input {
+    min-width: 0;
+  }
+
+  // Los botones son .p-button-icon-only, que en Lara mide 3rem de ancho y
+  // 47px de alto: hay que bajarlos con el campo o la pieza queda descuadrada.
+  .p-inputnumber-button {
+    width: 2rem;
+    padding: $control-padding-y 0;
+
+    .p-button-icon {
+      font-size: 0.75rem;
+    }
+  }
+}

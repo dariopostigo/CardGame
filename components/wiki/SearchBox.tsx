@@ -81,9 +81,9 @@ export default function SearchBox() {
   };
 
   return (
-    <div className="relative" ref={boxRef}>
-      <span className="pointer-events-none absolute left-2 top-1/2 z-10 -translate-y-1/2 text-[var(--wiki-muted)]">
-        <i className="pi pi-search text-sm" />
+    <div className="ui-field-icon" ref={boxRef}>
+      <span className="ui-field-icon__mark">
+        <i className="pi pi-search" />
       </span>
       <Controller
         name="q"
@@ -113,7 +113,7 @@ export default function SearchBox() {
               }
             }}
             placeholder="Buscar…"
-            className="w-40 pl-8 sm:w-56"
+            className="w-40 sm:w-56"
           />
         )}
       />
