@@ -16,7 +16,7 @@ export default function RepositoryDevIndexPage() {
         <>
           <p>
             Los controles con los que están hechas la wiki y los laboratorios. Son{" "}
-            <b>PrimeReact 11</b> sobre el skin <code>--wiki-*</code>, así que todo lo de aquí se ve
+            <b>PrimeReact 10</b> sobre el skin <code>--wiki-*</code>, así que todo lo de aquí se ve
             en claro y en oscuro: el interruptor de la cabecera es parte de la prueba, no un extra.
           </p>
           <p className="mt-2">

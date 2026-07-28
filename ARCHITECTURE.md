@@ -14,7 +14,7 @@
 | Framework | **Next.js 16.2.11, App Router** | Breaking changes respecto a versiones anteriores: **leer `node_modules/next/dist/docs/` antes de programar** ([`AGENTS.md`](AGENTS.md)) |
 | React | **19.2.4** | Server Components por defecto; `"use client"` es una excepción explícita |
 | Lenguaje | **TypeScript `strict`** | [`tsconfig.json`](tsconfig.json). Sin `any` sin justificación escrita |
-| UI kit | **PrimeReact 11** (`@primeuix/themes` preset Aura) — **solo comportamiento** | En esta versión los componentes llegan **sin CSS**: el preset trae los tokens pero su hoja de estilo está vacía y la librería no registra las clases `p-*`. Sirve para accesibilidad y teclado; **el aspecto es nuestro** (`components/ui/`, `styles/components/`). Configurado en [`app/providers.tsx`](app/providers.tsx) |
+| UI kit | **PrimeReact 10** (tema Lara ámbar) | Versión totalmente gratuita: sin comprobación de licencia ni componentes PRO. Los componentes llegan **vestidos** y con las clases `p-*`; el tema es CSS, se carga en [`styles/vendor/_primereact.scss`](styles/vendor/_primereact.scss) (claro y oscuro) y [`app/providers.tsx`](app/providers.tsx) solo lleva opciones globales. Los campos son suyos; el **botón es nuestro** (`components/ui/Button.tsx`), porque el de Lara trae su paleta escrita a pelo en vez de los tokens del skin |
 | Estilos | **Tailwind 4 + SCSS/ITCSS** | Reglas completas en [`AGENTS.md`](AGENTS.md). **No se repiten aquí** |
 | Formularios | `react-hook-form` | Solo donde haga falta (lab de diseño) |
 | Contenido | **Markdown en [`docs/`](docs/)** parseado en build | No hay CMS ni base de datos |
@@ -132,7 +132,7 @@ app/
 │   ├── layout.tsx          #   RepoShell side="dev"
 │   ├── page.tsx            #   hub, sale de lib/repository.ts
 │   ├── typography/         #   títulos, textos, prosa
-│   ├── buttons/            #   Button de PrimeReact 11
+│   ├── buttons/            #   Button propio (components/ui/Button.tsx)
 │   └── forms/              #   campos, select, radios, casillas, deslizador
 ├── repository-pro/         # REPOSITORIO de componentes del JUEGO (medieval)
 │   ├── layout.tsx          #   RepoShell side="pro"
