@@ -62,10 +62,10 @@ export const REPO_DEV_GROUPS: readonly ComponentGroup[] = [
     slug: "forms",
     label: "Campos y controles",
     summary:
-      "Texto, área de texto, número, desplegable, radios, casillas, interruptor y deslizador: los controles con los que se manejan los paneles de mando de los labs. Funcionan, pero siguen SIN VESTIR (PrimeReact 11 no trae CSS).",
+      "Texto, área de texto, número, desplegable, radios, casillas, interruptor y deslizador: los controles con los que se manejan los paneles de mando de los labs, vestidos con el tema Lara ámbar de PrimeReact 10 en claro y oscuro.",
     icon: "pi pi-sliders-h",
     status: "en-curso",
-    source: "primereact/* (sin estilos propios todavía)",
+    source: "primereact/* + styles/vendor/_primereact.scss",
   },
   {
     slug: "surfaces",

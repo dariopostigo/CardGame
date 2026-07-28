@@ -4,31 +4,23 @@
 // campos sin estado no enseña nada, porque la mitad de lo que hay que juzgar
 // —el foco, el marcado, el desplegable abierto— solo existe al usarlos.
 //
-// PrimeReact 11 es COMPUESTO: un desplegable no es <Dropdown/> con props, son
-// Select.Root + Trigger + Popup + List, y un radio son Root + Box + Indicator.
-// A cambio, el marcado es nuestro y el tema no pelea con el skin. Los ejemplos
-// usan vocabulario del proyecto a propósito: así se ve el ancho real que pide
-// un rótulo como «Generación de tablero» y no un «Lorem» de cortesía.
+// PrimeReact 10 es de una pieza: un desplegable es <Dropdown/> con props, no
+// seis subcomponentes, y llega VESTIDO (el tema Lara ámbar de
+// styles/vendor/_primereact.scss, en claro y oscuro). Los ejemplos usan
+// vocabulario del proyecto a propósito: así se ve el ancho real que pide un
+// rótulo como «Generación de tablero» y no un «Lorem» de cortesía.
 
-import { useState, type ChangeEvent } from "react";
-// Los tipos de los eventos hay que pedirlos a mano: las props de los
-// componentes de la v11 son genéricas (aceptan `as`), así que TypeScript no
-// infiere el parámetro del manejador y sin esto sale un `any` implícito.
-import type { UseCheckboxChangeEvent } from "@primereact/types/headless/checkbox";
-import type { UseInputNumberValueChangeEvent } from "@primereact/types/headless/inputnumber";
-import type { UseRadioButtonGroupValueChangeEvent } from "@primereact/types/headless/radiobuttongroup";
-import type { UseSelectValueChangeEvent } from "@primereact/types/headless/select";
-import type { UseSliderChangeEvent } from "@primereact/types/headless/slider";
-import type { UseToggleSwitchChangeEvent } from "@primereact/types/headless/toggleswitch";
+// Los manejadores no llevan tipo a mano: en la v10 las props no son
+// genéricas, así que TypeScript infiere el evento de cada `onChange`.
+import { useState } from "react";
 import { Checkbox } from "primereact/checkbox";
+import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
+import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
+import { InputTextarea } from "primereact/inputtextarea";
 import { RadioButton } from "primereact/radiobutton";
-import { RadioButtonGroup } from "primereact/radiobuttongroup";
-import { Select } from "primereact/select";
 import { Slider } from "primereact/slider";
-import { Textarea } from "primereact/textarea";
-import { ToggleSwitch } from "primereact/toggleswitch";
 import { Cluster, Family, Specimen, SpecimenGrid } from "@/components/repository/Showcase";
 
 const TILE_SIZES = [
@@ -66,10 +58,11 @@ export default function FormShowcase() {
         title="Campos de texto"
         note={
           <>
-            <code>InputText</code> y <code>Textarea</code> son los dos únicos controles de la v11
-            que siguen siendo de una pieza. El rótulo va <b>encima</b> y en versalitas, igual que
-            los de sección: los paneles de los labs son columnas estrechas y un rótulo al lado
-            roba la mitad del ancho.
+            <code>InputText</code> e <code>InputTextarea</code> son los envoltorios de{" "}
+            <code>&lt;input&gt;</code> y <code>&lt;textarea&gt;</code>: aceptan los atributos
+            nativos tal cual. El rótulo va <b>encima</b> y en versalitas, igual que los de sección:
+            los paneles de los labs son columnas estrechas y un rótulo al lado roba la mitad del
+            ancho.
           </>
         }
       >
@@ -82,7 +75,7 @@ export default function FormShowcase() {
               <InputText
                 id="rf-seed"
                 value={seed}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setSeed(e.target.value)}
+                onChange={(e) => setSeed(e.target.value)}
                 className="w-full"
               />
             </div>
@@ -95,16 +88,16 @@ export default function FormShowcase() {
               <InputText id="rf-size" value="Pequeña · 8" disabled className="w-full" />
             </div>
           </Specimen>
-          <Specimen label="Área de texto" hint={<code>Textarea</code>}>
+          <Specimen label="Área de texto" hint={<code>InputTextarea</code>}>
             <div className="w-full">
               <label htmlFor="rf-note" className={`${LABEL} mb-1 block`}>
                 Nota de la variante
               </label>
-              <Textarea
+              <InputTextarea
                 id="rf-note"
                 rows={3}
                 value={note}
-                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setNote(e.target.value)}
+                onChange={(e) => setNote(e.target.value)}
                 className="w-full"
               />
             </div>
@@ -113,29 +106,26 @@ export default function FormShowcase() {
             label="Número con pasos"
             hint={
               <>
-                <code>InputNumber.Root</code> + <code>Group</code>, <code>Decrement</code>,{" "}
-                <code>Input</code>, <code>Increment</code>
+                <code>InputNumber</code> con <code>showButtons</code>
               </>
             }
           >
             <div className="w-full">
-              <label className={`${LABEL} mb-1 block`}>Losetas por tablero</label>
-              <InputNumber.Root
+              <label htmlFor="rf-count" className={`${LABEL} mb-1 block`}>
+                Losetas por tablero
+              </label>
+              <InputNumber
+                inputId="rf-count"
                 value={tileCount}
-                onValueChange={(e: UseInputNumberValueChangeEvent) => setTileCount(e.value)}
+                onValueChange={(e) => setTileCount(e.value ?? null)}
                 min={1}
                 max={30}
-              >
-                <InputNumber.Group>
-                  <InputNumber.Decrement>
-                    <i className="pi pi-minus" />
-                  </InputNumber.Decrement>
-                  <InputNumber.Input />
-                  <InputNumber.Increment>
-                    <i className="pi pi-plus" />
-                  </InputNumber.Increment>
-                </InputNumber.Group>
-              </InputNumber.Root>
+                showButtons
+                buttonLayout="horizontal"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                className="w-full"
+              />
             </div>
           </Specimen>
         </SpecimenGrid>
@@ -145,51 +135,42 @@ export default function FormShowcase() {
         title="Desplegable"
         note={
           <>
-            Lo que en la v10 era <code>&lt;Dropdown/&gt;</code> aquí son seis partes, y{" "}
-            <code>Select.List</code> pinta las opciones solo si no le pasas hijos. Va en{" "}
-            <code>Portal</code> para que el desplegable no lo recorte el panel del laboratorio.
+            <code>Dropdown</code> recibe las opciones por prop y las pinta él. Se monta en{" "}
+            <code>document.body</code> por defecto (<code>appendTo</code>), así que el panel
+            desplegado no lo recorta el contenedor del laboratorio.
           </>
         }
       >
         <SpecimenGrid>
           <Specimen label="Selección simple" hint={`Valor: ${size}`}>
             <div className="w-full">
-              <label className={`${LABEL} mb-1 block`}>Tamaño de la variante</label>
-              <Select.Root
+              <label htmlFor="rf-tile-size" className={`${LABEL} mb-1 block`}>
+                Tamaño de la variante
+              </label>
+              <Dropdown
+                inputId="rf-tile-size"
                 value={size}
-                onValueChange={(e: UseSelectValueChangeEvent) => setSize(String(e.value))}
+                onChange={(e) => setSize(String(e.value))}
                 options={TILE_SIZES}
                 optionLabel="label"
                 optionValue="value"
+                placeholder="Elige un tamaño"
                 className="w-full"
-              >
-                <Select.Trigger>
-                  <Select.Value placeholder="Elige un tamaño" />
-                  <Select.Indicator>
-                    <i className="pi pi-chevron-down text-[0.75em]" />
-                  </Select.Indicator>
-                </Select.Trigger>
-                <Select.Portal>
-                  <Select.Positioner>
-                    <Select.Popup>
-                      <Select.List />
-                    </Select.Popup>
-                  </Select.Positioner>
-                </Select.Portal>
-              </Select.Root>
+              />
             </div>
           </Specimen>
-          <Specimen label="Deshabilitado" hint="Mismo marcado, prop en la raíz">
+          <Specimen label="Deshabilitado" hint="Mismo componente, una prop">
             <div className="w-full">
-              <label className={`${LABEL} mb-1 block`}>Capítulo (aún no hay campaña)</label>
-              <Select.Root options={[]} disabled className="w-full">
-                <Select.Trigger>
-                  <Select.Value placeholder="Partida rápida" />
-                  <Select.Indicator>
-                    <i className="pi pi-chevron-down text-[0.75em]" />
-                  </Select.Indicator>
-                </Select.Trigger>
-              </Select.Root>
+              <label htmlFor="rf-chapter" className={`${LABEL} mb-1 block`}>
+                Capítulo (aún no hay campaña)
+              </label>
+              <Dropdown
+                inputId="rf-chapter"
+                options={[]}
+                disabled
+                placeholder="Partida rápida"
+                className="w-full"
+              />
             </div>
           </Specimen>
         </SpecimenGrid>
@@ -202,7 +183,7 @@ export default function FormShowcase() {
             Radios para lo <b>excluyente</b> (un hexágono tiene un terreno y solo uno), casillas
             para lo <b>acumulable</b> (una loseta tiene las anclas que haga falta). El{" "}
             <code>inputId</code> y su <code>&lt;label&gt;</code> no son opcionales: sin ellos el
-            área de clic es la casilla de 14px.
+            área de clic es la casilla de 22px.
           </>
         }
       >
@@ -210,29 +191,25 @@ export default function FormShowcase() {
           <Specimen label="Radios" hint={`Terreno: ${terrain}`}>
             <div className="w-full">
               <span className={`${LABEL} mb-2 block`}>Terreno del hexágono</span>
-              <RadioButtonGroup
-                name="rf-terrain"
-                value={terrain}
-                onValueChange={(e: UseRadioButtonGroupValueChangeEvent) => setTerrain(String(e.value))}
-              >
-                <div className="grid grid-cols-2 gap-y-2">
-                  {TERRAINS.map((t) => (
-                    <div key={t.value} className="flex items-center gap-2">
-                      <RadioButton.Root value={t.value} inputId={`rf-terrain-${t.value}`}>
-                        <RadioButton.Box>
-                          <RadioButton.Indicator />
-                        </RadioButton.Box>
-                      </RadioButton.Root>
-                      <label
-                        htmlFor={`rf-terrain-${t.value}`}
-                        className="cursor-pointer text-sm text-[var(--wiki-text)]"
-                      >
-                        {t.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </RadioButtonGroup>
+              <div className="grid grid-cols-2 gap-y-2">
+                {TERRAINS.map((t) => (
+                  <div key={t.value} className="flex items-center gap-2">
+                    <RadioButton
+                      inputId={`rf-terrain-${t.value}`}
+                      name="rf-terrain"
+                      value={t.value}
+                      checked={terrain === t.value}
+                      onChange={(e) => setTerrain(String(e.value))}
+                    />
+                    <label
+                      htmlFor={`rf-terrain-${t.value}`}
+                      className="cursor-pointer text-sm text-[var(--wiki-text)]"
+                    >
+                      {t.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
           </Specimen>
           <Specimen
@@ -244,19 +221,15 @@ export default function FormShowcase() {
               <div className="grid grid-cols-2 gap-y-2">
                 {["N", "NE", "SE", "S", "SO", "NO"].map((dir) => (
                   <div key={dir} className="flex items-center gap-2">
-                    <Checkbox.Root
+                    <Checkbox
                       inputId={`rf-anchor-${dir}`}
                       checked={anchors.includes(dir)}
-                      onCheckedChange={(e: UseCheckboxChangeEvent) =>
+                      onChange={(e) =>
                         setAnchors((prev) =>
                           e.checked ? [...prev, dir] : prev.filter((d) => d !== dir),
                         )
                       }
-                    >
-                      <Checkbox.Box>
-                        <Checkbox.Indicator />
-                      </Checkbox.Box>
-                    </Checkbox.Root>
+                    />
                     <label
                       htmlFor={`rf-anchor-${dir}`}
                       className="cursor-pointer text-sm text-[var(--wiki-text)]"
@@ -273,19 +246,12 @@ export default function FormShowcase() {
             hint="Para lo que se ve al instante: enciende o apaga una capa del lienzo"
           >
             <Cluster>
-              <ToggleSwitch.Root
+              <InputSwitch
                 inputId="rf-fog"
                 checked={showFog}
-                onCheckedChange={(e: UseToggleSwitchChangeEvent) => setShowFog(e.checked)}
-              >
-                <ToggleSwitch.Control>
-                  <ToggleSwitch.Handle />
-                </ToggleSwitch.Control>
-              </ToggleSwitch.Root>
-              <label
-                htmlFor="rf-fog"
-                className="cursor-pointer text-sm text-[var(--wiki-text)]"
-              >
+                onChange={(e) => setShowFog(e.value)}
+              />
+              <label htmlFor="rf-fog" className="cursor-pointer text-sm text-[var(--wiki-text)]">
                 Pintar la niebla ({showFog ? "sí" : "no"})
               </label>
             </Cluster>
@@ -293,21 +259,13 @@ export default function FormShowcase() {
           <Specimen label="Deshabilitados" hint="El estado apagado también es especimen">
             <Cluster>
               <div className="flex items-center gap-2">
-                <Checkbox.Root inputId="rf-off-a" checked disabled>
-                  <Checkbox.Box>
-                    <Checkbox.Indicator />
-                  </Checkbox.Box>
-                </Checkbox.Root>
+                <Checkbox inputId="rf-off-a" checked disabled />
                 <label htmlFor="rf-off-a" className="text-sm text-[var(--wiki-muted)]">
                   Marcada
                 </label>
               </div>
               <div className="flex items-center gap-2">
-                <Checkbox.Root inputId="rf-off-b" disabled>
-                  <Checkbox.Box>
-                    <Checkbox.Indicator />
-                  </Checkbox.Box>
-                </Checkbox.Root>
+                <Checkbox inputId="rf-off-b" checked={false} disabled />
                 <label htmlFor="rf-off-b" className="text-sm text-[var(--wiki-muted)]">
                   Vacía
                 </label>
@@ -328,23 +286,18 @@ export default function FormShowcase() {
         }
       >
         <SpecimenGrid>
-          <Specimen label="Valor simple" hint={<code>Slider.Root + Track + Range + Handle</code>}>
+          <Specimen label="Valor simple" hint={<code>Slider</code>}>
             <div className="w-full">
               <label className={`${LABEL} mb-2 flex items-center justify-between`}>
                 <span>Peso en la bolsa</span>
                 <span className="tabular-nums text-[var(--wiki-text)]">{weight}</span>
               </label>
-              <Slider.Root
+              <Slider
                 value={weight}
-                onValueChange={(e: UseSliderChangeEvent) => setWeight(Number(e.value))}
+                onChange={(e) => setWeight(Number(e.value))}
                 min={1}
                 max={20}
-              >
-                <Slider.Track>
-                  <Slider.Range />
-                </Slider.Track>
-                <Slider.Handle />
-              </Slider.Root>
+              />
             </div>
           </Specimen>
         </SpecimenGrid>

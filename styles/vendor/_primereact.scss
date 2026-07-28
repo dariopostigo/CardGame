@@ -1,0 +1,41 @@
+@use "sass:meta";
+@use "../abstracts" as *;
+
+// =========================================================================
+// 0. VENDOR — PrimeReact 10 (tema Lara ámbar)
+//
+// La v10 sí trae CSS: un theme.css por esquema de color, con las reglas de
+// componente ya envueltas en `@layer primereact` —la capa que declara
+// vendor/_tailwind.scss—. Todo lo nuestro va SIN capa, así que sigue ganando
+// a la librería sin !important, igual que ya ganaba a Tailwind.
+//
+// El tema NO es un juego de custom properties: los componentes llevan los
+// colores escritos a pelo, y claro y oscuro son dos ficheros distintos. En
+// vez de servirlos como dos <link> y cambiar el href en caliente (la receta
+// oficial, que saca el CSS de styles/ y parpadea al conmutar), cargamos el
+// oscuro anidado bajo `html.dark`, la clase que pone el script antiFOUC de
+// app/layout.tsx. Cada regla oscura sale como su pareja clara más `html.dark`
+// —una clase y un elemento de especificidad extra—, así que siempre pisa.
+//
+// Se carga con `meta.load-css` y no con `@import`: el segundo está obsoleto
+// en Dart Sass (fuera en la 3.0) y además no se puede anidar sin avisos. El
+// `@import "…/theme.css"` con extensión tampoco vale, porque con .css Sass lo
+// deja pasar tal cual en vez de inlinarlo (lo mismo que hacemos a propósito
+// con Tailwind, ver _tailwind.scss).
+// =========================================================================
+
+@include meta.load-css("primereact/resources/themes/lara-light-amber/theme");
+
+html.dark {
+  @include meta.load-css("primereact/resources/themes/lara-dark-amber/theme");
+}
+
+// El tema pide "Inter var", que no cargamos, y le mete a :root unos
+// font-feature-settings pensados para esa fuente. Los componentes leen la
+// familia por var(--font-family), así que se la reescribimos aquí —después
+// del load-css, para pisarla— en vez de dejarlos en el sans del sistema.
+:root {
+  --font-family: #{$font-sans};
+  --font-feature-settings: normal;
+  font-feature-settings: normal;
+}

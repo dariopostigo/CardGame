@@ -8,10 +8,10 @@
 // donde vive. Antes era una función `btn(active)` copiada en TileLab y en
 // BoardLab, y dos copias de un estilo divergen en cuanto una se retoca.
 //
-// No usamos el Button de PrimeReact 11: en esta versión los componentes
-// llegan sin CSS (el preset Aura de @primeuix/themes 3 trae los tokens pero
-// su hoja de estilo está vacía), así que un <Button> se pinta como texto
-// pelado. Un <button> nuestro con estas clases es más corto y más honesto.
+// No usamos el Button de PrimeReact 10: llega vestido, pero con la paleta del
+// tema Lara escrita a pelo dentro de su CSS, así que ponerlo a juego con el
+// skin sería repisar color, radio y alto uno a uno. Un <button> nuestro que
+// pide los tokens por nombre es más corto y cambia solo de claro a oscuro.
 //
 // El texto del botón primario es skin("bg") a propósito: sobre el acento
 // índigo del tema claro sale blanco y sobre el acento pálido del oscuro sale

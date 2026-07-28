@@ -9,15 +9,41 @@
 }
 
 // Globo invertido (fondo = color de texto) para que destaque sobre la prosa.
-.wiki-icon-tip-popup {
-  background: skin("text");
-  color: skin("surface");
-  padding: 0.3rem 0.6rem;
-  border-radius: radius("md");
-  font-size: 0.8rem;
-  font-weight: 500;
-  line-height: 1.2;
-  white-space: nowrap;
-  box-shadow: $shadow-tooltip;
+//
+// El Tooltip de PrimeReact 10 pinta .p-tooltip > (.p-tooltip-arrow +
+// .p-tooltip-text) y la clase que le pasamos cae en la raíz, así que vestimos
+// desde ahí. Nuestras reglas van sin @layer y las del tema Lara dentro de
+// `@layer primereact`, de modo que estas ganan sin necesidad de !important.
+.wiki-icon-tip-tooltip {
   z-index: z("tooltip");
+
+  .p-tooltip-text {
+    background: skin("text");
+    color: skin("surface");
+    padding: 0.3rem 0.6rem;
+    border-radius: radius("md");
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: $shadow-tooltip;
+  }
+
+  // La flecha es un triángulo hecho con bordes: solo tiene color el lado que
+  // mira al globo, y cuál es depende de dónde se haya colocado.
+  &.p-tooltip-top .p-tooltip-arrow {
+    border-top-color: skin("text");
+  }
+
+  &.p-tooltip-bottom .p-tooltip-arrow {
+    border-bottom-color: skin("text");
+  }
+
+  &.p-tooltip-left .p-tooltip-arrow {
+    border-left-color: skin("text");
+  }
+
+  &.p-tooltip-right .p-tooltip-arrow {
+    border-right-color: skin("text");
+  }
 }

@@ -9,10 +9,10 @@ import {
 } from "@/components/repository/Showcase";
 import { groupBySlug } from "@/lib/repository";
 
-// El botón de las herramientas, que es NUESTRO y no el de PrimeReact: en la
-// v11 los componentes llegan sin CSS (el aviso de la página lo explica), así
-// que un <Button> de la librería se pinta como texto pelado. Lo que se
-// documenta aquí es components/ui/Button.tsx, el mismo que usan los labs.
+// El botón de las herramientas, que es NUESTRO y no el de PrimeReact: el de
+// la librería viste con la paleta del tema Lara y no con el skin de la wiki
+// (el aviso de la página lo explica). Lo que se documenta aquí es
+// components/ui/Button.tsx, el mismo que usan los labs.
 
 const group = groupBySlug("dev", "buttons")!;
 
@@ -27,14 +27,15 @@ export default function ButtonsPage() {
       <GroupHeader group={group} />
 
       <div className="mb-8 rounded-lg border-l-4 border-[var(--wiki-callout-border)] bg-[var(--wiki-callout-bg)] p-4 text-sm text-[var(--wiki-text)]">
-        <b>Por qué el botón es nuestro y no de PrimeReact.</b> En PrimeReact 11 los componentes
-        llegan <b>sin hoja de estilo</b>: el preset Aura de <code>@primeuix/themes</code> 3 trae los
-        tokens de diseño, pero su CSS de componente está vacío y la librería no registra las clases{" "}
-        <code>p-button</code> —el atributo <code>class</code> sale literalmente en blanco—. Con el
-        reset de Tailwind por debajo, un <code>&lt;Button&gt;</code> se pinta como texto sin caja.
-        Así que el botón es un <code>&lt;button&gt;</code> con las clases de{" "}
-        <code>styles/components/_button.scss</code>. A los campos y selectores les pasa lo mismo:
-        siguen sin vestir, a la espera de la misma decisión.
+        <b>Por qué el botón es nuestro y no de PrimeReact.</b> El <code>&lt;Button&gt;</code> de
+        PrimeReact 10 sí llega vestido —el tema Lara ámbar de{" "}
+        <code>styles/vendor/_primereact.scss</code>—, pero vestido <b>con su paleta</b>, no con la
+        del skin de la wiki: sus colores, su radio y su alto están escritos a pelo en el tema y
+        habría que repisarlos uno a uno. El botón de los paneles de mando es un{" "}
+        <code>&lt;button&gt;</code> con las clases de <code>styles/components/_button.scss</code>,
+        que piden los tokens por nombre y cambian solos entre claro y oscuro. Los campos y
+        selectores sí son los de la librería: ahí el tema vale tal cual (ver{" "}
+        <code>/repository-dev/forms</code>).
       </div>
 
       <Family

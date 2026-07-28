@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, type RefObject } from "react";
 import { Tooltip } from "primereact/tooltip";
 import type { RarityLevel } from "@/lib/rarity";
 
@@ -16,21 +17,18 @@ const LABEL: Record<RarityLevel, string> = {
 // cartas (styles/settings/_colors.scss). Sin texto visible, así que el nombre solo vive
 // en el tooltip real al pasar el ratón (igual que el resto de iconos, IconTip.tsx).
 export default function RarityChip({ level }: { level: RarityLevel }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const label = LABEL[level] ?? level;
 
   return (
-    <Tooltip.Root>
-      <Tooltip.Trigger
-        as="span"
+    <>
+      <span
+        ref={ref}
         className={`wiki-rarity-chip wiki-rarity-chip--${level}`}
         tabIndex={0}
         aria-label={label}
       />
-      <Tooltip.Portal>
-        <Tooltip.Positioner sideOffset={6}>
-          <Tooltip.Popup className="wiki-icon-tip-popup">{label}</Tooltip.Popup>
-        </Tooltip.Positioner>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+      <Tooltip target={ref as RefObject<HTMLElement>} content={label} position="top" className="wiki-icon-tip-tooltip" />
+    </>
   );
 }

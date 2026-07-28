@@ -28,7 +28,7 @@
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import Link from "next/link";
 import { InputText } from "primereact/inputtext";
-import { Textarea } from "primereact/textarea";
+import { InputTextarea } from "primereact/inputtextarea";
 import * as Hex from "@/lib/rules/hex";
 import type { HexCoord } from "@/lib/rules/hex";
 import { TERRAINS, TERRAIN_IDS, targetShare, type TerrainId } from "@/lib/rules/terrain";
@@ -710,7 +710,7 @@ export default function TileLab() {
 
               <div className="flex flex-col gap-1">
                 <span className={label}>Nota de maquetado</span>
-                <Textarea
+                <InputTextarea
                   value={sketch.note}
                   onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
                     patch((s) => ({ ...s, note: e.target.value }))
@@ -890,7 +890,7 @@ function TypeSection({
 
           <div className="flex flex-col gap-1">
             <span className={labelClass}>Qué sitio es</span>
-            <Textarea
+            <InputTextarea
               value={form.note}
               onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onForm({ ...form, note: e.target.value })}
               rows={2}

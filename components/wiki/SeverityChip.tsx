@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, type RefObject } from "react";
 import { Tooltip } from "primereact/tooltip";
 import type { SeverityLevel } from "@/lib/severity";
 
@@ -12,21 +13,18 @@ const LABEL: Record<SeverityLevel, string> = {
 // mecanismo que RarityChip.tsx pero con la paleta ámbar/rojo de lib/severity.ts,
 // para no confundirse con la Rareza de las cartas buenas.
 export default function SeverityChip({ level }: { level: SeverityLevel }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const label = LABEL[level] ?? level;
 
   return (
-    <Tooltip.Root>
-      <Tooltip.Trigger
-        as="span"
+    <>
+      <span
+        ref={ref}
         className={`wiki-severity-chip wiki-severity-chip--${level}`}
         tabIndex={0}
         aria-label={label}
       />
-      <Tooltip.Portal>
-        <Tooltip.Positioner sideOffset={6}>
-          <Tooltip.Popup className="wiki-icon-tip-popup">{label}</Tooltip.Popup>
-        </Tooltip.Positioner>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+      <Tooltip target={ref as RefObject<HTMLElement>} content={label} position="top" className="wiki-icon-tip-tooltip" />
+    </>
   );
 }

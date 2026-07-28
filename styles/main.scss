@@ -6,7 +6,7 @@
 // debe reordenar: es lo que hace que la cascada sea predecible sin recurrir
 // a !important ni a selectores cada vez más largos.
 //
-//   0. vendor      Tailwind y sus @layer (única capa de terceros)
+//   0. vendor      Tailwind y el tema de PrimeReact (única capa de terceros)
 //   1. settings    variables Sass: paletas, tipografías, escalas   (sin CSS)
 //   2. tools       funciones y mixins                              (sin CSS)
 //   3. generic     resets de bajo nivel
@@ -20,6 +20,7 @@
 // =========================================================================
 
 @use "vendor/tailwind";
+@use "vendor/primereact";
 @use "generic";
 @use "elements";
 @use "objects";
