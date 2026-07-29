@@ -6,8 +6,7 @@
 //
 // El SVG solo aporta geometría (centros y vértices los calcula lib/rules/hex.ts);
 // todo el color vive aquí, pedido por nombre a terrain(). El componente marca
-// cada hexágono con data-terrain / data-location / data-hidden y esta hoja
-// decide cómo se ve.
+// cada hexágono con data-terrain / data-hidden y esta hoja decide cómo se ve.
 // -------------------------------------------------------------------------
 
 .board {
@@ -34,7 +33,7 @@
 }
 
 // Un bloque por terreno, generado desde el mapa de settings: si mañana entra
-// un sexto terreno (Colinas, Río…), basta añadirlo a $terrain y a TerrainId.
+// un terreno más (Colinas, Río…), basta añadirlo a $terrain y a TerrainId.
 @each $name, $colors in $terrain {
   .board__hex[data-terrain="#{$name}"] {
     fill: map.get($colors, "base");
@@ -64,6 +63,37 @@
   stroke-width: 3;
 }
 
+// --- Base: silueta, canto y sombra ----------------------------------------
+
+// La capa que hace que el tablero sea un objeto y no un dibujo. Va entera bajo
+// un `drop-shadow` porque el filtro trabaja sobre la silueta de lo que contiene:
+// así la sombra sale del contorno del tablero completo, con su canto incluido, y
+// no loseta a loseta (que se sombrearían entre ellas estando a la misma altura).
+//
+// `drop-shadow` de CSS y no un <filter> en el SVG: el color sale de un token de
+// settings como todo lo demás, y no hay que mantener un <defs> en el TSX.
+.board__base {
+  pointer-events: none;
+  filter: drop-shadow(0 6px 7px $board-shadow);
+}
+
+// Los hexágonos de la base los tapa el relleno de la capa de encima: lo único
+// que se ve de ellos es el filete del borde exterior, que hace de junta entre el
+// terreno y el canto.
+.board__base-hex {
+  fill: $board-base;
+}
+
+// El grosor de la loseta. Sin trazo a propósito: un filete aquí dibujaría la
+// retícula del canto hexágono a hexágono, y el canto es de la LOSETA, no de cada
+// casilla, así que los lados contiguos tienen que fundirse en una sola pared.
+// Un solo tono, y no por simplificar: en esta proyección la única pared que se
+// ve es la de abajo (Hex.SKIRT_DIRECTIONS), así que no hay dos caras que
+// diferenciar con la luz.
+.board__skirt {
+  fill: $board-skirt;
+}
+
 // --- Hueco cerrado --------------------------------------------------------
 
 // El negativo del mapa: no es un hexágono, es el agujero que dejó el encaje.
@@ -72,10 +102,19 @@
   pointer-events: none;
 }
 
+// El hueco NO se pinta: es un agujero, así que deja ver lo que hay detrás del
+// tablero, y con ello el skin (claro o oscuro) sin tener color propio. Es la
+// única excepción a la regla de que los colores del mapa no dependen del tema, y
+// se sostiene porque aquí no hay color que elegir: hay ausencia de loseta.
+//
+// El polígono se queda en el DOM aunque no pinte, por su <title> para lectores
+// de pantalla y porque es el sitio donde tocaría darle un tinte si algún día se
+// quisiera. Lo que hace que el agujero se lea como agujero y no como el exterior
+// del tablero es la GEOMETRÍA: el canto de las losetas que lo rodean asoma por
+// dentro y la sombra del tablero le cae encima.
 .board__void {
-  fill: $board-void;
-  stroke: $board-void;
-  stroke-width: 1;
+  fill: none;
+  stroke: none;
 }
 
 // --- Contorno de loseta ---------------------------------------------------
@@ -95,28 +134,17 @@
 
 // --- Marcas encima del hexágono -------------------------------------------
 
-// Localizaciones y fichas se pintan como glifos centrados. `pointer-events:
-// none` para que no roben el clic al hexágono de debajo.
-.board__glyph {
+// La capa de fichas. Cómo se ve cada una es cosa de _piece.scss; lo que se
+// decide aquí es que son PIEZAS sobre la loseta, y por eso llevan sombra.
+//
+// Un solo `drop-shadow` para la capa entera, igual que en .board__base y por lo
+// mismo: todas las fichas están a la misma altura sobre el tablero, así que la
+// luz les cae igual, y un filtro compartido se rasteriza una vez en vez de
+// veintitrés. La sombra es más corta y más apretada que la del tablero porque
+// una ficha se levanta milímetros de la loseta, no centímetros de la mesa.
+.board__pieces {
   pointer-events: none;
-  text-anchor: middle;
-  dominant-baseline: central;
-  user-select: none;
-}
-
-.board__glyph--token {
-  font-size: 0.85rem;
-}
-
-.board__glyph--location {
-  font-size: 1.1rem;
-}
-
-// Disco claro bajo el glifo. Los emoji se pintan como bitmap, así que no
-// admiten contorno: la única forma de darles contraste es el fondo.
-.board__glyph-halo {
-  fill: $board-glyph-halo;
-  pointer-events: none;
+  filter: drop-shadow(0 2px 2px $board-shadow);
 }
 
 // Anillo de la entrada: la "puerta" del mapa (board-map.md §2c paso 0).

@@ -190,35 +190,55 @@ export function hasLineOfSight(
 // Vive aquí y no en el componente porque es geometría, no cosmética: el
 // tamaño en píxeles es el único parámetro visual. Así el tablero se puede
 // pintar en SVG, en canvas o no pintarse (tests) sin duplicar fórmulas.
+//
+// El segundo parámetro visual es la INCLINACIÓN (`tilt`): cuánto se comprime
+// el eje vertical, que es lo que hace que el tablero se vea desde delante en
+// vez de a plomo desde arriba (docs/board/board-map.md §2d). Es una compresión
+// ortográfica uniforme, así que los hexágonos vecinos siguen tocándose exacto:
+// no hay que tocar nada del motor, solo proyectar más bajo.
+//
+// Por defecto vale 1 —tablero plano— porque el catálogo de losetas
+// (/dev/losetas) enseña la PIEZA, no la mesa, y ahí la inclinación estorba:
+// sólo el tablero de partida pide la suya.
 
 const SQRT3 = Math.sqrt(3);
 
-/** Centro en píxeles de un hexágono puntiagudo arriba, para un radio dado. */
-export function toPixel(hex: HexCoord, size: number): { x: number; y: number } {
+/**
+ * Centro en píxeles de un hexágono puntiagudo arriba, para un radio dado.
+ *
+ * @param {number} [tilt=1] - Compresión vertical; 1 es plano visto desde arriba.
+ */
+export function toPixel(hex: HexCoord, size: number, tilt = 1): { x: number; y: number } {
   return {
     x: size * SQRT3 * (hex.q + hex.r / 2),
-    y: size * 1.5 * hex.r,
+    y: size * 1.5 * hex.r * tilt,
   };
 }
 
 /** Los 6 vértices de un hexágono centrado en (cx, cy), listos para <polygon>. */
-export function polygonPoints(cx: number, cy: number, size: number): string {
+export function polygonPoints(cx: number, cy: number, size: number, tilt = 1): string {
   const points: string[] = [];
   for (let i = 0; i < 6; i++) {
-    const angle = (Math.PI / 180) * (60 * i - 30);
-    points.push(`${(cx + size * Math.cos(angle)).toFixed(2)},${(cy + size * Math.sin(angle)).toFixed(2)}`);
+    const { x, y } = corner(cx, cy, size, i, tilt);
+    points.push(`${x.toFixed(2)},${y.toFixed(2)}`);
   }
   return points.join(" ");
 }
 
 /** Ancho y alto de un hexágono puntiagudo arriba. */
-export function hexSize(size: number): { width: number; height: number } {
-  return { width: SQRT3 * size, height: 2 * size };
+export function hexSize(size: number, tilt = 1): { width: number; height: number } {
+  return { width: SQRT3 * size, height: 2 * size * tilt };
 }
 
-function corner(cx: number, cy: number, size: number, index: number): { x: number; y: number } {
+function corner(
+  cx: number,
+  cy: number,
+  size: number,
+  index: number,
+  tilt = 1,
+): { x: number; y: number } {
   const angle = (Math.PI / 180) * (60 * (((index % 6) + 6) % 6) - 30);
-  return { x: cx + size * Math.cos(angle), y: cy + size * Math.sin(angle) };
+  return { x: cx + size * Math.cos(angle), y: cy + size * Math.sin(angle) * tilt };
 }
 
 /**
@@ -233,9 +253,29 @@ export function edgeEndpoints(
   cy: number,
   size: number,
   dir: number,
+  tilt = 1,
 ): [{ x: number; y: number }, { x: number; y: number }] {
   // El lado que mira a `dir` va del vértice (6-dir) al (7-dir); comprobado
   // contra la orientación puntiagudo-arriba de toPixel().
   const d = ((dir % 6) + 6) % 6;
-  return [corner(cx, cy, size, 6 - d), corner(cx, cy, size, 7 - d)];
+  return [corner(cx, cy, size, 6 - d, tilt), corner(cx, cy, size, 7 - d, tilt)];
 }
+
+/**
+ * Las direcciones cuyo lado enseña el CANTO de la loseta cuando el tablero va
+ * inclinado: solo las dos que miran hacia abajo en pantalla, SO y SE.
+ *
+ * Las otras cuatro no se ven, y por dos motivos distintos:
+ *  - NE y NO miran hacia arriba, así que su pared queda al otro lado de la pieza.
+ *  - E y O son lados VERTICALES en pantalla (sus dos vértices comparten x), así
+ *    que extruirlos hacia abajo da un polígono de área cero. No es un atajo: la
+ *    compresión de `tilt` es una proyección ortográfica inclinada sobre el eje
+ *    horizontal, y en ella una pared que mira al este se ve exactamente de canto.
+ *    Para que asomara haría falta una cámara en perspectiva, que es lo único de
+ *    la referencia que esta proyección no da.
+ *
+ * Vive aquí porque es una consecuencia de la orientación de DIRECTIONS y de
+ * toPixel(), no del componente: si algún día el hexágono pasara a plano-arriba,
+ * esta lista cambia con las fórmulas de al lado y no con el SVG.
+ */
+export const SKIRT_DIRECTIONS: readonly number[] = [4, 5];

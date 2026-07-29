@@ -482,6 +482,7 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
 | **Mazmorra** (`board/board-map.md` §3b) | **2 garantizadas**, tirando en la fila de Élite |
 | Suceso **Hallazgo** ([`cards/encounter.md`](cards/encounter.md) §4) | **1 garantizada**, tirando en la fila de Normal |
 | Suceso **Botín inesperado** (Combate, §3) | **1 carta extra** al ganar, misma fila que la fuente del combate |
+| **Ficha de Terreno**, al acertar la prueba (`board/board-map.md` §4b) | **1 garantizada**, pero **de un catálogo fijo**: siempre una carta de movimiento ([`cards/items.md`](cards/items.md) §5), nunca del catálogo general — no pasa por el Paso 3 |
 
 **Paso 2 — ¿de qué rareza?** (§3.3). La rareza la marca **la fuente**, no la zona del mapa: los Élite ya aparecen lejos de la entrada (`characters/enemies.md` §5c), así que la progresión sale sola.
 
@@ -492,6 +493,9 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
 | Élite · Mazmorra | — | 55 % | 35 % | 10 % | — |
 | Jefe de capítulo | — | 25 % | 50 % | 25 % | — |
 | Jefe final | — | — | 40 % | 45 % | 15 % |
+| Ficha de Terreno (éxito) | 45 % | 40 % | 15 % | — | — |
+
+> **Ficha de Terreno, un caso especial:** usa la misma rareza que la Ficha de Tesoro (45/40/15) porque no hace falta más — hay **exactamente una** carta de movimiento por escalón (Bota veloz Común, Atajo del pícaro Poco común, Zancada del viento Raro, `cards/items.md` §5), así que la tirada de rareza **ya elige la carta**, sin pasar por el Paso 3 ni sortear dentro del catálogo.
 
 > **En el prototipo, Épico y Legendario casi no existen.** Las armas y armaduras solo llegan a **Raro** ([`cards/weapons.md`](cards/weapons.md) §5b, [`cards/armor.md`](cards/armor.md) §6b); los únicos Épico/Legendario escritos son objetos mágicos ([`cards/items.md`](cards/items.md) §3). **Regla de caída:** si la rareza sorteada no existe para el tipo de carta que toca, **baja al escalón más alto disponible**. Con el reparto de tipos de abajo, un Élite saca Épico un 10 % de las veces y casi siempre acabará siendo un item mágico o un Raro — que es exactamente el ritmo que se quiere hasta que se amplíen los catálogos.
 
@@ -513,13 +517,15 @@ El objetivo elegido es **botín moderado: el Mazo acaba en 14-16 cartas** (arran
 | | Cuentas |
 |---|---|
 | Fichas en un mapa 12×12 | ~130 hexes con ficha posible × 17,5 % ≈ **23 fichas** |
-| Reparto por tipo (tabla B de `board/board-map.md` §2c) | ~4,5 Enemigo · ~6,7 Amenaza · ~3,5 Tesoro · ~2,4 Exploración · ~5,3 Personaje · ~0,6 Terreno |
+| Reparto por tipo (tabla B de `board/board-map.md` §2c) | ~4,5 Enemigo · ~6,7 Amenaza · ~3,5 Tesoro · ~2,4 Exploración · ~5,3 Personaje · ~1,8 Terreno |
 | Con qué te cruzas de verdad en **40 turnos** (§6c) | ~55 % del mapa → **~13 fichas** |
 | Combates | ~2,5 de ficha de Enemigo + ~1,5 de Amenaza que sale ¡Emboscada! + **1 boss** ≈ **5 peleas** |
-| **Cartas encontradas** | ~2 de Tesoro + ~2 de Normales + ~1,5 de Élite/boss + ~1 de Sucesos ≈ **~7** |
-| De ellas, al Mazo (60 %: items + mercenarios) | **~4** |
+| **Cartas encontradas** | ~2 de Tesoro + ~2 de Normales + ~1,5 de Élite/boss + ~1 de Sucesos + ~0,5 de Ficha de Terreno ≈ **~7,5** |
+| De ellas, al Mazo (60 %: items + mercenarios) | **~4-5** |
 | Compradas con el oro de la partida (~40-60 oro, stock limitado) | **~2** al Mazo |
-| **Mazo al final** | 8 + 4 + 2 ≈ **14** ✅ |
+| **Mazo al final** | 8 + 4-5 + 2 ≈ **14-15** ✅ |
+
+> La Ficha de Terreno es nueva como fuente de carta (`board/board-map.md` §4b) y todavía no estaba en esta cuenta; con ~1,8 apariciones/mapa, ~55 % de encuentro real y solo si se intenta y se acierta la prueba, aporta poco (~0,5 cartas) y el Mazo final sigue dentro del objetivo de 14-16. Cifra a remedir con el resto de la tabla, no solo esta fuente.
 
 Consecuencias que conviene tener presentes:
 - **El tope de 20 no se toca en una Partida rápida**, y es correcto: es el techo del Modo Campaña, donde el Mazo persiste entre mapas. Lo que **sí** se usa entero es la fórmula elástica de "en juego": de 4 huecos al empezar (Mazo 8) a **7** al final (Mazo 14), con las sustituciones entrando en juego a mitad de partida (§4).

@@ -75,30 +75,120 @@ $rarity-levels: ("comun", "poco-comun", "raro", "epico", "legendario");
 // Constantes de diseño, como la rareza: NO cambian con el tema claro/oscuro,
 // porque son la identidad del mapa (una llanura es verde en los dos temas).
 // "base" rellena el hexágono, "line" pinta su borde.
-// Espejo de TerrainId en lib/rules/terrain.ts: mismas 6 claves, mismos nombres.
-// La Cueva es el más oscuro del mapa, y tiene que serlo: es un agujero en la
-// roca, así que se lee por contraste contra la Montaña que la rodea.
+// Espejo de TerrainId en lib/rules/terrain.ts: mismas 7 claves, mismos nombres.
+// La Mazmorra es el más oscuro del mapa, y tiene que serlo: es un agujero en la
+// roca, así que se lee por contraste contra la Montaña que la rodea. El Pueblo es
+// su contrario también en color —teja y cal, lo más cálido y claro del mapa— y va
+// más saturado que el Camino para que una calle no se confunda con un sendero.
 $terrain: (
   "llanura": ("base": #9cb46a, "line": #7c9150),
   "camino": ("base": #d8bb86, "line": #b2966a),
   "bosque": ("base": #2f6b41, "line": #245132),
   "pantano": ("base": #5a6b62, "line": #43514a),
   "montana": ("base": #8b8896, "line": #6c697a),
-  "cueva": ("base": #43382f, "line": #2a221c),
+  "mazmorra": ("base": #43382f, "line": #2a221c),
+  "pueblo": ("base": #c98a5e, "line": #a06744),
 );
 
-// Halo claro detrás de las fichas del tablero: sin él, los glifos oscuros son
-// ilegibles sobre Bosque y Pantano.
-$board-glyph-halo: rgba(255, 255, 255, 0.78);
+// --- Fichas del tablero (board/board-map.md §4 y §4c) ---------------------
+// Constantes de diseño como el terreno: NO cambian con el tema claro/oscuro,
+// porque son la identidad de la pieza. Espejo de BoardToken y PawnId; las pinta
+// components/_piece.scss por data-piece.
+//
+// "field" es la cara de la ficha y "ink" el glifo que va encima, así que las
+// dos claves de cada entrada son un par de contraste y hay que moverlas juntas.
+//
+// La paleta se elige contra el TERRENO, no por gusto: el tablero es verde
+// (Llanura y Bosque suman ~60 %), gris (Pantano, Montaña) y arena (Camino), así
+// que las fichas van a colores que ahí no existen —rojos, azul, violeta, oro— y
+// ninguna es verde. Por eso la ficha de Terreno no es la "montaña verde" que
+// decía la tabla de §4: sobre Bosque desaparecía.
+//
+// Amenaza y Enemigo comparten familia de rojo a propósito: una Amenaza casi
+// siempre resulta ser un enemigo, y lo que las separa es la certeza, no la
+// categoría. Exploración es la única de cara clara, y también a propósito: es
+// el comodín, el único cuyo contenido no se sabe, así que la ausencia de color
+// ES su significado. Jefe, en cambio, NO comparte la familia de rojo aunque
+// también sea un enemigo: ahí la categoría sí importa (Jefe de capítulo/Jefe
+// final frente a Normal/Élite), así que rompe la familia a propósito con un
+// morado que no usa ninguna otra ficha.
+$piece: (
+  "amenaza": ("field": #b8402f, "ink": #f8efe1),
+  "enemigo": ("field": #7c2233, "ink": #f8efe1),
+  // Oro claro, no el oro saturado de antes: el glifo del cofre es un emoji y
+  // trae sus propios tonos oscuros, así que la cara tiene que hacerle de papel.
+  "tesoro": ("field": #f0d68f, "ink": #2b2318),
+  "personaje": ("field": #35688f, "ink": #f1f6fa),
+  // Violeta porque no hay verde que se lea sobre Bosque/Llanura (arriba). El
+  // glifo pasó de ruta a emoji de montaña (⛰️), así que "ink" ya no pinta nada:
+  // el violeta hace de papel, igual que el oro de Tesoro.
+  "terreno": ("field": #6a55a0, "ink": #f3effa),
+  "exploracion": ("field": #e6dfcb, "ink": #2b2318),
+  // Fichas de personaje, y las dos se juegan contra su hermana de contenido, no
+  // contra el terreno:
+  //
+  // · El HÉROE lleva el emoji del mago, y la ficha de Personaje lleva el del
+  //   elfo: dos humanoides con capucha, así que el glifo no los separa. Lo hace
+  //   la cara —azul PÁLIDO contra el azul medio del Personaje—, que además le
+  //   hace de papel al emoji, igual que el oro claro de Tesoro. Es la tercera
+  //   cara clara del juego (con Tesoro y Exploración) y eso es lo que hay que
+  //   vigilar a tamaño de partida.
+  // · El ENEMIGO ACTIVO lleva la misma calavera que el latente, así que solo lo
+  //   distingue el color, y no puede ser un tercer rojo: entre el granate del
+  //   latente y el ladrillo de la Amenaza no queda hueco que se lea. Va en
+  //   NEGRO con la tinta al rojo vivo —la única cara oscura del tablero—, y dice
+  //   lo que tiene que decir: el bicho que dormía ya está despierto.
+  "heroe": ("field": #bcdcf2, "ink": #10222f),
+  "enemigo-activo": ("field": #241016, "ink": #ff6f4a),
+  // Corona (emoji), campo morado imperial: ni un tercer rojo (Amenaza/Enemigo)
+  // ni el violeta de Terreno — es a propósito, porque el Jefe no es "otro
+  // enemigo más", es una CATEGORÍA de peligro distinta
+  // (characters/enemies.md §3). El "ink" queda sin uso visual, igual que en el
+  // resto de emoji, pero se deja en un dorado que combina con la corona.
+  // Reservada a Modo Campaña: board-gen.ts no la coloca todavía.
+  "jefe": ("field": #3d1a54, "ink": #f0d68f),
+);
 
-// Hueco cerrado: el vacío que deja el encaje de las losetas y ya no se puede
-// rellenar. Va más oscuro que cualquier terreno a propósito —es un agujero, no
-// un sitio— y no depende del skin, como el resto del mapa.
-$board-void: #17120f;
+// Filete oscuro que rodea a toda ficha. Sin él, un disco claro se pierde sobre
+// el Camino. (Llevaba al lado un $piece-base, el tinte de la elipse de apoyo de
+// la peana; la peana ya no existe.)
+$piece-rim: rgba(26, 20, 14, 0.85);
+
+// Filete claro de la cara del disco, por dentro del oscuro. Es luz, no tinta:
+// el mismo blanco translúcido para las nueve fichas.
+$piece-face-line: rgba(255, 255, 255, 0.75);
+
+// Huella de una ficha ya resuelta: no es pieza, es la marca que dejó en el
+// suelo, así que va grabada y a trazos.
+$piece-mark: rgba(28, 22, 16, 0.45);
+
+// El RELIEVE de la ficha, y son las dos caras del mismo truco: el canto es el
+// grosor del cartón que asoma por debajo (va oscuro y opaco, como el alma de la
+// loseta en $board-skirt) y el brillo es la luz que le da por arriba. Los dos
+// son neutros a propósito: valen igual para el disco granate y para el hueso,
+// así que el relieve no hay que ajustarlo ficha a ficha.
+$piece-edge: #3f362d;
+$piece-gloss: rgba(255, 255, 255, 0.22);
 
 // Contorno de cada loseta. Es lo que hace que el tablero se lea como piezas
 // encajadas y no como una rejilla continua.
+// (El halo claro que llevaban las fichas se retiró con los emoji: existía solo
+// porque un emoji es un mapa de bits y no admite filete. Las fichas vectoriales
+// traen el suyo — ver $piece-rim.)
 $board-tile-edge: rgba(24, 20, 12, 0.62);
+
+// El CANTO de la loseta: el grosor que se ve por los lados que dan al vacío
+// cuando el tablero va inclinado (HexBoard.tsx §2). Es el alma del cartón, así
+// que va oscuro y desaturado —no es terreno, es el corte de la pieza— y como
+// el resto del mapa no depende del skin.
+//
+$board-skirt: #4a4038;
+// La silueta que queda debajo de los hexágonos y sobre la que se calcula la
+// sombra. Solo asoma en el filete del borde exterior, donde hace de junta.
+$board-base: #2b2420;
+// Sombra proyectada del tablero. Es lo que lo separa del fondo y lo que lo
+// convierte en un objeto encima de una mesa en vez de un dibujo.
+$board-shadow: rgba(12, 9, 7, 0.45);
 
 // Ancla, en el lienzo de losetas (/dev/losetas): la flecha que marca por dónde
 // se une una loseta a otra. Va rellena oscura con filete claro porque se pinta

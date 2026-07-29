@@ -357,7 +357,7 @@ export default function TileLab() {
       </p>
       <p className="mb-4 max-w-3xl text-sm text-[var(--wiki-muted)]">
         La biblioteca tiene dos niveles. Un <b>tipo</b> es un sitio del mundo —un peñasco, una
-        ciénaga, una cueva—, lo define <b>un terreno</b> y es lo que se sortea al construir el
+        ciénaga, una posada—, lo define <b>un terreno</b> y es lo que se sortea al construir el
         tablero; sus <b>variantes</b> son las maneras de dibujar ese mismo sitio. El peso es del
         tipo y se reparte entre sus variantes: añadir un peñasco más no hace que salgan más
         peñascos, hace que se repitan menos. Que un tipo tenga terreno propio no impide las

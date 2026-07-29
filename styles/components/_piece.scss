@@ -1,0 +1,104 @@
+@use "sass:map";
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Fichas del tablero — ver components/game/board/BoardPiece.tsx
+//
+// Misma división de trabajo que _board.scss y _tile.scss: el SVG aporta
+// geometría (el disco y su compresión) y todo el color se pide por nombre a
+// piece(), desde el mapa $piece de settings.
+//
+// Un bloque por ficha, generado desde el mapa: una ficha nueva es una entrada
+// en $piece más su dibujo en piece-art.tsx, y nada más en esta hoja.
+//
+// Hay UNA geometría y no tres: la placa de localización y la peana de personaje
+// se retiraron —el Pueblo y la Mazmorra son terreno, y el héroe y el enemigo
+// activo pasaron al disco—, así que lo que distingue a una ficha de otra es su
+// dibujo y su color.
+//
+// El disco se pinta con DOS filetes, y no es adorno: el oscuro de fuera lo
+// separa del Bosque y de la Mazmorra, y el claro de la cara lo separa del Camino
+// y de la Llanura. Con uno solo, la ficha se perdía sobre medio tablero.
+// -------------------------------------------------------------------------
+
+.piece {
+  // Las fichas no reciben el clic: quien lo recibe es el hexágono de debajo,
+  // que es el que el jugador quiere seleccionar.
+  pointer-events: none;
+}
+
+// --- La cara de la ficha ---------------------------------------------------
+
+.piece__face {
+  stroke: $piece-face-line;
+  stroke-width: 1.2;
+}
+
+.piece__rim {
+  fill: none;
+  stroke: $piece-rim;
+  stroke-width: 1.1;
+}
+
+.piece__glyph {
+  // Los glifos de piece-art.tsx pintan con currentColor, así que el color de
+  // la tinta se decide aquí y el dibujo no sabe de colores. Este es el valor de
+  // respaldo: el de cada ficha lo pisa el bucle de abajo.
+  color: $piece-rim;
+}
+
+// La cara y la tinta de cada ficha. Van en el mismo bucle porque son un par de
+// contraste: cambiar una sin la otra deja el glifo ilegible.
+@each $name, $colors in $piece {
+  .piece[data-piece="#{$name}"],
+  .piece-icon[data-piece="#{$name}"] {
+    .piece__face {
+      fill: map.get($colors, "field");
+    }
+
+    .piece__glyph {
+      color: map.get($colors, "ink");
+    }
+  }
+}
+
+// El enemigo latente y el activo son el MISMO enemigo (characters/enemies.md §2)
+// y comparten dibujo, pero NO entrada en $piece: "enemigo" y "enemigo-activo"
+// son dos claves, porque lo único que los separa a la vista es la cara.
+
+// --- Sombra y volumen -----------------------------------------------------
+
+// El canto del cartón: la media luna que asoma por debajo de la cara. Sin trazo,
+// porque es el corte de la pieza y no un contorno; el filete que la separa del
+// terreno ya lo pone .piece__rim.
+.piece__edge {
+  fill: $piece-edge;
+}
+
+// El brillo de arriba. Blanco translúcido y neutro: el mismo para las ocho
+// fichas, así que el relieve no se ajusta color a color. Sin trazo, o dejaría de
+// ser luz y se leería como un dibujo más dentro de la ficha.
+.piece__gloss {
+  fill: $piece-gloss;
+  stroke: none;
+}
+
+// --- Ficha resuelta: la huella -------------------------------------------
+
+// Ya no hay pieza. Queda el anillo grabado en el terreno: sin relieve, sin
+// sombra y a trazos, para que se lea como "aquí ya estuve" y no como una ficha
+// apagada que todavía se puede activar.
+.piece__mark {
+  fill: none;
+  stroke: $piece-mark;
+  stroke-width: 1.6;
+  stroke-dasharray: 3 3.5;
+}
+
+// --- Icono suelto (leyendas y catálogos) ---------------------------------
+
+.piece-icon {
+  display: inline-block;
+  vertical-align: -0.15em;
+  flex: none;
+}

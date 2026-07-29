@@ -54,19 +54,19 @@ export const DEV_LABS: readonly DevLab[] = [
     slug: "tablero",
     label: "Generación de tablero",
     summary:
-      "El encaje: cuántas losetas, cómo se unen por sus anclas, hacia dónde crece la silueta, Guarida y Pueblo garantizados y siembra de fichas. Aquí entra también el lote de semillas —cientos de tableros de golpe para ver el reparto y no el ejemplar—, que es lo que queda por construir.",
+      "El encaje: cuántas losetas, cómo se unen por sus anclas, hacia dónde crece la silueta, la Guarida del boss y la siembra de fichas. Nada se repinta: el tablero es el catálogo, así que si no sale Pueblo es que el encaje no lo ha traído. Aquí entra también el lote de semillas —cientos de tableros de golpe para ver el reparto y no el ejemplar—, que es lo que queda por construir.",
     icon: "pi pi-map",
     status: "en-curso",
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §2c" },
   },
   {
-    slug: "fichas",
+    slug: "pieces",
     label: "Diseño de fichas",
     summary:
-      "Las 6 fichas del tablero y las localizaciones: iconografía, legibilidad sobre cada terreno y estados (sin explorar, detectada, resuelta).",
+      "La pieza que se pone encima: las 6 fichas de contenido y las 2 de personaje, todas en el mismo disco tumbado. Dibujo vectorial, legibilidad a tamaño de partida sobre los siete terrenos, y los estados de la niebla más la ficha ya resuelta.",
     icon: "pi pi-circle-fill",
-    status: "planificado",
-    doc: { href: "/docs/board/board-map", label: "Fichas del tablero" },
+    status: "en-curso",
+    doc: { href: "/docs/board/board-map", label: "Tablero y mapa §4c" },
   },
   {
     slug: "baraja",

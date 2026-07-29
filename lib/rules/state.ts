@@ -38,14 +38,24 @@ export type BoardToken =
   | "enemigo";
 
 /**
- * Localizaciones especiales del prototipo. NINGUNA abre sub-mapa: se
- * resuelven en su propio hexágono (docs/board/board-map.md §3b-bis).
+ * Localización especial, y ya solo queda UNA: la Guarida donde espera el boss.
+ *
+ * Eran tres. El Pueblo y la Mazmorra se fueron porque ahora son TERRENO
+ * (`TerrainId`) y los trae maquetados la loseta que los dibuja: lo que un
+ * hexágono es lo dice su terreno, y el contenido lo ponen sus fichas. La Guarida
+ * se queda porque no es un sitio del mundo que se pueda maquetar —es "donde ha
+ * salido el boss esta partida", y eso lo decide la generación mirando la
+ * distancia a la entrada (board-gen.ts paso 5)—.
+ *
+ * Y no se VE: no tiene ficha, ni placa, ni dibujo. Es un dato del motor, y lo que
+ * el jugador encuentra al llegar es la ficha de Enemigo del propio boss.
  */
-export type LocationId = "pueblo" | "mazmorra" | "guarida";
+export type LocationId = "guarida";
 
 export type Hex = {
   readonly coord: HexCoord;
   readonly terrain: TerrainId;
+  /** La Guarida del boss, si es este hexágono. Invisible: ver `LocationId`. */
   readonly location: LocationId | null;
   readonly token: BoardToken | null;
   /** Loseta a la que pertenece — board-map.md §2. */
@@ -109,7 +119,11 @@ export type Chapter = {
   readonly thresholdsFired: readonly number[];
   /** El boss de la Guarida: 1 de los 3 Élite, al azar (§5b.3). */
   readonly bossElite: EliteId;
-  /** El Élite de la Mazmorra: 1 de los 2 restantes. Null si el mapa no la lleva. */
+  /**
+   * El Élite de la Mazmorra: 1 de los 2 restantes. Null si el encaje no sacó
+   * ninguna loseta de Mazmorra en la mitad lejana del tablero, que es lo que
+   * decide si esta partida lleva un segundo Élite o no.
+   */
   readonly dungeonElite: EliteId | null;
   /** Semilla con la que se generó, para poder repetir la partida exacta. */
   readonly seed: string;

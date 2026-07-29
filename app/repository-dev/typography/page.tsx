@@ -77,12 +77,12 @@ export default function TipografiaPage() {
             }
           >
             <p className="text-sm text-[var(--wiki-muted)]">
-              9 losetas, ~72 hexágonos. El total de hexágonos es lo que fija el tamaño del tablero,
-              no el número de piezas.
+              12 losetas, ~103 hexágonos. El total de hexágonos es lo que fija el tamaño del
+              tablero, no el número de piezas.
             </p>
           </Specimen>
           <Specimen label="Cifra medida" hint="Los labs miden: la cifra manda sobre el adjetivo">
-            <span className="text-2xl font-bold tabular-nums text-[var(--wiki-text)]">72</span>
+            <span className="text-2xl font-bold tabular-nums text-[var(--wiki-text)]">103</span>
             <span className="text-sm text-[var(--wiki-muted)]">hexágonos</span>
           </Specimen>
           <Specimen label="Código en línea" hint={<code>bg-[var(--wiki-code-bg)]</code>}>

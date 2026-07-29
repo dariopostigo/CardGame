@@ -9,7 +9,7 @@
 // que promete docs/board/board-map.md §2 y §2c antes de construir encima.
 //
 // Lo que se prueba aquí es el ENCAJE, no la loseta: cuántas se colocan, por
-// dónde crece el tablero, dónde caen las localizaciones y las fichas. Cómo es
+// dónde crece el tablero y dónde caen las fichas, el boss y el Pueblo. Cómo es
 // cada loseta por dentro se maqueta en el otro laboratorio (/dev/losetas).
 //
 // Vive en components/dev/ y no en components/game/ porque es instrumental: el
@@ -26,7 +26,8 @@ import { generateBoard } from "@/lib/rules/board-gen";
 import type { BoardToken, Hex as HexCell } from "@/lib/rules/state";
 import { TERRAINS, TERRAIN_IDS, type TerrainId } from "@/lib/rules/terrain";
 import { TILES_BY_ID } from "@/lib/rules/tile-library";
-import { ELITE_LABEL, LOCATION_GLYPH, TOKEN_GLYPH } from "@/components/game/board/board-glyphs";
+import { PieceIcon } from "@/components/game/board/BoardPiece";
+import { ELITE_LABEL, TOKEN_ART, TOKEN_IDS } from "@/components/game/board/piece-art";
 import HexBoard from "@/components/game/board/HexBoard";
 import { buttonClass } from "@/components/ui/Button";
 
@@ -34,9 +35,10 @@ import { buttonClass } from "@/components/ui/Button";
 // generarían tableros distintos y la hidratación se quejaría.
 const INITIAL_SEED = "guarida-1";
 
-// Pocas losetas y grandes: la bolsa va de 4 a 37 hexágonos por pieza (media 8,6
-// por peso), así que 9 losetas ya dan las ~78 casillas de una Partida rápida.
-const TILE_COUNTS = [6, 9, 12];
+// Los tres tamaños de tablero, y 12 es el MÍNIMO: la bolsa va de 4 a 37
+// hexágonos por pieza (media 8,6 por peso), así que salen ~103, ~129 y ~155
+// casillas. Lo que fija el tamaño es el total de hexágonos, no las piezas.
+const TILE_COUNTS = [12, 15, 18];
 const DENSITIES = [0.12, 0.17, 0.22];
 const SHAPES: Array<{ label: string; sprawl: number }> = [
   { label: "Alargado", sprawl: 2 },
@@ -45,7 +47,7 @@ const SHAPES: Array<{ label: string; sprawl: number }> = [
 
 export default function BoardLab() {
   const [seed, setSeed] = useState(INITIAL_SEED);
-  const [tileCount, setTileCount] = useState(9);
+  const [tileCount, setTileCount] = useState(12);
   const [tokenDensity, setTokenDensity] = useState(0.17);
   const [sprawl, setSprawl] = useState(2);
   const [revealAll, setRevealAll] = useState(true);
@@ -53,12 +55,23 @@ export default function BoardLab() {
   const [showTiles, setShowTiles] = useState(true);
   const [selected, setSelected] = useState<HexCell | null>(null);
 
-  const { board, chapter, openedPasses } = useMemo(
+  const { board, chapter, stranded } = useMemo(
     () => generateBoard({ seed, tileCount, tokenDensity, sprawl }),
     [seed, tileCount, tokenDensity, sprawl],
   );
 
   const stats = useMemo(() => summarize(board.hexes), [board]);
+
+  // Losetas de Pueblo colocadas. Se cuenta aparte del terreno porque es la
+  // pregunta que de verdad importa desde que la generación no funda pueblos: no
+  // «hay casas», sino «el encaje ha sacado el sitio donde vive la gente».
+  const villageTiles = useMemo(
+    () =>
+      board.tiles.filter((t) =>
+        (TILES_BY_ID[t.defId]?.cells ?? []).some((c) => c.terrain === "pueblo"),
+      ).length,
+    [board],
+  );
   const maxDistance = useMemo(
     () => Math.max(...[...board.distanceFromEntrance.values()].filter(Number.isFinite)),
     [board],
@@ -90,9 +103,10 @@ export default function BoardLab() {
         semilla da siempre el mismo tablero.
       </p>
       <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
-        El <b>terreno no se sortea</b>: cada hexágono llega pintado por su loseta, así que esto es
-        exactamente lo maquetado. La única excepción es la <b>Montaña que hay que abrir</b> cuando
-        deja una bolsa incomunicada —se cuenta arriba, y lo normal es que no haga falta ninguna—.
+        El <b>terreno no se sortea y no se repinta</b>: cada hexágono del tablero es el que dibujó
+        su loseta en el catálogo, sin una sola excepción. La generación no abre Montañas, no mueve
+        la entrada y <b>no funda pueblos</b>: si el encaje no saca ninguna loseta de Pueblo, esa
+        partida no tiene Pueblo, y lo que hay que subir es el peso de esos tipos en la bolsa.
       </p>
 
       {/* Controles */}
@@ -112,7 +126,10 @@ export default function BoardLab() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-1">
+        <div
+          className="flex flex-col gap-1"
+          title="Los tres tamaños de tablero. 12 es el mínimo: la bolsa va de 4 a 37 hexágonos por pieza (media 8,6), así que salen ~103, ~129 y ~155 hexágonos, y por debajo de 12 el mapa no da para una travesía."
+        >
           <span className={label}>Losetas</span>
           <div className="flex items-center gap-2">
             {TILE_COUNTS.map((n) => (
@@ -163,19 +180,35 @@ export default function BoardLab() {
             </button>
           </div>
         </div>
+
       </div>
 
       {/* Resumen de la partida que saldría de este tablero */}
       <div className="mb-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-[var(--wiki-text)]">
-        <span>
+        <span
+          title={
+            board.tiles.length < tileCount
+              ? "El encaje se ha cerrado antes de colocarlas todas: se han agotado las anclas libres. El generador ya reintenta la siembra y se queda el mejor intento, así que si esto sale a menudo lo que hay que revisar es cuántas anclas trae la bolsa, no el número de losetas."
+              : undefined
+          }
+        >
           <b>Tablero:</b> {board.hexes.size} hexágonos en {board.tiles.length} losetas
+          {board.tiles.length < tileCount && (
+            <b className="text-[var(--wiki-danger)]"> (de {tileCount} pedidas)</b>
+          )}
         </span>
-        <span>
+        <span title="La Guarida es la única localización que queda, y no se ve: solo marca el hexágono transitable más lejano a la entrada, que es donde espera el boss. Derrotarlo es la condición de victoria.">
           <b>Boss de la Guarida:</b> {ELITE_LABEL[chapter.bossElite]}
         </span>
-        <span>
-          <b>Mazmorra:</b>{" "}
-          {chapter.dungeonElite ? ELITE_LABEL[chapter.dungeonElite] : "no la lleva este tablero"}
+        <span title="El segundo Élite va en un hexágono de Mazmorra de la mitad lejana. Si el encaje no ha sacado ninguna loseta de Mazmorra allí, esta partida no lo lleva: lo decide el maquetado, no un dado.">
+          <b>Élite de Mazmorra:</b>{" "}
+          {chapter.dungeonElite ? ELITE_LABEL[chapter.dungeonElite] : "este tablero no saca Mazmorra"}
+        </span>
+        <span title="El Pueblo lo trae maquetado su loseta (Posada, Poblado, Iglesia, Torre de mago) y no se garantiza: si el encaje no saca ninguna, esta partida se queda sin tienda y sin descanso largo. Si sale «ninguno» a menudo, hay que subir el peso de los tipos de Pueblo en /dev/losetas.">
+          <b>Pueblo:</b>{" "}
+          {stats.terrain.pueblo === 0
+            ? "ninguno"
+            : `${stats.terrain.pueblo} ${stats.terrain.pueblo === 1 ? "hexágono" : "hexágonos"} en ${villageTiles} ${villageTiles === 1 ? "loseta" : "losetas"}`}
         </span>
         <span>
           <b>Travesía máxima:</b> {maxDistance} hexágonos
@@ -193,11 +226,11 @@ export default function BoardLab() {
             ? "ninguno"
             : `${board.voids.length} ${board.voids.length === 1 ? "hexágono" : "hexágonos"}`}
         </span>
-        <span title="Montañas que la generación ha tenido que convertir en Llanura para no dejar una bolsa aislada. Son los únicos hexágonos del tablero que no llevan el terreno que maquetó su loseta, así que cuantos menos, mejor.">
-          <b>Maquetado roto:</b>{" "}
-          {openedPasses.length === 0
+        <span title="Terreno transitable al que no se llega desde la entrada sin cruzar Montaña. La generación ya no abre la roca para arreglarlo: si aquí sale algo, la culpa es de una loseta cuya montaña parte su propio terreno, y se arregla en /dev/losetas.">
+          <b>Incomunicado:</b>{" "}
+          {stranded.length === 0
             ? "nada"
-            : `${openedPasses.length} ${openedPasses.length === 1 ? "montaña abierta" : "montañas abiertas"}`}
+            : `${stranded.length} ${stranded.length === 1 ? "hexágono" : "hexágonos"}`}
         </span>
       </div>
 
@@ -222,16 +255,10 @@ export default function BoardLab() {
         </div>
 
         <div className="board__legend">
-          {(Object.keys(TOKEN_GLYPH) as BoardToken[]).map((t) => (
-            <span key={t} className="board__legend-item" title={TOKEN_GLYPH[t].label}>
-              <span aria-hidden>{TOKEN_GLYPH[t].glyph}</span>
+          {TOKEN_IDS.map((t) => (
+            <span key={t} className="board__legend-item" title={TOKEN_ART[t].label}>
+              <PieceIcon piece={{ family: "token", id: t }} />
               {capitalize(t)} · {stats.tokens[t]}
-            </span>
-          ))}
-          {(Object.keys(LOCATION_GLYPH) as Array<keyof typeof LOCATION_GLYPH>).map((l) => (
-            <span key={l} className="board__legend-item" title={LOCATION_GLYPH[l].label}>
-              <span aria-hidden>{LOCATION_GLYPH[l].glyph}</span>
-              {capitalize(l)}
             </span>
           ))}
         </div>
@@ -257,7 +284,7 @@ export default function BoardLab() {
           <div className="mb-1 font-semibold text-[var(--wiki-text)]">
             Hexágono {selected.coord.q},{selected.coord.r} — {TERRAINS[selected.terrain].label}
             {selected.isEntrance && " · Entrada"}
-            {selected.location && ` · ${capitalize(selected.location)}`}
+            {selected.location === "guarida" && " · Guarida (aquí espera el boss)"}
             {selected.token && ` · ficha de ${capitalize(selected.token)}`}
           </div>
           <ul className="grid gap-0.5 text-[var(--wiki-muted)]">
@@ -302,9 +329,7 @@ type Summary = {
 
 function summarize(hexes: ReadonlyMap<string, HexCell>): Summary {
   const terrain = Object.fromEntries(TERRAIN_IDS.map((id) => [id, 0])) as Record<TerrainId, number>;
-  const tokens = Object.fromEntries(
-    (Object.keys(TOKEN_GLYPH) as BoardToken[]).map((t) => [t, 0]),
-  ) as Record<BoardToken, number>;
+  const tokens = Object.fromEntries(TOKEN_IDS.map((t) => [t, 0])) as Record<BoardToken, number>;
   let tokenTotal = 0;
 
   for (const cell of hexes.values()) {

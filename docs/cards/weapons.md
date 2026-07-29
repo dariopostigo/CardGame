@@ -40,7 +40,7 @@ Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hu
 |---|---|---|---|
 | Libro de hechizos | ✋ | Foco arcano: **+1 a las tiradas y CD de tus hechizos** mientras lo empuñas (`../game-design.md` §4b.7). No hace daño. | Común |
 | Símbolo sagrado | ✋ | Foco divino: **+1 a las tiradas y CD de tus hechizos** mientras lo empuñas (`../game-design.md` §4b.7). No hace daño. | Común |
-| Antorcha | ✋ | **Ilumina:** mejora el rango de visión en localizaciones oscuras (Cueva/Mazmorra/Mina, `../board/board-map.md` §3b). No hace daño. | Común |
+| Antorcha | ✋ | **Ilumina:** mejora el rango de visión en sitios oscuros (el terreno **Mazmorra**, `../board/board-map.md` §3a; y la Mina cuando llegue, §3b). No hace daño. | Común |
 | Escudo | ✋ | **+2 a la Defensa/CA** mientras lo empuñas; ocupa 1 mano, combinable con cualquier armadura ([`armor.md`](armor.md) §5). No hace daño. | Común |
 
 ## 4. Reglas transversales

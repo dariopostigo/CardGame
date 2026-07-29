@@ -12,7 +12,7 @@
 //
 // TRES palabras, y conviene no mezclarlas:
 //   · BIBLIOTECA — todo lo que existe (tile-library.ts).
-//   · TIPO       — un sitio del mundo: un Peñasco, una Ciénaga, una Cueva. Lo
+//   · TIPO       — un sitio del mundo: un Peñasco, una Ciénaga, una Posada. Lo
 //     define UN terreno, tiene un peso en la bolsa y agrupa sus variantes.
 //   · VARIANTE   — una loseta concreta de ese tipo. Varios peñascos distintos,
 //     de formas y tamaños distintos, son variantes del mismo tipo, y al tablero
@@ -151,7 +151,9 @@ export function terrainCounts(def: TileDef): Map<TerrainId, number> {
 /**
  * El carácter con el que se dibuja cada terreno. Fuente única de la letra: la
  * lee `drawn()` para leer un dibujo y `TERRAIN_CHAR` para escribirlo.
- * La Cueva es "V" (cue-V-a) porque la C ya la tenía pedida el Camino.
+ * Dos letras no son la inicial porque la inicial estaba pedida: la Mazmorra es
+ * "Z" (ma-Z-morra, la M es de Montaña) y el Pueblo es "U" (p-U-eblo, la P es de
+ * Pantano).
  */
 export const TERRAIN_CHARS: ReadonlyMap<string, TerrainId> = new Map<string, TerrainId>([
   ["L", "llanura"],
@@ -159,7 +161,8 @@ export const TERRAIN_CHARS: ReadonlyMap<string, TerrainId> = new Map<string, Ter
   ["B", "bosque"],
   ["P", "pantano"],
   ["M", "montana"],
-  ["V", "cueva"],
+  ["Z", "mazmorra"],
+  ["U", "pueblo"],
 ]);
 
 /** La inversa: el carácter de cada terreno, para escribir un dibujo. */
@@ -717,20 +720,21 @@ export function validateTileTypes(types: readonly TileType[]): string[] {
  * tipo equivocado.
  *
  * El otro aviso es de la roca: si la Montaña de la variante parte su terreno
- * transitable en trozos, el tablero puede acabar teniendo que ABRIR esa montaña
- * para no dejar una bolsa aislada (board-gen.ts, paso 4), y eso es lo único que
- * repinta una loseta ya maquetada. Vale la pena saberlo aquí, que es donde se
- * decide, y no descubrirlo como un hexágono de Llanura en medio de la sierra.
+ * transitable en trozos, ese trozo puede quedar INCOMUNICADO en la partida —el
+ * tablero ya no abre la roca para arreglarlo (board-gen.ts, paso 4): lo cuenta y
+ * lo deja—. Vale la pena saberlo aquí, que es donde se decide, y no descubrirlo
+ * como un rincón del mapa al que no se puede llegar.
  *
  * @returns {string[]} Avisos; vacía si el tipo se lee como lo que dice ser.
  */
 export function typeNotes(type: TileType): string[] {
   const notes: string[] = [];
   const label = TERRAINS[type.terrain]?.label ?? type.terrain;
-  // Los terrenos de LUGAR (`isPlace`: Camino y Cueva) no tienen por qué mandar en
-  // su loseta. Un camino es un hilo que cruza otra cosa y una cueva es un agujero
-  // en la roca: pedirles que sean mayoría sería pedirles que dejaran de ser lo
-  // que son. Del terreno de ambiente sí se espera que domine.
+  // Los terrenos de LUGAR (`isPlace`: Camino, Mazmorra y Pueblo) no tienen por
+  // qué mandar en su loseta. Un camino es un hilo que cruza otra cosa, una
+  // mazmorra es un agujero en la roca y un pueblo son cuatro casas en un claro:
+  // pedirles que sean mayoría sería pedirles que dejaran de ser lo que son. Del
+  // terreno de ambiente sí se espera que domine.
   const mustDominate = !TERRAINS[type.terrain]?.isPlace;
 
   for (const def of type.variants) {
@@ -740,7 +744,7 @@ export function typeNotes(type: TileType): string[] {
     if (!isConnected(open)) {
       notes.push(
         `${def.label}: la roca parte su terreno transitable en trozos; si la loseta vecina no ` +
-          `los une por fuera, el tablero tendrá que abrir la Montaña`,
+          `los une por fuera, en la partida quedará un trozo incomunicado`,
       );
     }
 

@@ -55,7 +55,7 @@ Formaliza cómo el héroe se acerca a un enemigo **Latente** antes de que empiec
 | Categoría | CR de referencia (D&D) | Dónde aparece | Notas |
 |---|---|---|---|
 | Normal | CR 1/8 – 1 | Ficha de Amenaza/Enemigo normal, cualquier terreno | Combate rápido, loot menor |
-| Élite | CR 2 – 5 | Ficha de Enemigo en una localización "Guarida" (`../board/board-map.md` §3b), o como boss de la **Partida rápida** | Combate más largo/duro, loot garantizado bueno |
+| Élite | CR 2 – 5 | Ficha de Enemigo en la **Guarida** (`../board/board-map.md` §3b-bis) o en un hexágono de **Mazmorra** (§3a), y como boss de la **Partida rápida** | Combate más largo/duro, loot garantizado bueno |
 | Jefe de capítulo | CR 6 – 10 | Asociado a un Castillo/Fortaleza o evento narrativo concreto en Modo Campaña | Ligado a la historia de ese capítulo, no aparece en **Partida rápida** |
 | Jefe final de campaña | CR 11+ | Último mapa de la Campaña (`../board/board-map.md` §2b) | Cierra el arco narrativo principal, el más elaborado de todos |
 
@@ -101,16 +101,16 @@ Al quedar adyacente a una ficha de Amenaza (revelada como enemigo) o de Enemigo,
 | Lobo de las lindes | 10 | 13 | 12 | 8 | 11 | 9 | Bosque | Ataca mejor en pareja/manada (bonus si hay 2+ juntos) |
 | Bandido merodeador | 13 | 12 | 11 | 8 | 9 | 10 | Llanura, Camino/Sendero | Ataque básico; puede robar un objeto y huir en vez de luchar a muerte |
 | Trasgo de pantano | 9 | 13 | 12 | 11 | 10 | 8 | Pantano | Bajo HP, veneno al golpear (estado negativo, no solo daño) |
-| Esqueleto errante | 12 | 13 | 11 | 8 | 10 | 9 | Ruinas/Cueva, Cripta/Cementerio (`../board/board-map.md` §3b del tablero) | Naturaleza No-muerto (§3b): resistencias/vulnerabilidades por defecto |
+| Esqueleto errante | 12 | 13 | 11 | 8 | 10 | 9 | Ruinas/Mazmorra, Cripta/Cementerio (`../board/board-map.md` §3a y §3b del tablero) | Naturaleza No-muerto (§3b): resistencias/vulnerabilidades por defecto |
 | Araña cavernaria | 10 | 13 | 11 | 9 | 12 | 8 | Montaña, Mina | Telaraña: puede inmovilizar/atascar en vez de solo hacer daño |
 
-**Élite** (ficha de Enemigo en localización "Guarida", o boss de la **Partida rápida**):
+**Élite** (ficha de Enemigo en la **Guarida** o en un hexágono de **Mazmorra**, y boss de la **Partida rápida**):
 
 | Enemigo | FUE | DES | CON | INT | SAB | CAR | Dónde | Idea de gancho mecánico |
 |---|---|---|---|---|---|---|---|---|
 | Capitán bandido | 16 | 12 | 13 | 8 | 10 | 15 | Guarida en Llanura/Camino | Llega acompañado de **1** Normal de refuerzo (tope de 2 enemigos, §5b.6); CAR alto porque lidera |
 | Trol de las minas | 16 | 13 | 15 | 8 | 12 | 10 | Guarida en Mina | Mucho HP (CON alta), golpe que ignora parte de la armadura ligera |
-| Araña matriarca | 12 | 16 | 15 | 10 | 13 | 8 | Guarida en Montaña/Cueva | Versión grande de la Araña cavernaria, veneno más fuerte |
+| Araña matriarca | 12 | 16 | 15 | 10 | 13 | 8 | Guarida en Montaña/Mazmorra | Versión grande de la Araña cavernaria, veneno más fuerte |
 
 **Jefe de capítulo** (Modo Campaña, ejemplo — nombres provisionales hasta tener la historia de `../board/board-map.md` §2b):
 - *"El Heraldo Ceniciento"* — FUE 16, DES 12, CON 16, INT 10, SAB 13, **CAR 18** (comanda y corrompe, de ahí su Carisma máximo). Sirviente de rango alto del antagonista de la Campaña, controla un Castillo/Fortaleza tomado en un capítulo intermedio.
@@ -247,7 +247,7 @@ Las cantidades respetan el **tope de 2 enemigos simultáneos** (§5b.6): "Normal
 | Sitio | Qué Élite |
 |---|---|
 | **Guarida** (garantizada) | El **boss**: 1 de los 3, al azar |
-| **Mazmorra** (opcional, 1 hex reforzado — `../board/board-map.md` §3b-bis) | 1 de los **2 restantes**, al azar |
+| **Mazmorra** (1 hex reforzado — `../board/board-map.md` §3b-bis) | 1 de los **2 restantes**, al azar. Ya no es opcional por dado: sale si el encaje de losetas ha puesto Mazmorra en la mitad lejana del tablero, o sea en el **29 %** de las partidas |
 | Ficha de Enemigo en zona lejana | El que sobre, o ninguno según densidad |
 
 Así una partida completa te enfrenta a **2 Élite distintos como máximo**, y el que te toque de boss cambia la partida entera: el Trol pide fuego (§5b.3), la Matriarca control contra su Telaraña y el Capitán aguantar a dos a la vez.
@@ -285,3 +285,4 @@ El balance fino (cuántos a la vez, con qué stats exactas) se ajusta al testear
 - [x] Formalizar el sistema de tipos de daño y resistencias → **Naturaleza de criatura** (§3b) con resistencias/vulnerabilidades por defecto; multiplicadores y lista de tipos en `../game-design.md` §4b.10. Falta balancear (¿son los multiplicadores correctos? ¿demasiados/pocos tipos?).
 - [x] Naturaleza del Heraldo Ceniciento = **No-muerto de alto rango** *(decidido)*: hereda resistente 🏹 / vulnerable 🔨,☀️ (§3b, §5b.4).
 - [ ] Asignar Naturaleza (§3b) a cualquier enemigo nuevo que se añada al bestiario.
+- [x] Diseñar la ficha visual de **Jefe de capítulo** y **Jefe final de campaña** → corona (👑), la misma para las dos categorías, distinta de la ficha genérica de Enemigo (`../board/board-map.md` §4c). Se prueba en `/dev/pieces`. Vive en Modo Campaña, que todavía no tiene motor de generación.

@@ -22,15 +22,33 @@
 // sortea ni un hexágono. Lo que decide el terreno del tablero es el maquetado de
 // la biblioteca; la tabla A (§2c) es el objetivo al que ese maquetado apunta.
 //
-// Y como el maquetado es lo que manda, este archivo lo REPINTA lo menos posible:
-// el único terreno que puede cambiar es la Montaña que hay que abrir para que no
-// quede una bolsa aislada (paso 4), y se abre por el punto más estrecho que haya.
-// Lo que se ve en el catálogo de /dev/losetas es lo que sale en la partida.
+// Y como el maquetado es lo que manda, este archivo NO REPINTA NADA. Ni un
+// hexágono: el tablero de la partida son las losetas del catálogo tal y como se
+// dibujaron, y lo que se ve en /dev/losetas es exactamente lo que sale al jugar.
+// Se llegó aquí quitando las tres excepciones que quedaban, y las tres por el
+// mismo motivo —un tablero que se corrige a sí mismo esconde el problema en vez
+// de enseñarlo—:
+//
+//   · La MONTAÑA que dejaba una bolsa incomunicada ya no se abre: se INFORMA
+//     (`stranded`). Que un trozo de terreno quede detrás de la roca es un fallo
+//     de maquetado, y se arregla en la loseta, donde `typeNotes` ya avisa.
+//   · La ENTRADA ya no se repinta si cae en roca: `pickEntrance` elige por
+//     terreno, así que solo podría pasar con una primera loseta toda de Montaña,
+//     y eso también es maquetado.
+//   · El PUEBLO ya no se funda. Si el encaje no saca ninguna loseta de Pueblo,
+//     esa partida no tiene Pueblo —ni tienda, ni descanso largo—, y eso se
+//     arregla subiendo el peso de los tipos de Pueblo en la bolsa, que es donde
+//     se decide cuánta gente hay en el mundo.
 //
 // Lo que se conserva del generador anterior, porque no depende de la forma
-// del tablero: conectividad garantizada, Guarida en el hexágono más lejano,
-// Pueblo garantizado en la mitad cercana, Mazmorra opcional, fichas por la
-// tabla B y reparto de los 3 Élite sin repetir.
+// del tablero: Guarida en el hexágono más lejano, fichas por la tabla B y
+// reparto de los 3 Élite sin repetir.
+//
+// Lo que ha cambiado con Pueblo y Mazmorra convertidos en TERRENO: los dos
+// sitios los trae ya maquetados la loseta, no los estampa el generador, y el
+// segundo Élite ya no depende de un dado sino de que el tablero haya sacado
+// Mazmorra en la mitad lejana. La Guarida es la única localización que queda, y
+// ya no se ve: solo marca dónde espera el boss.
 //
 // Puro y determinista: misma semilla → mismo tablero, siempre.
 // =========================================================================
@@ -54,12 +72,16 @@ import { type TileInstance, direction, instantiate, opposite } from "./tiles";
 export type BoardConfig = {
   /** Semilla legible; la misma semilla da el mismo tablero. */
   readonly seed: string;
-  /** Losetas a colocar. 9 × ~8,6 hexágonos ≈ 78 hexágonos. */
+  /**
+   * Losetas a colocar. Los tres tamaños de tablero son **12, 15 y 18**, y 12 es
+   * el mínimo *(decidido)*: por debajo de eso el mapa no da para una travesía.
+   * Con la media de ~8,6 hexágonos por pieza (por peso de bolsa) salen ~103,
+   * ~129 y ~155 hexágonos — y lo que fija el tamaño del tablero es ese total,
+   * no el número de piezas, porque la bolsa va de 4 a 37 hexágonos por loseta.
+   */
   readonly tileCount: number;
   /** Fracción de hexes transitables con ficha: ~15-20 % (§2c tabla B). */
   readonly tokenDensity: number;
-  /** Probabilidad de que el tablero lleve Mazmorra (§2c paso 4: "opcional"). */
-  readonly dungeonChance: number;
   /**
    * Cuánto se estira el tablero lejos de la entrada. 0 = crece por igual en
    * todas direcciones (tablero redondeado, travesía corta); 2 = tiende a
@@ -69,9 +91,8 @@ export type BoardConfig = {
 };
 
 export const DEFAULT_BOARD_CONFIG: Omit<BoardConfig, "seed"> = {
-  tileCount: 9,
+  tileCount: 12,
   tokenDensity: 0.17,
-  dungeonChance: 0.5,
   sprawl: 2,
 };
 
@@ -112,11 +133,11 @@ const TOKEN_WEIGHTS: Readonly<Record<TerrainId, ReadonlyArray<readonly [BoardTok
     ["personaje", 3],
   ],
   montana: [],
-  // La Cueva es el único terreno donde el Tesoro pesa más que la Amenaza: es un
-  // hallazgo, y si no premiara no valdría la pena entrar. Sale poco porque no se
-  // sortea (peso 0 en la tabla A), así que puede ser generosa sin desbalancear
-  // el reparto: solo hay cuevas donde una loseta las dibuja.
-  cueva: [
+  // La Mazmorra es el único terreno donde el Tesoro pesa más que la Amenaza: es
+  // un hallazgo, y si no premiara no valdría la pena entrar. Sale poco porque no
+  // se sortea (peso 0 en la tabla A), así que puede ser generosa sin
+  // desbalancear el reparto: solo hay mazmorras donde una loseta las dibuja.
+  mazmorra: [
     ["enemigo", 2],
     ["amenaza", 1],
     ["tesoro", 3],
@@ -124,6 +145,13 @@ const TOKEN_WEIGHTS: Readonly<Record<TerrainId, ReadonlyArray<readonly [BoardTok
     ["terreno", 0],
     ["personaje", 0],
   ],
+  // El Pueblo no entra en el sorteo: sus hexágonos llevan SIEMPRE Personaje (ver
+  // `seedTokens`), y ninguna otra ficha. Es la única entrada de la tabla que no
+  // es una tabla, y por eso está vacía: un pueblo no es un sitio donde "puede"
+  // haber algo, es donde vive la gente. Cuántos NPC salen lo decide el tipo de
+  // loseta a través de cuántos hexágonos de Pueblo dibuja —una Posada uno, un
+  // Poblado grande cuatro—, que es para lo que existen los cinco tipos.
+  pueblo: [],
 };
 
 // Losetas que pueden ser la primera del tablero: las que dejan más de un punto
@@ -140,13 +168,18 @@ export type GeneratedBoard = {
   readonly board: Board;
   readonly chapter: Chapter;
   /**
-   * Las Montañas que hubo que abrir para no dejar una bolsa aislada (paso 4):
-   * los únicos hexágonos del tablero cuyo terreno NO es el que maquetó su
-   * loseta. Sale en el informe porque es la única grieta entre el catálogo y la
-   * partida, y conviene poder mirarla (/dev/tablero la cuenta); vacía es lo
-   * normal y lo deseable.
+   * Terreno transitable al que no se llega desde la entrada sin cruzar Montaña:
+   * una bolsa que la roca deja incomunicada.
+   *
+   * Antes esto se ARREGLABA abriendo la Montaña, y ya no: se informa y se deja
+   * como está. El tablero es conexo por construcción —las losetas se encajan
+   * borde con borde—, así que una bolsa incomunicada solo puede venir de una
+   * loseta cuya propia roca parte su terreno en dos, y de eso avisa `typeNotes`
+   * al maquetarla. Con la biblioteca de hoy sale vacío, y vacío es lo normal:
+   * si /dev/tablero empieza a contar hexágonos aquí, lo que hay que arreglar es
+   * una loseta, no la generación.
    */
-  readonly openedPasses: readonly HexCoord[];
+  readonly stranded: readonly HexCoord[];
 };
 
 // Hexágono mutable, solo dentro de este módulo. Lo que sale es readonly.
@@ -178,9 +211,12 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
   // ninguna loseta cabe en las que quedan, el tablero se queda en 3 ó 4 piezas.
   // No se puede arreglar desde dentro del bucle (ahí ya no hay sitio), así que se
   // vuelve a sembrar con el generador ya avanzado y se queda el mejor intento, no
-  // el último. Con la biblioteca de hoy no llega a pasar en 300 semillas ni con
-  // 12 losetas, pero depende del reparto de anclas de la bolsa: cada loseta nueva
-  // puede volver a provocarlo, así que la red se queda puesta.
+  // el último. Con la biblioteca de hoy no llegaba a pasar en 300 semillas hasta
+  // 12 losetas —el mínimo de hoy—, y con 15 y 18 está sin medir: cuantas más
+  // piezas se piden, más se agotan las anclas libres. Si el encaje se queda corto,
+  // el tablero sale con menos losetas de las pedidas y /dev/tablero lo canta
+  // («12 de 15 pedidas»); lo que hay que mirar entonces es el reparto de anclas de
+  // la bolsa, no subir este número.
   let layout = layoutTiles(cfg, rng);
   for (
     let attempt = 1;
@@ -195,8 +231,8 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
   // --- 2. El terreno, tal cual lo trae cada loseta --------------------------
   // No se sortea nada: la loseta llega pintada entera (`TileCell.terrain` es
   // obligatorio), así que el terreno del tablero lo decide el maquetado de la
-  // biblioteca. Lo único que puede cambiarlo después es abrir un paso o arreglar
-  // la entrada, más abajo, y eso son reparaciones de conectividad, no azar.
+  // biblioteca. Y nada de lo que viene después lo cambia: este es el terreno
+  // definitivo del tablero, hexágono a hexágono.
   const drafts = new Map<HexKey, Draft>();
   for (const [k, cell] of layout.cells) {
     drafts.set(k, {
@@ -213,75 +249,60 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
   // La "puerta" del tablero (§2c paso 0). Con losetas no hay esquinas, así que
   // se elige dentro de la PRIMERA loseta, que es por donde empezó a crecer todo,
   // y con preferencia por la boca de su camino (ver `pickEntrance`).
+  // La entrada NO se repinta: `pickEntrance` ordena por terreno, así que solo
+  // caería en roca si la primera loseta fuera toda de Montaña, y con la
+  // biblioteca de hoy no existe esa loseta. Si algún día se maqueta, la partida
+  // empezará pagando 3 de movimiento por salir, que es lo que dice el terreno.
   const entranceDraft = pickEntrance(drafts, layout.tiles[0]);
   entranceDraft.isEntrance = true;
-  // Último recurso: si la primera loseta es TODA roca no hay puerta posible, y
-  // con el pool base de 2 no podrías ni salir del hexágono. Es el único sitio
-  // fuera del paso 4 donde se repinta maquetado, y con la biblioteca de hoy no
-  // llega a pasar nunca.
-  if (!isOpenGround(entranceDraft.terrain)) entranceDraft.terrain = "llanura";
   const entrance = entranceDraft.coord;
 
-  // --- 4. Conectividad ------------------------------------------------------
-  const carved = carveConnectivity(drafts, entrance, rng);
-  rng = carved.rng;
+  // --- 4. Conectividad: se MIDE, no se arregla ------------------------------
   const dist = bfsDistances(drafts, entrance);
+  const stranded = findStranded(drafts, dist);
 
-  // --- 5. Localizaciones garantizadas (§2c paso 4) -------------------------
+  // --- 5. El boss y los sitios de la partida (§2c paso 4) ------------------
   const placeable = [...drafts.values()].filter(
     (d) => !d.isEntrance && isOpenGround(d.terrain) && Number.isFinite(dist.get(Hex.key(d.coord))!),
   );
 
-  // Guarida: el hexágono transitable MÁS LEJANO a la entrada.
+  // La Guarida: el hexágono transitable MÁS LEJANO a la entrada. Es lo ÚNICO que
+  // sigue siendo una localización, y ya no se ve: no lleva ficha ni placa, solo
+  // marca para el motor dónde espera el boss, que es la condición de victoria
+  // (§2b). Lo que el jugador ve de ella es la ficha de Enemigo del propio boss.
   const lair = placeable.reduce((best, d) =>
     dist.get(Hex.key(d.coord))! > dist.get(Hex.key(best.coord))! ? d : best,
   );
   lair.location = "guarida";
   const maxDist = dist.get(Hex.key(lair.coord))!;
 
-  // Pueblo: en la mitad cercana, y GARANTIZADO — si no cae, la tienda, el
-  // descanso largo y la limpieza de Maldiciones quedan inaccesibles.
-  const nearHalf = placeable.filter(
-    (d) => d.location === null && dist.get(Hex.key(d.coord))! <= maxDist / 2,
-  );
-  const villagePool = nearHalf.length > 0 ? nearHalf : placeable.filter((d) => d.location === null);
-  // Nadie funda un pueblo dentro de una cueva; y los pueblos se asientan en el
-  // camino, así que si hay alguno a mano va ahí. Las dos son preferencias, no
-  // requisitos: si la única opción es una cueva, pueblo en la cueva antes que
-  // tablero sin pueblo (que dejaría tienda y descanso largo inaccesibles).
-  const outdoors = villagePool.filter((d) => d.terrain !== "cueva");
-  const settleable = outdoors.length > 0 ? outdoors : villagePool;
-  const onRoad = settleable.filter((d) => d.terrain === "camino");
-  const [village, r2] = Rng.pick(rng, onRoad.length > 0 ? onRoad : settleable);
-  rng = r2;
-  village.location = "pueblo";
+  // Aquí no hay paso del Pueblo, y es a propósito: el Pueblo es TERRENO y lo
+  // trae maquetado su loseta (Posada, Poblado, Iglesia, Torre de mago). Si el
+  // encaje no saca ninguna, esa partida no tiene Pueblo —ni tienda, ni descanso
+  // largo—, y eso se corrige en el peso de la bolsa, no repintando un hexágono.
 
-  // Mazmorra: opcional, en la mitad lejana, no pegada a la Guarida.
-  const [dungeonRoll, r3] = Rng.next(rng);
-  rng = r3;
-  let hasDungeon = dungeonRoll < cfg.dungeonChance;
-  if (hasDungeon) {
-    const farHalf = placeable.filter(
-      (d) =>
-        d.location === null &&
-        dist.get(Hex.key(d.coord))! > maxDist / 2 &&
-        Hex.distance(d.coord, lair.coord) > 1,
-    );
-    if (farHalf.length > 0) {
-      // Una mazmorra se entra por un agujero en la roca: si la mitad lejana
-      // tiene una cueva, es ahí. Es la contrapartida del pueblo en el camino, y
-      // le da a la Cueva algo que hacer más allá de su tabla de fichas.
-      const caves = farHalf.filter((d) => d.terrain === "cueva");
-      const [dungeon, r4] = Rng.pick(rng, caves.length > 0 ? caves : farHalf);
-      rng = r4;
-      dungeon.location = "mazmorra";
-    } else {
-      hasDungeon = false;
-    }
+  // El segundo Élite ya no lo aloja una localización: lo aloja la ROCA. Va en un
+  // hexágono de Mazmorra de la mitad lejana, y si el tablero no ha sacado
+  // ninguna loseta de Mazmorra allí, esta partida no lleva Élite de Mazmorra —el
+  // tipo de loseta que salga es lo que decide qué contenido hay, y eso es todo
+  // el sentido de que la Mazmorra sea terreno y no un sello encima—.
+  const dungeonCells = placeable.filter(
+    (d) =>
+      d.terrain === "mazmorra" &&
+      d.location === null &&
+      dist.get(Hex.key(d.coord))! > maxDist / 2 &&
+      Hex.distance(d.coord, lair.coord) > 1,
+  );
+  let dungeonHex: HexCoord | null = null;
+  if (dungeonCells.length > 0) {
+    // La cámara más honda de las que haya: la que más lejos queda de la entrada.
+    dungeonHex = dungeonCells.reduce((best, d) =>
+      dist.get(Hex.key(d.coord))! > dist.get(Hex.key(best.coord))! ? d : best,
+    ).coord;
   }
 
   // --- 6. Fichas (tabla B) --------------------------------------------------
-  rng = seedTokens(drafts, cfg, rng);
+  rng = seedTokens(drafts, cfg, dungeonHex, rng);
 
   // --- 7. Élites: boss y, si hay, el de la Mazmorra ------------------------
   const [shuffledElites, r5] = Rng.shuffle(rng, ELITES);
@@ -311,13 +332,13 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
       distanceFromEntrance: dist,
       voids: findVoids(hexes),
     },
-    openedPasses: carved.opened,
+    stranded,
     chapter: {
       turn: 1,
       threat: 0,
       thresholdsFired: [],
       bossElite: shuffledElites[0],
-      dungeonElite: hasDungeon ? shuffledElites[1] : null,
+      dungeonElite: dungeonHex ? shuffledElites[1] : null,
       seed: cfg.seed,
     },
   };
@@ -556,7 +577,9 @@ function pickEntrance(drafts: ReadonlyMap<HexKey, Draft>, firstTile: PlacedTile)
 /** Lo buena que es una puerta cada terreno; cuanto más bajo, mejor. */
 function doorRank(terrain: TerrainId): number {
   if (terrain === "camino") return 0; // la boca del sendero
-  if (terrain === "cueva") return 2; // al mapa no se entra saliendo de un agujero
+  // Al mapa no se entra saliendo de un agujero, y tampoco desde la plaza del
+  // pueblo: la entrada es el borde del mundo conocido, no un sitio con nombre.
+  if (terrain === "mazmorra" || terrain === "pueblo") return 2;
   if (!isOpenGround(terrain)) return 3; // Montaña: no hay puerta, hay que abrirla
   return 1;
 }
@@ -602,151 +625,72 @@ function bfsDistances(drafts: ReadonlyMap<HexKey, Draft>, from: HexCoord): Map<H
 }
 
 /**
- * Garantizar que todo hexágono transitable es alcanzable desde la entrada
- * (§2c paso 3). Cuando una masa de Montaña deja una bolsa aislada, se abre un
- * paso convirtiendo en Llanura las Montañas que hagan falta.
+ * El terreno transitable al que no se llega desde la entrada (§2c paso 3).
  *
- * Con el terreno maquetado esto es lo ÚNICO que repinta una loseta, así que abre
- * el paso MÁS ESTRECHO que haya: de todas las bolsas aisladas se conecta primero
- * la que cuesta menos roca, y por la ruta que menos roca cruza.
+ * Antes esta comprobación ABRÍA la Montaña que estorbaba, y ahora solo cuenta:
+ * el maquetado no se toca. Una bolsa incomunicada no se puede formar encajando
+ * losetas —el tablero es conexo por construcción—, así que si aparece, viene de
+ * una loseta cuya roca parte su propio terreno en dos y a la que ninguna vecina
+ * se lo une por fuera. Eso se arregla en la loseta, y `typeNotes` lo avisa al
+ * maquetarla; taparlo aquí solo conseguía que nadie se enterara.
  *
- * Con la biblioteca de hoy no llega a hacer falta ni una vez en 300 tableros, y no
- * por suerte: la bolsa aislada aparecía cuando una variante tenía su terreno
- * transitable partido por su propia roca, y de eso avisa ahora `typeNotes`. Esto
- * es la red de seguridad, no el caso normal.
- *
- * Muta `drafts` a propósito: es un paso de construcción, no una regla de juego.
- *
- * @returns {{rng: Rng.Rng, opened: HexCoord[]}} El generador tras los sorteos de
- * desempate y las Montañas repintadas, para poder contarlas.
+ * @param {ReadonlyMap<HexKey, number>} dist - Distancias desde la entrada, con
+ *   Infinity en lo que no se alcanza sin cruzar Montaña.
+ * @returns {HexCoord[]} Los hexágonos transitables incomunicados; vacío es lo normal.
  */
-function carveConnectivity(
-  drafts: Map<HexKey, Draft>,
-  entrance: HexCoord,
-  rng: Rng.Rng,
-): { rng: Rng.Rng; opened: HexCoord[] } {
-  let r = rng;
-  const opened: HexCoord[] = [];
-  // Cada iteración conecta una bolsa. El bucle termina porque cada pasada
-  // reduce en al menos uno el número de hexes inalcanzables.
-  for (let guard = 0; guard < drafts.size; guard++) {
-    const dist = bfsDistances(drafts, entrance);
-    const stranded = [...drafts.values()].filter(
-      (d) => isOpenGround(d.terrain) && !Number.isFinite(dist.get(Hex.key(d.coord))!),
-    );
-    if (stranded.length === 0) return { rng: r, opened };
-
-    const search = mountainCosts(drafts, entrance);
-    const rockOf = (d: Draft) => search.cost.get(Hex.key(d.coord)) ?? Infinity;
-    const cheapest = Math.min(...stranded.map(rockOf));
-    // No puede pasar —el tablero es conexo por construcción, que para eso se
-    // encajan las losetas—, pero si pasara, repintar nada dejaría el bucle
-    // dando vueltas hasta el guard.
-    if (!Number.isFinite(cheapest)) return { rng: r, opened };
-
-    // Entre las bolsas que empatan a roca se sortea, para que el tablero no
-    // herede un sesgo de forma del orden de recorrido.
-    const [target, nextR] = Rng.pick(
-      r,
-      stranded.filter((d) => rockOf(d) === cheapest),
-    );
-    r = nextR;
-    for (const coord of pathTo(search, target.coord)) {
-      const draft = drafts.get(Hex.key(coord))!;
-      if (isOpenGround(draft.terrain)) continue;
-      draft.terrain = "llanura";
-      opened.push(coord);
-    }
-  }
-  return { rng: r, opened };
-}
-
-/** Lo que cuesta llegar a cada hexágono en Montañas abiertas, y por dónde. */
-type PassSearch = {
-  readonly cost: ReadonlyMap<HexKey, number>;
-  readonly cameFrom: ReadonlyMap<HexKey, HexCoord | null>;
-};
-
-/**
- * Coste de llegar a cada hexágono medido en ROCA ROTA: entrar en terreno
- * transitable es gratis y entrar en Montaña cuesta uno. No busca la ruta más
- * corta, busca la que destroza menos maquetado —rodea la sierra hasta su punto
- * más estrecho y la cruza por ahí—, que es la diferencia entre abrir un paso y
- * hacerle un agujero.
- *
- * Dijkstra a mano, buscando el mínimo con un recorrido lineal: el tablero son
- * ~70 hexágonos, así que una cola de prioridad costaría más de leer que de correr.
- *
- * @returns {PassSearch} Coste y predecesor de cada hexágono del tablero.
- */
-function mountainCosts(drafts: ReadonlyMap<HexKey, Draft>, from: HexCoord): PassSearch {
-  const cost = new Map<HexKey, number>([[Hex.key(from), 0]]);
-  const cameFrom = new Map<HexKey, HexCoord | null>([[Hex.key(from), null]]);
-  const pending = new Set<HexKey>([Hex.key(from)]);
-  const settled = new Set<HexKey>();
-
-  while (pending.size > 0) {
-    let current: HexKey | null = null;
-    for (const k of pending) {
-      if (current === null || cost.get(k)! < cost.get(current)!) current = k;
-    }
-    pending.delete(current!);
-    settled.add(current!);
-
-    const coord = drafts.get(current!)!.coord;
-    for (const n of Hex.neighbors(coord)) {
-      const nk = Hex.key(n);
-      const draft = drafts.get(nk);
-      if (!draft || settled.has(nk)) continue;
-      const next = cost.get(current!)! + (isOpenGround(draft.terrain) ? 0 : 1);
-      if (next >= (cost.get(nk) ?? Infinity)) continue;
-      cost.set(nk, next);
-      cameFrom.set(nk, coord);
-      pending.add(nk);
-    }
-  }
-  return { cost, cameFrom };
-}
-
-/**
- * Rehacer la ruta hasta `to` desde una búsqueda ya hecha.
- *
- * @returns {HexCoord[]} La ruta incluyendo extremos, o vacía si no se alcanzó.
- */
-function pathTo(search: PassSearch, to: HexCoord): HexCoord[] {
-  if (!search.cameFrom.has(Hex.key(to))) return [];
-  const path: HexCoord[] = [];
-  let step: HexCoord | null = to;
-  while (step) {
-    path.push(step);
-    step = search.cameFrom.get(Hex.key(step)) ?? null;
-  }
-  return path.reverse();
+function findStranded(
+  drafts: ReadonlyMap<HexKey, Draft>,
+  dist: ReadonlyMap<HexKey, number>,
+): HexCoord[] {
+  return [...drafts.values()]
+    .filter((d) => isOpenGround(d.terrain) && !Number.isFinite(dist.get(Hex.key(d.coord))!))
+    .map((d) => d.coord);
 }
 
 // --- Fichas ---------------------------------------------------------------
 
 /**
  * Sembrar fichas sobre los hexes transitables según la tabla B (§2c).
- * Quedan fuera: la entrada, la Montaña y los hexes con localización especial
- * (que colocan sus propias fichas). El Pueblo recibe siempre una de Personaje,
- * porque es donde viven los NPCs de tienda y descanso.
+ *
+ * Quedan fuera: la entrada, la Montaña, el hexágono de la Guarida y el de la
+ * Mazmorra que aloja al segundo Élite —esos dos ya tienen su contenido, y es un
+ * boss—. El Pueblo también queda fuera del sorteo, pero por lo contrario: cada
+ * uno de sus hexágonos recibe SIEMPRE una ficha de Personaje, porque es donde
+ * vive la gente del mapa.
+ *
+ * Ahí está el trabajo que hacen los cinco tipos de loseta de Pueblo: el tipo
+ * decide cuántos hexágonos de Pueblo trae la pieza, y con eso cuánta gente sale.
+ * Una Posada dibuja uno —un tabernero y se acabó—; un Poblado pequeño dos —un
+ * tabernero y un vendedor, o un mago—; un Poblado grande cuatro, que ya son
+ * oficios para elegir. QUIÉN es cada uno todavía no se decide aquí: el NPC
+ * concreto sale al interactuar (docs/characters/npcs.md §1), y cuando exista ese
+ * subsistema el tipo de loseta será lo que sesgue el sorteo.
  *
  * Muta `drafts`; devuelve el generador avanzado.
  *
+ * @param {HexCoord | null} dungeonHex - El hexágono de Mazmorra con el segundo
+ *   Élite, si el tablero lo lleva: no se siembra encima.
  * @returns {Rng.Rng} El generador tras todos los sorteos.
  */
-function seedTokens(drafts: Map<HexKey, Draft>, cfg: BoardConfig, rng: Rng.Rng): Rng.Rng {
+function seedTokens(
+  drafts: Map<HexKey, Draft>,
+  cfg: BoardConfig,
+  dungeonHex: HexCoord | null,
+  rng: Rng.Rng,
+): Rng.Rng {
   let r = rng;
   const candidates: Draft[] = [];
+  const dungeonKey = dungeonHex ? Hex.key(dungeonHex) : null;
 
   for (const draft of drafts.values()) {
-    if (draft.location === "pueblo") {
+    if (draft.terrain === "pueblo") {
       draft.token = "personaje";
       continue;
     }
-    // Guarida y Mazmorra alojan su propio Élite, no una ficha de la tabla B.
+    // La Guarida aloja al boss y la Mazmorra elegida al segundo Élite: ninguna
+    // de las dos lleva ficha de la tabla B.
     if (draft.location !== null || draft.isEntrance) continue;
+    if (dungeonKey !== null && Hex.key(draft.coord) === dungeonKey) continue;
     if (TOKEN_WEIGHTS[draft.terrain].length === 0) continue;
     candidates.push(draft);
   }
