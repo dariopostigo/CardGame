@@ -105,8 +105,8 @@ export default function PieceLab() {
         profundidad para nada.
       </p>
       <p className={note}>
-        Tres de los glifos son <b>rutas</b>, que pintan con la tinta que les da su ficha. Las cinco
-        excepciones son <b>Tesoro, Exploración, Personaje, Héroe y Terreno</b>, que van como{" "}
+        Tres de los glifos son <b>rutas</b>, que pintan con la tinta que les da su ficha. Las seis
+        excepciones son <b>Tesoro, Exploración, Personaje, Héroe, Terreno y Jefe</b>, que van como{" "}
         <b>emoji</b>: traen sus propios colores, ignoran la tinta de la ficha y dependen de la fuente
         del sistema —el cofre es <code>U+1FA8E</code>, de Unicode 17, así que con una fuente vieja
         sale el rectángulo de carácter desconocido; el elfo y el mago son secuencias de cuatro puntos

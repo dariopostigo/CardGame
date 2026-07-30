@@ -8,10 +8,7 @@
 // Red Blob Games; no conviene reinventarlas.
 //
 // Orientación de la casa: hexágono PUNTIAGUDO ARRIBA (pointy-top), con las
-// filas en horizontal. El mapa del prototipo es un rectángulo de 12×12
-// (docs/board/board-map.md §2c), y para eso se usan coordenadas "por filas"
-// (offset odd-r) solo en la construcción de la rejilla; el resto del motor
-// trabaja siempre en axiales.
+// filas en horizontal.
 //
 // Este archivo es puro: sin React, sin azar, sin estado.
 // =========================================================================
@@ -34,8 +31,8 @@ export function equals(a: HexCoord, b: HexCoord): boolean {
   return a.q === b.q && a.r === b.r;
 }
 
-// Las 6 direcciones, en orden horario empezando por el este.
-const DIRECTIONS: readonly HexCoord[] = [
+/** Las 6 direcciones, en orden horario empezando por el este. */
+export const DIRECTIONS: readonly HexCoord[] = [
   { q: 1, r: 0 },
   { q: 1, r: -1 },
   { q: 0, r: -1 },
@@ -91,9 +88,11 @@ export function withinRadius(center: HexCoord, radius: number): HexCoord[] {
   return out;
 }
 
-// --- Rejilla rectangular (offset odd-r) -----------------------------------
-// Solo para construir el mapa 12×12 y para saber dónde están las esquinas.
-// El motor no usa estas coordenadas para nada más.
+// --- Rejilla escalonada (offset odd-r) -------------------------------------
+// El motor no la usa para nada más que maquetar: es la rejilla de papel
+// cuadriculado sobre la que se dibuja una loseta a mano en /dev/losetas y en
+// la que `drawn()`/`toDrawing()` (lib/rules/tiles.ts) leen y escriben el
+// dibujo ASCII de cada variante.
 
 export type OffsetCoord = { readonly col: number; readonly row: number };
 
@@ -103,27 +102,6 @@ export function offsetToAxial({ col, row }: OffsetCoord): HexCoord {
 
 export function axialToOffset({ q, r }: HexCoord): OffsetCoord {
   return { col: q + ((r - (r & 1)) >> 1), row: r };
-}
-
-/** Los hexágonos de un rectángulo de width × height, por filas. */
-export function rectangle(width: number, height: number): HexCoord[] {
-  const out: HexCoord[] = [];
-  for (let row = 0; row < height; row++) {
-    for (let col = 0; col < width; col++) {
-      out.push(offsetToAxial({ col, row }));
-    }
-  }
-  return out;
-}
-
-/** Las 4 esquinas del rectángulo — la entrada sale de aquí (§2c paso 0). */
-export function corners(width: number, height: number): HexCoord[] {
-  return [
-    { col: 0, row: 0 },
-    { col: width - 1, row: 0 },
-    { col: 0, row: height - 1 },
-    { col: width - 1, row: height - 1 },
-  ].map(offsetToAxial);
 }
 
 // --- Línea de visión ------------------------------------------------------

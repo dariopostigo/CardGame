@@ -32,7 +32,8 @@ export type DevLab = {
 
 export const LAB_STATUS_LABEL = BUILD_STATUS_LABEL;
 
-// El orden importa: primero la pieza, luego el tablero que se monta con ella.
+// El orden importa: primero la loseta, luego el tablero que se monta con ellas,
+// y luego las fichas que se ponen encima del tablero ya montado.
 export const DEV_LABS: readonly DevLab[] = [
   {
     slug: "losetas",
@@ -63,7 +64,7 @@ export const DEV_LABS: readonly DevLab[] = [
     slug: "pieces",
     label: "Diseño de fichas",
     summary:
-      "La pieza que se pone encima: las 6 fichas de contenido y las 2 de personaje, todas en el mismo disco tumbado. Dibujo vectorial, legibilidad a tamaño de partida sobre los siete terrenos, y los estados de la niebla más la ficha ya resuelta.",
+      "La pieza que se pone encima: las 6 fichas de contenido y las 3 de personaje, todas en el mismo disco tumbado. Dibujo vectorial, legibilidad a tamaño de partida sobre los siete terrenos, y los estados de la niebla más la ficha ya resuelta.",
     icon: "pi pi-circle-fill",
     status: "en-curso",
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §4c" },

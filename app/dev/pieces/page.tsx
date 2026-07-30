@@ -7,7 +7,7 @@ import PieceLab from "@/components/dev/PieceLab";
 export const metadata: Metadata = {
   title: "Diseño de fichas",
   description:
-    "Laboratorio de fichas del tablero: las 6 de contenido y las 2 de personaje, con su legibilidad sobre cada terreno y sus estados.",
+    "Laboratorio de fichas del tablero: las 6 de contenido y las 3 de personaje, con su legibilidad sobre cada terreno y sus estados.",
 };
 
 export default function PiecesLabPage() {

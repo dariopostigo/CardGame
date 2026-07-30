@@ -583,7 +583,7 @@ export function instantiate(def: TileDef, rotation: number, origin: HexCoord): T
   const anchors: TileEdge[] = [];
   for (const localCell of def.cells) {
     for (let dir = 0; dir < 6; dir++) {
-      const outside = Hex.add(localCell.hex, DIRECTIONS[dir]);
+      const outside = Hex.add(localCell.hex, Hex.DIRECTIONS[dir]);
       if (local.has(Hex.key(outside))) continue; // borde interior: no da a ninguna parte
       const hex = place(localCell.hex);
       const placedDir = rotateDir(dir, rotation);
@@ -645,19 +645,8 @@ function footprint(inst: TileInstance): string {
   return `${shape}#${anchors}`;
 }
 
-// Las 6 direcciones en el mismo orden que hex.ts. Se repiten aquí porque
-// hex.ts no las exporta como dato (solo como neighbors()).
-const DIRECTIONS: readonly HexCoord[] = [
-  { q: 1, r: 0 },
-  { q: 1, r: -1 },
-  { q: 0, r: -1 },
-  { q: -1, r: 0 },
-  { q: -1, r: 1 },
-  { q: 0, r: 1 },
-];
-
 export function direction(dir: number): HexCoord {
-  return DIRECTIONS[((dir % 6) + 6) % 6];
+  return Hex.DIRECTIONS[((dir % 6) + 6) % 6];
 }
 
 /** La dirección contraria: el borde con el que encaja. */
@@ -768,6 +757,11 @@ export function typeNotes(type: TileType): string[] {
   return notes;
 }
 
+/** Terrenos donde un ancla nunca puede caer (§ cabecera de tile-library.ts): la
+ * roca, el pantano y la boca de una mazmorra no invitan a seguir. El Camino
+ * ancla en sus propias bocas, que es terreno abierto y no entra aquí. */
+const ANCHOR_FORBIDDEN_TERRAINS: ReadonlySet<TerrainId> = new Set(["montana", "pantano", "mazmorra"]);
+
 /**
  * Comprobar que unas losetas son coherentes, una a una. La usa
  * `validateTileTypes` y también el editor de /dev/losetas, que la llama sobre el
@@ -781,6 +775,7 @@ export function validateTileLibrary(tiles: readonly TileDef[]): string[] {
   for (const def of tiles) {
     const shape = shapeOf(def);
     const keys = new Set(shape.map(Hex.key));
+    const terrainByKey = new Map(def.cells.map((c) => [Hex.key(c.hex), c.terrain]));
 
     if (shape.length < MIN_TILE_HEXES) {
       problems.push(`${def.id}: ${shape.length} hexágonos (mínimo ${MIN_TILE_HEXES})`);
@@ -817,6 +812,13 @@ export function validateTileLibrary(tiles: readonly TileDef[]): string[] {
       if (keys.has(Hex.key(Hex.add(anchor.hex, direction(anchor.dir))))) {
         problems.push(
           `${def.id}: el ancla ${ak} da a un hexágono de la propia loseta (solo van en el contorno)`,
+        );
+      }
+
+      const anchorTerrain = terrainByKey.get(Hex.key(anchor.hex));
+      if (anchorTerrain && ANCHOR_FORBIDDEN_TERRAINS.has(anchorTerrain)) {
+        problems.push(
+          `${def.id}: el ancla ${ak} cae en ${anchorTerrain}, que no invita a seguir (roca, pantano o boca de mazmorra)`,
         );
       }
     }

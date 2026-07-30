@@ -15,25 +15,57 @@ Hex {
   q, r                // coordenadas axiales
   terrain             // Llanura | Bosque | Pantano | Montaña | Camino | Mazmorra | Pueblo (board-map.md §3a)
                       // Obligatorio: lo trae pintado la loseta, no se sortea (§2c, tabla A)
-  groupId?            // a qué grupo/tile pertenece (board-map.md §2; null en prototipo hex-por-hex)
-  isConnector: bool   // si es un hexágono "puerta" entre dos grupos (board-map.md §4)
+  tileId              // loseta a la que pertenece (obligatorio: no hay hexágono sin loseta,
+                      // lib/rules/state.ts). El grupo/tile YA está construido (§2, §2c) — lo
+                      // que sigue aparcado es la niebla POR grupo (§4), no el dato en sí
+  isConnector: bool   // si es un hexágono "puerta" entre dos grupos (board-map.md §4). Diseño
+                      // por delante del motor: sin consumidor hasta que la niebla por grupo se
+                      // retome (aparcada a propósito hasta que existan fichas de personaje, §4)
   location?           // Guarida | null  (la única localización que queda, e INVISIBLE: solo
                       // marca dónde espera el boss. Pueblo y Mazmorra son terreno,
                       // board-map.md §3a y §3b)
                       // En el prototipo NINGUNA abre sub-mapa: se resuelven en su hex (§3b-bis)
   boardToken?         // Exploracion | Amenaza | Tesoro | Terreno | Personaje | Enemigo | null
+                      // NOTA: board-map.md §4c ya diseña un 4º estado de ficha ("Resuelta",
+                      // con huella grabada) y una 3ª ficha de personaje (Jefe, corona morada)
+                      // que este campo todavía no representa. Aparcado a propósito: el propio
+                      // lib/rules/state.ts dice que Character/Enemy/Combat/Card "se añadirá al
+                      // implementar su subsistema, no antes", y Resuelta/Jefe son ese mismo caso
   isEntrance: bool    // hex de entrada: la boca del camino de la primera loseta,
                       // o su hex más exterior si no trae camino (board-map.md §2c paso 0)
   terrainRevealed: bool   // capa 1 de niebla: se conoce el tipo de terreno (visión de terreno)
   contentRevealed: bool   // capa 2: se conoce su contenido/ficha (visión de detalle)
 }                         // dos capas, no un solo `revealed` (board-map.md §2c, game-design.md §2.3)
 
+PlacedTile {              // una loseta ya colocada en el tablero (lib/rules/state.ts)
+  id                      // identificador de la instancia ("t0", "t1"… es el tileId de sus hexágonos)
+  defId                   // loseta de la biblioteca de la que sale (lib/rules/tile-library.ts)
+  rotation                // pasos de 60° con los que se colocó
+  hexes: HexCoord[]
+}
+
+Board {                   // el tablero de una partida: hexágonos + losetas que los trajeron
+                          // (lib/rules/state.ts, se genera en board-gen.ts, se prueba en /dev/tablero)
+  hexes: Map<HexKey, Hex>  // indexado por hex.key() para acceso O(1)
+  tiles: PlacedTile[]      // en orden de colocación
+  voids: HexCoord[]        // huecos cerrados: el negativo del mapa, no son hexágonos (§2, `findVoids`)
+  entrance: HexCoord
+  distanceFromEntrance: Map<HexKey, number>   // BFS desde la entrada esquivando Montaña
+}
+
+GeneratedBoard {          // lo que devuelve `generateBoard()` (board-gen.ts)
+  board: Board
+  chapter: Chapter
+  stranded: HexCoord[]     // terreno transitable incomunicado por la roca; se MIDE y no se
+                          // arregla — antes se abría la Montaña, ya no (§2)
+}
+
 Chapter {                 // el "reloj" y el estado de la partida
   turn                    // turno de héroe actual
   threat                  // Nivel de Amenaza, 0..40 — el TOPE ES LA DURACIÓN (game-design.md §6c.1)
   threatMax               // 40
   thresholdsFired: Set    // histéresis: 25/50/75 % se disparan UNA vez (game-design.md §6c.3)
-  bossElite               // 1 de los 3 Élite, al azar (enemies.md §5c)
+  bossElite               // 1 de los 3 Élite, al azar (enemies.md §5b.3)
   dungeonElite?           // 1 de los 2 restantes, si el mapa lleva Mazmorra (board-map.md §3b-bis)
   seed
 }
@@ -48,8 +80,12 @@ TerrainDef {                // datos de board-map.md §3a
   genWeight                 // peso de generación (tabla A, §2c)
 }
 
-Group (tile) {              // solo versión con tiles (post-prototipo)
-  id, terrainOrLocationType, hexes: Hex[], neighborGroupIds: []
+Group (tile) {              // la niebla de grupo (§4) todavía no lee este dato: el grupo en sí
+                            // ya existe (PlacedTile, arriba), lo que falta es la lógica de
+                            // exploración por grupo, aparcada hasta las fichas de personaje (§4)
+  id, terrain, hexes: Hex[], neighborGroupIds: []
+                            // "terrain" y no "terrainOrLocationType": Pueblo y Mazmorra ya son
+                            // terreno (board-map.md §3b), no una localización aparte del grupo
   explorationState          // 'sinExplorar' | 'detectado' | 'explorado' (§4)
 }
 

@@ -520,10 +520,10 @@ El objetivo elegido es **botín moderado: el Mazo acaba en 14-16 cartas** (arran
 | Reparto por tipo (tabla B de `board/board-map.md` §2c) | ~4,5 Enemigo · ~6,7 Amenaza · ~3,5 Tesoro · ~2,4 Exploración · ~5,3 Personaje · ~1,8 Terreno |
 | Con qué te cruzas de verdad en **40 turnos** (§6c) | ~55 % del mapa → **~13 fichas** |
 | Combates | ~2,5 de ficha de Enemigo + ~1,5 de Amenaza que sale ¡Emboscada! + **1 boss** ≈ **5 peleas** |
-| **Cartas encontradas** | ~2 de Tesoro + ~2 de Normales + ~1,5 de Élite/boss + ~1 de Sucesos + ~0,5 de Ficha de Terreno ≈ **~7,5** |
-| De ellas, al Mazo (60 %: items + mercenarios) | **~4-5** |
+| **Cartas encontradas** | ~2 de Tesoro + ~2 de Normales + ~1,5 de Élite/boss + ~1 de Sucesos + ~0,5 de Ficha de Terreno ≈ **~7** |
+| De ellas, al Mazo (60 %: items + mercenarios) | **~4** |
 | Compradas con el oro de la partida (~40-60 oro, stock limitado) | **~2** al Mazo |
-| **Mazo al final** | 8 + 4-5 + 2 ≈ **14-15** ✅ |
+| **Mazo al final** | 8 + 4 + 2 ≈ **14** ✅ |
 
 > La Ficha de Terreno es nueva como fuente de carta (`board/board-map.md` §4b) y todavía no estaba en esta cuenta; con ~1,8 apariciones/mapa, ~55 % de encuentro real y solo si se intenta y se acierta la prueba, aporta poco (~0,5 cartas) y el Mazo final sigue dentro del objetivo de 14-16. Cifra a remedir con el resto de la tabla, no solo esta fuente.
 

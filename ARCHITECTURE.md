@@ -50,7 +50,7 @@ Y al revés: **la generación no repinta NADA.** `board-gen.ts` no sortea terren
 
 **Los cinco tamaños** (`TILE_SIZES`) doblan capacidad en cada nivel: Mínima 4, Pequeña 8, Mediana 16, Grande 32, Enorme 64 hexágonos. El tamaño no se guarda en la loseta, se deriva de cuántos hexágonos tiene (`sizeOf`), para que no puedan discrepar. Es de la **variante**, no del tipo: un mismo tipo puede tener un peñasco Mínimo y otro Pequeño. La biblioteca de hoy son **22 tipos y 49 variantes** que cubren **los cinco tamaños** (7 Mínimas, 19 Pequeñas, 17 Medianas, 5 Grandes y 1 Enorme, el Robledal viejo de 37 hexágonos), con una media de 8,5 hexágonos por pieza (por peso de bolsa) y **todos los tipos con dos variantes o más**, que es lo que evita que un sitio salga siempre igual dibujado. Cada familia de terreno de ambiente llega a pieza grande: Llanura el Páramo, Montaña el Paso, Bosque el Robledal viejo, y Camino y Pantano sus Grandes propias; de los tres de lugar, la **Mazmorra** llega a Grande y el **Pueblo** se queda en Mediana a propósito —cuatro casas no son una región—. Por eso el tamaño del tablero se pide en **piezas y no en ancho × alto**: `tileCount` son **12, 15 ó 18** —12 el mínimo *(decidido)*— y lo que de verdad fija el tamaño es el total de hexágonos que salga, ~103 / ~129 / ~155, no el número de piezas.
 
-**Las losetas se maquetan DIBUJADAS** (`drawn()`): una cadena por fila de hexágonos y un carácter por hexágono (espacio hueco y `L C B P M V` los terrenos; todos llevan el suyo), sobre la rejilla escalonada de `hex.ts`. Veinte hexágonos escritos como literales `{q, r}` esconden un duplicado o un hueco; dibujados se ven. `toDrawing` es la inversa y da el dibujo **canónico**: la misma loseta siempre el mismo dibujo, esté donde esté en el papel, y por eso abrirla en el editor y guardarla sin tocar nada no mueve el fichero. Cuidado con el orden: hay que trasladar en coordenadas **axiales** y pasar a la rejilla escalonada después, porque mover el dibujo por el papel un número impar de filas no lo traslada, lo deforma (las filas impares van medio hexágono a la derecha).
+**Las losetas se maquetan DIBUJADAS** (`drawn()`): una cadena por fila de hexágonos y un carácter por hexágono (espacio hueco y `L C B P M Z U` los terrenos; todos llevan el suyo), sobre la rejilla escalonada de `hex.ts`. Veinte hexágonos escritos como literales `{q, r}` esconden un duplicado o un hueco; dibujados se ven. `toDrawing` es la inversa y da el dibujo **canónico**: la misma loseta siempre el mismo dibujo, esté donde esté en el papel, y por eso abrirla en el editor y guardarla sin tocar nada no mueve el fichero. Cuidado con el orden: hay que trasladar en coordenadas **axiales** y pasar a la rejilla escalonada después, porque mover el dibujo por el papel un número impar de filas no lo traslada, lo deforma (las filas impares van medio hexágono a la derecha).
 
 **La biblioteca vive en `data/tile-library.json`, y `/dev/losetas` la ESCRIBE** (por `app/api/dev/tile-library`, una ruta que responde 404 fuera de desarrollo). Antes era un literal de TypeScript y la salida del editor había que copiarla y pegarla a mano; ahí es donde se colaban los errores. El JSON se sigue revisando en el diff igual que se revisaba el código —el dibujo ASCII se lee—, y lo que no cabe en un JSON, el *por qué* de cada pieza, va en el campo `note` de cada tipo y de cada variante. Se valida al arrancar (`parseLibrary` + `validateTileTypes`) y **antes de escribir**, con la misma función: si no pasa, no se escribe nada.
 
@@ -127,6 +127,7 @@ app/
 │   ├── page.tsx            #   hub, sale de lib/dev-labs.ts
 │   ├── losetas/            #   la pieza: forma, terreno y anclas
 │   ├── tablero/            #   el encaje: generación de la partida
+│   ├── pieces/             #   las fichas: las 6 de contenido y las 3 de personaje
 │   └── mapas/              #   redirección histórica → /dev/tablero
 ├── repository-dev/         # REPOSITORIO de componentes de las HERRAMIENTAS
 │   ├── layout.tsx          #   RepoShell side="dev"
@@ -145,7 +146,8 @@ components/
 ├── design/                 # lab de diseño de carta (vive dentro de la wiki)
 ├── dev/                    # marco de /dev y paneles de mando de cada lab
 │                           #   TileLab + TileCanvas (loseta), BoardLab (tablero)
-│                           #   tile-sketch (el boceto), tile-library-store (editar)
+│                           #   PieceLab (fichas), tile-sketch (el boceto),
+│                           #   tile-library-store (editar)
 ├── repository/             # marco y VITRINA de los dos repositorios
 │   ├── RepoShell/Sidebar   #   un solo marco para los dos lados
 │   ├── RepoIndex.tsx       #   hub compartido
@@ -206,6 +208,7 @@ Nada más. Sin React, sin `fs`, sin `Date.now()`, sin `Math.random()`.
 | `reduce.ts` | `applyAction`: valida legalidad y despacha al subsistema |
 | `rng.ts` | PRNG con semilla (xorshift/mulberry32). Devuelve `[valor, rngSiguiente]` |
 | `hex.ts` | Coordenadas axiales/cúbicas, vecinos, distancia, línea de visión |
+| `terrain.ts` | Los 7 terrenos del prototipo: coste de movimiento, modificadores de visión/detección, peligro y cuota de generación (`docs/board/board-map.md` §3a) |
 | `vision.ts` | Las dos capas de niebla, acumulativas y permanentes |
 | `deck.ts` | Mazo / "en juego" / Oteo, con el tope elástico |
 | `combat.ts` | Iniciativa, ataque, adyacencia, desengancharse, fin de combate |
