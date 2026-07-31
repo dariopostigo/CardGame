@@ -23,5 +23,15 @@ $deck-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 $deck-deal-duration: 0.55s;
 $deck-flight-duration: 0.46s;
 $deck-play-duration: 0.38s;
+// Caída de "jugar" sobre el tablero simulado, antes de volver al Mazo (ver
+// DeckLab.tsx, dropFlight): la única curva del lab con overshoot, porque es
+// la única que choca contra algo en vez de soltar o recoger.
+$deck-fall-duration: 0.42s;
+$deck-fall-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+// Pausa de impacto entre aterrizar y salir volando hacia el Mazo. No se usa
+// en CSS —vive en el setTimeout de handleDropFlightEnd— mismo patrón que
+// $deck-deal-stagger de abajo: el valor real está en TS, esto es la fuente
+// documentada de ese número.
+$deck-fall-hold: 160ms;
 $deck-expand-duration: 0.24s;
 $deck-deal-stagger: 90ms;

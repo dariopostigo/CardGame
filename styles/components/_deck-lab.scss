@@ -143,6 +143,30 @@
     padding-left: 170px;
   }
 
+  // Tablero simulado: este lab prueba lib/rules/deck.ts, no la pantalla de
+  // juego (ver cabecera de DeckLab.tsx) — no hay tablero real todavía, así
+  // que aquí solo vive un hueco de mentira para que "jugar" tenga un sitio
+  // físico donde caer. Landscape a propósito: la carta es vertical, así que
+  // un hueco horizontal no se confunde nunca con otra carta esperando turno.
+  &__board {
+    display: grid;
+    place-items: center;
+    width: calc(var(--card-w) * 0.85);
+    height: calc(var(--card-w) * 0.6);
+    border: 2px dashed skin("border");
+    border-radius: radius("lg");
+    background: skin("surface-2");
+    box-shadow: $shadow-pile;
+  }
+
+  &__board-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: skin("muted");
+  }
+
   &__oteo {
     display: flex;
     gap: 32px;
@@ -351,6 +375,34 @@
     transition: transform $deck-flight-duration $deck-ease-out;
   }
 
+  // --- Clon volante (carta ampliada → tablero, caída) -----------------------
+  // Primer tramo de "jugar" (ver handlePlayRequest en DeckLab.tsx): nace
+  // donde estaba la carta ampliada y cae sobre .deck-lab__board con
+  // $deck-fall-ease, la única curva del lab con overshoot — rebota al llegar
+  // en vez de solo soltar o recoger. La sombra pasa de $shadow-expand
+  // ("todavía en el aire") a $shadow-pile ("ya en la mesa") en la misma
+  // transición, vía la clase --landed que aplica el propio efecto: así el
+  // valor intermedio de la sombra no hay que escribirlo a mano en TS. No se
+  // desvanece — tiene que seguir viéndose sobre el tablero durante la pausa
+  // de impacto antes de que el segundo tramo (.deck-lab__play-flyer, justo
+  // debajo) se la lleve de vuelta al Mazo.
+  &__drop-flyer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: z("expand-flyer");
+    pointer-events: none;
+    border-radius: var(--card-radius);
+    box-shadow: $shadow-expand;
+    transition:
+      transform $deck-fall-duration $deck-fall-ease,
+      box-shadow $deck-fall-duration $deck-fall-ease;
+
+    &--landed {
+      box-shadow: $shadow-pile;
+    }
+  }
+
   // --- Clon volante (carta ampliada → Mazo, jugar) --------------------------
   // Sin ventana que recortar: aquí no hace falta el truco de arriba porque no
   // hay ningún hueco con una proporción distinta que revelar poco a poco —
@@ -358,7 +410,8 @@
   // siempre ($deck-play-duration es la más corta de las tres: "jugar es
   // devolver, no revela"). Por eso no tiene overflow:hidden ni width/height
   // propios: el tamaño lo pone GameCard (nativo) y todo lo demás es
-  // transform.
+  // transform. Ahora arranca desde donde cayó sobre el tablero, no desde la
+  // carta ampliada — ver dropFlight arriba.
   &__play-flyer {
     position: fixed;
     top: 0;
@@ -440,10 +493,10 @@
       transition: none;
     }
 
-    // __expand-flyer y __play-flyer quedan fuera a propósito: su
-    // transitionend es lo que limpia expandFlight/playFlight en DeckLab.tsx
-    // (ver sus useLayoutEffect) — sin transición ese aviso no llegaría nunca
-    // y la carta se quedaría oculta para siempre.
+    // __expand-flyer, __drop-flyer y __play-flyer quedan fuera a propósito:
+    // su transitionend es lo que limpia expandFlight/dropFlight/playFlight en
+    // DeckLab.tsx (ver sus useLayoutEffect) — sin transición ese aviso no
+    // llegaría nunca y la carta se quedaría oculta para siempre.
     &__backdrop,
     &__backdrop--closing {
       animation: none;

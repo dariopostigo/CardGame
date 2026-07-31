@@ -61,6 +61,11 @@ type ExpandFlight = { instanceId: string; card: DeckCard; from: DOMRect; mode: "
 // grande en ese instante), nunca del hueco pequeño de la bandeja.
 type PlayFlight = { instanceId: string; card: DeckCard; from: DOMRect };
 
+// Vuelo de caída: primer tramo de "jugar", entre la carta ampliada y el
+// tablero simulado del centro de la mesa. Igual que PlayFlight, siempre sale
+// de la carta ampliada — nunca de la bandeja.
+type DropFlight = { instanceId: string; card: DeckCard; from: DOMRect };
+
 // Todo el mazo arranca sin preparar: a diferencia de la partida real (§1b,
 // paso 4: 2 de las 3 Básicas empiezan ya "en juego"), aquí interesa ver el
 // Oteo construir el "en juego" desde cero, turno a turno.
@@ -76,9 +81,11 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
   const [flight, setFlight] = useState<Flight | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [expandFlight, setExpandFlight] = useState<ExpandFlight | null>(null);
+  const [dropFlight, setDropFlight] = useState<DropFlight | null>(null);
   const [playFlight, setPlayFlight] = useState<PlayFlight | null>(null);
 
   const pileRef = useRef<HTMLDivElement>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
   const pendingPreviewRef = useRef<HTMLDivElement>(null);
   const oteoRefs = useRef(new Map<string, HTMLDivElement>());
   const trayRefs = useRef(new Map<string, HTMLDivElement>());
@@ -86,18 +93,22 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
   const expandCardRef = useRef<HTMLDivElement>(null);
   const expandFlyerRef = useRef<HTMLDivElement>(null);
   const expandFlyerCardRef = useRef<HTMLDivElement>(null);
+  const dropFlyerRef = useRef<HTMLDivElement>(null);
+  const dropHoldTimer = useRef<number | null>(null);
   const playFlyerRef = useRef<HTMLDivElement>(null);
 
   const btn = (active: boolean) => buttonClass({ active });
   const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
 
   function reset(nextHero: (typeof HEROES)[number] = hero) {
+    if (dropHoldTimer.current) window.clearTimeout(dropHoldTimer.current);
     setState(emptyDeckState(nextHero, classCards));
     setOteo([]);
     setPending(null);
     setFlight(null);
     setExpandedId(null);
     setExpandFlight(null);
+    setDropFlight(null);
     setPlayFlight(null);
   }
 
@@ -153,7 +164,7 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
   // Clic fuera de la carta ampliada: la des-selecciona volviendo a bajar a su
   // hueco de la bandeja (el viaje de handleTrayClick, al revés).
   function handleCollapse(card: DeckCard) {
-    if (playFlight) return;
+    if (playFlight || dropFlight) return;
     const from = expandCardRef.current?.getBoundingClientRect() ?? null;
     if (from) {
       setExpandFlight({ instanceId: card.instanceId, card, from, mode: "close" });
@@ -162,22 +173,48 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
     }
   }
 
-  // Jugar una carta: regla madre, siempre vuelve al Mazo. Sale volando desde
-  // la carta AMPLIADA (el clic que juega solo existe ahí, nunca desde la
-  // bandeja directamente), no desde su hueco pequeño de la bandeja — antes sí
-  // lo hacía, y el corte entre "carta grande en pantalla" y "carta chica ya
-  // encogiendo en la bandeja" era justo el efecto de dos cartas duplicadas
-  // que se veía raro. expandedId se queda activo (así el hueco real de la
-  // bandeja sigue oculto) hasta que el vuelo termina y playCard se compromete
-  // de verdad — ver handlePlayFlightEnd.
+  // Jugar una carta: regla madre, siempre vuelve al Mazo, pero en dos tramos
+  // visuales — primero cae sobre el tablero simulado del centro de la mesa
+  // (dropFlight, ver su useLayoutEffect y handleDropFlightEnd más abajo), y
+  // solo desde ahí sale volando de vuelta al Mazo (playFlight, sin cambios).
+  // Los dos tramos salen de la carta AMPLIADA (el clic que juega solo existe
+  // ahí, nunca desde la bandeja directamente) — antes el vuelo al Mazo salía
+  // del hueco pequeño de la bandeja, y el corte entre "carta grande en
+  // pantalla" y "carta chica ya encogiendo en la bandeja" era justo el efecto
+  // de dos cartas duplicadas que se veía raro. expandedId se queda activo
+  // (así el hueco real de la bandeja sigue oculto) hasta que el SEGUNDO tramo
+  // termina y playCard se compromete de verdad — ver handlePlayFlightEnd.
   function handlePlayRequest(card: DeckCard) {
     const from = expandCardRef.current?.getBoundingClientRect() ?? null;
     if (from) {
-      setPlayFlight({ instanceId: card.instanceId, card, from });
+      setDropFlight({ instanceId: card.instanceId, card, from });
     } else {
       setState((prev) => playCard(prev, card));
       setExpandedId(null);
     }
+  }
+
+  // Fin del primer tramo (caída sobre el tablero): el clon ya está aterrizado
+  // y quieto, así que se mide SU rect, no el de .deck-lab__board — el tablero
+  // es más pequeño que la carta a 0.9× y el origen del segundo tramo tiene
+  // que ser "donde se ve la carta", no "el hueco que pisa". dropFlight se
+  // deja vivo durante la pausa de impacto ($deck-fall-hold, 160ms, en
+  // styles/settings/_motion.scss) para que el clon no desaparezca mientras
+  // playFlight todavía no existe — sin ese solape habría un frame sin carta
+  // visible entre los dos tramos.
+  function handleDropFlightEnd() {
+    if (!dropFlight) return;
+    const dropped = dropFlight;
+    dropHoldTimer.current = window.setTimeout(() => {
+      const from = dropFlyerRef.current?.getBoundingClientRect() ?? null;
+      setDropFlight(null);
+      if (from) {
+        setPlayFlight({ instanceId: dropped.instanceId, card: dropped.card, from });
+      } else {
+        setState((prev) => playCard(prev, dropped.card));
+        setExpandedId(null);
+      }
+    }, 160);
   }
 
   function handlePlayFlightEnd() {
@@ -288,6 +325,45 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
     setExpandFlight(null);
   }
 
+  // --- Vuelo carta ampliada → tablero: caída. Primer tramo de "jugar" (ver
+  // handlePlayRequest): nace donde estaba la carta ampliada —igual que hace
+  // playFlight más abajo— y cae sobre .deck-lab__board con $deck-fall-ease,
+  // la única curva del lab con overshoot: rebota al llegar en vez de solo
+  // soltar o recoger. La sombra pasa de $shadow-expand ("todavía en el aire")
+  // a $shadow-pile ("ya en la mesa") en la misma transición, aplicando la
+  // clase --landed en el mismo rAF que fija el transform final, para no
+  // tener que escribir un valor de sombra a medio camino a mano aquí. No se
+  // desvanece: tiene que seguir viéndose sobre el tablero durante la pausa de
+  // impacto antes de que el segundo tramo se la lleve — ver
+  // handleDropFlightEnd.
+  useLayoutEffect(() => {
+    const el = dropFlyerRef.current;
+    const board = boardRef.current;
+    if (!el || !dropFlight || !board) return;
+    el.classList.remove("deck-lab__drop-flyer--landed");
+    el.style.transition = "none";
+    el.style.transform = "none";
+    const native = el.getBoundingClientRect();
+    const { from } = dropFlight;
+    const fromCenterX = from.left + from.width / 2;
+    const fromCenterY = from.top + from.height / 2;
+    const bigScale = from.width / native.width;
+    el.style.left = `${fromCenterX - native.width / 2}px`;
+    el.style.top = `${fromCenterY - native.height / 2}px`;
+    el.style.transform = `scale(${bigScale})`;
+    // Fuerza el reflow, mismo motivo que en los otros vuelos.
+    void el.getBoundingClientRect();
+    const boardRect = board.getBoundingClientRect();
+    const dx = boardRect.left + boardRect.width / 2 - fromCenterX;
+    const dy = boardRect.top + boardRect.height / 2 - fromCenterY;
+    const raf = requestAnimationFrame(() => {
+      el.style.transition = "";
+      el.style.transform = `translate(${dx}px, ${dy}px) scale(0.9) rotate(-6deg)`;
+      el.classList.add("deck-lab__drop-flyer--landed");
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [dropFlight]);
+
   // --- Vuelo carta ampliada → Mazo: jugar. No hay ventana que recortar aquí
   // (a diferencia de los dos de arriba) — vuelve al mazo encogiéndose a un
   // 22% y girando, el mismo gesto de siempre, solo que ahora arrancando
@@ -295,7 +371,16 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
   // "natural" de la carta (para saber cuánto agrandarla al principio) se mide
   // en el propio clon antes de tocarle nada: como GameCard se dimensiona sola
   // por --card-w/--card-h, un div fixed sin ancho propio se ajusta exacto a
-  // ese tamaño.
+  // ese tamaño. Ahora arranca desde donde cayó sobre el tablero, no desde la
+  // carta ampliada — ver dropFlight arriba.
+  //
+  // Doble rAF (no uno, como en los otros vuelos): esta vez el estado que lo
+  // dispara (setPlayFlight en handleDropFlightEnd) nace en un setTimeout, no
+  // en el clic de un usuario, y con un solo rAF el navegador podía pintar el
+  // tamaño GRANDE y el translate/scale final en el mismo fotograma —la carta
+  // se encogía de golpe en vez de volar— exactamente el problema que ya
+  // describe el comentario del reparto Mazo→Oteo más abajo, aquí disparado
+  // por el mismo tipo de origen (un timer, no un evento de clic).
   useLayoutEffect(() => {
     const el = playFlyerRef.current;
     const pile = pileRef.current;
@@ -316,12 +401,18 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
     const pileRect = pile.getBoundingClientRect();
     const dx = pileRect.left + pileRect.width / 2 - fromCenterX;
     const dy = pileRect.top + pileRect.height / 2 - fromCenterY;
-    const raf = requestAnimationFrame(() => {
-      el.style.transition = "";
-      el.style.transform = `translate(${dx}px, ${dy}px) scale(0.22) rotate(-14deg)`;
-      el.style.opacity = "0";
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        el.style.transition = "";
+        el.style.transform = `translate(${dx}px, ${dy}px) scale(0.22) rotate(-14deg)`;
+        el.style.opacity = "0";
+      });
     });
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
+    };
   }, [playFlight]);
 
   // --- Reparto Mazo → Oteo: cada carta oteada nace ya en su hueco del grid
@@ -466,9 +557,14 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
           </span>
         </div>
 
-        {/* Centro de la mesa: solo la pista de "aún no hay nada que decidir".
-            El Oteo y la sustitución se resuelven en el modal de abajo. */}
+        {/* Centro de la mesa: el tablero es una simulación —este lab prueba
+            lib/rules/deck.ts, no hay tablero real todavía— solo para que
+            "jugar" tenga un sitio físico donde caer. El Oteo y la
+            sustitución se resuelven en el modal de abajo. */}
         <div className="deck-lab__center">
+          <div className="deck-lab__board" ref={boardRef} aria-hidden="true">
+            <span className="deck-lab__board-label">Tablero</span>
+          </div>
           {oteo.length === 0 && !pending && state.deck.length === 0 && (
             <p className="deck-lab__hint">Sin Oteo: el Mazo está vacío.</p>
           )}
@@ -579,7 +675,9 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
           <div
             className={
               "deck-lab__backdrop" +
-              (expandFlight?.mode === "close" || playFlight ? " deck-lab__backdrop--closing" : "")
+              (expandFlight?.mode === "close" || dropFlight || playFlight
+                ? " deck-lab__backdrop--closing"
+                : "")
             }
             onClick={() => handleCollapse(pendingCard)}
           >
@@ -587,7 +685,7 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
               ref={expandCardRef}
               className={
                 "deck-lab__expand-card" +
-                (expandFlight || playFlight ? " deck-lab__expand-card--hidden" : "")
+                (expandFlight || dropFlight || playFlight ? " deck-lab__expand-card--hidden" : "")
               }
               onClick={(e) => {
                 e.stopPropagation();
@@ -613,6 +711,19 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
           <div ref={expandFlyerCardRef} className="deck-lab__expand-flyer-card">
             <GameCard card={expandFlight.card.card} theme={DEFAULT_CARD_THEME} />
           </div>
+        </div>
+      )}
+
+      {/* Clon volante: carta ampliada → tablero (caída al jugar) */}
+      {dropFlight && (
+        <div
+          ref={dropFlyerRef}
+          className="deck-lab__drop-flyer"
+          onTransitionEnd={(e) => {
+            if (e.propertyName === "transform") handleDropFlightEnd();
+          }}
+        >
+          <GameCard card={dropFlight.card.card} theme={DEFAULT_CARD_THEME} />
         </div>
       )}
 
