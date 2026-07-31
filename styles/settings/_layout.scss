@@ -22,7 +22,12 @@ $z: (
   "frame": 5,            // filete de rareza (.card::before)
   "chip": 6,             // fichas flotantes y banda de nombre solapada
   "gloss": 7,            // brillo especular, siempre encima
+  "tray": 10,            // fila de "en juego" del lab de Baraja, sobre la mesa
+  "tray-hover": 11,      // carta de la bandeja asomada al 100%, sobre sus vecinas
   "tooltip": 50,         // globos de ayuda de la wiki
+  "flyer": 60,           // clon volante del Oteo (pila → mesa → bandeja)
+  "modal": 70,           // carta ampliada al centro del lab de Baraja
+  "expand-flyer": 80,    // clon volante bandeja↔centro, por encima del modal que atraviesa
 );
 
 // --- Profundidad 3D -------------------------------------------------------
@@ -36,3 +41,10 @@ $depth: (
 // --- Sombras --------------------------------------------------------------
 $shadow-tooltip: 0 4px 12px rgba(0, 0, 0, 0.25);
 $shadow-card-hover: 0 22px 40px -18px rgba(0, 0, 0, 0.65);
+
+// Mazo del lab de Baraja: el mazo boca abajo, la carta volando y la ampliada
+// al centro. Ninguna lleva tinte de rareza —esa la aporta var(--rarity) donde
+// aplica—, aquí solo va la sombra de profundidad.
+$shadow-pile: 0 10px 20px -10px rgba(0, 0, 0, 0.55);
+$shadow-flyer: 0 32px 60px -20px rgba(0, 0, 0, 0.6);
+$shadow-expand: 0 40px 80px -24px rgba(0, 0, 0, 0.7);

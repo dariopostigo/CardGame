@@ -217,3 +217,13 @@ $gold-light: #fff3b0;
 $gold-glow: rgba(226, 181, 60, 0.7);
 $gold-glow-soft: rgba(226, 181, 60, 0.55);
 $gold-glow-hot: rgba(255, 230, 128, 0.9);
+
+// --- Selección "en juego" (Baraja y Oteo) ---------------------------------
+// Celeste, no el "accent" de la wiki (índigo): es la marca de "esta carta
+// responde al puntero" del lab de Baraja, constante del juego como el dorado
+// de legendaria — no cambia con el tema claro/oscuro ni con la rareza de la
+// carta (antes tomaba prestado var(--rarity), pero eso hacía que una carta
+// "clase" —beige claro— se leyera casi blanca en el hover).
+$deck-select: #38bdf8;
+$deck-select-soft: rgba(56, 189, 248, 0.4);
+$deck-select-glow: rgba(56, 189, 248, 0.75);

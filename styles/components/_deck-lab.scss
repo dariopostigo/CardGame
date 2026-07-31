@@ -1,0 +1,461 @@
+@use "../abstracts" as *;
+
+// =========================================================================
+// Lab de Baraja y Oteo — mesa de juego
+//
+// Capa puramente visual sobre el esqueleto de .card ya existente (_card.scss)
+// y el layout de .card-lab__stage/__grid (objects/). Lo que aporta este
+// parcial es la METÁFORA física: un mazo boca abajo en la esquina, el Oteo
+// repartiendo al centro, y la bandeja de "en juego" asomando por abajo.
+//
+// Las dos animaciones que "vuelan" una carta de un sitio a otro (repartir y
+// tomar del Oteo) las dispara components/dev/DeckLab.tsx a mano, escribiendo
+// transform/opacity por ref antes del primer paint y limpiándolos un frame
+// después — el mismo truco que ya usa GameCard.tsx para el tilt. Aquí solo
+// vive la transición que hace que ese cambio se vea animado.
+// =========================================================================
+
+.deck-lab {
+  position: relative;
+
+  // --- Mesa: donde vive el mazo, el Oteo y la bandeja ----------------------
+  // Columna flexible: el centro se estira para llenar el hueco disponible y
+  // la bandeja de "en juego" queda siempre pegada al borde inferior del
+  // recuadro, dentro de él (no debajo, suelta en la página).
+  &__stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 24px 0;
+  }
+
+  &__hint {
+    color: skin("muted");
+    font-size: 0.85rem;
+  }
+
+  // --- Mazo boca abajo, esquina superior izquierda -------------------------
+  &__pile {
+    position: absolute;
+    top: 28px;
+    left: 24px;
+    width: calc(var(--card-w) * 0.44);
+    height: calc(var(--card-h) * 0.44);
+  }
+
+  &__pile-stack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    // Contiene el z-index negativo de las láminas de abajo (nth-child 2..4) a
+    // este bloque, o escaparían a buscar el contexto de apilado más cercano
+    // hacia arriba y podrían acabar por detrás de cualquier cosa de la página.
+    isolation: isolate;
+  }
+
+  &__pile-back {
+    position: absolute;
+    inset: 0;
+    border-radius: calc(var(--card-radius) * 0.55);
+    border: 2px solid skin("border");
+    background:
+      repeating-linear-gradient(135deg, skin("accent-soft") 0 8px, transparent 8px 16px),
+      skin("surface-2");
+    box-shadow: $shadow-pile;
+
+    // Un puñado de láminas visibles del mazo, siempre las mismas 4: es la
+    // metáfora de "hay un mazo", no un contador (el número real va en la
+    // insignia). Cuantas menos queden en el Mazo, más planas se ven.
+    @for $i from 2 through 4 {
+      &:nth-child(#{$i}) {
+        top: ($i - 1) * -3px;
+        left: ($i - 1) * 2px;
+        z-index: -$i;
+      }
+    }
+  }
+
+  &__pile[data-empty="true"] &__pile-back {
+    opacity: 0.35;
+  }
+
+  &__pile-trigger {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform $duration-fast $ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-4px);
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  &__pile-count {
+    position: absolute;
+    right: -8px;
+    bottom: -8px;
+    z-index: z("chip");
+    min-width: 30px;
+    height: 30px;
+    padding: 0 6px;
+    display: grid;
+    place-items: center;
+    border-radius: radius("pill");
+    background: skin("accent");
+    color: skin("bg");
+    font-size: 0.75rem;
+    font-weight: 800;
+    border: 2px solid skin("bg");
+  }
+
+  &__pile-label {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: skin("muted");
+  }
+
+  // --- Centro de la mesa: revelado del Oteo --------------------------------
+  &__center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    min-height: 300px;
+    // Hueco a la izquierda: aquí y no en .deck-lab__stage, porque solo el
+    // centro comparte banda vertical con el mazo — la bandeja va debajo y
+    // puede usar todo el ancho.
+    padding-left: 170px;
+  }
+
+  &__oteo {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  &__oteo-card {
+    position: relative;
+    cursor: pointer;
+    transition:
+      transform $deck-deal-duration $deck-ease-out,
+      opacity $deck-deal-duration $deck-ease-out,
+      filter $duration-fast $ease;
+    filter: drop-shadow(0 0 0 transparent);
+
+    &:hover,
+    &:focus-visible {
+      transform: scale(1.1) translateY(-6px) !important;
+      filter: drop-shadow(0 0 12px $deck-select-soft) drop-shadow(0 0 6px $deck-select);
+      z-index: z("tray-hover");
+      outline: none;
+    }
+
+    &:hover .card::before,
+    &:focus-visible .card::before {
+      box-shadow: 0 0 0 2px $deck-select;
+    }
+  }
+
+  &__pick-hint {
+    position: absolute;
+    left: 50%;
+    bottom: -30px;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity $duration-fast $ease;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $deck-select;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  &__oteo-card:hover &__pick-hint,
+  &__oteo-card:focus-visible &__pick-hint {
+    opacity: 1;
+  }
+
+  &__tray-label {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: skin("muted");
+    padding-bottom: 8px;
+  }
+
+  // --- Bandeja de "en juego": abajo, asomando dentro del recuadro ----------
+  // Altura FIJA (no min-height): si el alto del contenedor pudiera crecer con
+  // la carta en hover, el que crece es el propio hueco (su borde inferior se
+  // desplaza hacia abajo, no hacia arriba) y la carta parecería hundirse en
+  // vez de asomar. Con el alto fijo de antemano, align-items: flex-end tiene
+  // sitio de sobra arriba y la carta solo puede crecer hacia arriba.
+  &__tray {
+    position: relative;
+    z-index: z("tray");
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 14px;
+    height: calc(var(--card-h) + 16px);
+    padding: 0 16px 16px;
+  }
+
+  &__tray-slot {
+    position: relative;
+    width: var(--card-w);
+    height: calc(var(--card-h) * 0.32);
+    overflow: hidden;
+    border-radius: var(--card-radius) var(--card-radius) 0 0;
+    cursor: pointer;
+    transition:
+      height $duration-slow $deck-ease-out,
+      transform $duration-slow $deck-ease-out,
+      filter $duration-fast $ease;
+
+    &:hover,
+    &:focus-visible {
+      height: var(--card-h);
+      z-index: z("tray-hover");
+      filter: drop-shadow(0 0 10px $deck-select-soft) drop-shadow(0 0 5px $deck-select);
+      outline: none;
+    }
+
+    // La carta se ancla arriba del hueco: recortada, se ve su arte y nombre
+    // (lo que identifica la carta); al crecer la altura del hueco hacia
+    // arriba (la bandeja va con align-items: flex-end), el resto se revela
+    // por abajo sin que la carta se mueva un píxel — solo cambia la ventana.
+    .card {
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  &__tray-slot--pending {
+    &:hover,
+    &:focus-visible {
+      filter: drop-shadow(0 0 10px skin("danger")) drop-shadow(0 0 6px skin("danger"));
+    }
+
+    &::after {
+      content: "Sustituir";
+      position: absolute;
+      inset: auto 0 0 0;
+      z-index: z("chip");
+      padding: 6px 0;
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: skin("bg");
+      background: skin("danger");
+      opacity: 0;
+      transition: opacity $duration-fast $ease;
+    }
+
+    &:hover::after,
+    &:focus-visible::after {
+      opacity: 1;
+    }
+  }
+
+  &__tray-card--hidden {
+    visibility: hidden;
+  }
+
+  // --- Clon volante (Oteo → bandeja) ----------------------------------------
+  // Es una VENTANA (overflow: hidden) que se traslada Y encoge de alto hacia
+  // el hueco de la bandeja; la carta de dentro NO se escala nunca (eso se
+  // veía como si se aplastara, no como si se hundiera). Al reducirse la
+  // ventana, lo que pasa es que se recorta el pie de la carta, igual que hace
+  // el hueco de la bandeja en reposo — es la misma "línea" a la que se refiere
+  // el comentario de .deck-lab__tray-slot, solo que aquí se anima llegando a
+  // ella en vez de estar ya puesta.
+  &__flyer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: z("flyer");
+    overflow: hidden;
+    pointer-events: none;
+    border-radius: var(--card-radius) var(--card-radius) 0 0;
+    box-shadow: $shadow-flyer;
+    transition:
+      transform $deck-flight-duration $deck-ease-out,
+      width $deck-flight-duration $deck-ease-out,
+      height $deck-flight-duration $deck-ease-out;
+  }
+
+  // La carta de dentro, a su tamaño natural siempre: es la ventana (arriba)
+  // la que decide cuánto se ve, nunca ella.
+  &__flyer-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  // --- Clon volante (bandeja ↔ centro, carta ampliada) ----------------------
+  // Es una VENTANA (overflow: hidden), igual que .deck-lab__flyer de arriba,
+  // que se traslada y redimensiona hacia el rect real de destino (el hueco de
+  // la bandeja o la carta ampliada, tenga cada uno la proporción que tenga).
+  // La diferencia es que aquí la carta de DENTRO sí puede crecer más allá de
+  // su tamaño nativo (hace falta llegar a 1.5×): .deck-lab__expand-flyer-card
+  // la escala de forma UNIFORME, con la misma duración/curva que el ancho de
+  // esta ventana, así que en cualquier instante intermedio "ancho de la
+  // ventana ÷ ancho nativo" y "escala de la carta" coinciden — es lo que hace
+  // que el recorte crezca o encoja en sincronía con el escalado, en vez de
+  // saltar de golpe al final.
+  &__expand-flyer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: z("expand-flyer");
+    overflow: hidden;
+    pointer-events: none;
+    border-radius: var(--card-radius);
+    box-shadow: $shadow-expand;
+    transition:
+      transform $deck-flight-duration $deck-ease-out,
+      width $deck-flight-duration $deck-ease-out,
+      height $deck-flight-duration $deck-ease-out;
+  }
+
+  // Tamaño nativo siempre (como .deck-lab__flyer-card); es este transform el
+  // que la escala de verdad, no la ventana de arriba.
+  &__expand-flyer-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    transition: transform $deck-flight-duration $deck-ease-out;
+  }
+
+  // --- Clon volante (carta ampliada → Mazo, jugar) --------------------------
+  // Sin ventana que recortar: aquí no hace falta el truco de arriba porque no
+  // hay ningún hueco con una proporción distinta que revelar poco a poco —
+  // solo encoge, gira y se desvanece de camino al mazo, el mismo gesto de
+  // siempre ($deck-play-duration es la más corta de las tres: "jugar es
+  // devolver, no revela"). Por eso no tiene overflow:hidden ni width/height
+  // propios: el tamaño lo pone GameCard (nativo) y todo lo demás es
+  // transform.
+  &__play-flyer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: z("expand-flyer");
+    pointer-events: none;
+    border-radius: var(--card-radius);
+    box-shadow: $shadow-expand;
+    transition:
+      transform $deck-play-duration $deck-ease-out,
+      opacity $deck-play-duration $deck-ease-out;
+  }
+
+  // --- Modal: Oteo, sustitución y carta ampliada -----------------------------
+  // Las tres comparten el mismo tratamiento (sombra + centrado) y las tres se
+  // acotan a la Zona de juego (position: absolute contra .deck-lab__stage, que
+  // es position: relative), no a toda la página — es una decisión sobre la
+  // mesa, no un diálogo de la aplicación.
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: z("modal");
+    display: grid;
+    place-items: center;
+    border-radius: var(--card-radius);
+    background: rgba(0, 0, 0, 0.55);
+    animation: deck-lab-fade $deck-expand-duration $ease both;
+  }
+
+  // Sustituir decide con un clic en la bandeja de debajo, así que el fondo no
+  // puede bloquear el puntero como el resto de modales — solo sombrea. Su
+  // contenido (carta pendiente, texto, "Cancelar") sí necesita responder al
+  // clic, por eso lo recupera aquí.
+  &__backdrop--soft {
+    pointer-events: none;
+
+    > * {
+      pointer-events: auto;
+    }
+  }
+
+  // Al cerrar la carta ampliada, el fondo se desvanece al mismo ritmo que el
+  // clon vuela de vuelta a la bandeja (mismo $deck-flight-duration): reverse
+  // reproduce deck-lab-fade al revés (de opaco a transparente) en vez de
+  // necesitar una segunda keyframe.
+  &__backdrop--closing {
+    animation: deck-lab-fade $deck-flight-duration $ease reverse both;
+    pointer-events: none;
+  }
+
+  // Se oculta mientras dura el vuelo bandeja↔centro (abriendo o cerrando): lo
+  // único visible en ese tramo es el clon de .deck-lab__expand-flyer, que
+  // termina exactamente en este mismo sitio y tamaño.
+  &__expand-card {
+    cursor: pointer;
+    transform: scale(1.5);
+    transform-origin: center;
+    border-radius: var(--card-radius);
+    box-shadow: $shadow-expand;
+
+    &--hidden {
+      visibility: hidden;
+    }
+  }
+
+  &__expand-hint {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: skin("bg");
+    opacity: 0.85;
+  }
+
+  @include reduced-motion {
+    &__oteo-card,
+    &__tray-slot,
+    &__pile-trigger,
+    &__flyer {
+      transition: none;
+    }
+
+    // __expand-flyer y __play-flyer quedan fuera a propósito: su
+    // transitionend es lo que limpia expandFlight/playFlight en DeckLab.tsx
+    // (ver sus useLayoutEffect) — sin transición ese aviso no llegaría nunca
+    // y la carta se quedaría oculta para siempre.
+    &__backdrop,
+    &__backdrop--closing {
+      animation: none;
+    }
+  }
+}
+
+@keyframes deck-lab-fade {
+  from {
+    opacity: 0;
+  }
+}

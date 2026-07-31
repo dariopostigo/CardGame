@@ -14,3 +14,14 @@ $ease: ease;
 // Marco dorado de legendaria: barrido del ángulo + latido del halo.
 $legendary-sweep: 6s;
 $legendary-glow: 2.4s;
+
+// --- Lab de Baraja y Oteo ---------------------------------------------------
+// Reparto deliberado: repartir (deal) es la más lenta porque es la primera
+// lectura ("¿qué me ha tocado?"); volar a la bandeja es más rápida porque ya
+// se ha decidido; jugar es la más corta porque devuelve, no revela.
+$deck-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$deck-deal-duration: 0.55s;
+$deck-flight-duration: 0.46s;
+$deck-play-duration: 0.38s;
+$deck-expand-duration: 0.24s;
+$deck-deal-stagger: 90ms;
