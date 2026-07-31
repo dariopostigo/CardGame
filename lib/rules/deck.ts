@@ -1,11 +1,11 @@
 // =========================================================================
 // Mazo y Oteo (docs/game-design.md §4)
 //
-// Modela las dos zonas del mazo personal —el Mazo (hasta 20 cartas) y "en
-// juego" (tope elástico techo(total ÷ 2), entre 3 y 10)— y el Oteo: al
-// empezar el turno se revelan 2 cartas al azar del Mazo, se elige 1 o
-// ninguna, y jugar una carta la devuelve siempre al Mazo (regla madre: nada
-// se pierde, pero nada es permanente).
+// Modela las dos zonas del mazo personal —el Mazo (20 cartas fijas) y "en
+// juego" (5 huecos fijos)— y el Oteo: al empezar el turno se revelan 2
+// cartas al azar del Mazo, se elige 1 o ninguna, y jugar una carta la
+// devuelve siempre al Mazo (regla madre: nada se pierde, pero nada es
+// permanente).
 //
 // Lo que NO modela: de dónde salen cartas nuevas (botín, tienda, §6b) ni el
 // recurso de acción del turno (§4b.3) — son otros subsistemas. Aquí solo
@@ -16,8 +16,8 @@ import type { CatalogCard } from "@/lib/card-catalog";
 
 /** Tope duro del Mazo del capítulo (§4). */
 export const DECK_MAX = 20;
-export const IN_PLAY_MIN = 3;
-export const IN_PLAY_MAX = 10;
+/** Tope fijo de "en juego" (§4). */
+export const IN_PLAY_MAX = 5;
 
 /** Una instancia de carta dentro del mazo: la misma CatalogCard puede repetirse. */
 export type DeckCard = {
@@ -30,34 +30,24 @@ export type DeckState = {
   readonly inPlay: readonly DeckCard[];
 };
 
-/** Tope elástico de "en juego": techo(tamaño total del mazo ÷ 2), entre 3 y 10. */
-export function inPlayCap(state: DeckState): number {
-  const total = state.deck.length + state.inPlay.length;
-  return Math.min(IN_PLAY_MAX, Math.max(IN_PLAY_MIN, Math.ceil(total / 2)));
-}
-
 export function isInPlayFull(state: DeckState): boolean {
-  return state.inPlay.length >= inPlayCap(state);
+  return state.inPlay.length >= IN_PLAY_MAX;
 }
 
 /**
  * El kit de clase de un héroe: sus Básicas + su Especial (`cards/class.md`),
- * repetidas cíclicamente hasta `size`. El kit real llega a las 7-8 cartas
+ * repetidas cíclicamente hasta `DECK_MAX`. El kit real llega a las 7-8 cartas
  * que el Oteo necesita (§4, aviso de contenido) añadiendo items de arranque;
  * como los items no llevan ficha de héroe en el catálogo —solo prosa en
  * `characters/heroes.md` §2d—, aquí se simula el mismo engorde repitiendo el
  * propio kit de clase en vez de items reales.
  */
-export function buildDeck(
-  heroChip: string,
-  classCards: readonly CatalogCard[],
-  size: number,
-): DeckCard[] {
+export function buildDeck(heroChip: string, classCards: readonly CatalogCard[]): DeckCard[] {
   const pool = classCards.filter(
     (c) => c.category === "clase" && c.stats.some((s) => s.label === heroChip),
   );
   if (pool.length === 0) return [];
-  return Array.from({ length: size }, (_, i) => ({
+  return Array.from({ length: DECK_MAX }, (_, i) => ({
     instanceId: `${pool[i % pool.length].id}#${i}`,
     card: pool[i % pool.length],
   }));
@@ -68,12 +58,8 @@ export function buildDeck(
  * juego". Este laboratorio no modela la elección de setup (cuáles 2) y toma
  * las 2 primeras del kit; el resto —incluida la Especial— se queda en el Mazo.
  */
-export function initialDeckState(
-  heroChip: string,
-  classCards: readonly CatalogCard[],
-  size: number,
-): DeckState {
-  const all = buildDeck(heroChip, classCards, size);
+export function initialDeckState(heroChip: string, classCards: readonly CatalogCard[]): DeckState {
+  const all = buildDeck(heroChip, classCards);
   const basicas = all.filter((d) => d.card.stats.some((s) => s.label === "Básica"));
   const startInPlay = basicas.slice(0, 2);
   const startIds = new Set(startInPlay.map((d) => d.instanceId));

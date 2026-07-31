@@ -156,7 +156,7 @@ components/
 ├── ui/                     # genéricos de herramienta
 │   └── Button.tsx          #   el botón de todo el proyecto (+ buttonClass)
 └── game/                   # componentes presentacionales del JUEGO
-    ├── board/              #   hexágonos, niebla, fichas
+    ├── board/              #   hexágonos, niebla, fichas + la cámara (zoom/arrastre)
     ├── ui/                 #   kit medieval: botón, panel…    (por construir)
     ├── hand/               #   Oteo, zona "en juego", mazo   (por construir)
     ├── combat/             #   iniciativa, objetivos, log     (por construir)
@@ -210,7 +210,7 @@ Nada más. Sin React, sin `fs`, sin `Date.now()`, sin `Math.random()`.
 | `hex.ts` | Coordenadas axiales/cúbicas, vecinos, distancia, línea de visión |
 | `terrain.ts` | Los 7 terrenos del prototipo: coste de movimiento, modificadores de visión/detección, peligro y cuota de generación (`docs/board/board-map.md` §3a) |
 | `vision.ts` | Las dos capas de niebla, acumulativas y permanentes |
-| `deck.ts` | Mazo / "en juego" / Oteo, con el tope elástico |
+| `deck.ts` | Mazo / "en juego" / Oteo, con el tope fijo de "en juego" |
 | `combat.ts` | Iniciativa, ataque, adyacencia, desengancharse, fin de combate |
 | `enemy-ai.ts` | Árbol de prioridades determinista (`docs/characters/enemies.md` §5b.6) |
 | `threat.ts` | Reloj 0→40, umbrales con histéresis |
@@ -330,7 +330,7 @@ Según [`docs/status.md`](docs/status.md) §4-§6, el prototipo existe **para ba
 
 Con las reglas en funciones puras y deterministas se pueden responder **sin jugar a mano**:
 
-1. **Tests unitarios del motor** — sin renderizar nada. Un ataque con Ventaja, el tope elástico de "en juego", que huir no recarga las Especiales.
+1. **Tests unitarios del motor** — sin renderizar nada. Un ataque con Ventaja, el tope fijo de "en juego", que huir no recarga las Especiales.
 2. **Partidas guionizadas** — una secuencia fija de acciones sobre una `seed` fija, comprobando el estado final. Detecta regresiones de reglas al tocar balance.
 3. **Simulador headless** — N partidas con `seed` distinta y una política de juego sencilla, volcando métricas: tasa de muerte por héroe, turnos hasta el boss, cuántas partidas termina el reloj antes que el jugador, cuánto loot cae de verdad, si el kiting a alcance 4 gana siempre. Eso son minutos de CPU en vez de semanas de testeo manual.
 

@@ -14,12 +14,89 @@
   gap: 0.75rem;
 }
 
+// --- Marco navegable ------------------------------------------------------
+
+// La ventana por la que se mira el tablero. Tiene ALTO FIJO a propósito: antes
+// la caja se ajustaba a la silueta que saliera, así que un tablero alargado
+// dejaba una tira de 200 px donde no se leía nada y uno compacto se comía la
+// pantalla. Con el marco quieto, lo que cambia al acercar es el tablero.
+//
+// El recorte es lo que hace posible el zoom: acercar hace que el mapa no quepa,
+// y lo que no cabe se esconde detrás del borde hasta que se arrastra.
+.board__viewport {
+  position: relative;
+  overflow: hidden;
+  height: 70vh;
+  min-height: 20rem;
+  border-radius: radius("md");
+
+  // LA MESA del juego, con su viñeta: el centro es donde cae la luz y el borde la
+  // penumbra que empuja la mirada hacia el tablero.
+  //
+  // El color no depende del skin: es el fondo de la PARTIDA, y una partida no se
+  // aclara porque la wiki esté en modo claro (ver $board-table).
+  background:
+    radial-gradient(
+      125% 95% at 50% 40%,
+      rgba($board-table-edge, 0) 30%,
+      $board-table-edge 100%
+    ),
+    $board-table;
+  // El arrastre lo lleva el puntero (use-board-view.ts): sin esto, en pantalla
+  // táctil el gesto lo capturaría el scroll de la página.
+  touch-action: none;
+  // Arrastrar sobre el SVG seleccionaría las coordenadas de los hexágonos.
+  user-select: none;
+  cursor: grab;
+
+  &[data-panning="true"] {
+    cursor: grabbing;
+
+    // El hexágono pide `pointer` porque se puede seleccionar; mientras se
+    // arrastra no se está seleccionando nada, así que manda el marco.
+    .board__hex {
+      cursor: grabbing;
+    }
+  }
+
+  // Se puede enfocar para recorrerlo con las flechas, así que tiene que verse.
+  &:focus-visible {
+    outline: 2px solid skin("accent");
+    outline-offset: 2px;
+  }
+}
+
 .board__svg {
   display: block;
   width: 100%;
-  height: auto;
-  // Sin esto, al reducir la ventana el mapa se recorta en vez de encogerse.
-  max-height: 78vh;
+  height: 100%;
+}
+
+// Mando de la cámara, sobre el tablero y en la esquina de siempre de un mapa.
+// No necesita z-index: va después del SVG dentro del mismo contexto.
+.board__nav {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid skin("border");
+  border-radius: radius("lg");
+  background: skin("surface");
+  cursor: default;
+}
+
+// La escala en tanto por ciento. Tabular para que el número no baile al pasar
+// de 100 a 99 mientras se gira la rueda.
+.board__zoom {
+  min-width: 3.25rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: skin("muted");
+  user-select: none;
 }
 
 // --- Hexágono --------------------------------------------------------------
@@ -103,9 +180,11 @@
 }
 
 // El hueco NO se pinta: es un agujero, así que deja ver lo que hay detrás del
-// tablero, y con ello el skin (claro o oscuro) sin tener color propio. Es la
-// única excepción a la regla de que los colores del mapa no dependen del tema, y
-// se sostiene porque aquí no hay color que elegir: hay ausencia de loseta.
+// tablero. Desde que el fondo es LA MESA ($board-table) y no el lienzo de la
+// wiki, eso ya no depende del skin —el hueco se ve igual en claro y en oscuro—,
+// así que dejó de ser la excepción a la regla de que los colores del mapa no
+// dependen del tema. Y encima gana: lo que asoma por el agujero es la mesa, que es
+// exactamente lo que se quiere que sea un hueco cerrado.
 //
 // El polígono se queda en el DOM aunque no pinte, por su <title> para lectores
 // de pantalla y porque es el sitio donde tocaría darle un tinte si algún día se

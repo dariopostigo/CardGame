@@ -376,6 +376,158 @@ function ArmoredFrame() {
   );
 }
 
+// --- Dorso de carta: pieza única para todo el mazo ------------------------
+// Vive fuera de CardTheme/CARD_FRAMES a propósito: no es un tema del frente
+// (no hay pestaña, no varía con data-rarity) — es la única cara que se ve en
+// el Mazo boca abajo y en el Oteo antes de revelarse (components/dev/DeckLab.tsx),
+// así que tiene que ser IDÉNTICA carta a carta o delataría lo que oculta.
+//
+// Reutiliza el filete y las cantoneras de ArmoredFrame con su mismo trazado
+// (BAND, BRACKET, ColorCorner) para que las dos caras casen mirando de canto,
+// pero recolorea en el metal FIJO de $back-metal (styles/components/_card-back.scss
+// escribe --m/--m-hi/--m-lo/--m-edge ahí, no por rareza) y sustituye la
+// ventana del arte por un rosetón de brújula centrado: no hay contenido que
+// enmarcar, así que el centro es el propio ornamento.
+function starPath(cx: number, cy: number, points: number, rOuter: number, rInner: number) {
+  const step = Math.PI / points;
+  const pts: string[] = [];
+  for (let i = 0; i < points * 2; i++) {
+    const r = i % 2 === 0 ? rOuter : rInner;
+    const a = i * step - Math.PI / 2;
+    pts.push(`${n(cx + r * Math.cos(a))},${n(cy + r * Math.sin(a))}`);
+  }
+  return `M${pts.join(" L")}Z`;
+}
+
+export function CardBack() {
+  const gid = useId();
+  const metal = `url(#${gid})`;
+  const cx = AXIS;
+  const cy = CARD_H / 2;
+
+  // Ventana fantasma: no enmarca nada, solo presta su geometría a las
+  // cantoneras (mismo anclaje e-y escala que en ArmoredFrame) para que las
+  // esquinas de las dos caras coincidan en tamaño y posición.
+  const WIN = { x: 17, y: 17, w: CARD_W - 34, h: CARD_H - 34 };
+  const cs = 0.6;
+  const mo = 1.8;
+  const ox0 = WIN.x - mo;
+  const oy0 = WIN.y - mo;
+  const ox1 = WIN.x + WIN.w + mo;
+  const oy1 = WIN.y + WIN.h + mo;
+  const corners: readonly [number, number, number, number][] = [
+    [ox0, oy0, 1, 1],
+    [ox1, oy0, -1, 1],
+    [ox0, oy1, 1, -1],
+    [ox1, oy1, -1, -1],
+  ];
+  const place = (px: number, py: number, sx: number, sy: number) =>
+    `translate(${px},${py}) scale(${sx * cs},${sy * cs}) translate(-8,-8)`;
+
+  const R = 56; // radio exterior del medallón central
+  const rosette = starPath(cx, cy, 8, R - 10, R - 26);
+  const RIM_RIVETS: readonly [number, number][] = [
+    [cx, cy - R - 3],
+    [cx, cy + R + 3],
+    [cx - R - 3, cy],
+    [cx + R + 3, cy],
+  ];
+
+  return (
+    <FrameSvg className="card-back">
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2={CARD_W} y2={CARD_H} gradientUnits="userSpaceOnUse">
+          <stop offset="0%" style={{ stopColor: "var(--m-lo)" }} />
+          <stop offset="24%" style={{ stopColor: "var(--m-hi)" }} />
+          <stop offset="50%" style={{ stopColor: "var(--m)" }} />
+          <stop offset="76%" style={{ stopColor: "var(--m-hi)" }} />
+          <stop offset="100%" style={{ stopColor: "var(--m-lo)" }} />
+        </linearGradient>
+        <radialGradient id={`${gid}-disc`} cx={cx} cy={n(cy - R * 0.35)} r={R} gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#2c1808" />
+          <stop offset="100%" stopColor="#130a02" />
+        </radialGradient>
+      </defs>
+
+      <g clipPath="url(#vf-card)">
+        {/* Misma piel de vitela que el frente, a toda carta: sin ventana que
+            recorte el panel, aquí no hay línea de arranque. */}
+        <rect x="0" y="0" width={CARD_W} height={CARD_H} fill="url(#vv-panel-fill)" />
+        <g>
+          <ellipse cx="82" cy="118" rx="66" ry="48" fill="url(#vv-stain)" />
+          <ellipse cx="184" cy="264" rx="58" ry="44" fill="url(#vv-stain)" />
+        </g>
+        <rect x="0" y="0" width={CARD_W} height={CARD_H} fill="url(#vv-grain)" opacity="0.45" />
+
+        {/* Cantoneras en las cuatro esquinas de la carta, mismo trazado y
+            escala que ArmoredFrame: así las dos caras casan de canto. */}
+        <g opacity="0.4" fill="#0c0700">
+          {corners.map(([px, py, sx, sy]) => (
+            <use
+              key={`sh-${px}-${py}`}
+              href="#vb-corner-shape"
+              transform={`translate(1.5,1.8) ${place(px, py, sx, sy)}`}
+            />
+          ))}
+        </g>
+        {corners.map(([px, py, sx, sy]) => (
+          <g key={`co-${px}-${py}`} transform={place(px, py, sx, sy)}>
+            <ColorCorner metal={metal} />
+          </g>
+        ))}
+
+        {/* Rosetón de brújula: el emblema del Oteo, mirando en las ocho
+            direcciones como quien escruta el tablero antes de repartir. */}
+        <g>
+          <circle cx={cx} cy={cy} r={R + 6} fill="none" style={{ stroke: "var(--m-edge)" }} strokeWidth="1.4" />
+          <circle cx={cx} cy={cy} r={R} fill={`url(#${gid}-disc)`} style={{ stroke: "var(--m-edge)" }} strokeWidth="2" />
+          <circle
+            cx={cx}
+            cy={cy}
+            r={R - 3.5}
+            fill="none"
+            style={{ stroke: "var(--m-hi)" }}
+            strokeWidth="1"
+            opacity="0.5"
+          />
+          <path d={rosette} fill={metal} style={{ stroke: "var(--m-edge)" }} strokeWidth="1.2" />
+          <path
+            d={starPath(cx, cy, 8, R - 12, R - 24)}
+            fill="none"
+            style={{ stroke: "var(--m-hi)" }}
+            strokeWidth="0.9"
+            opacity="0.55"
+          />
+          <circle cx={cx} cy={cy} r="9" fill={`url(#${gid}-disc)`} style={{ stroke: "var(--m-edge)" }} strokeWidth="1.4" />
+          <circle cx={n(cx - 2.5)} cy={n(cy - 2.5)} r="3" style={{ fill: "var(--m-hi)" }} opacity="0.6" />
+          {RIM_RIVETS.map(([rx, ry]) => (
+            <g key={`${rx}-${ry}`} transform={`translate(${rx},${ry})`}>
+              <circle r="3.6" fill={metal} style={{ stroke: "var(--m-edge)" }} strokeWidth="1" />
+              <circle cx="-1" cy="-1" r="1.3" style={{ fill: "var(--m-hi)" }} opacity="0.7" />
+            </g>
+          ))}
+        </g>
+      </g>
+
+      {/* Filete exterior: idéntico al de ArmoredFrame. */}
+      <Band from={0} to={BAND.rim[1]} fill={metal} />
+      <Band from={BAND.groove[0]} to={BAND.groove[1]} fill="var(--m-edge)" />
+      <Band from={BAND.main[0]} to={BAND.main[1]} fill={metal} />
+      <Band from={BAND.lip[0]} to={BAND.lip[1]} fill="var(--m-edge)" opacity={0.85} />
+      <Band from={BAND.main[1] - 1.2} to={BAND.main[1]} fill="var(--m-hi)" opacity={0.5} />
+      <Band from={BAND.main[0]} to={BAND.main[0] + 1} fill="var(--m-lo)" opacity={0.5} />
+
+      <g fill="url(#vb-glint)">
+        <ellipse cx="78" cy="7" rx="28" ry="4" />
+        <ellipse cx="196" cy="11" rx="16" ry="3" />
+        <ellipse cx="7" cy="96" rx="3.5" ry="24" />
+        <ellipse cx="253" cy="228" rx="3.5" ry="30" />
+        <ellipse cx="168" cy="358" rx="24" ry="4" />
+      </g>
+    </FrameSvg>
+  );
+}
+
 // Un tema por pestaña del lab (THEMES en CardDesignLab.tsx) y por parcial de
 // styles/components/card-themes/. Vive aquí para que CARD_FRAMES sea un Record
 // exhaustivo: añadir un tema sin decidir su marco rompe el build, en la misma

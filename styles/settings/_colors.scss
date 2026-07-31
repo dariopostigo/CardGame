@@ -190,6 +190,17 @@ $board-base: #2b2420;
 // convierte en un objeto encima de una mesa en vez de un dibujo.
 $board-shadow: rgba(12, 9, 7, 0.45);
 
+// LA MESA: el fondo sobre el que está el tablero, y es el fondo del JUEGO —el
+// mismo en el laboratorio y en la partida—. Marrón casi negro, la referencia es
+// `public/assets/viajesTierraMedia/map1.webp`.
+//
+// No depende del skin, igual que el resto del mapa: la mesa de una partida no se
+// aclara porque la wiki esté en claro. Y son dos tonos porque el fondo lleva
+// VIÑETA: el centro es donde cae la luz y el borde la penumbra que empuja la
+// mirada hacia el tablero. Sin ella el fondo es una plancha plana de color.
+$board-table: #221a16;
+$board-table-edge: #0d0908;
+
 // Ancla, en el lienzo de losetas (/dev/losetas): la flecha que marca por dónde
 // se une una loseta a otra. Va rellena oscura con filete claro porque se pinta
 // sobre cualquier terreno, y sobre el Bosque una flecha sin filete
@@ -217,6 +228,17 @@ $gold-light: #fff3b0;
 $gold-glow: rgba(226, 181, 60, 0.7);
 $gold-glow-soft: rgba(226, 181, 60, 0.55);
 $gold-glow-hot: rgba(255, 230, 128, 0.9);
+
+// --- Dorso de carta (Baraja y Oteo) ---------------------------------------
+// El dorso es UNA sola pieza para todo el mazo (components/design/card-frames.tsx
+// #CardBack): a diferencia de --m en card-themes/armored, este metal NO varía
+// con data-rarity — el dorso no debe delatar nunca qué carta oculta. Acero
+// bruñido, no el dorado de $gold (que sigue significando "legendaria" en
+// exclusiva): mismo lenguaje de blindaje del tema Armored, otra aleación.
+$back-metal-lo: #23262b;
+$back-metal: #5b6572;
+$back-metal-hi: #c3ccd6;
+$back-metal-edge: #121316;
 
 // --- Selección "en juego" (Baraja y Oteo) ---------------------------------
 // Celeste, no el "accent" de la wiki (índigo): es la marca de "esta carta

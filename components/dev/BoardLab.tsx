@@ -103,6 +103,13 @@ export default function BoardLab() {
         semilla da siempre el mismo tablero.
       </p>
       <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
+        El tablero se mira por una <b>ventana</b>: <b>arrástralo</b> con el ratón para moverte por
+        él y usa la <b>rueda</b> —o el mando de la esquina— para acercar y alejar. Con el foco
+        puesto en el marco valen también las flechas, <code>+</code>, <code>−</code> y{" "}
+        <code>0</code> para volver a encajarlo. Hace falta desde que el tablero mínimo son 12
+        losetas: encajado entero se ve la silueta, pero para leer un hexágono hay que acercarse.
+      </p>
+      <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
         El <b>terreno no se sortea y no se repinta</b>: cada hexágono del tablero es el que dibujó
         su loseta en el catálogo, sin una sola excepción. La generación no abre Montañas, no mueve
         la entrada y <b>no funda pueblos</b>: si el encaje no saca ninguna loseta de Pueblo, esa

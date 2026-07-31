@@ -73,7 +73,7 @@ export const DEV_LABS: readonly DevLab[] = [
     slug: "baraja",
     label: "Baraja y Oteo",
     summary:
-      "Mazo, zona «en juego» con tope elástico y el Oteo de 2 cartas por turno. Es donde se prueba la regla madre: jugar una carta la devuelve al Mazo.",
+      "Mazo, zona «en juego» con tope fijo de 5 y el Oteo de 2 cartas por turno. Es donde se prueba la regla madre: jugar una carta la devuelve al Mazo.",
     icon: "pi pi-clone",
     status: "en-curso",
     doc: { href: "/docs/game-design", label: "Mazo y Oteo" },

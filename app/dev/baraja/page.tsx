@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Baraja y Oteo",
   description:
-    "Laboratorio de Mazo y Oteo: tope elástico de \"en juego\" y la regla madre de jugar una carta.",
+    "Laboratorio de Mazo y Oteo: tope fijo de \"en juego\" y la regla madre de jugar una carta.",
 };
 
 export default function BarajaLabPage() {

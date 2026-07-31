@@ -46,6 +46,13 @@
 // a hexágono y el camino había que "seguirlo"; hoy la loseta lo trae pintado y
 // el trazo solo tapaba el terreno de debajo, se cruzaba consigo mismo en las
 // encrucijadas y salía al vacío por las anclas sin pareja.
+//
+// El tablero se mira por una VENTANA de alto fijo y se puede recorrer: rueda
+// para acercar, arrastre para moverse, flechas si no hay ratón. Las seis capas
+// van dentro de un grupo con la `transform` de la cámara, que calcula
+// use-board-view.ts; el `viewBox` sigue siendo la vista encajada —el estado
+// neutro— y el zoom un desvío medido contra ella. Sigue sin decidir nada de la
+// partida: mover la cámara no es jugar.
 // =========================================================================
 
 import { useMemo } from "react";
@@ -54,8 +61,10 @@ import type { HexCoord } from "@/lib/rules/hex";
 import type { Board, Hex as HexCell } from "@/lib/rules/state";
 import { TERRAINS } from "@/lib/rules/terrain";
 import { direction } from "@/lib/rules/tiles";
+import Button from "@/components/ui/Button";
 import BoardPiece from "./BoardPiece";
 import { TOKEN_ART } from "./piece-art";
+import { useBoardView } from "./use-board-view";
 
 type Props = {
   board: Board;
@@ -142,6 +151,11 @@ export default function HexBoard({
     return { minX, minY, width: maxX - minX, height: maxY - minY };
   }, [cells, hexSize, tilt, skirt]);
 
+  // La cámara. Se le pasa el encuadre encajado porque es su origen: el zoom y el
+  // arrastre se miden contra él, y es lo que le permite frenar el arrastre antes
+  // de que el tablero se salga del marco.
+  const view = useBoardView(viewBox);
+
   const center = (cell: HexCell) => Hex.toPixel(cell.coord, hexSize, tilt);
 
   // Los cantos: un lado por cada borde que da al VACÍO. Los que dan a otra
@@ -164,157 +178,218 @@ export default function HexBoard({
   }, [board, cells, hexSize, tilt, skirt]);
 
   return (
-    <svg
-      className="board__svg"
-      viewBox={`${viewBox.minX} ${viewBox.minY} ${viewBox.width} ${viewBox.height}`}
-      role="img"
-      aria-label={`Tablero de ${cells.length} hexágonos en ${board.tiles.length} losetas`}
+    <div
+      className="board__viewport"
+      role="group"
+      aria-label="Tablero: arrastra para moverte, rueda o botones para acercar"
+      title="Arrastra el tablero para moverte · rueda para acercar y alejar · flechas y +/− con el foco puesto"
+      {...view.frameProps}
     >
-      {/* 1. Huecos cerrados. No son hexágonos del tablero —no llevan terreno, ni
-          ficha, ni niebla— así que se pintan aparte y no reciben el clic: son el
-          agujero que dejó el encaje, y se ven siempre porque no hay nada que
-          descubrir en ellos. Van debajo de los cantos para que el hueco se lea
-          como una sima: se le ven las paredes de las losetas que lo rodean. */}
-      <g className="board__voids">
-        {board.voids.map((coord) => {
-          const { x, y } = Hex.toPixel(coord, hexSize, tilt);
-          return (
-            <polygon
-              key={Hex.key(coord)}
-              className="board__void"
-              points={Hex.polygonPoints(x, y, hexSize, tilt)}
-            >
-              <title>Intransitable</title>
-            </polygon>
-          );
-        })}
-      </g>
-
-      {/* 2. Base: la silueta del tablero y los cantos de las losetas. La sombra
-          proyectada la pone el filtro de _board.scss sobre este grupo entero, así
-          que se calcula de una vez sobre la silueta de todo el tablero y no
-          loseta a loseta (que sombrearía a las vecinas, y están a la misma
-          altura). Queda fuera de la capa interactiva a propósito: si el hover
-          entrara en el grupo filtrado, el navegador tendría que rasterizar la
-          sombra otra vez en cada pasada del ratón. */}
-      <g className="board__base">
-        {cells.map((cell) => {
-          const { x, y } = center(cell);
-          return (
-            <polygon
-              key={Hex.key(cell.coord)}
-              className="board__base-hex"
-              points={Hex.polygonPoints(x, y, hexSize, tilt)}
-            />
-          );
-        })}
-        {skirts.map((side) => (
-          <polygon key={side.key} className="board__skirt" points={side.points} />
-        ))}
-      </g>
-
-      {/* 3. Relleno */}
-      <g>
-        {cells.map((cell) => {
-          const { x, y } = center(cell);
-          const terrainKnown = revealAll || cell.terrainRevealed;
-          return (
-            <polygon
-              key={Hex.key(cell.coord)}
-              className="board__hex"
-              points={Hex.polygonPoints(x, y, hexSize, tilt)}
-              data-terrain={terrainKnown ? cell.terrain : undefined}
-              data-hidden={terrainKnown ? undefined : "true"}
-              data-selected={selected && Hex.equals(selected, cell.coord) ? "true" : undefined}
-              data-interactive={onHexClick ? "true" : undefined}
-              onClick={onHexClick ? () => onHexClick(cell) : undefined}
-            >
-              <title>{describe(cell, terrainKnown, revealAll || cell.contentRevealed)}</title>
-            </polygon>
-          );
-        })}
-      </g>
-
-      {/* 4. Contorno de cada loseta */}
-      {showTiles && (
-        <g className="board__tiles">
-          {cells.flatMap((cell) => {
-            const { x, y } = center(cell);
-            const sides: React.ReactElement[] = [];
-            for (let dir = 0; dir < 6; dir++) {
-              const neighbor = board.hexes.get(Hex.key(Hex.add(cell.coord, direction(dir))));
-              // Lado exterior de la loseta: da al vacío o a otra loseta.
-              if (neighbor && neighbor.tileId === cell.tileId) continue;
-              const [a, b] = Hex.edgeEndpoints(x, y, hexSize, dir, tilt);
-              sides.push(
-                <line
-                  key={`${Hex.key(cell.coord)}-${dir}`}
-                  className="board__tile-edge"
-                  x1={a.x}
-                  y1={a.y}
-                  x2={b.x}
-                  y2={b.y}
-                />,
-              );
-            }
-            return sides;
-          })}
-        </g>
-      )}
-
-      {/* 5. Marcas del suelo: el anillo de la entrada y las coordenadas. Van
-          antes de las fichas y fuera de su grupo, porque están PINTADAS en la
-          loseta —no son piezas— y no les toca sombra. */}
-      <g>
-        {cells.map((cell) => {
-          const { x, y } = center(cell);
-          const contentKnown = revealAll || cell.contentRevealed;
-
-          return (
-            <g key={Hex.key(cell.coord)}>
-              {cell.isEntrance && contentKnown && (
+      <svg
+        className="board__svg"
+        viewBox={`${viewBox.minX} ${viewBox.minY} ${viewBox.width} ${viewBox.height}`}
+        role="img"
+        aria-label={`Tablero de ${cells.length} hexágonos en ${board.tiles.length} losetas`}
+      >
+        {/* La cámara envuelve las seis capas: se mueve el tablero entero, no una
+            capa suya, porque el volumen sale de la geometría y los cantos y las
+            sombras tienen que viajar con el terreno al que pertenecen. */}
+        <g transform={view.transform}>
+          {/* 1. Huecos cerrados. No son hexágonos del tablero —no llevan terreno, ni
+              ficha, ni niebla— así que se pintan aparte y no reciben el clic: son el
+              agujero que dejó el encaje, y se ven siempre porque no hay nada que
+              descubrir en ellos. Van debajo de los cantos para que el hueco se lea
+              como una sima: se le ven las paredes de las losetas que lo rodean. */}
+          <g className="board__voids">
+            {board.voids.map((coord) => {
+              const { x, y } = Hex.toPixel(coord, hexSize, tilt);
+              return (
                 <polygon
-                  className="board__entrance"
-                  points={Hex.polygonPoints(x, y, hexSize * 0.72, tilt)}
+                  key={Hex.key(coord)}
+                  className="board__void"
+                  points={Hex.polygonPoints(x, y, hexSize, tilt)}
+                >
+                  <title>Intransitable</title>
+                </polygon>
+              );
+            })}
+          </g>
+
+          {/* 2. Base: la silueta del tablero y los cantos de las losetas. La sombra
+              proyectada la pone el filtro de _board.scss sobre este grupo entero, así
+              que se calcula de una vez sobre la silueta de todo el tablero y no
+              loseta a loseta (que sombrearía a las vecinas, y están a la misma
+              altura). Queda fuera de la capa interactiva a propósito: si el hover
+              entrara en el grupo filtrado, el navegador tendría que rasterizar la
+              sombra otra vez en cada pasada del ratón. */}
+          <g className="board__base">
+            {cells.map((cell) => {
+              const { x, y } = center(cell);
+              return (
+                <polygon
+                  key={Hex.key(cell.coord)}
+                  className="board__base-hex"
+                  points={Hex.polygonPoints(x, y, hexSize, tilt)}
                 />
-              )}
+              );
+            })}
+            {skirts.map((side) => (
+              <polygon key={side.key} className="board__skirt" points={side.points} />
+            ))}
+          </g>
 
-              {showCoords && (
-                <text className="board__coord" x={x} y={y - hexSize * 0.62 * tilt}>
-                  {cell.coord.q},{cell.coord.r}
-                </text>
-              )}
+          {/* 3. Relleno */}
+          <g>
+            {cells.map((cell) => {
+              const { x, y } = center(cell);
+              const terrainKnown = revealAll || cell.terrainRevealed;
+              return (
+                <polygon
+                  key={Hex.key(cell.coord)}
+                  className="board__hex"
+                  points={Hex.polygonPoints(x, y, hexSize, tilt)}
+                  data-terrain={terrainKnown ? cell.terrain : undefined}
+                  data-hidden={terrainKnown ? undefined : "true"}
+                  data-selected={selected && Hex.equals(selected, cell.coord) ? "true" : undefined}
+                  data-interactive={onHexClick ? "true" : undefined}
+                  onClick={
+                    onHexClick
+                      ? () => {
+                          // Todo arrastre termina en un clic sobre el hexágono donde
+                          // se suelta el ratón, y mover el mapa no es seleccionar.
+                          if (view.wasDrag()) return;
+                          onHexClick(cell);
+                        }
+                      : undefined
+                  }
+                >
+                  <title>{describe(cell, terrainKnown, revealAll || cell.contentRevealed)}</title>
+                </polygon>
+              );
+            })}
+          </g>
+
+          {/* 4. Contorno de cada loseta */}
+          {showTiles && (
+            <g className="board__tiles">
+              {cells.flatMap((cell) => {
+                const { x, y } = center(cell);
+                const sides: React.ReactElement[] = [];
+                for (let dir = 0; dir < 6; dir++) {
+                  const neighbor = board.hexes.get(Hex.key(Hex.add(cell.coord, direction(dir))));
+                  // Lado exterior de la loseta: da al vacío o a otra loseta.
+                  if (neighbor && neighbor.tileId === cell.tileId) continue;
+                  const [a, b] = Hex.edgeEndpoints(x, y, hexSize, dir, tilt);
+                  sides.push(
+                    <line
+                      key={`${Hex.key(cell.coord)}-${dir}`}
+                      className="board__tile-edge"
+                      x1={a.x}
+                      y1={a.y}
+                      x2={b.x}
+                      y2={b.y}
+                    />,
+                  );
+                }
+                return sides;
+              })}
             </g>
-          );
-        })}
-      </g>
+          )}
 
-      {/* 6. Fichas: las piezas sobre la loseta. La sombra la pone esta CAPA
-          entera y no cada ficha: todas están a la misma altura sobre el tablero,
-          así que la luz les cae igual, y así el navegador rasteriza un filtro y
-          no veintitrés.
+          {/* 5. Marcas del suelo: el anillo de la entrada y las coordenadas. Van
+              antes de las fichas y fuera de su grupo, porque están PINTADAS en la
+              loseta —no son piezas— y no les toca sombra. */}
+          <g>
+            {cells.map((cell) => {
+              const { x, y } = center(cell);
+              const contentKnown = revealAll || cell.contentRevealed;
 
-          El orden de `cells` (por fila y luego por columna) deja de importar
-          ahora que ninguna ficha sobresale de su hexágono, y se conserva porque
-          es lo que hace el pintado estable entre renders. */}
-      <g className="board__pieces">
-        {cells.map((cell) => {
-          if (!cell.token || !(revealAll || cell.contentRevealed)) return null;
-          const { x, y } = center(cell);
-          return (
-            <BoardPiece
-              key={Hex.key(cell.coord)}
-              piece={{ family: "token", id: cell.token }}
-              x={x}
-              y={y}
-              hexSize={hexSize}
-              tilt={tilt}
-              label={TOKEN_ART[cell.token].label}
-            />
-          );
-        })}
-      </g>
-    </svg>
+              return (
+                <g key={Hex.key(cell.coord)}>
+                  {cell.isEntrance && contentKnown && (
+                    <polygon
+                      className="board__entrance"
+                      points={Hex.polygonPoints(x, y, hexSize * 0.72, tilt)}
+                    />
+                  )}
+
+                  {showCoords && (
+                    <text className="board__coord" x={x} y={y - hexSize * 0.62 * tilt}>
+                      {cell.coord.q},{cell.coord.r}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+          </g>
+
+          {/* 6. Fichas: las piezas sobre la loseta. La sombra la pone esta CAPA
+              entera y no cada ficha: todas están a la misma altura sobre el tablero,
+              así que la luz les cae igual, y así el navegador rasteriza un filtro y
+              no veintitrés.
+
+              El orden de `cells` (por fila y luego por columna) deja de importar
+              ahora que ninguna ficha sobresale de su hexágono, y se conserva porque
+              es lo que hace el pintado estable entre renders. */}
+          <g className="board__pieces">
+            {cells.map((cell) => {
+              if (!cell.token || !(revealAll || cell.contentRevealed)) return null;
+              const { x, y } = center(cell);
+              return (
+                <BoardPiece
+                  key={Hex.key(cell.coord)}
+                  piece={{ family: "token", id: cell.token }}
+                  x={x}
+                  y={y}
+                  hexSize={hexSize}
+                  tilt={tilt}
+                  label={TOKEN_ART[cell.token].label}
+                />
+              );
+            })}
+          </g>
+        </g>
+      </svg>
+
+      {/* Mando de la cámara. Va dentro del marco y encima del recorte —es la
+          única cosa de esta pantalla que no es tablero— y no propaga el
+          pointerdown: si lo hiciera, pulsar «+» empezaría también un arrastre.
+          Los botones existen aparte de la rueda porque la rueda no se ve: un
+          mando visible es lo que dice que el mapa se puede recorrer. */}
+      <div className="board__nav" onPointerDown={(e) => e.stopPropagation()}>
+        <Button
+          size="sm"
+          iconOnly
+          aria-label="Alejar"
+          title="Alejar"
+          disabled={view.atMin}
+          onClick={view.zoomOut}
+        >
+          <i className="pi pi-minus" />
+        </Button>
+        <span className="board__zoom" title="Escala: 100 % es el tablero encajado en el marco">
+          {Math.round(view.zoom * 100)} %
+        </span>
+        <Button
+          size="sm"
+          iconOnly
+          aria-label="Acercar"
+          title="Acercar"
+          disabled={view.atMax}
+          onClick={view.zoomIn}
+        >
+          <i className="pi pi-plus" />
+        </Button>
+        <Button
+          size="sm"
+          title="Volver a encajar el tablero entero en el marco"
+          disabled={view.isFit}
+          onClick={view.fit}
+        >
+          Encajar
+        </Button>
+      </div>
+    </div>
   );
 }
 

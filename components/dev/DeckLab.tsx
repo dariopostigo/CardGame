@@ -3,8 +3,8 @@
 // =========================================================================
 // Laboratorio de Mazo y Oteo — /dev/baraja
 //
-// Banco de pruebas de lib/rules/deck.ts: elige un héroe y un tamaño de mazo
-// y comprueba el tope elástico de "en juego" y el Oteo turno a turno
+// Banco de pruebas de lib/rules/deck.ts: elige un héroe y comprueba el Mazo
+// (20 cartas fijas), el tope fijo de "en juego" (5) y el Oteo turno a turno
 // (docs/game-design.md §4). No es la pantalla de juego —no hay recurso de
 // acción ni turnos de verdad, solo el ciclo Otear → tomar/rechazar → jugar—,
 // es la herramienta para probar la mecánica del motor antes de construir
@@ -24,9 +24,9 @@
 // lib/rules/deck.ts sobre por qué no usa items reales todavía.
 // =========================================================================
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { cardFontVars } from "@/components/design/card-fonts";
-import { CardFrameDefs, DEFAULT_CARD_THEME } from "@/components/design/card-frames";
+import { CardBack, CardFrameDefs, DEFAULT_CARD_THEME } from "@/components/design/card-frames";
 import GameCard from "@/components/design/GameCard";
 import { buttonClass } from "@/components/ui/Button";
 import type { CatalogCard } from "@/lib/card-catalog";
@@ -34,7 +34,7 @@ import {
   buildDeck,
   DECK_MAX,
   drawOteo,
-  inPlayCap,
+  IN_PLAY_MAX,
   isInPlayFull,
   playCard,
   takeOteo,
@@ -44,7 +44,6 @@ import {
 } from "@/lib/rules/deck";
 
 const HEROES = ["Guerrero", "Mago", "Pícaro", "Clérigo"] as const;
-const DECK_SIZES = [4, 8, 14, 20];
 
 // Rect de origen de un vuelo Oteo → bandeja: se toma de la carta oteada (o de
 // su vista ampliada, si el vuelo llega desde una sustitución) en el instante
@@ -65,14 +64,13 @@ type PlayFlight = { instanceId: string; card: DeckCard; from: DOMRect };
 // Todo el mazo arranca sin preparar: a diferencia de la partida real (§1b,
 // paso 4: 2 de las 3 Básicas empiezan ya "en juego"), aquí interesa ver el
 // Oteo construir el "en juego" desde cero, turno a turno.
-function emptyDeckState(hero: (typeof HEROES)[number], classCards: CatalogCard[], size: number): DeckState {
-  return { deck: buildDeck(hero, classCards, size), inPlay: [] };
+function emptyDeckState(hero: (typeof HEROES)[number], classCards: CatalogCard[]): DeckState {
+  return { deck: buildDeck(hero, classCards), inPlay: [] };
 }
 
 export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
   const [hero, setHero] = useState<(typeof HEROES)[number]>(HEROES[0]);
-  const [size, setSize] = useState(8);
-  const [state, setState] = useState<DeckState>(() => emptyDeckState(hero, classCards, size));
+  const [state, setState] = useState<DeckState>(() => emptyDeckState(hero, classCards));
   const [oteo, setOteo] = useState<OteoDraw>([]);
   const [pending, setPending] = useState<DeckCard | null>(null);
   const [flight, setFlight] = useState<Flight | null>(null);
@@ -90,13 +88,11 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
   const expandFlyerCardRef = useRef<HTMLDivElement>(null);
   const playFlyerRef = useRef<HTMLDivElement>(null);
 
-  const cap = useMemo(() => inPlayCap(state), [state]);
-
   const btn = (active: boolean) => buttonClass({ active });
   const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
 
-  function reset(nextHero: (typeof HEROES)[number] = hero, nextSize: number = size) {
-    setState(emptyDeckState(nextHero, classCards, nextSize));
+  function reset(nextHero: (typeof HEROES)[number] = hero) {
+    setState(emptyDeckState(nextHero, classCards));
     setOteo([]);
     setPending(null);
     setFlight(null);
@@ -399,12 +395,12 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
     <div className={`card-lab deck-lab ${cardFontVars}`} data-theme={DEFAULT_CARD_THEME}>
       <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">Baraja y Oteo</h1>
       <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
-        Tu mazo personal tiene dos zonas: el <b>Mazo</b> (hasta 20 cartas, boca abajo en la
-        esquina) y <b>en juego</b> (tope elástico según el tamaño del Mazo, entre 3 y 10 huecos,
-        asomando abajo). Al empezar el turno <b>oteas</b>: se reparten 2 cartas al azar del Mazo y
-        eliges 1 o ninguna; con &ldquo;en juego&rdquo; lleno, tomar una nueva exige sustituir una que ya tengas
-        preparada. <b>Jugar</b> una carta la devuelve siempre al Mazo — nada se pierde, pero nada
-        es permanente.
+        Tu mazo personal tiene dos zonas: el <b>Mazo</b> (20 cartas fijas, boca abajo en la
+        esquina) y <b>en juego</b> (5 huecos fijos, asomando abajo). Al empezar el turno{" "}
+        <b>oteas</b>: se reparten 2 cartas al azar del Mazo y eliges 1 o ninguna; con &ldquo;en
+        juego&rdquo; lleno, tomar una nueva exige sustituir una que ya tengas preparada.{" "}
+        <b>Jugar</b> una carta la devuelve siempre al Mazo — nada se pierde, pero nada es
+        permanente.
       </p>
 
       {/* Controles */}
@@ -418,31 +414,10 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
                 className={btn(hero === h)}
                 onClick={() => {
                   setHero(h);
-                  reset(h, size);
+                  reset(h);
                 }}
               >
                 {h}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div
-          className="flex flex-col gap-1"
-          title="El kit de clase es siempre 4 cartas (3 Básicas + 1 Especial); por encima de eso se rellena repitiéndolas, simulando el hueco que ocupan los items de arranque."
-        >
-          <span className={label}>Tamaño de mazo</span>
-          <div className="flex items-center gap-2">
-            {DECK_SIZES.map((n) => (
-              <button
-                key={n}
-                className={btn(size === n)}
-                onClick={() => {
-                  setSize(n);
-                  reset(hero, n);
-                }}
-              >
-                {n}
               </button>
             ))}
           </div>
@@ -459,7 +434,7 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
           <span className={label}>&nbsp;</span>
           <span>
             <b>Mazo:</b> {state.deck.length}/{DECK_MAX} · <b>En juego:</b> {state.inPlay.length}/
-            {cap}
+            {IN_PLAY_MAX}
           </span>
         </div>
       </div>
@@ -472,7 +447,9 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
         <div className="deck-lab__pile" ref={pileRef} data-empty={state.deck.length === 0}>
           <div className="deck-lab__pile-stack">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="deck-lab__pile-back" />
+              <div key={i} className="deck-lab__pile-back">
+                <CardBack />
+              </div>
             ))}
           </div>
           <button
@@ -499,7 +476,7 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
 
         {/* En juego: bandeja inferior, asomando, dentro del mismo recuadro */}
         <div className="deck-lab__tray-label">
-          En juego ({state.inPlay.length}/{cap})
+          En juego ({state.inPlay.length}/{IN_PLAY_MAX})
         </div>
         <div className="deck-lab__tray">
           {state.inPlay.map((d) => (

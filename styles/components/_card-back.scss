@@ -1,0 +1,26 @@
+@use "../abstracts" as *;
+
+// =========================================================================
+// Dorso de carta — Baraja y Oteo
+//
+// Pieza única para todo el mazo (components/design/card-frames.tsx#CardBack):
+// mismo filete y cantoneras del lenguaje Armored, pero en el metal FIJO de
+// $back-metal (settings/_colors.scss) en vez del --m por rareza de
+// card-themes/armored — el dorso no debe delatar nunca qué carta oculta.
+//
+// No vive dentro de .card (no tiene grid de zonas, ni data-rarity, ni tema):
+// es el propio <svg> del marco (components/_card.scss ya lo trae con
+// "display: none" por defecto, como cada tema del frente lo reactiva en su
+// parcial — aquí se hace lo mismo).
+// =========================================================================
+
+.card-back {
+  --m: #{$back-metal};
+  --m-hi: #{$back-metal-hi};
+  --m-lo: #{$back-metal-lo};
+  --m-edge: #{$back-metal-edge};
+
+  display: block;
+  width: 100%;
+  height: 100%;
+}

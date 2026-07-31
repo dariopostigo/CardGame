@@ -20,7 +20,7 @@ Es también el **punto de continuación** del proyecto: la §6 dice por dónde s
 | Descanso y recuperación | ✅ | `game-design.md` §4c. **Cura fija** (mitad de PV máx) en el prototipo; los Dados de Vida quedan diferidos a la progresión de nivel, porque a nivel 1 darían 1 solo uso por partida |
 | Economía / oro | ✅ | `game-design.md` §6b (sin balancear). **Oro inicial = 0**; **cada NPC compra lo que vende** (§6b.4) |
 | Nivel de Amenaza (reloj de capítulo) | ✅ | Barra **0→40** a **+1/turno**: el tope **es la duración de la partida, 40 turnos** (`game-design.md` §6c.1). Umbrales en los turnos 10/20/30, subidas de golpe reescritas como "cuántos turnos cuesta" (+3 acampar, +2 alertar/huir, +5 Mal augurio, −10 el Tabernero). Con tope 100 el reloj daba 5× lo necesario y no presionaba |
-| Mazo, Oteo y máximo | ✅ | `game-design.md` §4. Dos zonas: **Mazo ≤20** (clase + items + mercenarios; swap 1-por-1) + **"en juego" con tope elástico** `techo(Mazo ÷ 2)` entre 3 y 10. Cada turno **oteas 2 al azar / preparas 1**, con regla para Mazo de <2 cartas. Arranca con ~8 cartas y con **2 Básicas ya preparadas** (§1b paso 4). **Armas y armaduras van aparte** (equipo, §4a) |
+| Mazo, Oteo y máximo | ✅ | `game-design.md` §4. Dos zonas: **Mazo ≤20** (clase + items + mercenarios; swap 1-por-1) + **"en juego" con tope fijo de 5**. Cada turno **oteas 2 al azar / preparas 1**, con regla para Mazo de <2 cartas. Arranca con ~8 cartas y con **2 Básicas ya preparadas** (§1b paso 4). **Armas y armaduras van aparte** (equipo, §4a) |
 | **Regla madre de cartas** | ✅ | **Jugar una carta la saca de "en juego"** y la devuelve al Mazo (`game-design.md` §4). Tres documentos decían lo contrario ("reutilizable cada turno") y quedan corregidos — era la contradicción más grave del sistema: decidía si "en juego" es un *loadout* que se spamea o **munición preparada** |
 | **Matemática del combate** | ✅ | `game-design.md` §4b.12: PV de protagonista (+10, §2), ataque secundario (§4b.3), Élite a 4 DV y **tope de 2 enemigos simultáneos** (`characters/enemies.md` §5b.3, §5b.6). Antes los 3 Élite ganaban a los 4 héroes y el Mago perdía contra un lobo suelto |
 | **Duración de una partida** | ✅ | **40 turnos** (= el tope del Nivel de Amenaza, `game-design.md` §6c.1). Es el número del que dependen la tabla de loot, el tamaño final del Mazo y la densidad de fichas — si cambia, se rehacen los tres |
@@ -79,7 +79,7 @@ Es también el **punto de continuación** del proyecto: la §6 dice por dónde s
 Las dos tandas de revisión que cerraron esto arreglaron, además de rellenar huecos, **cosas que estaban rotas y no solo incompletas**.
 
 **Primera tanda (arranque y exploración):**
-1. **El Oteo no funcionaba a nivel 1** — con 4 cartas de clase el Mazo se vaciaba en 3 turnos. Arreglado con el kit inicial (~8 cartas) + el tope elástico de "en juego".
+1. **El Oteo no funcionaba a nivel 1** — con 4 cartas de clase el Mazo se vaciaba en 3 turnos. Arreglado con el kit inicial (~8 cartas) + el tope fijo de 5 en "en juego" (se alcanza pronto en cualquier tamaño de Mazo).
 2. **El sigilo estaba muerto** — la visión del héroe (1) era menor que la detección enemiga (2), así que la fase de aproximación nunca podía dispararse. Arreglado con los dos radios de visión y el invariante `detalle > detección`.
 3. **El "golpe de oportunidad" se referenciaba en 3 cartas y no existía.** Resuelto como *Desengancharse*, una sola regla simétrica.
 4. **Sin Pueblo garantizado**, tienda + descanso largo + limpiar Maldiciones podían quedar inaccesibles en una partida entera.
