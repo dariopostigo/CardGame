@@ -110,6 +110,15 @@ export default function BoardLab() {
         losetas: encajado entero se ve la silueta, pero para leer un hexágono hay que acercarse.
       </p>
       <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
+        El fondo es <b>la mesa</b> del juego, la misma que en la partida, y sobre ella corre la{" "}
+        <b>niebla de atmósfera</b>: jirones a la deriva que pasan <i>por debajo</i> del tablero. La
+        niebla es de la mesa, no un velo sobre el mapa, así que las losetas la tapan y se ve
+        alrededor, bajo la sombra del tablero y por los huecos cerrados. Tampoco se acerca ni se
+        arrastra con la cámara, y no esconde nada —no la confundas con la niebla de exploración, que
+        tapa lo que el héroe no ha visto y va por hexágono—. Si has pedido menos movimiento en el
+        sistema, se queda quieta.
+      </p>
+      <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
         El <b>terreno no se sortea y no se repinta</b>: cada hexágono del tablero es el que dibujó
         su loseta en el catálogo, sin una sola excepción. La generación no abre Montañas, no mueve
         la entrada y <b>no funda pueblos</b>: si el encaje no saca ninguna loseta de Pueblo, esa

@@ -201,6 +201,14 @@ $board-shadow: rgba(12, 9, 7, 0.45);
 $board-table: #221a16;
 $board-table-edge: #0d0908;
 
+// La NIEBLA de atmósfera que va a la deriva por delante del tablero
+// (BoardFog.tsx). Es el color de cada jirón; la opacidad del conjunto la pone
+// `.board__fog` y la de cada jirón el propio motor, así que este tono va puro.
+//
+// Gris muy claro con una gota de amarillo: la niebla no es blanca, recoge la luz
+// cálida de la mesa. Blanco puro sobre el marrón oscuro se lee como escarcha.
+$board-fog: #d8d2c4;
+
 // Ancla, en el lienzo de losetas (/dev/losetas): la flecha que marca por dónde
 // se une una loseta a otra. Va rellena oscura con filete claro porque se pinta
 // sobre cualquier terreno, y sobre el Bosque una flecha sin filete

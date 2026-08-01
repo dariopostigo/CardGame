@@ -156,7 +156,7 @@ components/
 ├── ui/                     # genéricos de herramienta
 │   └── Button.tsx          #   el botón de todo el proyecto (+ buttonClass)
 └── game/                   # componentes presentacionales del JUEGO
-    ├── board/              #   hexágonos, niebla, fichas + la cámara (zoom/arrastre)
+    ├── board/              #   hexágonos, fichas, la cámara (zoom/arrastre) y la niebla
     ├── ui/                 #   kit medieval: botón, panel…    (por construir)
     ├── hand/               #   Oteo, zona "en juego", mazo   (por construir)
     ├── combat/             #   iniciativa, objetivos, log     (por construir)

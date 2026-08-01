@@ -70,6 +70,45 @@
   display: block;
   width: 100%;
   height: 100%;
+
+  // Posicionado solo para quedar POR ENCIMA de la niebla, que es un lienzo
+  // absoluto: un elemento posicionado gana a uno que no lo está, por mucho que
+  // vaya antes en el marcado. Con los dos posicionados y ningún z-index de por
+  // medio, manda el orden del DOM —y el tablero va después— así que no hace
+  // falta inventar un nivel de apilamiento para esto.
+  position: relative;
+}
+
+// --- Niebla de atmósfera ---------------------------------------------------
+
+// El lienzo de la niebla, del tamaño del marco y DEBAJO del tablero (ver
+// BoardFog.tsx): la niebla es de la mesa, no un velo sobre el mapa, así que las
+// losetas la tapan y solo se ve alrededor del tablero, a través de su sombra y
+// por los huecos cerrados.
+//
+// Es hermano del SVG y no va dentro, así que ni se acerca ni se arrastra con la
+// cámara: la niebla está en la mesa, no pegada al mapa.
+.board__fog {
+  position: absolute;
+  inset: 0;
+
+  // El alto y el ancho van explícitos porque un <canvas> es un elemento
+  // REEMPLAZADO: con `width: auto` se queda en su tamaño intrínseco (300×150) y
+  // el `inset: 0` no lo estira, al contrario que en un div.
+  width: 100%;
+  height: 100%;
+
+  // Tiene que dejar pasar el arrastre y el clic en el hexágono de debajo.
+  pointer-events: none;
+
+  // El color de los jirones. Aquí no pinta nada: lo LEE el motor con
+  // getComputedStyle para tintar el sprite que genera, que es la forma de que el
+  // color siga viviendo en settings y no cocido en el JS.
+  color: $board-fog;
+
+  // La densidad del velo entero. Es la palanca de "cuánta niebla hay": el motor
+  // ya da a cada jirón su propia opacidad, y esto los baja todos a la vez.
+  opacity: 0.55;
 }
 
 // Mando de la cámara, sobre el tablero y en la esquina de siempre de un mapa.
@@ -183,8 +222,8 @@
 // tablero. Desde que el fondo es LA MESA ($board-table) y no el lienzo de la
 // wiki, eso ya no depende del skin —el hueco se ve igual en claro y en oscuro—,
 // así que dejó de ser la excepción a la regla de que los colores del mapa no
-// dependen del tema. Y encima gana: lo que asoma por el agujero es la mesa, que es
-// exactamente lo que se quiere que sea un hueco cerrado.
+// dependen del tema. Y encima gana: por el agujero asoma la mesa con su niebla,
+// que es exactamente lo que se quiere que sea un hueco cerrado.
 //
 // El polígono se queda en el DOM aunque no pinte, por su <title> para lectores
 // de pantalla y porque es el sitio donde tocaría darle un tinte si algún día se

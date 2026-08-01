@@ -53,6 +53,13 @@
 // use-board-view.ts; el `viewBox` sigue siendo la vista encajada —el estado
 // neutro— y el zoom un desvío medido contra ella. Sigue sin decidir nada de la
 // partida: mover la cámara no es jugar.
+//
+// Dentro del marco hay una capa que no es del mapa: la NIEBLA de atmósfera
+// (BoardFog), un lienzo DEBAJO del SVG y fuera de la cámara. Es la mesa la que
+// tiene niebla, no el tablero, así que el mapa la tapa y ni se acerca ni se
+// arrastra con él. Ojo con el nombre: no tiene nada que ver con la niebla de
+// exploración —lo que el jugador no ha descubierto—, que es un dato del hexágono
+// y la pinta la capa 3 con data-hidden.
 // =========================================================================
 
 import { useMemo } from "react";
@@ -62,6 +69,7 @@ import type { Board, Hex as HexCell } from "@/lib/rules/state";
 import { TERRAINS } from "@/lib/rules/terrain";
 import { direction } from "@/lib/rules/tiles";
 import Button from "@/components/ui/Button";
+import BoardFog from "./BoardFog";
 import BoardPiece from "./BoardPiece";
 import { TOKEN_ART } from "./piece-art";
 import { useBoardView } from "./use-board-view";
@@ -185,6 +193,12 @@ export default function HexBoard({
       title="Arrastra el tablero para moverte · rueda para acercar y alejar · flechas y +/− con el foco puesto"
       {...view.frameProps}
     >
+      {/* La niebla va DEBAJO del tablero: es atmósfera de la mesa, no un velo
+          sobre el mapa (ver BoardFog). Las losetas son opacas, así que la tapan;
+          se ve por todo alrededor, a través de la sombra proyectada y por los
+          huecos cerrados, que son agujeros de verdad. */}
+      <BoardFog />
+
       <svg
         className="board__svg"
         viewBox={`${viewBox.minX} ${viewBox.minY} ${viewBox.width} ${viewBox.height}`}
