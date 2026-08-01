@@ -23,9 +23,14 @@
 //      Va junto en un grupo porque la sombra se calcula sobre la silueta de
 //      todo lo que contiene; los hexágonos de esta capa los tapa la 3, así que
 //      lo único que queda a la vista es el canto.
-//   3. relleno de los hexágonos (y el clic, la niebla y la selección)
+//   3. relleno de los hexágonos (y el clic, la niebla y la selección). El
+//      hexágono no lleva borde propio: el terreno de una misma loseta fluye
+//      sin cortes, como en la foto de referencia (map1.webp) — el único trazo
+//      del mapa es el de la capa 4.
 //   4. contorno de cada loseta, que tiene que quedar POR ENCIMA del relleno de
 //      todos los hexágonos, no solo del suyo
+//   4b. resalte de hover/selección, por ENCIMA del contorno de loseta (ver
+//      más abajo por qué necesita su propia capa)
 //   5. marcas pintadas en el suelo: la entrada y las coordenadas
 //   6. las fichas, que son piezas encima de la loseta y llevan su sombra
 //
@@ -34,15 +39,27 @@
 // pinta la capa 3 con el resto del mapa, y la Guarida no se ve.
 //
 // Al pasar el ratón por un hexágono interactivo, no se mueve: se resalta con
-// un contorno más grueso y una sombra suave (`:hover` en _board.scss). Se
-// probó de verdad LEVANTAR el hexágono (relleno arriba con `transform`, dejando
-// ver el canto oscuro de la capa 2 debajo) y se descartó: cada vértice de un
-// hexágono lo comparten TRES losetas, así que al subir uno solo, ese vértice se
-// separa del de las otras dos —que no se han movido— y el borde de la tercera
-// se queda apuntando al sitio donde estaba el vértice antes, como una púa
-// suelta. Pasa incluso entre losetas del mismo terreno, así que no hay forma de
-// disimularlo con el color. La única forma de que no se note es que nada se
-// mueva.
+// un contorno más grueso y una sombra suave (`.board__hex-highlight` en
+// _board.scss). Se probó de verdad LEVANTAR el hexágono (relleno arriba con
+// `transform`, dejando ver el canto oscuro de la capa 2 debajo) y se descartó:
+// cada vértice de un hexágono lo comparten TRES losetas, así que al subir uno
+// solo, ese vértice se separa del de las otras dos —que no se han movido— y el
+// borde de la tercera se queda apuntando al sitio donde estaba el vértice
+// antes, como una púa suelta. Pasa incluso entre losetas del mismo terreno, así
+// que no hay forma de disimularlo con el color. La única forma de que no se
+// note es que nada se mueva.
+//
+// El resalte vive en su PROPIA capa (4b) y no en el propio hexágono (capa 3)
+// por el mismo motivo que el contorno de loseta vive en la 4 y no en la 3:
+// tiene que quedar por ENCIMA de todo lo que se le pueda montar por delante.
+// Con el contorno de loseta ya claro y grueso (map1.webp), si el resalte
+// pintara su trazo en el propio hexágono, la loseta vecina lo taparía justo en
+// los lados que dan a otra pieza —el aro de hover saldría "mordido" ahí—.
+// Como capa aparte, encima de la 4, siempre se ve entero. No reabre el
+// problema del párrafo anterior: es el mismo polígono, sin transformar, así
+// que no hay vértice que desalinear; lo único que cambia es si su trazo
+// (siempre existe, a 0 de grosor) se pinta visible o no, vía `data-hover`/
+// `data-selected` y el estado `hoveredHex` de abajo.
 //
 // Los cantos se pintan ANTES de los rellenos a propósito: así un canto que
 // caiga sobre la propia loseta —pasa en las piezas con entrantes— queda tapado
@@ -73,7 +90,7 @@
 // y la pinta la capa 3 con data-hidden.
 // =========================================================================
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import * as Hex from "@/lib/rules/hex";
 import type { HexCoord } from "@/lib/rules/hex";
 import type { Board, Hex as HexCell } from "@/lib/rules/state";
@@ -142,6 +159,11 @@ export default function HexBoard({
   // Alias local: la inclinación entra en cada fórmula de geometría de abajo y no
   // es un dato de este tablero, es la cámara del juego (ver BOARD_TILT).
   const tilt = BOARD_TILT;
+
+  // Qué hexágono tiene el ratón encima ahora mismo. Solo alimenta la capa 4b
+  // (el trazo de resalte): no mueve nada, así que no reabre el problema del
+  // vértice compartido de la nota de arriba.
+  const [hoveredHex, setHoveredHex] = useState<HexCoord | null>(null);
 
   // Orden de pintado estable entre renders: los hexágonos viven en un Map y su
   // orden de inserción depende del encaje de las losetas, que no significa nada.
@@ -287,6 +309,13 @@ export default function HexBoard({
                         }
                       : undefined
                   }
+                  onPointerEnter={onHexClick ? () => setHoveredHex(cell.coord) : undefined}
+                  onPointerLeave={
+                    onHexClick
+                      ? () =>
+                          setHoveredHex((h) => (h && Hex.equals(h, cell.coord) ? null : h))
+                      : undefined
+                  }
                 >
                   <title>{describe(cell, terrainKnown, revealAll || cell.contentRevealed)}</title>
                 </polygon>
@@ -327,6 +356,32 @@ export default function HexBoard({
               })}
             </g>
           )}
+
+          {/* 4b. Resalte interactivo (hover / selección), por ENCIMA del contorno
+              de loseta. Si viviera en el propio hexágono (capa 3, como antes), el
+              contorno claro de la loseta se pintaría encima en los lados que dan a
+              otra pieza y el resalte se vería cortado justo ahí. Es el mismo
+              polígono del hexágono, solo el trazo: no se mueve, así que la nota de
+              arriba sobre el vértice compartido no aplica —esto no levanta nada,
+              solo decide si un trazo ya quieto se pinta o no. */}
+          <g className="board__highlights">
+            {cells.map((cell) => {
+              const { x, y } = center(cell);
+              return (
+                <polygon
+                  key={Hex.key(cell.coord)}
+                  className="board__hex-highlight"
+                  points={Hex.polygonPoints(x, y, hexSize, tilt)}
+                  data-hover={
+                    onHexClick && hoveredHex && Hex.equals(hoveredHex, cell.coord)
+                      ? "true"
+                      : undefined
+                  }
+                  data-selected={selected && Hex.equals(selected, cell.coord) ? "true" : undefined}
+                />
+              );
+            })}
+          </g>
 
           {/* 5. Marcas del suelo: el anillo de la entrada y las coordenadas. Van
               antes de las fichas y fuera de su grupo, porque están PINTADAS en la

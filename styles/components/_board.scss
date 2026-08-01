@@ -173,25 +173,42 @@
 
 .board__hex[data-interactive="true"] {
   cursor: pointer;
+}
 
-  // El hexágono no se mueve al pasar el ratón —se probó y, en una rejilla
-  // donde cada vértice lo comparten tres losetas, levantar solo una siempre
-  // deja un trocito de borde de las otras dos apuntando al aire (ver la nota
-  // de HexBoard.tsx). El contorno más grueso y la sombra bastan para saber
-  // sobre qué loseta está el ratón, sin mover nada que tenga que seguir
-  // encajando con sus vecinas.
-  &:hover {
+// --- Resalte interactivo (hover / selección) -------------------------------
+
+// Capa aparte (HexBoard.tsx §4b), por ENCIMA del contorno de loseta: si este
+// trazo viviera en el propio hexágono, el contorno claro de la loseta vecina
+// se pintaría encima en los lados que dan a otra pieza, y el resalte se vería
+// mordido justo ahí. Es el mismo polígono del hexágono, solo el trazo —nunca
+// se mueve, así que el problema del vértice compartido (ver nota de
+// HexBoard.tsx) no aplica: solo decide si un trazo ya quieto se ve o no.
+.board__highlights {
+  pointer-events: none;
+}
+
+.board__hex-highlight {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 0;
+  transition:
+    stroke $duration-fast $ease,
+    stroke-width $duration-fast $ease,
+    filter $duration-fast $ease;
+
+  &[data-hover="true"] {
     stroke: skin("text");
     stroke-width: 2.5;
     filter: drop-shadow(0 2px 3px $board-shadow);
   }
-}
 
-// Hexágono seleccionado: contorno grueso del color de texto, para que se lea
-// sobre cualquier terreno.
-.board__hex[data-selected="true"] {
-  stroke: skin("text");
-  stroke-width: 3;
+  // Seleccionado gana al hover si coinciden: más grueso y sin sombra, para que
+  // se lea como un estado distinto del simple "el ratón está aquí".
+  &[data-selected="true"] {
+    stroke: skin("text");
+    stroke-width: 3;
+    filter: none;
+  }
 }
 
 // --- Base: silueta, canto y sombra ----------------------------------------
