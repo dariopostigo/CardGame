@@ -63,6 +63,7 @@ import {
   type EliteId,
   type Hex as HexTile,
   type LocationId,
+  type NpcType,
   type PlacedTile,
 } from "./state";
 import { TERRAINS, type TerrainId, isOpenGround } from "./terrain";
@@ -145,12 +146,9 @@ const TOKEN_WEIGHTS: Readonly<Record<TerrainId, ReadonlyArray<readonly [BoardTok
     ["terreno", 0],
     ["personaje", 0],
   ],
-  // El Pueblo no entra en el sorteo: sus hexágonos llevan SIEMPRE Personaje (ver
-  // `seedTokens`), y ninguna otra ficha. Es la única entrada de la tabla que no
-  // es una tabla, y por eso está vacía: un pueblo no es un sitio donde "puede"
-  // haber algo, es donde vive la gente. Cuántos NPC salen lo decide el tipo de
-  // loseta a través de cuántos hexágonos de Pueblo dibuja —una Posada uno, un
-  // Poblado grande cuatro—, que es para lo que existen los cinco tipos.
+  // El Pueblo no entra en este sorteo: sus NPC los reparte `seedTokens` con su
+  // propia regla de tope por tamaño, y ninguna otra ficha aparece ahí. Es la
+  // única entrada de la tabla que no es una tabla, y por eso está vacía.
   pueblo: [],
 };
 
@@ -188,6 +186,7 @@ type Draft = {
   terrain: TerrainId;
   location: LocationId | null;
   token: BoardToken | null;
+  npcType: NpcType | null;
   tileId: string;
   isEntrance: boolean;
 };
@@ -240,6 +239,7 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
       terrain: cell.terrain,
       location: null,
       token: null,
+      npcType: null,
       tileId: cell.tileId,
       isEntrance: false,
     });
@@ -302,7 +302,7 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
   }
 
   // --- 6. Fichas (tabla B) --------------------------------------------------
-  rng = seedTokens(drafts, cfg, dungeonHex, rng);
+  rng = seedTokens(drafts, cfg, dungeonHex, rng, layout.tiles);
 
   // --- 7. Élites: boss y, si hay, el de la Mazmorra ------------------------
   const [shuffledElites, r5] = Rng.shuffle(rng, ELITES);
@@ -316,6 +316,7 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
       terrain: d.terrain,
       location: d.location,
       token: d.token,
+      npcType: d.npcType,
       tileId: d.tileId,
       isEntrance: d.isEntrance,
       // La niebla arranca cerrada; abrirla es trabajo de la visión del héroe.
@@ -647,6 +648,70 @@ function findStranded(
     .map((d) => d.coord);
 }
 
+// --- NPCs de pueblo ---------------------------------------------------------
+
+/** Los 7 tipos de NPC del prototipo (docs/characters/npcs.md §2). */
+const NPC_TYPES: readonly NpcType[] = [
+  "vendedor",
+  "tabernero",
+  "sacerdote",
+  "mago",
+  "capitan-mercenarios",
+  "informante",
+  "herrero",
+];
+
+// Las tres losetas de Pueblo de UN hexágono ya vienen tematizadas por su nota
+// (data/tile-library.json): la Posada es un tabernero y punto, la Iglesia el
+// Sacerdote, la Torre de mago el Mago. Con un solo hexágono no hay sorteo que
+// hacer, así que aquí se fija en vez de tirar entre los 7.
+const FIXED_VILLAGE_NPC: Readonly<Record<string, NpcType>> = {
+  posada: "tabernero",
+  iglesia: "sacerdote",
+  "torre-de-mago": "mago",
+};
+
+/**
+ * Tope de NPC que da una instancia de Pueblo, según cuántos hexágonos de
+ * Pueblo dibuja. No todos hablan: un Poblado grande saca sus cuatro
+ * hexágonos de golpe, y con los cuatro oficios a la vez el mapa se llena de
+ * gente. 1 y 2 hexágonos dan uno; 4 dan dos — el resto de hexágonos de esa
+ * instancia se queda sin ficha, como Pueblo vacío.
+ */
+function npcCapFor(villageHexCount: number): number {
+  if (villageHexCount <= 2) return 1;
+  return Math.ceil(villageHexCount / 2);
+}
+
+/**
+ * Repartir los NPC de una instancia de Pueblo: cuáles de sus hexágonos hablan
+ * y qué oficio le toca a cada uno, sin repetir dentro de la misma instancia
+ * —no puede haber dos taberneros en el mismo Poblado—.
+ *
+ * Muta los `Draft` elegidos.
+ */
+function seedVillageNpcs(
+  defId: string,
+  hexes: readonly Draft[],
+  rng: Rng.Rng,
+): Rng.Rng {
+  const fixed = FIXED_VILLAGE_NPC[defId];
+  if (fixed !== undefined) {
+    hexes[0].token = "personaje";
+    hexes[0].npcType = fixed;
+    return rng;
+  }
+
+  const cap = npcCapFor(hexes.length);
+  const [shuffledHexes, r1] = Rng.shuffle(rng, hexes);
+  const [shuffledNpcs, r2] = Rng.shuffle(r1, NPC_TYPES);
+  for (let i = 0; i < cap; i++) {
+    shuffledHexes[i].token = "personaje";
+    shuffledHexes[i].npcType = shuffledNpcs[i];
+  }
+  return r2;
+}
+
 // --- Fichas ---------------------------------------------------------------
 
 /**
@@ -654,22 +719,17 @@ function findStranded(
  *
  * Quedan fuera: la entrada, la Montaña, el hexágono de la Guarida y el de la
  * Mazmorra que aloja al segundo Élite —esos dos ya tienen su contenido, y es un
- * boss—. El Pueblo también queda fuera del sorteo, pero por lo contrario: cada
- * uno de sus hexágonos recibe SIEMPRE una ficha de Personaje, porque es donde
- * vive la gente del mapa.
- *
- * Ahí está el trabajo que hacen los cinco tipos de loseta de Pueblo: el tipo
- * decide cuántos hexágonos de Pueblo trae la pieza, y con eso cuánta gente sale.
- * Una Posada dibuja uno —un tabernero y se acabó—; un Poblado pequeño dos —un
- * tabernero y un vendedor, o un mago—; un Poblado grande cuatro, que ya son
- * oficios para elegir. QUIÉN es cada uno todavía no se decide aquí: el NPC
- * concreto sale al interactuar (docs/characters/npcs.md §1), y cuando exista ese
- * subsistema el tipo de loseta será lo que sesgue el sorteo.
+ * boss—. El Pueblo también queda fuera de la tabla B, pero con su propia regla
+ * (`seedVillageNpcs`): tope de NPC por tamaño de la instancia, sin repetir
+ * oficio dentro de ella —ver `npcCapFor` y `FIXED_VILLAGE_NPC`—.
  *
  * Muta `drafts`; devuelve el generador avanzado.
  *
  * @param {HexCoord | null} dungeonHex - El hexágono de Mazmorra con el segundo
  *   Élite, si el tablero lo lleva: no se siembra encima.
+ * @param {readonly PlacedTile[]} tiles - Las losetas colocadas, para saber qué
+ *   `defId` tiene cada instancia de Pueblo (`Draft.tileId` solo da el id de
+ *   instancia, no el tipo de loseta).
  * @returns {Rng.Rng} El generador tras todos los sorteos.
  */
 function seedTokens(
@@ -677,16 +737,26 @@ function seedTokens(
   cfg: BoardConfig,
   dungeonHex: HexCoord | null,
   rng: Rng.Rng,
+  tiles: readonly PlacedTile[],
 ): Rng.Rng {
   let r = rng;
   const candidates: Draft[] = [];
   const dungeonKey = dungeonHex ? Hex.key(dungeonHex) : null;
 
+  const villageHexesByTile = new Map<string, Draft[]>();
   for (const draft of drafts.values()) {
-    if (draft.terrain === "pueblo") {
-      draft.token = "personaje";
-      continue;
-    }
+    if (draft.terrain !== "pueblo") continue;
+    const list = villageHexesByTile.get(draft.tileId);
+    if (list) list.push(draft);
+    else villageHexesByTile.set(draft.tileId, [draft]);
+  }
+  for (const [tileId, hexes] of villageHexesByTile) {
+    const defId = tiles.find((t) => t.id === tileId)!.defId;
+    r = seedVillageNpcs(defId, hexes, r);
+  }
+
+  for (const draft of drafts.values()) {
+    if (draft.terrain === "pueblo") continue; // ya resuelto arriba
     // La Guarida aloja al boss y la Mazmorra elegida al segundo Élite: ninguna
     // de las dos lleva ficha de la tabla B.
     if (draft.location !== null || draft.isEntrance) continue;

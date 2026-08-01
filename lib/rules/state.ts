@@ -38,6 +38,21 @@ export type BoardToken =
   | "enemigo";
 
 /**
+ * Los 7 tipos de NPC del prototipo (docs/characters/npcs.md §2), sin el Dador
+ * de misión (solo Campaña). Se decide al generar el tablero y no al
+ * interactuar, porque hace falta saberlo ya para no repetir oficio dentro de
+ * un mismo Pueblo (board-gen.ts, `seedTokens`).
+ */
+export type NpcType =
+  | "vendedor"
+  | "tabernero"
+  | "sacerdote"
+  | "mago"
+  | "capitan-mercenarios"
+  | "informante"
+  | "herrero";
+
+/**
  * Localización especial, y ya solo queda UNA: la Guarida donde espera el boss.
  *
  * Eran tres. El Pueblo y la Mazmorra se fueron porque ahora son TERRENO
@@ -58,6 +73,12 @@ export type Hex = {
   /** La Guarida del boss, si es este hexágono. Invisible: ver `LocationId`. */
   readonly location: LocationId | null;
   readonly token: BoardToken | null;
+  /**
+   * El oficio del NPC, si `token` es "personaje" y sale de un Pueblo. Los NPC
+   * sueltos del resto del mapa todavía no tienen tipo (docs/characters/npcs.md
+   * §5): null en todo lo que no sea Pueblo.
+   */
+  readonly npcType: NpcType | null;
   /** Loseta a la que pertenece — board-map.md §2. */
   readonly tileId: string;
   /** Hexágono de entrada al mapa (§2c paso 0). */

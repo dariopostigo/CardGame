@@ -175,7 +175,11 @@ $piece-gloss: rgba(255, 255, 255, 0.22);
 // (El halo claro que llevaban las fichas se retiró con los emoji: existía solo
 // porque un emoji es un mapa de bits y no admite filete. Las fichas vectoriales
 // traen el suyo — ver $piece-rim.)
-$board-tile-edge: rgba(24, 20, 12, 0.62);
+// Opaco a propósito: el límite entre dos losetas lo dibuja CADA una por su
+// lado (HexBoard.tsx §4), así que ahí se superponen dos trazos; con alfa se
+// veían negros donde se pisaban y grises donde el lado daba al vacío y no
+// tenía con qué duplicarse. Un solo tono sólido evita esa lotería.
+$board-tile-edge: #18140c;
 
 // El CANTO de la loseta: el grosor que se ve por los lados que dan al vacío
 // cuando el tablero va inclinado (HexBoard.tsx §2). Es el alma del cartón, así

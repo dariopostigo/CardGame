@@ -8,6 +8,7 @@ Documento dedicado a los NPCs **no hostiles** que aparecen en el mapa mediante l
 
 - **Ficha de Personaje** (icono blanco): siempre no-hostil, el jugador sabe de antemano que va a interactuar (diálogo/tienda), no combate.
 - También aparecen de forma concentrada dentro de la localización **Pueblo/Aldea** (`../board/board-map.md` §3b), que puede tener varios NPCs a la vez en su sub-mapa.
+- **Quién es cada NPC de Pueblo se decide en generación, no al interactuar** *(decidido)*: cada instancia de Pueblo da un tope de NPC según su tamaño (1-2 hexágonos → uno, 4 → dos) y nunca repite oficio dentro de la misma instancia. Posada/Iglesia/Torre de mago fijan su oficio (Tabernero/Sacerdote/Mago); Poblado pequeño/grande sortean entre el resto del catálogo de §2, sin repetir (`../board/board-map.md` §2c, `board-gen.ts` `seedVillageNpcs`). Los NPC sueltos del resto del mapa (fuera de Pueblo) siguen sin tipo concreto asignado.
 
 ## 2. Tipos de NPC (ejemplo, no oficial)
 
@@ -71,7 +72,7 @@ Consecuencia de diseño: la decisión de compra es "¿me lo llevo ahora o ahorro
 
 ## 5. Próximos pasos / preguntas abiertas
 
-- [ ] **Colocación en el mapa** — mezcla ya perfilada: el **Capitán de mercenarios** solo en Pueblos; el **Tabernero** en Pueblo o en una posada suelta de camino; el **Informante/Guía** y el **Mercader** pueden salir sueltos; Sacerdote/Herrero/Mago tienden al Pueblo. El reparto fino se concreta al revisar la generación de fichas (`../board/board-map.md` §2c).
+- [x] **Colocación dentro de un Pueblo** → **decidido**: tope de NPC por tamaño de la instancia (1-2 hex→1, 4 hex→2) sin repetir oficio; Posada/Iglesia/Torre de mago fijan el suyo (Tabernero/Sacerdote/Mago); Poblado pequeño/grande sortean el resto sin repetir (§1, `../board/board-map.md` §2c). Sigue abierto qué NPC concreto puede salir **suelto** fuera de Pueblo — mezcla perfilada pero no implementada: el **Capitán de mercenarios** solo en Pueblos; el **Tabernero** también en una posada suelta de camino; el **Informante/Guía** y el **Mercader** pueden salir sueltos; Sacerdote/Herrero/Mago tienden al Pueblo.
 - [x] Definir el sistema de precios/economía → **Oro** (`../game-design.md` §6b), precios por Rareza (§6b.3). Falta balancear cifras.
 - [x] Definir **quién compra** las cartas que te sobran → §2b: cada NPC compra lo que vende.
 - [x] Definir el stock/rotación concreto de cada tienda → **§3**: oferta aleatoria fijada al empezar el capítulo, sin rotación intracapítulo, renovada al cambiar de capítulo; 4/3/3/2 cartas y sin tope de rareza por ahora. Falta balancear si esas cantidades dan demasiada o poca elección.

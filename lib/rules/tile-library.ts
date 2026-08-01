@@ -36,7 +36,8 @@
 //     lo que separa una Posada de una Torre de mago no es el dibujo del terreno,
 //     es con quién te encuentras al llegar (un tabernero, un mago). De ahí que
 //     sean cinco tipos y no cinco variantes de uno: el tablero necesita saber qué
-//     clase de sitio le ha tocado para sembrarlo (`VILLAGE_NPCS` en board-gen).
+//     clase de sitio le ha tocado para sembrarlo (`FIXED_VILLAGE_NPC`/`NPC_TYPES`
+//     en board-gen).
 //
 // Los TAMAÑOS hacen dos trabajos distintos. Las Mínimas y Pequeñas son la
 // argamasa —accidentes del terreno que rellenan y doblan el tablero—; las
