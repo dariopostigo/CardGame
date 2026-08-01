@@ -143,11 +143,18 @@
 .board__hex {
   // El relleno por defecto es la niebla; cada terreno lo pisa más abajo.
   fill: skin("surface-2");
-  stroke: skin("border");
-  stroke-width: 1;
+  // Sin borde propio a propósito: el hexágono no es la pieza, es una casilla
+  // dentro de ella, y en la referencia (map1.webp) el terreno fluye sin
+  // cortes dentro de una loseta. El único trazo visible del tablero es el
+  // contorno de loseta (`.board__tile-edge`), que sí marca un límite real. El
+  // `stroke` se queda en `transparent` en vez de `none` para poder
+  // transicionarlo a color en el hover/selección de abajo.
+  stroke: transparent;
+  stroke-width: 0;
   transition:
     fill $duration-fast $ease,
     stroke $duration-fast $ease,
+    stroke-width $duration-fast $ease,
     filter $duration-fast $ease;
 }
 
@@ -156,14 +163,12 @@
 @each $name, $colors in $terrain {
   .board__hex[data-terrain="#{$name}"] {
     fill: map.get($colors, "base");
-    stroke: map.get($colors, "line");
   }
 }
 
 // Niebla: gana a cualquier terreno, porque el jugador no sabe qué hay debajo.
 .board__hex[data-hidden="true"] {
   fill: skin("surface-2");
-  stroke: skin("border");
 }
 
 .board__hex[data-interactive="true"] {

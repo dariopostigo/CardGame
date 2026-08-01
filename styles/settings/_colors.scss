@@ -171,15 +171,18 @@ $piece-edge: #3f362d;
 $piece-gloss: rgba(255, 255, 255, 0.22);
 
 // Contorno de cada loseta. Es lo que hace que el tablero se lea como piezas
-// encajadas y no como una rejilla continua.
+// encajadas y no como una rejilla continua — y es el ÚNICO trazo visible del
+// tablero: el hexágono ya no dibuja borde propio (`.board__hex`), igual que en
+// la foto de referencia (`public/assets/viajesTierraMedia/map1.webp`), donde
+// el terreno fluye sin cortes dentro de una pieza y solo se marca su silueta
+// exterior.
+// Claro y cálido a propósito, como el canto de cartón de la referencia: un
+// tono oscuro aquí se leería como rejilla otra vez, justo lo que se quiere
+// evitar.
 // (El halo claro que llevaban las fichas se retiró con los emoji: existía solo
 // porque un emoji es un mapa de bits y no admite filete. Las fichas vectoriales
 // traen el suyo — ver $piece-rim.)
-// Opaco a propósito: el límite entre dos losetas lo dibuja CADA una por su
-// lado (HexBoard.tsx §4), así que ahí se superponen dos trazos; con alfa se
-// veían negros donde se pisaban y grises donde el lado daba al vacío y no
-// tenía con qué duplicarse. Un solo tono sólido evita esa lotería.
-$board-tile-edge: #18140c;
+$board-tile-edge: #d8c6a0;
 
 // El CANTO de la loseta: el grosor que se ve por los lados que dan al vacío
 // cuando el tablero va inclinado (HexBoard.tsx §2). Es el alma del cartón, así
