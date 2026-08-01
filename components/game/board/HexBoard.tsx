@@ -33,6 +33,17 @@
 // sombra—, y ya no hace falta: el Pueblo y la Mazmorra son TERRENO, así que los
 // pinta la capa 3 con el resto del mapa, y la Guarida no se ve.
 //
+// Al pasar el ratón por un hexágono interactivo, no se mueve: se resalta con
+// un contorno más grueso y una sombra suave (`:hover` en _board.scss). Se
+// probó de verdad LEVANTAR el hexágono (relleno arriba con `transform`, dejando
+// ver el canto oscuro de la capa 2 debajo) y se descartó: cada vértice de un
+// hexágono lo comparten TRES losetas, así que al subir uno solo, ese vértice se
+// separa del de las otras dos —que no se han movido— y el borde de la tercera
+// se queda apuntando al sitio donde estaba el vértice antes, como una púa
+// suelta. Pasa incluso entre losetas del mismo terreno, así que no hay forma de
+// disimularlo con el color. La única forma de que no se note es que nada se
+// mueva.
+//
 // Los cantos se pintan ANTES de los rellenos a propósito: así un canto que
 // caiga sobre la propia loseta —pasa en las piezas con entrantes— queda tapado
 // sin tener que averiguar cuál se ve y cuál no. Y como el canto solo existe en
@@ -48,7 +59,7 @@
 // encrucijadas y salía al vacío por las anclas sin pareja.
 //
 // El tablero se mira por una VENTANA de alto fijo y se puede recorrer: rueda
-// para acercar, arrastre para moverse, flechas si no hay ratón. Las seis capas
+// para acercar, arrastre para moverse, flechas si no hay ratón. Todas las capas
 // van dentro de un grupo con la `transform` de la cámara, que calcula
 // use-board-view.ts; el `viewBox` sigue siendo la vista encajada —el estado
 // neutro— y el zoom un desvío medido contra ella. Sigue sin decidir nada de la
@@ -288,15 +299,22 @@ export default function HexBoard({
             <g className="board__tiles">
               {cells.flatMap((cell) => {
                 const { x, y } = center(cell);
+                const cellKey = Hex.key(cell.coord);
                 const sides: React.ReactElement[] = [];
                 for (let dir = 0; dir < 6; dir++) {
-                  const neighbor = board.hexes.get(Hex.key(Hex.add(cell.coord, direction(dir))));
+                  const neighborCoord = Hex.add(cell.coord, direction(dir));
+                  const neighbor = board.hexes.get(Hex.key(neighborCoord));
                   // Lado exterior de la loseta: da al vacío o a otra loseta.
                   if (neighbor && neighbor.tileId === cell.tileId) continue;
+                  // Un borde contra OTRA loseta lo ven las dos casillas que lo
+                  // comparten —cada una lo dibujaría desde su lado— y en reposo
+                  // coinciden pixel a pixel, así que se pinta una sola vez,
+                  // desde la casilla de clave menor.
+                  if (neighbor && Hex.key(neighborCoord) < cellKey) continue;
                   const [a, b] = Hex.edgeEndpoints(x, y, hexSize, dir, tilt);
                   sides.push(
                     <line
-                      key={`${Hex.key(cell.coord)}-${dir}`}
+                      key={`${cellKey}-${dir}`}
                       className="board__tile-edge"
                       x1={a.x}
                       y1={a.y}

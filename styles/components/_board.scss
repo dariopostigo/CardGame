@@ -145,7 +145,10 @@
   fill: skin("surface-2");
   stroke: skin("border");
   stroke-width: 1;
-  transition: fill $duration-fast $ease, stroke $duration-fast $ease;
+  transition:
+    fill $duration-fast $ease,
+    stroke $duration-fast $ease,
+    filter $duration-fast $ease;
 }
 
 // Un bloque por terreno, generado desde el mapa de settings: si mañana entra
@@ -166,9 +169,16 @@
 .board__hex[data-interactive="true"] {
   cursor: pointer;
 
+  // El hexágono no se mueve al pasar el ratón —se probó y, en una rejilla
+  // donde cada vértice lo comparten tres losetas, levantar solo una siempre
+  // deja un trocito de borde de las otras dos apuntando al aire (ver la nota
+  // de HexBoard.tsx). El contorno más grueso y la sombra bastan para saber
+  // sobre qué loseta está el ratón, sin mover nada que tenga que seguir
+  // encajando con sus vecinas.
   &:hover {
     stroke: skin("text");
     stroke-width: 2.5;
+    filter: drop-shadow(0 2px 3px $board-shadow);
   }
 }
 
