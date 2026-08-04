@@ -78,7 +78,8 @@ Esto da progresión de loot dentro de un mismo arquetipo de arma en vez de una l
 |---|---|
 | **Poco común** | **+1 al daño** |
 | **Raro** | **+1 al ataque y +1 al daño** |
-| Épico / Legendario | Lo del Raro **más una propiedad propia** (a diseñar pieza por pieza, §6) |
+| **Épico** | Lo del Raro **más una propiedad propia de familia** (tabla de abajo) |
+| **Legendario** | **+2 al ataque y +2 al daño** (el doble del Raro) **más la propiedad de Épico, ampliada** |
 
 Cada pieza hereda **manos, dado, tipo de daño y stat de ataque** de su familia de §1-§2; aquí solo se listan las mejoras.
 
@@ -88,22 +89,38 @@ Cada pieza hereda **manos, dado, tipo de daño y stat de ataque** de su familia 
 |---|---|---|---|---|---|---|
 | Espada de acero enano | Espada | ✋ | 1d8 | 🗡️ | +1 al daño | Poco común |
 | Filo del juramento | Espada | ✋ | 1d8 | 🗡️ | +1 al ataque y +1 al daño | Raro |
+| Hoja de hielo eterno | Espada | ✋ | 1d8 | 🗡️ | +1 al ataque y +1 al daño · al impactar, el objetivo pierde 1 de Movimiento ese turno (frío que entumece) | Épico |
+| Excalibur | Espada | ✋ | 1d8 | 🗡️ | +2 al ataque y +2 al daño · crítico también con natural **19-20** (`../game-design.md` §4b.4) | Legendario |
 | Hacha de guerra orlada | Hacha | 🤲 | 1d12 | 🗡️ | +1 al daño | Poco común |
 | Hendedora de cráneos | Hacha | 🤲 | 1d12 | 🗡️ | +1 al ataque y +1 al daño | Raro |
+| Furia del berserker | Hacha | 🤲 | 1d12 | 🗡️ | +1 al ataque y +1 al daño · por debajo del 50 % de tus PV, **+1d6** de daño extra | Épico |
+| Fin de todas las cosas | Hacha | 🤲 | 1d12 | 🗡️ | +2 al ataque y +2 al daño · crítico también con natural **19-20** | Legendario |
 | Dagas del alba | Dagas | ✋ | 1d4 | 🏹 | +1 al daño | Poco común |
 | Colmillos gemelos | Dagas | ✋ | 1d4 | 🏹 | +1 al ataque y +1 al daño | Raro |
+| Colmillos del asesino silencioso | Dagas | ✋ | 1d4 | 🏹 | +1 al ataque y +1 al daño · **ventaja** en el primer ataque de cada combate | Épico |
+| Susurro de la muerte | Dagas | ✋ | 1d4 | 🏹 | +2 al ataque y +2 al daño · crítico también con natural **19-20** | Legendario |
 | Maza estrellada | Maza | ✋ | 1d6 | 🔨 | +1 al daño | Poco común |
 | Yugo del penitente | Maza | ✋ | 1d6 | 🔨 | +1 al ataque y +1 al daño | Raro |
+| Martillo del juicio final | Maza | ✋ | 1d6 | 🔨/☀️ | +1 al ataque y +1 al daño · contra Naturaleza No-muerto (`../characters/enemies.md` §3b), el daño pasa a ☀️ radiante | Épico |
+| Voluntad divina | Maza | ✋ | 1d6 | 🔨 | +2 al ataque y +2 al daño · crítico también con natural **19-20** | Legendario |
 | Arco largo de tejo | Arco | 🤲 | 1d8 | 🏹 | +1 al daño · alcance 4 hex | Poco común |
 | Susurro del bosque | Arco | 🤲 | 1d8 | 🏹 | +1 al ataque y +1 al daño · alcance **5 hex** | Raro |
+| Arco del viento cortante | Arco | 🤲 | 1d8 | 🏹 | +1 al ataque y +1 al daño · alcance **6 hex** | Épico |
+| Lluvia de flechas eternas | Arco | 🤲 | 1d8 | 🏹 | +2 al ataque y +2 al daño · alcance **7 hex** · el ataque secundario (`../game-design.md` §4b.3) conserva el mod de la stat | Legendario |
 | Ballesta de gatillo fino | Ballesta de mano | ✋ | 1d6 | 🏹 | +1 al daño · alcance 3 hex | Poco común |
 | Aguijón de bolsillo | Ballesta de mano | ✋ | 1d6 | 🏹 | +1 al ataque y +1 al daño · alcance **4 hex** | Raro |
+| Colmillo de víbora | Ballesta de mano | ✋ | 1d6 | 🏹 | +1 al ataque y +1 al daño · alcance **5 hex** · el impacto aplica **Envenenado** leve (`../effects.md`) | Épico |
+| Beso de la reina araña | Ballesta de mano | ✋ | 1d6 | 🏹 | +2 al ataque y +2 al daño · alcance **6 hex** · el impacto aplica **Envenenado** (salvación CON CD 14) | Legendario |
 | Bastón nudoso | Bastón de mago | ✋ | 1d6 | 🔨 | +1 al daño · alcance 2 hex | Poco común |
 | Bastón de las mareas | Bastón de mago | ✋ | 1d6 | 🔨 | +1 al ataque y +1 al daño · alcance 2 hex · foco arcano **+1** (§3) | Raro |
+| Bastón del poder | Bastón de mago | ✋ | 1d6 | 🔨 | +1 al ataque y +1 al daño · alcance 2 hex · foco arcano **+1** y **+1 CA** mientras lo empuñas | Épico |
+| Cetro de la tormenta arcana | Bastón de mago | ✋ | 1d6 | 🔨 | +2 al ataque y +2 al daño · alcance 2 hex · foco arcano **+2** y **+1 CA** | Legendario |
 
 **Por qué existe esta tabla.** Todo el catálogo anterior era **Común**, así que la premisa de los kits iniciales —*"el equipo bueno es la recompensa de explorar"* ([`../characters/heroes.md`](../characters/heroes.md) §2d)— **no tenía nada a lo que aspirar**: la única mejora real de daño era pasar a un arma 🤲 y perder el escudo. La **tabla de loot** (pendiente en `../game-design.md` §7) necesita este contenido para poder apuntar a algo; con la regla de derivación, sortear botín es elegir **familia + rareza**.
 
 Efecto medido: el Guerrero con *Filo del juramento* pasa de ~5,9 a ~7,8 de daño por turno (**+32 %**) — un premio que se nota sin romper la ventana de 5-6 turnos del boss (`../characters/enemies.md` §5b.3).
+
+**Subir un escalón sin encontrarlo/comprarlo — reforjar en el Herrero:** además de salir como loot o compra, tu arma concreta puede subir un escalón de esta misma tabla pagando al Herrero (`../game-design.md` §6d) — sin más requisito que el oro.
 
 ## 6. Futuras implementaciones (fuera de la v1)
 
@@ -121,6 +138,7 @@ Aparcadero de cartas de **arma** concretas que se nos van ocurriendo pero que no
 - [ ] Balancear dados/alcances al testear en el prototipo.
 - [x] Munición **infinita** *(decidido)*: sin recurso de munición en la v1 (§4).
 - [x] Subconjunto del prototipo *(decidido)*: **Espada ✋, Hacha 🤲, Dagas ✋, Arco 🤲, Ballesta de mano ✋, Bastón ✋, Maza ✋ + Escudo**, más los focos (Libro, Símbolo) y la Antorcha — las 7 familias con escalón de rareza en §5b, que son también las que salen en los kits iniciales (`../characters/heroes.md` §2d).
-- [x] Ampliar cada familia con variantes de rareza siguiendo la progresión de §5 → **§5b**: Poco común (+1 daño) y Raro (+1 ataque y daño) para las 7 familias del prototipo. Épico/Legendario siguen pieza por pieza en §6.
+- [x] Ampliar cada familia con variantes de rareza siguiendo la progresión de §5 → **§5b**: las 7 familias del prototipo cubren ya los 5 escalones (Poco común +1 daño, Raro +1 ataque y daño, Épico propiedad de familia, Legendario +2/+2 y la propiedad ampliada).
 - [x] Retirar la propiedad **"Ligera"**, que no existía y de la que colgaban dos reglas *(decidido)* → §4.
+- [x] Enganchar la escalera de rareza con el **reforjado** *(decidido)* → §5b: el Herrero sube un escalón de esta tabla pagando oro, sin uso ni loot nuevo (`../game-design.md` §6d).
 - [ ] Revisar §6 de vez en cuando y decidir si alguna de esas armas pasa ya a la v1.

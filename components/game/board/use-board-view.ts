@@ -41,6 +41,17 @@ type View = { k: number; tx: number; ty: number };
 const FIT: View = { k: 1, tx: 0, ty: 0 };
 
 /**
+ * Mismo encaje, aunque sea otro objeto. `HexBoard` recalcula el `viewBox` cada
+ * vez que cambia `board` —también cuando lo único distinto es la niebla
+ * revelada, que no toca ni una coordenada—, así que comparar por referencia
+ * resetea la cámara en cada movimiento. Por valor, solo se resetea cuando el
+ * encaje de verdad cambia (otra semilla, otro tamaño de tablero).
+ */
+function sameBox(a: ViewBox, b: ViewBox): boolean {
+  return a.minX === b.minX && a.minY === b.minY && a.width === b.width && a.height === b.height;
+}
+
+/**
  * Cuánto se puede alejar y acercar. El mínimo baja de 1 —del tablero encajado—
  * porque el marco tiene alto fijo: un tablero alargado deja bandas a los lados
  * y alejarlo un poco más es lo que lo separa del borde. El máximo son 6 veces:
@@ -179,7 +190,7 @@ export function useBoardView(viewBox: ViewBox): BoardView {
   // sola a encajada. Derivarlo aquí en vez de restablecerlo desde un efecto
   // ahorra el segundo pintado que costaría cada tablero nuevo.
   const [camera, setCamera] = useState<{ box: ViewBox; view: View }>({ box: viewBox, view: FIT });
-  const view = camera.box === viewBox ? camera.view : FIT;
+  const view = sameBox(camera.box, viewBox) ? camera.view : FIT;
 
   // El arrastre en curso y si ya ha pasado de DRAG_SLOP. En refs porque los lee
   // el manejador del puntero siguiente y el `onClick` del hexágono, no el
@@ -200,7 +211,7 @@ export function useBoardView(viewBox: ViewBox): BoardView {
       const vis = visibleRect(rect, viewBox);
       setCamera((c) => ({
         box: viewBox,
-        view: clampView(change(c.box === viewBox ? c.view : FIT, vis, rect), viewBox, vis),
+        view: clampView(change(sameBox(c.box, viewBox) ? c.view : FIT, vis, rect), viewBox, vis),
       }));
     },
     [frame, viewBox],

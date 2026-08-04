@@ -84,7 +84,7 @@ export const DEV_LABS: readonly DevLab[] = [
     summary:
       "Los 2 puntos de movimiento contra el coste de cada terreno, y los dos radios de visión que abren las dos capas de niebla.",
     icon: "pi pi-directions",
-    status: "planificado",
+    status: "en-curso",
     doc: { href: "/docs/game-design", label: "Movimiento y visión" },
   },
   {

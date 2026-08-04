@@ -104,12 +104,12 @@ Character {
   deck: Card[]              // clase + items + mercenarios; tope deckMax=20 (§4)
   deckMax                   // 20
   inPlay: Card[]            // cartas preparadas, las únicas jugables (§4)
-                            // ARRANCA con las 2 Básicas elegidas en el setup (§1b paso 4), no vacío
+                            // ARRANCA con las 2 cartas de habilidad de clase elegidas en el setup (§1b paso 4), no vacío
   inPlayMax                 // = clamp(ceil(deck.length / 2), 3, 10) — elástico, no un 10 fijo (§4)
   states: Effect[]          // estados activos (../effects.md)
   actionUsed, quickActionUsed   // economía de acción del turno (§4b.3)
-  usedThisCombat: []        // Especiales 1/combate — se vacía al terminar el COMBATE (§4b.8)
-  usedThisRest: []          // Especiales/Hoguera 1/descanso
+  usedThisCombat: []        // cartas con tope 1/combate — se vacía al terminar el COMBATE (§4b.8)
+  usedThisRest: []          // cartas con tope 1/descanso, más Hoguera
 }
 
 Enemy {                     // bloque de combate, enemies.md §5b
@@ -152,7 +152,7 @@ Esto no es el modelo final, solo una forma concreta de ver cómo encajan las pie
 - **Niebla del prototipo — dos capas por hex:** para cada hex dentro de `visionTerrain` marcar `terrainRevealed`, y dentro de `visionDetail` marcar además `contentRevealed` (board-map.md §2c). Ambas son **acumulativas y permanentes**: lo revelado no se vuelve a ocultar al alejarse. La niebla por grupo (3 estados) es solo para la versión con tiles.
 - **Recalcular visión** tras cada movimiento del héroe, y también al cambiar un modificador de visión (entrar/salir de Bosque, jugar *Ojo avizor*, ganar *Velo de sombras*). La Montaña **bloquea línea de visión**, así que no basta con el radio: hace falta un trazado de línea (supercover/line-of-sight sobre coordenadas cúbicas) por cada hex candidato.
 - **Desengancharse (game-design.md §4b.11):** se evalúa al **abandonar** un hex adyacente a un enemigo con `aiState === 'activo'`, una vez por enemigo y turno. Conviene resolverlo dentro del propio paso de movimiento, no como un evento aparte, para que el orden movimiento → daño → llegada sea determinista.
-- **Fin de combate y `usedThisCombat` (game-design.md §4b.8):** el combate **no** termina al huir. Hay que llevar `turnsOutOfContact` y solo vaciar `usedThisCombat` cuando llegue a 2 (o al morir todos los enemigos); si un enemigo te vuelve a detectar antes, el contador se **reinicia** y sigue siendo el mismo combate. Sin esto, huir un hex recarga las Especiales `1/combate`.
+- **Fin de combate y `usedThisCombat` (game-design.md §4b.8):** el combate **no** termina al huir. Hay que llevar `turnsOutOfContact` y solo vaciar `usedThisCombat` cuando llegue a 2 (o al morir todos los enemigos); si un enemigo te vuelve a detectar antes, el contador se **reinicia** y sigue siendo el mismo combate. Sin esto, huir un hex recarga las cartas `1/combate`.
 - **Tope de 2 enemigos activos (enemies.md §5b.6):** los refuerzos e invocaciones que no caben van a `pendingReinforcements` y entran cuando muere uno. Conviene comprobarlo en el sitio **donde se genera** el enemigo, no al pintarlo.
 - **Ataque a bocajarro (game-design.md §4b.1):** un ataque a distancia contra un objetivo adyacente es legal y aplica **Desventaja**; no hay que rechazar el objetivo por estar por debajo del alcance mínimo. Vale para el héroe y para la IA (`enemies.md` §5b.6 paso 3).
 - **Tabla de loot (game-design.md §6b.6):** conviene una **sola función** `rollLoot(fuente)` que haga los tres pasos (¿cae carta? → rareza → tipo) y devuelva cartas concretas del catálogo, porque la llaman **seis** sitios distintos: matar un enemigo, ficha de Tesoro, Mazmorra, Suceso *Hallazgo*, Combate *Botín inesperado* y el umbral del 25 % de Amenaza (que le resta un escalón de rareza). Ojo con la **regla de caída**: si la rareza sorteada no existe para ese tipo de carta, baja al escalón más alto disponible — sin ella, un Épico de arma devuelve vacío, porque el catálogo solo llega a Raro.

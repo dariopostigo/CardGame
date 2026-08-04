@@ -146,16 +146,11 @@
   // Sin borde propio a propósito: el hexágono no es la pieza, es una casilla
   // dentro de ella, y en la referencia (map1.webp) el terreno fluye sin
   // cortes dentro de una loseta. El único trazo visible del tablero es el
-  // contorno de loseta (`.board__tile-edge`), que sí marca un límite real. El
-  // `stroke` se queda en `transparent` en vez de `none` para poder
-  // transicionarlo a color en el hover/selección de abajo.
-  stroke: transparent;
-  stroke-width: 0;
-  transition:
-    fill $duration-fast $ease,
-    stroke $duration-fast $ease,
-    stroke-width $duration-fast $ease,
-    filter $duration-fast $ease;
+  // contorno de loseta (`.board__tile-edge`), que sí marca un límite real.
+  stroke: none;
+  // El `fill` transiciona porque sí cambia en vivo: al revelarse el terreno
+  // (`data-hidden` desaparece), pasa del gris de niebla al color del terreno.
+  transition: fill $duration-fast $ease;
 }
 
 // Un bloque por terreno, generado desde el mapa de settings: si mañana entra
@@ -192,9 +187,19 @@
   stroke: transparent;
   stroke-width: 0;
   transition:
+    fill $duration-fast $ease,
     stroke $duration-fast $ease,
     stroke-width $duration-fast $ease,
     filter $duration-fast $ease;
+
+  // Alcance de movimiento (lib/rules/movement.ts `reachableHexes`): un tinte
+  // de relleno, no un trazo, para no competir con el hover/selección de abajo
+  // —los tres pueden coincidir en el mismo hexágono— y para leerse como "aquí
+  // SÍ puedes llegar", no como un simple cursor encima.
+  &[data-reachable="true"] {
+    fill: skin("accent");
+    fill-opacity: 0.18;
+  }
 
   &[data-hover="true"] {
     stroke: skin("text");
@@ -208,6 +213,53 @@
     stroke: skin("text");
     stroke-width: 3;
     filter: none;
+  }
+}
+
+// --- Pulso de selección (HexBoard.tsx, capa 7) -----------------------------
+
+// Dos aros que crecen desde el propio hexágono y se desvanecen: el eco visual
+// de "esto es lo que tienes seleccionado", sea el héroe o cualquier otra
+// ficha. Van en su propia capa —no en `.board__hex-highlight`— porque tienen
+// que verse POR ENCIMA de la ficha, no debajo de su sombra.
+.board__pulse {
+  fill: none;
+  stroke: skin("accent");
+  stroke-width: 2.5;
+  // El origen del `scale` tiene que ser el propio centro del hexágono, no el
+  // (0,0) del `<svg>`: `fill-box` calcula el origen sobre la caja del propio
+  // polígono en vez de sobre todo el lienzo.
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: board-pulse 1.8s $ease infinite;
+}
+
+// El segundo aro, a mitad de vuelta del primero: un aro solo se ve
+// "parpadear" en cada reinicio del bucle, con dos desfasados siempre hay uno
+// a medio crecer y el pulso se lee continuo.
+.board__pulse--b {
+  animation-delay: -0.9s;
+}
+
+@keyframes board-pulse {
+  from {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.45);
+  }
+}
+
+@include reduced-motion {
+  .board__pulse {
+    animation: none;
+    opacity: 0.55;
+  }
+
+  .board__pulse--b {
+    display: none;
   }
 }
 

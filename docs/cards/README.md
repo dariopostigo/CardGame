@@ -11,7 +11,7 @@ Carpeta dedicada a **todos los tipos de carta** del juego, uno por documento. El
 
 | Documento | Qué contiene | Origen |
 |---|---|---|
-| [`class.md`](class.md) | Cartas Básicas y Especiales de Clase | Clase |
+| [`class.md`](class.md) | Cartas de Habilidad de Clase | Clase |
 | [`weapons.md`](weapons.md) | Armas (melee, distancia, soporte) | Equipo |
 | [`armor.md`](armor.md) | Armaduras (ligeras, medias, pesadas) | Equipo |
 | [`items.md`](items.md) | Items: aventurero, herramientas, mágicos, pociones, pergaminos, cartas de movimiento | Equipo |
@@ -36,7 +36,7 @@ La categoría es obligatoria (`clase`, `arma`, `armadura`, `item`, `maldicion`, 
 | Ajuste | Para qué | Ejemplo |
 |---|---|---|
 | `peso=` | Peso de la armadura cuando está en el encabezado y no en una columna | `<!-- cards: armadura peso=media -->` |
-| `fichas=` | Fichas fijas al pie de todas las cartas de la tabla | `<!-- cards: clase fichas="Guerrero,Básica" -->` |
+| `fichas=` | Fichas fijas al pie de todas las cartas de la tabla | `<!-- cards: clase fichas="Guerrero" -->` |
 | `rareza=` | Raíl de color cuando la tabla no tiene columna Rareza | `<!-- cards: encuentro rareza=enemigo -->` |
 | `icono=` | Icono del badge, si el de la categoría no distingue | `<!-- cards: encuentro icono=⚔️ -->` |
 

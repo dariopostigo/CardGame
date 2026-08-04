@@ -23,16 +23,22 @@
 //      Va junto en un grupo porque la sombra se calcula sobre la silueta de
 //      todo lo que contiene; los hexágonos de esta capa los tapa la 3, así que
 //      lo único que queda a la vista es el canto.
-//   3. relleno de los hexágonos (y el clic, la niebla y la selección). El
+//   3. relleno de los hexágonos (y el clic y la niebla). El
 //      hexágono no lleva borde propio: el terreno de una misma loseta fluye
 //      sin cortes, como en la foto de referencia (map1.webp) — el único trazo
 //      del mapa es el de la capa 4.
 //   4. contorno de cada loseta, que tiene que quedar POR ENCIMA del relleno de
 //      todos los hexágonos, no solo del suyo
 //   4b. resalte de hover/selección, por ENCIMA del contorno de loseta (ver
-//      más abajo por qué necesita su propia capa)
+//      más abajo por qué necesita su propia capa). También el alcance de
+//      movimiento (`reachable`, lib/rules/movement.ts), como un relleno
+//      translúcido en la misma capa: no es un estado nuevo, es la misma idea
+//      de "trazo que decide si se pinta" pero con fill en vez de stroke.
 //   5. marcas pintadas en el suelo: la entrada y las coordenadas
 //   6. las fichas, que son piezas encima de la loseta y llevan su sombra
+//   7. el pulso de selección (`selected`): dos aros que crecen y se
+//      desvanecen, por ENCIMA de la ficha para que se note sobre cualquier
+//      terreno o disco que tenga debajo
 //
 // Había una capa más, la de localizaciones —impresa en la loseta y por eso sin
 // sombra—, y ya no hace falta: el Pueblo y la Mazmorra son TERRENO, así que los
@@ -92,14 +98,14 @@
 
 import { useMemo, useState } from "react";
 import * as Hex from "@/lib/rules/hex";
-import type { HexCoord } from "@/lib/rules/hex";
+import type { HexCoord, HexKey } from "@/lib/rules/hex";
 import type { Board, Hex as HexCell } from "@/lib/rules/state";
 import { TERRAINS } from "@/lib/rules/terrain";
 import { direction } from "@/lib/rules/tiles";
 import Button from "@/components/ui/Button";
 import BoardFog from "./BoardFog";
 import BoardPiece from "./BoardPiece";
-import { TOKEN_ART } from "./piece-art";
+import { PAWN_ART, TOKEN_ART } from "./piece-art";
 import { useBoardView } from "./use-board-view";
 
 type Props = {
@@ -113,6 +119,10 @@ type Props = {
   /** Dibuja el contorno de cada loseta. */
   showTiles?: boolean;
   selected?: HexCoord | null;
+  /** Hexágonos dentro del alcance de movimiento actual (capa 4b, resalte de relleno). */
+  reachable?: ReadonlySet<HexKey>;
+  /** Dónde está el héroe. Se pinta siempre, no depende de `contentRevealed`: se ve a sí mismo. */
+  heroAt?: HexCoord | null;
   onHexClick?: (hex: HexCell) => void;
 };
 
@@ -154,6 +164,8 @@ export default function HexBoard({
   showCoords = false,
   showTiles = true,
   selected = null,
+  reachable,
+  heroAt = null,
   onHexClick,
 }: Props) {
   // Alias local: la inclinación entra en cada fórmula de geometría de abajo y no
@@ -297,7 +309,6 @@ export default function HexBoard({
                   points={Hex.polygonPoints(x, y, hexSize, tilt)}
                   data-terrain={terrainKnown ? cell.terrain : undefined}
                   data-hidden={terrainKnown ? undefined : "true"}
-                  data-selected={selected && Hex.equals(selected, cell.coord) ? "true" : undefined}
                   data-interactive={onHexClick ? "true" : undefined}
                   onClick={
                     onHexClick
@@ -378,6 +389,7 @@ export default function HexBoard({
                       : undefined
                   }
                   data-selected={selected && Hex.equals(selected, cell.coord) ? "true" : undefined}
+                  data-reachable={reachable?.has(Hex.key(cell.coord)) ? "true" : undefined}
                 />
               );
             })}
@@ -434,7 +446,45 @@ export default function HexBoard({
                 />
               );
             })}
+            {/* El héroe, aparte de las fichas de contenido: no depende de
+                `contentRevealed` (se ve a sí mismo siempre) ni de `cell.token`
+                (no es contenido del hexágono, es quien anda por él). */}
+            {heroAt &&
+              (() => {
+                const { x, y } = Hex.toPixel(heroAt, hexSize, tilt);
+                return (
+                  <BoardPiece
+                    piece={{ family: "pawn", id: "heroe" }}
+                    x={x}
+                    y={y}
+                    hexSize={hexSize}
+                    tilt={tilt}
+                    label={PAWN_ART.heroe.label}
+                  />
+                );
+              })()}
           </g>
+
+          {/* 7. Pulso de selección: cualquier casilla seleccionada (héroe o
+              cualquier otra ficha) lo lleva, por igual — es "esto es lo que
+              estás mirando", no un estado del héroe. Va DESPUÉS de las fichas
+              a propósito, para que el aro se vea completo por encima del disco
+              y no a medias por debajo de su sombra. Dos aros con retraso
+              (`board__pulse--b`) en vez de uno: un solo aro se ve "parpadear"
+              al reiniciar el bucle; con dos desfasados siempre hay uno a medio
+              crecer y la animación se lee continua. */}
+          {selected &&
+            board.hexes.has(Hex.key(selected)) &&
+            (() => {
+              const { x, y } = Hex.toPixel(selected, hexSize, tilt);
+              const points = Hex.polygonPoints(x, y, hexSize, tilt);
+              return (
+                <g className="board__pulse-group" style={{ pointerEvents: "none" }}>
+                  <polygon className="board__pulse" points={points} />
+                  <polygon className="board__pulse board__pulse--b" points={points} />
+                </g>
+              );
+            })()}
         </g>
       </svg>
 

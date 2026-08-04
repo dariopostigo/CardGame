@@ -27,6 +27,7 @@ Un mercenario **no ocupa un hexágono** ni se mueve por el mapa: es una carta de
 | Común | +2 |
 | Poco común | +3 |
 | Raro / Épico | +4 |
+| Legendario | +5 |
 
 Motivo: antes hacían **daño automático sin tirada**, y como jugar la carta cuesta la **misma Acción** que atacar tú —que sí puedes fallar—, el mercenario era estrictamente mejor que tu propio ataque en todos los casos. Con tirada quedan dentro de la misma matemática que héroes y enemigos. *(Si al balancear se prefiere volver al daño garantizado, la compensación sería bajarles el dado un escalón para pagar la certeza.)*
 
@@ -51,16 +52,37 @@ Dos vías, con el mismo trade-off que el resto del juego (gratis-pero-arriesgado
 
 | Mercenario | Tipo | Alcance | Efecto | Rareza |
 |---|---|---|---|---|
-| Mercenarios de las Llanuras | Acción | Melee | Un mercenario ataca a un enemigo adyacente a ti: **+2** al ataque, **1d6+2 🗡️** | Común |
-| Arquero a sueldo | Acción | 4 hex | Disparo a distancia: **+2** al ataque, **1d6 🏹** | Común |
-| Bruto de taberna | Acción | Melee | **+3** al ataque, **1d8 🔨**; **+2 de daño** si el objetivo está por debajo del 50 % de PV | Poco común |
-| Curandera errante | Acción | — | Los mercenarios te asisten: recuperas **1d8 PV** (sin tirada, no es un ataque) | Poco común |
-| Espadachín veterano | Acción | Melee | **+4** al ataque **con ventaja** ([`../effects.md`](../effects.md)), **1d10 🗡️** | Raro |
-| Compañía de la Grifa Negra | Acción | Melee | Dos mercenarios atacan: **2 ataques a +4**, **1d8 🗡️** cada uno, repartidos entre uno o dos enemigos adyacentes a ti | Épico |
+| Mercenarios de las Llanuras | Accion | Melee | Un mercenario ataca a un enemigo adyacente a ti: **+2** al ataque, **1d6+2 🗡️** | Común |
+| Arquero a sueldo | Accion | 4 hex | Disparo a distancia: **+2** al ataque, **1d6 🏹** | Común |
+| Aprendiz de sanador | Accion | — | Los mercenarios te asisten: recuperas **1d4 PV** (sin tirada, no es un ataque) | Común |
+| Bruto de taberna | Accion | Melee | **+3** al ataque, **1d8 🔨**; **+2 de daño** si el objetivo está por debajo del 50 % de PV | Poco común |
+| Ballestero mercenario | Accion | 4 hex | Disparo a distancia: **+3** al ataque, **1d8 🏹** | Poco común |
+| Curandera errante | Accion | — | Los mercenarios te asisten: recuperas **1d8 PV** (sin tirada, no es un ataque) | Poco común |
+| Espadachín veterano | Accion | Melee | **+4** al ataque **con ventaja** ([`../effects.md`](../effects.md)), **1d10 🗡️** | Raro |
+| Francotirador de las brumas | Accion | 5 hex | Disparo a distancia: **+4** al ataque **con ventaja** si el objetivo no te ha detectado (`../characters/enemies.md` §2b), **1d8 🏹** | Raro |
+| Chamán de la tribu | Accion | — | Los mercenarios te asisten: recuperas **2d8 PV** y retiras un estado negativo leve (Envenenado o Ralentizado, [`../effects.md`](../effects.md)) | Raro |
+| Compañía de la Grifa Negra | Accion | Melee | Dos mercenarios atacan: **2 ataques a +4**, **1d8 🗡️** cada uno, repartidos entre uno o dos enemigos adyacentes a ti | Épico |
+| Compañía de arqueros del alba | Accion | 5 hex | Dos mercenarios disparan: **2 ataques a +4**, **1d8 🏹** cada uno, repartidos entre uno o dos enemigos | Épico |
+| Guardia de honor | Accion | — | Los mercenarios te asisten: recuperas **2d8 PV** y ganas **Escudado +2 CA** ([`../effects.md`](../effects.md)) durante 2 turnos | Épico |
+| La Legión del Ocaso | Accion | Melee | Tres mercenarios atacan: **3 ataques a +5**, **1d10 🗡️** cada uno, repartidos entre uno o dos enemigos adyacentes a ti | Legendario |
+| La Horda de flechas incesantes | Accion | 6 hex | Tres mercenarios disparan: **3 ataques a +5**, **1d10 🏹** cada uno, repartidos entre uno o dos enemigos | Legendario |
+| Círculo de sanadores ancestral | Accion | — | Los mercenarios te asisten: recuperas **4d8 PV**, retiras todos los estados negativos y ganas **Escudado +3 CA** durante 2 turnos | Legendario |
 
 - **El efecto escala con la Rareza** (mismo espíritu que la progresión por familia de [`weapons.md`](weapons.md) §5 / [`armor.md`](armor.md) §6): a mayor rareza, más daño, mejor bono de ataque y más efecto.
 - Los mercenarios **usan los valores fijos de su carta**, no tus estadísticas — no dependen de tu FUE/DES ni se benefician de tus armas. Cada uno lleva **su tipo de daño** (🗡️🏹🔨…) que se compara con la Naturaleza del objetivo (`../game-design.md` §4b.10, [`../characters/enemies.md`](../characters/enemies.md) §3b) como cualquier ataque.
 - **Su alcance se mide desde tu hexágono** (§1b): no hay ficha de mercenario en el tablero que posicionar.
+
+## 3b. Familias por alcance — reforjar *(ver `../game-design.md` §6d)*
+
+Para que el Capitán de mercenarios pueda **reforjar** una carta (subirla un escalón de Rareza pagando oro, sin más requisito — `../game-design.md` §6d), el catálogo de §3 se agrupa en familias por alcance, igual que Arma/Armadura se agrupan por familia de pieza. Las **tres familias cubren ya los 5 escalones de punta a punta**:
+
+| Rareza | Melee | Distancia | Soporte |
+|---|---|---|---|
+| Común | Mercenarios de las Llanuras | Arquero a sueldo | Aprendiz de sanador |
+| Poco común | Bruto de taberna | Ballestero mercenario | Curandera errante |
+| Raro | Espadachín veterano | Francotirador de las brumas | Chamán de la tribu |
+| Épico | Compañía de la Grifa Negra | Compañía de arqueros del alba | Guardia de honor |
+| Legendario | La Legión del Ocaso | La Horda de flechas incesantes | Círculo de sanadores ancestral |
 
 ## 4. Próximos pasos
 
@@ -70,3 +92,4 @@ Dos vías, con el mismo trade-off que el resto del juego (gratis-pero-arriesgado
 - [x] Definir el NPC concreto que los vende (§2b) y su stock/rotación → **Capitán de mercenarios**, **2 cartas** sorteadas al empezar el capítulo y fijas hasta el siguiente (`../characters/npcs.md` §3).
 - [ ] Decidir si una ficha ofrece un mercenario de rareza fija o aleatoria.
 - [ ] Cuando quieras, ampliar el catálogo (§3) con más compañías y variantes de rareza.
+- [x] Enganchar el catálogo con el **reforjado** *(decidido)* → §3b: las tres familias (Melee, Distancia, Soporte) cubren ya los 5 escalones de punta a punta (`../game-design.md` §6d.4).

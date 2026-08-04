@@ -210,6 +210,7 @@ Nada más. Sin React, sin `fs`, sin `Date.now()`, sin `Math.random()`.
 | `hex.ts` | Coordenadas axiales/cúbicas, vecinos, distancia, línea de visión |
 | `terrain.ts` | Los 7 terrenos del prototipo: coste de movimiento, modificadores de visión/detección, peligro y cuota de generación (`docs/board/board-map.md` §3a) |
 | `vision.ts` | Las dos capas de niebla, acumulativas y permanentes |
+| `movement.ts` | Alcance de movimiento: coste de terreno, bonus de Camino una vez por turno, suelo de 1 |
 | `deck.ts` | Mazo / "en juego" / Oteo, con el tope fijo de "en juego" |
 | `combat.ts` | Iniciativa, ataque, adyacencia, desengancharse, fin de combate |
 | `enemy-ai.ts` | Árbol de prioridades determinista (`docs/characters/enemies.md` §5b.6) |

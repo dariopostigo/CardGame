@@ -20,18 +20,19 @@ Es también el **punto de continuación** del proyecto: la §6 dice por dónde s
 | Descanso y recuperación | ✅ | `game-design.md` §4c. **Cura fija** (mitad de PV máx) en el prototipo; los Dados de Vida quedan diferidos a la progresión de nivel, porque a nivel 1 darían 1 solo uso por partida |
 | Economía / oro | ✅ | `game-design.md` §6b (sin balancear). **Oro inicial = 0**; **cada NPC compra lo que vende** (§6b.4) |
 | Nivel de Amenaza (reloj de capítulo) | ✅ | Barra **0→40** a **+1/turno**: el tope **es la duración de la partida, 40 turnos** (`game-design.md` §6c.1). Umbrales en los turnos 10/20/30, subidas de golpe reescritas como "cuántos turnos cuesta" (+3 acampar, +2 alertar/huir, +5 Mal augurio, −10 el Tabernero). Con tope 100 el reloj daba 5× lo necesario y no presionaba |
-| Mazo, Oteo y máximo | ✅ | `game-design.md` §4. Dos zonas: **Mazo ≤20** (clase + items + mercenarios; swap 1-por-1) + **"en juego" con tope fijo de 5**. Cada turno **oteas 2 al azar / preparas 1**, con regla para Mazo de <2 cartas. Arranca con ~8 cartas y con **2 Básicas ya preparadas** (§1b paso 4). **Armas y armaduras van aparte** (equipo, §4a) |
+| Mazo, Oteo y máximo | ✅ | `game-design.md` §4. Dos zonas: **Mazo ≤20** (clase + items + mercenarios; swap 1-por-1) + **"en juego" con tope fijo de 5**. Cada turno **oteas 2 al azar / preparas 1**, con regla para Mazo de <2 cartas. Arranca con ~12 cartas (8 de clase + 4 items) y con **2 cartas de habilidad de clase ya preparadas** (§1b paso 4). **Armas y armaduras van aparte** (equipo, §4a) |
 | **Regla madre de cartas** | ✅ | **Jugar una carta la saca de "en juego"** y la devuelve al Mazo (`game-design.md` §4). Tres documentos decían lo contrario ("reutilizable cada turno") y quedan corregidos — era la contradicción más grave del sistema: decidía si "en juego" es un *loadout* que se spamea o **munición preparada** |
 | **Matemática del combate** | ✅ | `game-design.md` §4b.12: PV de protagonista (+10, §2), ataque secundario (§4b.3), Élite a 4 DV y **tope de 2 enemigos simultáneos** (`characters/enemies.md` §5b.3, §5b.6). Antes los 3 Élite ganaban a los 4 héroes y el Mago perdía contra un lobo suelto |
 | **Duración de una partida** | ✅ | **40 turnos** (= el tope del Nivel de Amenaza, `game-design.md` §6c.1). Es el número del que dependen la tabla de loot, el tamaño final del Mazo y la densidad de fichas — si cambia, se rehacen los tres |
-| **Progresión / subida de nivel** | ⭕ | **Aparcada por decisión del usuario.** Solo enunciado (milestone, +1 PV, 1 Especial/nivel). Concepto propuesto sin escribir: "level-up draft" (ver memoria) |
+| **Progresión / subida de nivel (personaje)** | ✅ | **Formalizada** *(ya no aparcada)*: `game-design.md` §5. Mismo rango 1-5 que las cartas, cada hito ya concede el nivel. PV y mejora de estadística (Niveles 3/5) concretados para los 4 héroes; **ya no desbloquea cartas** (eso se eliminó al fusionar Básica/Especial, `cards/class.md` §6, con las 8 cartas de cada héroe ya con tabla 1-5). Falta balancear |
+| **Progresión de cartas (reforjar)** | 🟡 | `game-design.md` §6d. **Solo NPC + oro, sin uso** *(simplificado)*: coste = trade-in de la tabla de precios (§6b.3), igual para las cinco categorías (21/50/125/340 oro por salto). Arma, Armadura, Mercenario y cartas de clase completan ya su escalera 1-5 (`cards/weapons.md` §5b, `cards/armor.md` §6b, `cards/mercenaries.md` §3b, `cards/class.md` §6a); Item cubre ya los 9 del kit inicial y el resto del catálogo pendiente (§6d.3); Maldiciones usan la versión invertida (el Sacerdote cobra por bajar 1 Nivel, `cards/curses.md` §4) |
 
 ## 2. Contenido — el "con qué se juega"
 
 | Contenido | Estado | Nota |
 |---|---|---|
 | Héroes (identidad + stats + kit) | ✅ | 4 héroes con **ficha de selección** (historia + fuertes/débiles, §1b) y **kit inicial** por clase (§2d) en `characters/heroes.md`. Prototipo arranca con **Guerrero + Mago** (decidido); Pícaro/Clérigo después |
-| Cartas de clase — **nivel 1** | ✅ | 3 Básicas + 1 Especial por héroe (`cards/class.md`). El tipo `Pasiva` se retiró de la v1 (se saltaba el Oteo); reformulado como *Aura/Postura* en `ideas.md`. **Ampliarlas sigue siendo deseable** por identidad y variedad de Oteo, ya no por tamaño de Mazo |
+| Cartas de clase | ✅ | **8 cartas de habilidad por héroe**, todas al mismo nivel desde el arranque, sin distinción Básica/Especial, las 8 con tabla de reforjar 1-5 (`cards/class.md` §6). El tipo `Pasiva` se retiró de la v1 (se saltaba el Oteo); reformulado como *Aura/Postura* en `ideas.md`. **Ampliarlas sigue siendo deseable** por identidad y variedad de Oteo, ya no por tamaño de Mazo. Falta balancear las cifras |
 | Cartas de clase — **niveles 2+** | ⭕ | Nada más allá de nivel 1; ligado a la progresión (§1) |
 | Cartas y objetos de exploración (clase + ítems + NPC) | ✅ | Set inicial listado (Ojo avizor —clase—, Mapa del cartógrafo —ítem—, Antorcha —arma soporte—, Informante —NPC—, Vista lejana —futura—) en `board/board-map.md` §8 |
 | Armas | ✅ | Valores de 1er pase (`cards/weapons.md`); **sistema de equipo** (llenan tus 2 manos), aparte del Mazo y sin límite de colección (`game-design.md` §4a). **Escalones Poco común/Raro** para las 7 familias del prototipo (§5b) y sin la propiedad fantasma "Ligera" (§4) |
@@ -39,11 +40,11 @@ Es también el **punto de continuación** del proyecto: la §6 dice por dónde s
 | Items | ✅ | Lista + consumibles + Hoguera + efectos de objetos mágicos + cartas de movimiento (`cards/items.md`). **Mochila deshabilitada** (su efecto era neto 0). Falta balancear |
 | Mercenarios | ✅ | Sistema (reclutar por prueba / comprar por oro) + catálogo de 6, con **alcance melee/distancia medido desde el héroe** y **tirada de ataque** por rareza (`cards/mercenaries.md` §1b). Falta balancear |
 | Efectos / estados | ✅ | 11 estados (incl. **Miedo**) con efecto/duración/fuentes/cura + reglas generales (representación, CD 12, timing, stacking) en `effects.md`. **Escudado a 2 turnos** y suelo de 2 turnos para todo buff (§1). Falta balancear |
-| Maldiciones | ✅ | Severidad Leve/Grave, catálogo de 8, fuentes y limpieza (Templo/prueba) en `cards/curses.md`. Falta balancear |
+| Maldiciones | ✅ | Severidad a **5 escalones** (mismo eje 1-5 con estrellas que el resto de cartas, leído al revés), catálogo de 9, fuentes y limpieza (Sacerdote baja 1 Nivel, o prueba gratuita) en `cards/curses.md`. Falta balancear |
 | Mazo de encuentro | ✅ | 10 cartas de Combate + 10 de Suceso, cruce con las 6 fichas, mazo único (`cards/encounter.md`). Falta balancear frecuencias |
-| **Enemigos — bloque de combate** | ✅ | 10 bloques jugables (PV/CA/ataque/daño/velocidad/detección/habilidad) + reglas de derivación (`characters/enemies.md` §5b). **Élite a 4 DV** (24/28/28) y regen del Trol +1; **Velocidad 3** para Lobo/Matriarca/Sombra; **críticos** escritos. Falta balancear |
+| **Enemigos — bloque de combate** | ✅ | 10 bloques jugables (PV/CA/ataque/daño/velocidad/detección/habilidad) + reglas de derivación (`characters/enemies.md` §5b). **Élite a 4 DV** (24/28/28) y regen del Trol +1; **Velocidad 3** para Lobo/Matriarca/Sombra; **críticos** escritos. **Nivel de enemigo** (1-5, dial de dificultad aparte de Categoría, §5d) nuevo. Falta balancear |
 | Enemigos — bestiario (variedad) | 🟡 | ~8 normales/élite + 2 jefes de ejemplo (`characters/enemies.md`) |
-| NPCs | 🟡 | 8 tipos definidos (7 en el prototipo; el Dador de misión es solo Campaña) (incl. **Sacerdote/Sanador** que limpia Maldiciones) e interacción ✅; **Mercenario resuelto** (`cards/mercenaries.md`); **stock de tienda resuelto** (4/3/3/2 cartas, sorteadas por capítulo y fijas hasta el siguiente, `characters/npcs.md` §3); NPCs con nombre = sin definir |
+| NPCs | 🟡 | 9 tipos definidos (8 en el prototipo; el Dador de misión es solo Campaña) (incl. **Sacerdote/Sanador** que limpia Maldiciones y el **Instructor**, nuevo, que reforja cartas de clase — `game-design.md` §6d.5) e interacción ✅; **Mercenario resuelto** (`cards/mercenaries.md`); **stock de tienda resuelto** (4/3/3/2 cartas, sorteadas por capítulo y fijas hasta el siguiente, `characters/npcs.md` §3); NPCs con nombre = sin definir |
 
 ## 3. Mundo y estructura
 
@@ -102,7 +103,7 @@ Las dos tandas de revisión que cerraron esto arreglaron, además de rellenar hu
 **Lo que queda:**
 1. **Balance** — necesita *jugar* para afinar cifras; no se puede cerrar en papel. Es el motivo de construir.
 2. **Modelo de interacción / UX** (§4) — se inventa construyendo, pero no está escrito.
-3. **Progresión más allá del nivel 1** — aparcada por decisión del usuario. Arrastra los Dados de Vida y las cartas de clase de nivel 2+.
+3. **Progresión más allá del nivel 1** — mecanismo ya formalizado (`game-design.md` §5): PV y estadística por nivel para los 4 héroes; el personaje ya no desbloquea cartas al subir, y las 8 cartas de cada héroe ya tienen tabla de reforjar 1-5 (`cards/class.md` §6). Falta activar los Dados de Vida completos (`game-design.md` §4c.4) y balancear todas las cifras nuevas.
 4. **Contenido de Campaña** (narrativa, capítulos, historias) — fase posterior al prototipo.
 5. **Arte / UI** — fase propia.
 6. **Ampliar catálogos** (más cartas de clase, más enemigos, Épico/Legendario en armas y armaduras) — deseable, nunca bloqueante.

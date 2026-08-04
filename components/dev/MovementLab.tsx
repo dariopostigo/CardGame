@@ -1,0 +1,349 @@
+"use client";
+
+// =========================================================================
+// Laboratorio de MOVIMIENTO Y VISIÓN — /dev/movimiento
+//
+// Banco de pruebas de lib/rules/movement.ts y lib/rules/vision.ts: el héroe
+// empieza en la entrada del tablero de /dev/tablero y se mueve a golpe de
+// clic. Lo que se prueba aquí es si el alcance con coste de terreno y los dos
+// radios de visión (docs/game-design.md §2.2, §2.3) se sienten bien, no si el
+// tablero se genera bien —eso ya lo prueba /dev/tablero— ni el combate ni la
+// activación de enemigos (§4b.5, /dev/combate, todavía sin motor).
+//
+// Toda la regla vive en el motor: el laboratorio solo pide un tablero, pide
+// alcance y visión, y pinta lo que le devuelven.
+// =========================================================================
+
+import { useMemo, useState, type ChangeEvent } from "react";
+import { InputText } from "primereact/inputtext";
+import * as Hex from "@/lib/rules/hex";
+import type { HexCoord, HexKey } from "@/lib/rules/hex";
+import { generateBoard } from "@/lib/rules/board-gen";
+import type { Board, Hex as HexCell } from "@/lib/rules/state";
+import { TERRAINS, TERRAIN_IDS } from "@/lib/rules/terrain";
+import { MOVE_BASE, movePointsForTurn, reachableHexes } from "@/lib/rules/movement";
+import { revealFromPosition, visionRadii } from "@/lib/rules/vision";
+import HexBoard from "@/components/game/board/HexBoard";
+import { TOKEN_ART } from "@/components/game/board/piece-art";
+import { buttonClass } from "@/components/ui/Button";
+
+const INITIAL_SEED = "sendero-1";
+
+/** El roster y su mod de Sabiduría, calco de la tabla de game-design.md §2.3. */
+const HERO_CLASSES = [
+  { label: "Guerrero", sabMod: 1 },
+  { label: "Pícaro", sabMod: 0 },
+  { label: "Mago", sabMod: 1 },
+  { label: "Clérigo", sabMod: 2 },
+] as const;
+
+type Modifiers = { slowed: boolean; cursedWeight: boolean };
+
+/**
+ * Los dos modificadores negativos que cita game-design.md §2.2 como el caso
+ * que justifica el suelo: Ralentizado (effects.md) + Peso maldito
+ * (cards/curses.md) suman 0 sin él. Un solo modificador nunca lo demuestra
+ * —2 − 1 ya da 1 sin necesidad de suelo—, hacen falta los dos a la vez.
+ */
+function modifierValues(m: Modifiers): number[] {
+  const out: number[] = [];
+  if (m.slowed) out.push(-1);
+  if (m.cursedWeight) out.push(-1);
+  return out;
+}
+
+export default function MovementLab() {
+  const [seed, setSeed] = useState(INITIAL_SEED);
+  const [heroClass, setHeroClass] = useState<(typeof HERO_CLASSES)[number]>(HERO_CLASSES[0]);
+  const [modifiers, setModifiers] = useState<Modifiers>({ slowed: false, cursedWeight: false });
+
+  const { board } = useMemo(
+    () => generateBoard({ seed, tileCount: 12, tokenDensity: 0.17, sprawl: 2 }),
+    [seed],
+  );
+
+  const btn = (active: boolean) => buttonClass({ active });
+  const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
+
+  return (
+    <div>
+      <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">Movimiento y visión</h1>
+      <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
+        El héroe tiene <b>2 puntos de movimiento por turno</b>, sin variación por raza (
+        <code>docs/game-design.md</code> §2.2). 1 punto cruza 1 hexágono de Llanura o
+        Camino; el Pantano cuesta 2 y la Montaña 3 —transitable, pero muy cara sin
+        movimiento extra—. El <b>Camino da +1 al pool</b> la primera vez que se pisa ese
+        turno: no se acumula por cruzar varios tramos seguidos.
+      </p>
+      <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
+        La niebla tiene <b>dos capas</b>: visión de <b>terreno</b> (la silueta del mapa) y
+        de <b>detalle</b> (las fichas), <code>3 + mod SAB</code> la de detalle y esa
+        misma +2 la de terreno (§2.3). El Bosque y la Mazmorra ciegan al héroe que está
+        de pie en ellos; la Montaña corta la línea de visión del todo. Una vez revelado,
+        un hexágono se queda revelado: la niebla es acumulativa y permanente, no vuelve a
+        cerrarse al alejarte.
+      </p>
+
+      {/* Controles de partida: semilla o clase nuevas empiezan de cero (niebla, turno y posición) */}
+      <div className="mb-5 flex flex-wrap items-end gap-x-6 gap-y-3">
+        <div className="flex flex-col gap-1">
+          <span className={label}>Semilla</span>
+          <div className="flex items-center gap-2">
+            <InputText
+              value={seed}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setSeed(e.target.value)}
+              className="w-40"
+              placeholder="cualquier texto"
+            />
+            <button className={btn(false)} onClick={() => setSeed(randomSeed())}>
+              Nueva
+            </button>
+          </div>
+        </div>
+
+        <div
+          className="flex flex-col gap-1"
+          title="Determina los dos radios de visión: 3 + mod SAB de detalle (mínimo 1), esa cifra + 2 de terreno (mínimo 2)."
+        >
+          <span className={label}>Clase</span>
+          <div className="flex items-center gap-2">
+            {HERO_CLASSES.map((c) => (
+              <button
+                key={c.label}
+                className={btn(heroClass.label === c.label)}
+                onClick={() => setHeroClass(c)}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className="flex flex-col gap-1"
+          title="Se suman al pool base de 2 al terminar turno, no a mitad de uno en curso. Actívalos los dos a la vez para ver el suelo de 1 hexágono (§2.2) atrapar la suma antes de llegar a 0."
+        >
+          <span className={label}>Modificadores del próximo turno</span>
+          <div className="flex items-center gap-2">
+            <button
+              className={btn(modifiers.slowed)}
+              onClick={() => setModifiers((m) => ({ ...m, slowed: !m.slowed }))}
+            >
+              Ralentizado (−1)
+            </button>
+            <button
+              className={btn(modifiers.cursedWeight)}
+              onClick={() =>
+                setModifiers((m) => ({ ...m, cursedWeight: !m.cursedWeight }))
+              }
+            >
+              Peso maldito (−1)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* La sesión de partida: clave en semilla+clase para que cambiar cualquiera de
+          las dos reinicie posición, niebla y turno sin arrastrar estado del héroe anterior. */}
+      <MovementSession
+        key={`${seed}:${heroClass.label}`}
+        board={board}
+        sabMod={heroClass.sabMod}
+        modifiers={modifiers}
+      />
+    </div>
+  );
+}
+
+type SessionProps = {
+  board: Board;
+  sabMod: number;
+  modifiers: Modifiers;
+};
+
+function MovementSession({ board, sabMod, modifiers }: SessionProps) {
+  const [turn, setTurn] = useState(1);
+  const [heroAt, setHeroAt] = useState<HexCoord>(board.entrance);
+  const [revealedBoard, setRevealedBoard] = useState<Board>(() =>
+    revealFromPosition(board, board.entrance, sabMod),
+  );
+  const [pointsLeft, setPointsLeft] = useState(() =>
+    movePointsForTurn(MOVE_BASE, modifierValues(modifiers)),
+  );
+  // Qué casilla está seleccionada: CUALQUIER ficha se puede seleccionar para
+  // inspeccionarla (panel de abajo), pero el alcance de movimiento solo
+  // aparece cuando la seleccionada es la del propio héroe — seleccionar no es
+  // lo mismo que "quiero moverme", es "quiero mirar esto".
+  const [selected, setSelected] = useState<HexCoord | null>(null);
+  const heroSelected = selected !== null && Hex.equals(selected, heroAt);
+
+  const reachable = useMemo(
+    () => (heroSelected ? reachableHexes(revealedBoard, heroAt, pointsLeft) : new Map<HexKey, number>()),
+    [heroSelected, revealedBoard, heroAt, pointsLeft],
+  );
+  // El propio hexágono del héroe entra en `reachable` (coste 0, quedarte donde
+  // estás) pero resaltarlo confundiría con "aquí puedes ir": ya lo marca la
+  // ficha del héroe y el pulso de selección. Se excluye solo del resalte, no
+  // de la lógica de clic.
+  const reachableHighlight = useMemo(() => {
+    if (!heroSelected) return new Set<HexKey>();
+    const heroKey = Hex.key(heroAt);
+    return new Set([...reachable.keys()].filter((k) => k !== heroKey));
+  }, [heroSelected, reachable, heroAt]);
+
+  const heroTerrain = revealedBoard.hexes.get(Hex.key(heroAt))!.terrain;
+  const radii = visionRadii(sabMod, heroTerrain);
+  const turnBudget = movePointsForTurn(MOVE_BASE, modifierValues(modifiers));
+  const selectedCell = selected ? revealedBoard.hexes.get(Hex.key(selected)) : undefined;
+
+  function handleHexClick(hex: HexCell) {
+    // Con el héroe ya seleccionado, clicar una casilla a su alcance MUEVE en
+    // vez de reseleccionar: ahí es donde "seleccionar" se convierte en
+    // "actuar". Su propia casilla no cuenta como destino, solo como toggle de
+    // selección (rama de abajo).
+    if (heroSelected && !Hex.equals(hex.coord, heroAt)) {
+      const remaining = reachable.get(Hex.key(hex.coord));
+      if (remaining !== undefined) {
+        setHeroAt(hex.coord);
+        setPointsLeft(remaining);
+        setRevealedBoard((prev) => revealFromPosition(prev, hex.coord, sabMod));
+        setSelected(hex.coord); // el héroe sigue seleccionado en su nueva casilla
+        return;
+      }
+    }
+
+    // Cualquier otra casilla —cualquier ficha, terreno vacío, o la del héroe
+    // sin alcance que ofrecer— se selecciona para inspeccionarla; clicar la ya
+    // seleccionada la deselecciona.
+    setSelected((prev) => (prev && Hex.equals(prev, hex.coord) ? null : hex.coord));
+  }
+
+  function endTurn() {
+    setTurn((t) => t + 1);
+    setPointsLeft(turnBudget);
+  }
+
+  return (
+    <>
+      <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-[var(--wiki-text)]">
+        <span>
+          <b>Turno:</b> {turn}
+        </span>
+        <span title="Se recarga a este valor al terminar turno; el suelo de 1 hexágono (§2.2) ya está aplicado.">
+          <b>Movimiento:</b> {pointsLeft} de {turnBudget}
+        </span>
+        <span title="Fichas, enemigos y localizaciones: 3 + mod SAB, mínimo 1, con el modificador del terreno donde estás de pie.">
+          <b>Visión de detalle:</b> {radii.detail} hexágonos
+        </span>
+        <span title="Solo la silueta del terreno: visión de detalle + 2, mínimo 2.">
+          <b>Visión de terreno:</b> {radii.terrain} hexágonos
+        </span>
+        <button className={buttonClass({ variant: "primary" })} onClick={endTurn}>
+          Terminar turno
+        </button>
+      </div>
+
+      <p className="mb-3 max-w-3xl text-sm text-[var(--wiki-muted)]">
+        Clica <b>cualquier ficha</b> (o casilla vacía) para inspeccionarla: qué terreno es,
+        qué se sabe de ella todavía según la niebla, o qué tipo de ficha hay. Clica{" "}
+        <b>la del héroe</b> para ver hasta dónde llega este turno —el tinte de abajo— y
+        muévelo con un segundo clic sobre una casilla alcanzable; se queda seleccionado para
+        encadenar movimientos sin volver a clicarlo.
+      </p>
+
+      <div className="board rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3">
+        <HexBoard
+          board={revealedBoard}
+          revealAll={false}
+          heroAt={heroAt}
+          selected={selected}
+          reachable={reachableHighlight}
+          onHexClick={handleHexClick}
+        />
+
+        <div className="board__legend">
+          {TERRAIN_IDS.map((id) => (
+            <span
+              key={id}
+              className="board__legend-item"
+              title={`Visión del héroe de pie ahí: ${signed(TERRAINS[id].heroVisionMod)}`}
+            >
+              <span className="board__swatch" data-terrain={id} />
+              {TERRAINS[id].label} · coste {TERRAINS[id].moveCost}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {selectedCell && <SelectionPanel cell={selectedCell} isHero={heroSelected} />}
+    </>
+  );
+}
+
+/** Panel de la casilla seleccionada: terreno + ficha, respetando la niebla. */
+function SelectionPanel({ cell, isHero }: { cell: HexCell; isHero: boolean }) {
+  const terrainKnown = cell.terrainRevealed;
+  const contentKnown = cell.contentRevealed;
+  const def = terrainKnown ? TERRAINS[cell.terrain] : null;
+
+  return (
+    <div className="mt-4 rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm">
+      <div className="mb-1 font-semibold text-[var(--wiki-text)]">
+        Hexágono {cell.coord.q},{cell.coord.r}
+        {def && ` — ${def.label}`}
+        {isHero && " · tu héroe está aquí"}
+        {cell.isEntrance && terrainKnown && " · Entrada"}
+      </div>
+
+      {!def ? (
+        <p className="text-[var(--wiki-muted)]">
+          Sin explorar: está fuera de tu visión de terreno, todavía no conoces ni la
+          silueta.
+        </p>
+      ) : (
+        <ul className="grid gap-0.5 text-[var(--wiki-muted)]">
+          <li>Coste de movimiento: {def.moveCost}</li>
+          {def.blocksLineOfSight && <li>Bloquea la línea de visión</li>}
+          {def.allowsAmbush && <li>Emboscada y cobertura</li>}
+          {def.safeToCamp && <li>Seguro para acampar</li>}
+          {def.hazard && (
+            <li>
+              Peligro al cruzar: salvación {def.hazard.save} CD {def.hazard.cd} o{" "}
+              {def.hazard.effect}
+            </li>
+          )}
+
+          {!contentKnown ? (
+            <li>
+              Puede haber una ficha aquí, pero está fuera de tu visión de detalle: hace
+              falta acercarse para distinguirla.
+            </li>
+          ) : cell.token ? (
+            <li>
+              <b>{TOKEN_ART[cell.token].label}</b>
+              {cell.token === "enemigo" && (
+                <>
+                  {" "}
+                  — todavía sin ficha de combate propia (fuerza, habilidades, nivel de
+                  amenaza): eso llega con el motor de combate (<code>/dev/combate</code>,
+                  hoy planificado).
+                </>
+              )}
+            </li>
+          ) : (
+            <li>No hay ninguna ficha en este hexágono.</li>
+          )}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Semilla legible al azar. Es una elección de UI, no una regla: aquí sí vale Math.random. */
+function randomSeed(): string {
+  return Math.random().toString(36).slice(2, 8);
+}
+
+function signed(n: number): string {
+  return n === 0 ? "sin cambio" : n > 0 ? `+${n}` : `${n}`;
+}

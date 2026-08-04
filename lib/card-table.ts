@@ -47,6 +47,14 @@ export type DamageType =
 export type CardWeight = "ligera" | "media" | "pesada";
 export type Hands = "1h" | "2h";
 
+// Ciclo de vida de la carta al jugarla (class.md §1): Accion se usa una vez y
+// vuelve al Mazo (regla madre, game-design.md §4); Pasiva se queda en juego
+// para siempre; Turnos se queda en juego hasta cumplir la duración que
+// indique su propio Efecto. No describe coste de activación: ese recurso de
+// turno (Movimiento/Acción/Acción rápida, game-design.md §4b.3) es aparte y
+// no depende del Tipo de la carta.
+export type CardType = "accion" | "pasiva" | "turnos";
+
 export type CardStat = { k?: string; v?: string; label?: string };
 
 export type CardRecord = {
@@ -61,7 +69,8 @@ export type CardRecord = {
   stats: CardStat[];
   /** Icono del badge; sin él manda el de la categoría (CATEGORY_BADGE). */
   badge?: string;
-  cost?: string;
+  /** Ciclo de vida de la carta una vez jugada (class.md §1). */
+  type?: CardType;
   hands?: Hands;
   damageType?: DamageType;
   weight?: CardWeight;
@@ -284,15 +293,13 @@ const HANDS_BY_ICON: Record<string, Hands> = {
   "🤲": "2h",
 };
 
-// Valores de la columna "Tipo" cuando significa coste de activación
-// (game-design.md §4b.3) en vez de tipo de daño.
-const ACTION_VALUES = new Set([
-  "accion",
-  "accion rapida",
-  "modificador",
-  "pasiva",
-  "fuera de combate",
-]);
+// Valores reconocidos de la columna "Tipo" cuando significa ciclo de vida de
+// la carta (class.md §1) en vez de tipo de daño.
+const TYPE_VALUES: Record<string, CardType> = {
+  accion: "accion",
+  pasiva: "pasiva",
+  turnos: "turnos",
+};
 
 type Role =
   | { kind: "name" }
@@ -302,7 +309,7 @@ type Role =
   | { kind: "hands" }
   | { kind: "weight" }
   | { kind: "damage" }
-  | { kind: "cost" }
+  | { kind: "type" }
   | { kind: "stat"; k: string };
 
 /** ¿Todos los valores no vacíos de la columna están en `set` (comparando iconos)? */
@@ -311,14 +318,14 @@ function allIcons(values: string[], set: Record<string, unknown>): boolean {
   return filled.length > 0 && filled.every((v) => normIcon(plain(v)) in set);
 }
 
-function allActions(values: string[]): boolean {
+function allTypes(values: string[]): boolean {
   const filled = values.filter((v) => !isEmpty(v));
-  return filled.length > 0 && filled.every((v) => ACTION_VALUES.has(norm(plain(v))));
+  return filled.length > 0 && filled.every((v) => norm(plain(v)) in TYPE_VALUES);
 }
 
 // El rol de una columna sale de su encabezado y, cuando el encabezado es
 // ambiguo, de sus valores: "Tipo" es el tipo de daño en weapons.md (🗡️/🏹/🔨)
-// pero el coste de activación en class.md (Acción / Acción rápida). Mirar los
+// pero el ciclo de vida en class.md (Accion / Pasiva / Turnos). Mirar los
 // valores evita tener que configurar el mapeo documento a documento.
 function roleFor(header: string, values: string[], index: number): Role {
   const h = norm(plain(header));
@@ -331,7 +338,7 @@ function roleFor(header: string, values: string[], index: number): Role {
   if (allIcons(values, DAMAGE_BY_ICON)) return { kind: "damage" };
   if (allIcons(values, WEIGHT_BY_ICON)) return { kind: "weight" };
   if (allIcons(values, HANDS_BY_ICON)) return { kind: "hands" };
-  if (allActions(values)) return { kind: "cost" };
+  if (allTypes(values)) return { kind: "type" };
   return { kind: "stat", k: plain(header) };
 }
 
@@ -407,8 +414,8 @@ export function cardsFromTable(
         case "damage":
           card.damageType = DAMAGE_BY_ICON[normIcon(plain(cell))];
           break;
-        case "cost":
-          card.cost = plain(cell);
+        case "type":
+          card.type = TYPE_VALUES[norm(plain(cell))];
           break;
         case "stat":
           card.stats.push({ k: role.k, v: plain(cell) });

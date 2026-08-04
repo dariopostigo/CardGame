@@ -35,10 +35,10 @@ export function isInPlayFull(state: DeckState): boolean {
 }
 
 /**
- * El kit de clase de un héroe: sus Básicas + su Especial (`cards/class.md`),
- * repetidas cíclicamente hasta `DECK_MAX`. El kit real llega a las 7-8 cartas
- * que el Oteo necesita (§4, aviso de contenido) añadiendo items de arranque;
- * como los items no llevan ficha de héroe en el catálogo —solo prosa en
+ * El kit de clase de un héroe: sus 8 cartas de habilidad (`cards/class.md`,
+ * sin distinción Básica/Especial), repetidas cíclicamente hasta `DECK_MAX`.
+ * El kit real suma además items de arranque (§4, aviso de contenido); como
+ * los items no llevan ficha de héroe en el catálogo —solo prosa en
  * `characters/heroes.md` §2d—, aquí se simula el mismo engorde repitiendo el
  * propio kit de clase en vez de items reales.
  */
@@ -54,14 +54,14 @@ export function buildDeck(heroChip: string, classCards: readonly CatalogCard[]):
 }
 
 /**
- * Preparación de salida (§1b, paso 4): 2 de las 3 Básicas arrancan ya "en
- * juego". Este laboratorio no modela la elección de setup (cuáles 2) y toma
- * las 2 primeras del kit; el resto —incluida la Especial— se queda en el Mazo.
+ * Preparación de salida (§1b, paso 4): 2 de las 8 cartas de habilidad del
+ * héroe arrancan ya "en juego" (cualquiera del roster, sin distinción
+ * Básica/Especial — `cards/class.md` §6). Este laboratorio no modela la
+ * elección de setup (cuáles 2) y toma las 2 primeras del kit.
  */
 export function initialDeckState(heroChip: string, classCards: readonly CatalogCard[]): DeckState {
   const all = buildDeck(heroChip, classCards);
-  const basicas = all.filter((d) => d.card.stats.some((s) => s.label === "Básica"));
-  const startInPlay = basicas.slice(0, 2);
+  const startInPlay = all.slice(0, 2);
   const startIds = new Set(startInPlay.map((d) => d.instanceId));
   return {
     deck: all.filter((d) => !startIds.has(d.instanceId)),

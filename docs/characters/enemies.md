@@ -262,6 +262,31 @@ Así una partida completa te enfrenta a **2 Élite distintos como máximo**, y e
 
 El balance fino (cuántos a la vez, con qué stats exactas) se ajusta al testear; esta tabla solo fija la progresión de amenaza.
 
+## 5d. Nivel de enemigo — dial de dificultad, aparte de Categoría *(decidido)*
+
+Un enemigo tiene, además de su **Categoría** (§3 — qué criatura es, con sus Dados de Vida base y su gancho mecánico), un **Nivel de 1 a 5** — mismo rango y mismas estrellas que héroes y cartas (`../game-design.md` §3.3, §5). Son **dos ejes independientes**:
+
+- **Categoría** decide **qué es** (un Lobo, un Trol, un jefe) y **dónde puede aparecer** (§5c).
+- **Nivel** escala **esa misma criatura** hacia arriba sin cambiar lo que es: un Lobo de las lindes Nivel 3 sigue siendo un Lobo — misma IA (§5b.6), mismo gancho (*Cazador de manada*), solo más resistente y más certero. No sustituye a la Categoría ni la duplica: un Élite Nivel 1 sigue siendo más peligroso que un Normal Nivel 5 en términos absolutos, el Nivel solo ajusta dentro de su propia Categoría.
+
+**Por qué un eje aparte y no una quinta Categoría.** Las 4 Categorías ya hacen un trabajo real (variedad de bestiario, dónde aparece cada una, el tope de 2 enemigos simultáneos por Categoría de refuerzo, §5b.6) que no hay que tocar. Lo que faltaba era un mando de precisión para subir la dificultad de una criatura concreta sin escribir un bloque nuevo — sobre todo para Modo Campaña, donde §5c ya liga nivel de héroe a qué Categorías aparecen; ahora también puede subir el **Nivel** de esas mismas Categorías en capítulos avanzados en vez de solo cambiar cuál sale.
+
+**Fórmula — mismo espíritu que la progresión de personaje (`../game-design.md` §5):**
+
+- **Nivel 1** = el bloque tal cual está escrito en §5b, sin cambios.
+- **Por cada nivel por encima de 1:** +1 Dado de Vida a la fórmula de PV de §5b.1 (`Dados de Vida × 5 + mod CON × Dados de Vida`).
+- **En los Niveles 3 y 5** (mismos hitos que los héroes, `../game-design.md` §5): +1 al bono de ataque y +1 a la CA.
+
+**Ejemplo — Lobo de las lindes (Normal, 2 DV base, CON 12/+1, PV 12/CA 12/Mordisco +1) a Nivel 3:**
+
+| Nivel | DV efectivos | PV | Ataque | CA |
+|---|---|---|---|---|
+| 1 (base, §5b.2) | 2 | 12 | +1 | 12 |
+| 2 | 3 | 18 | +1 | 12 |
+| 3 | 4 | 24 | +2 | 13 |
+
+Sin escribir un bloque nuevo, un Lobo Nivel 3 pasa de 12 a 24 PV y de +1 a +2 de ataque/13 de CA — un knob de dificultad que cualquier encuentro (o el generador de mapa) puede girar sin tocar el bestiario.
+
 ## 6. Próximos pasos / preguntas abiertas
 
 - [x] Decidir estático vs. patrulla para el prototipo — **activación por detección** (latente hasta ver al héroe, luego persigue; §2). No patrulla; los "cazadores" proactivos quedan como idea futura.
@@ -284,5 +309,6 @@ El balance fino (cuántos a la vez, con qué stats exactas) se ajusta al testear
 - [ ] Cuando quieras, ir añadiendo más enemigos al bestiario de §5 (normales, élite, o nuevos jefes).
 - [x] Formalizar el sistema de tipos de daño y resistencias → **Naturaleza de criatura** (§3b) con resistencias/vulnerabilidades por defecto; multiplicadores y lista de tipos en `../game-design.md` §4b.10. Falta balancear (¿son los multiplicadores correctos? ¿demasiados/pocos tipos?).
 - [x] Naturaleza del Heraldo Ceniciento = **No-muerto de alto rango** *(decidido)*: hereda resistente 🏹 / vulnerable 🔨,☀️ (§3b, §5b.4).
+- [x] Definir el **Nivel de enemigo** (1-5, eje aparte de Categoría) → §5d: +1 Dado de Vida por nivel, +1 ataque/CA en Niveles 3 y 5, mismo rango que héroes y cartas. Falta decidir qué Nivel trae cada aparición concreta en Campaña (§5c) y balancear.
 - [ ] Asignar Naturaleza (§3b) a cualquier enemigo nuevo que se añada al bestiario.
 - [x] Diseñar la ficha visual de **Jefe de capítulo** y **Jefe final de campaña** → corona (👑), la misma para las dos categorías, distinta de la ficha genérica de Enemigo (`../board/board-map.md` §4c). Se prueba en `/dev/pieces`. Vive en Modo Campaña, que todavía no tiene motor de generación.

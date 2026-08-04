@@ -117,12 +117,12 @@ Catálogos: armas y focos en [`../cards/weapons.md`](../cards/weapons.md), armad
 - **Pícaro:** las dos manos con arma de **1 mano cada una** — Dagas para melee finesse y Ballesta de mano para 3 hex. Cubre las dos distancias, que es su forma de elegir peleas.
 - **Clérigo:** Maza bendita (usa **FUE o SAB**, la mejor de las dos) + Símbolo sagrado como foco divino. Es el único que arranca con armadura media: hace ruido (desventaja para evitar detección) y no le importa, porque no es un héroe de sigilo.
 
-> **Estos kits son la mitad del arreglo del Oteo.** 4 cartas de clase + 4 items = **8 cartas de Mazo**, lo que fija el tope de "en juego" en `techo(8 ÷ 2)` = **4 huecos** (`../game-design.md` §4). Con solo las 4 de clase el Mazo se vaciaba en 3 turnos y el Oteo dejaba de ser una decisión.
+> **Estos kits ayudan al arreglo del Oteo, pero ya no son la mitad de él.** Cada héroe trae **8 cartas de habilidad de clase** (`../cards/class.md` §6, sin distinción Básica/Especial) + 4 items = **12 cartas de Mazo** al arrancar, muy por encima del mínimo de 3-4 sin preparar que necesita el Oteo (`../game-design.md` §4, tope fijo de 5 en juego). Antes, con solo 4 cartas de clase, los items eran quienes evitaban que el Mazo se vaciara en 3 turnos; ahora esa función la cubren de sobra las propias cartas de clase, y los items se quedan por variedad de utilidad.
 
 ## 3. Cómo conecta cada héroe con el resto del diseño
 
-- Cada héroe usa las 6 estadísticas de `../game-design.md` §2; su stat principal marca qué Cartas Básicas de Clase tiene sentido que reciba primero.
-- Las Cartas Especiales de Clase (`../game-design.md` §3) son donde cada héroe empieza a diferenciarse de verdad — el prototipo puede lanzarse con muy pocas y ampliar después.
+- Cada héroe usa las 6 estadísticas de `../game-design.md` §2; su stat principal marca qué Cartas de Habilidad de Clase (`../game-design.md` §3) tiene sentido que reciba primero.
+- Ese mismo roster de 8 cartas por héroe es donde cada uno empieza a diferenciarse de verdad — el prototipo puede lanzarse con muy pocas y ampliar después.
 - *(Idea futura)* El estado **Miedo** ([`../effects.md`](../effects.md)) podría afectar distinto según el héroe — ej. el Clérigo más resistente por fe, el Pícaro más vulnerable en combate abierto pero no en sigilo.
 
 ## 4. Próximos pasos / preguntas abiertas
@@ -130,9 +130,9 @@ Catálogos: armas y focos en [`../cards/weapons.md`](../cards/weapons.md), armad
 - [x] Definir método y valores de las 6 estadísticas base de cada héroe (§2b — array estándar de D&D repartido por rol).
 - [x] Definir Movimiento y Dado de Vida de cada héroe (§2c).
 - [x] Roster del **prototipo** = **Guerrero + Mago** *(decidido)*: máximo contraste (melee/tanque 14 PV vs. distancia/frágil 8 PV). Pícaro y Clérigo entran justo después; el catálogo de los 4 sigue en [`../cards/class.md`](../cards/class.md).
-- [x] Diseñar las primeras Cartas Básicas de Clase (`../game-design.md` §3) para cada héroe → hechas para los **4 héroes** (Guerrero, Mago, Pícaro, Clérigo), cada uno con 3 Básicas + 1 Especial, en [`cards/class.md`](../cards/class.md). Falta balancear.
+- [x] Diseñar las primeras Cartas de Habilidad de Clase (`../game-design.md` §3) para cada héroe → hechas para los **4 héroes** (Guerrero, Mago, Pícaro, Clérigo), cada uno con **8 cartas** al mismo nivel, en [`cards/class.md`](../cards/class.md). Falta balancear.
 - [x] Decidir si el jugador controla un héroe fijo por partida, o un grupo → **un solo héroe por partida** (decidido para el prototipo: simplifica combate, turno e iniciativa). El "grupo" queda como idea futura para Modo Campaña.
 - [x] Escribir la **ficha de cada héroe** para la pantalla de selección (historia + fuertes/débiles) → §1b.
 - [x] Definir el **kit inicial** de cada héroe (equipo + items de arranque) → §2d. Falta balancear.
 - [ ] Cuando quieras, ir añadiendo héroes de la lista de candidatos (§2) o nuevos, uno a uno.
-- [ ] Ampliar las **cartas de clase** de cada héroe (`../cards/class.md`): hoy son 3 Básicas + 1 Especial, y aunque el kit inicial ya arregla el tamaño de Mazo (§2d), más cartas de clase darían más identidad y variedad al Oteo.
+- [ ] Ampliar las **cartas de clase** de cada héroe (`../cards/class.md`): hoy son 8 al mismo nivel, y aunque el kit inicial ya arregla el tamaño de Mazo (§2d), más cartas de clase darían más identidad y variedad al Oteo.

@@ -19,9 +19,10 @@
 // entre uno y otro: sin este cálculo manual (FLIP) el cambio se vería como un
 // corte seco, no como un vuelo.
 //
-// El tamaño de mazo por encima de las 4 cartas de clase (3 Básicas + 1
-// Especial) se rellena repitiendo esas mismas cartas: ver la nota de
-// lib/rules/deck.ts sobre por qué no usa items reales todavía.
+// El tamaño de mazo por encima de las 8 cartas de clase del héroe (sin
+// distinción Básica/Especial, cards/class.md §6) se rellena repitiendo esas
+// mismas cartas: ver la nota de lib/rules/deck.ts sobre por qué no usa items
+// reales todavía.
 // =========================================================================
 
 import { useLayoutEffect, useRef, useState } from "react";
@@ -67,8 +68,8 @@ type PlayFlight = { instanceId: string; card: DeckCard; from: DOMRect };
 type DropFlight = { instanceId: string; card: DeckCard; from: DOMRect };
 
 // Todo el mazo arranca sin preparar: a diferencia de la partida real (§1b,
-// paso 4: 2 de las 3 Básicas empiezan ya "en juego"), aquí interesa ver el
-// Oteo construir el "en juego" desde cero, turno a turno.
+// paso 4: 2 de las 8 cartas de habilidad empiezan ya "en juego"), aquí
+// interesa ver el Oteo construir el "en juego" desde cero, turno a turno.
 function emptyDeckState(hero: (typeof HEROES)[number], classCards: CatalogCard[]): DeckState {
   return { deck: buildDeck(hero, classCards), inPlay: [] };
 }

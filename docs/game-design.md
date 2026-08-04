@@ -13,13 +13,13 @@ Flujo desde que el jugador abre la aplicación hasta que pisa el primer hexágon
 1. **Partida nueva → elegir modalidad.** **Partida rápida** (la única disponible en el prototipo) o **Modo Campaña**, que a su vez contiene **varias historias distintas seleccionables** (no un único arco; se irán añadiendo — `board/board-map.md` §2b).
 2. **Elegir héroe** de los disponibles ([`characters/heroes.md`](characters/heroes.md)). La pantalla de selección muestra una **ficha completa** de cada uno: retrato, historia breve, puntos fuertes y débiles, las 6 estadísticas, PV, dado de vida y su kit inicial (`characters/heroes.md` §1b).
 3. **Kit inicial** — se otorga automáticamente, sin pasar por tienda ni gastar oro (**el oro inicial sigue siendo 0**, §6b):
-   - **Todas sus cartas de clase** (Básicas + Especial, [`cards/class.md`](cards/class.md)) → van al **Mazo**.
+   - **Todas sus cartas de habilidad de clase** (8 por héroe, sin distinción Básica/Especial, [`cards/class.md`](cards/class.md)) → van al **Mazo**.
    - Una **selección fija de armas y armaduras por clase** → van **equipadas** (§4a), no al Mazo.
-   - Un **puñado de items de arranque por clase** → van al **Mazo**. Existen por una razón mecánica, no de sabor: sin ellos el Mazo arranca con solo 4 cartas y el **Oteo se rompe** (ver el aviso de §4).
+   - Un **puñado de items de arranque por clase** → van al **Mazo**, ya no por necesidad estructural (con 8 cartas de clase el Mazo ya no se vacía enseguida) sino por variedad de utilidad — ver el aviso de §4.
    - Los kits concretos de los 4 héroes están en `characters/heroes.md` §2d.
-4. **Preparación de salida — eliges 2 Básicas de clase que arrancan ya "en juego"** *(decidido)*. La zona "en juego" (§4) no empieza vacía: escoges **2 de las 3 Básicas** de tu héroe ([`cards/class.md`](cards/class.md)) y salen preparadas desde el turno 1. Los otros 3 huecos (el tope fijo es 5, §4) los llena el Oteo.
+4. **Preparación de salida — eliges 2 cartas de habilidad de clase que arrancan ya "en juego"** *(decidido)*. La zona "en juego" (§4) no empieza vacía: escoges **2 de las 8 cartas de habilidad** de tu héroe ([`cards/class.md`](cards/class.md), cualquiera del roster) y salen preparadas desde el turno 1. Los otros 3 huecos (el tope fijo es 5, §4) los llena el Oteo.
 
-   > **Por qué.** Sin esto, el **primer combate de la partida se peleaba con 0-2 cartas preparadas y al azar**, y para el Mago era una lotería de supervivencia: solo aguanta con *Escudo arcano* listo (CA 16 en vez de 13), y con un Mazo de 8 cartas de las que el Oteo revela 2 por turno, entraba a su primera pelea sin escudo **~4 de cada 10 partidas**. Un héroe no debería morir por un sorteo antes de tomar ninguna decisión. Que **elijas** las 2 (en vez de dártelas todas) mantiene la decisión en tus manos y no infla el arranque: sigues empezando con 1 hueco libre y sin tu Especial.
+   > **Por qué.** Sin esto, el **primer combate de la partida se peleaba con 0-2 cartas preparadas y al azar**, y para el Mago era una lotería de supervivencia: solo aguanta con *Escudo arcano* listo (CA 16 en vez de 13). Un héroe no debería morir por un sorteo antes de tomar ninguna decisión. Que **elijas** las 2 (en vez de dártelas todas) mantiene la decisión en tus manos y no infla el arranque: sigues empezando con 3 huecos libres. Al no haber ya distinción Básica/Especial, puedes elegir cualquiera de las 8 — el número exacto de partidas que esto cambia respecto a la cifra anterior está por recalcular.
 5. **Generación del mapa y entrada.** Se genera el mapa (`board/board-map.md` §2c) y el héroe entra por **una esquina**, la "puerta" del mapa (§2c, paso 0). A partir de ahí empieza el turno 1: oteas, mueves, actúas.
 
 ## 2. Personaje y estadísticas
@@ -100,10 +100,9 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 
 ### 3.1 Por origen
 
-1. **Cartas Básicas de Clase** — inspiradas en las cartas "Básica 1/2/3" de Viajes. Cada clase tiene un set fijo de cartas genéricas disponibles desde el nivel 1 (p. ej. Guerrero: "Golpe firme", "Postura defensiva"). Catálogo en [`cards/class.md`](cards/class.md).
-2. **Cartas Especiales de Clase** — se desbloquean por nivel/hito, igual que las subclases de D&D. Más potentes, uso limitado (una vez por combate/descanso). Ver [`cards/class.md`](cards/class.md).
-3. **Cartas de equipo** — armas, armaduras e items conseguidos jugando (botín, tesoro, recompensas, compra; ver §3.2 y [`cards/`](cards/README.md)). Las **armas y armaduras** se **equipan** aparte (§4a); los **items** entran al **Mazo** (§4). Nada de esto se consigue con el Oteo.
-4. **Cartas de Mercenario** — compañías a sueldo que se **reclutan** superando una prueba de Carisma en una ficha del tablero (fallarla la convierte en enemigo) o se **compran** por oro; van al Mazo como cartas de Acción. Como cualquier carta, **al darles la orden vuelven al Mazo** (regla madre de §4): son una ráfaga preparada, no un aliado permanente en el tablero. Catálogo en [`cards/mercenaries.md`](cards/mercenaries.md).
+1. **Cartas de Habilidad de Clase** — inspiradas en las cartas "Básica 1/2/3" de Viajes. Cada clase tiene un set fijo de cartas genéricas, **todas disponibles desde el nivel 1** (p. ej. Guerrero: "Golpe firme", "Postura defensiva"): ya no hay un subconjunto que se desbloquee por nivel/hito de personaje *(decidido — elimina la distinción anterior entre "Básica" y "Especial")*, cada carta sube de Nivel por su cuenta pagando al Instructor (§6d.5). Algunas tienen uso limitado (`1/combate` o `1/descanso`), como propiedad de la carta y no de ninguna categoría. Catálogo en [`cards/class.md`](cards/class.md).
+2. **Cartas de equipo** — armas, armaduras e items conseguidos jugando (botín, tesoro, recompensas, compra; ver §3.2 y [`cards/`](cards/README.md)). Las **armas y armaduras** se **equipan** aparte (§4a); los **items** entran al **Mazo** (§4). Nada de esto se consigue con el Oteo.
+3. **Cartas de Mercenario** — compañías a sueldo que se **reclutan** superando una prueba de Carisma en una ficha del tablero (fallarla la convierte en enemigo) o se **compran** por oro; van al Mazo como cartas de Acción. Como cualquier carta, **al darles la orden vuelven al Mazo** (regla madre de §4): son una ráfaga preparada, no un aliado permanente en el tablero. Catálogo en [`cards/mercenaries.md`](cards/mercenaries.md).
 
 ### 3.2 Por tipo (icono diferenciador)
 
@@ -111,7 +110,7 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 |---|---|---|---|
 | **Arma** | Espada | Añade daño y tipo de daño (lista completa y resistencias en §4b.10); ocupa 1 o 2 manos (§2.4) | Puede requerir stat mínima para usarse sin penalización |
 | **Armadura** | Escudo/coraza | Suma a la Defensa/CA; puede restar Destreza si es pesada | Solo 1 equipada a la vez (§2.4) |
-| **Item** | Bolsa | Categoría amplia: pociones (efecto instantáneo), hechizos (Cartas Especiales o Pergaminos), objetos de aventura/herramientas/objetos mágicos raros — ver [`cards/items.md`](cards/items.md) | El más variado de los 4 tipos |
+| **Item** | Bolsa | Categoría amplia: pociones (efecto instantáneo), hechizos (cartas de habilidad de clase o Pergaminos), objetos de aventura/herramientas/objetos mágicos raros — ver [`cards/items.md`](cards/items.md) | El más variado de los 4 tipos |
 | **Mercenario** | 🪖 Casco/estandarte | Carta de Acción: das la orden a una compañía a sueldo (atacar, curarte, etc.); cuesta tu Acción y, como toda carta, **gasta su preparación** al jugarse (regla madre de §4) | Origen (reclutar/comprar) y catálogo en [`cards/mercenaries.md`](cards/mercenaries.md) |
 | **Maldición** | Calavera/nube negra | Efecto negativo persistente que **ocupa un hueco del mazo** (a diferencia de un Efecto/Estado temporal de combate) — ej. -1 movimiento, 1 de daño cada 2 turnos, −1 al rango de visión | Definida en [`cards/curses.md`](cards/curses.md) (severidad Leve/Grave, fuentes, limpieza); da incentivo a "limpiar" el mazo |
 
@@ -121,32 +120,34 @@ Además siguen existiendo las **Cartas de Efecto/Estado** (ventaja, desventaja, 
 
 Todas las cartas de equipo siguen el mismo patrón que viste en Viajes: **coste** (si aplica) + **texto de efecto** + **modificador de estadística o de prueba**.
 
-### 3.3 Rareza
+### 3.3 Rareza / Nivel de carta *(unificado, decidido)*
 
-Determina lo poderosa que es una carta y la dificultad de encontrarla/comprarla (ligado a las Fichas de Tesoro de `board/board-map.md` y a los precios de `characters/npcs.md`):
+Determina lo poderosa que es una carta y la dificultad de encontrarla/comprarla (ligado a las Fichas de Tesoro de `board/board-map.md` y a los precios de `characters/npcs.md`). **Rareza y Nivel de carta son el mismo eje con dos nombres**: 5 escalones fijos, cada uno con su color y su número de estrellas (★) para el diseño visual de la carta.
 
-| Rareza | Color |
-|---|---|
-| Común | Gris |
-| Poco común | Verde |
-| Raro | Azul |
-| Épico | Morado |
-| Legendario | Dorado |
+| Nivel | Rareza | Color | Estrellas |
+|---|---|---|---|
+| 1 | Común | Gris | ★ |
+| 2 | Poco común | Verde | ★★ |
+| 3 | Raro | Azul | ★★★ |
+| 4 | Épico | Morado | ★★★★ |
+| 5 | Legendario | Dorado | ★★★★★ |
 
-Aplica a cartas de Arma/Armadura/Item (y previsiblemente Maldición). Las cartas de clase (§3.1) no llevan rareza propia por ahora — quedan fuera de este sistema.
+- **Aplica a Arma, Armadura, Item, Mercenario y Maldición** *(Maldición se suma ahora, decidido — antes quedaba "previsiblemente" fuera; su Nivel se lee al revés, ver [`cards/curses.md`](cards/curses.md) §1)*. Las **cartas de clase** (§3.1) siguen sin Rareza/Nivel de carta propio: se reforjan igual que el resto (§6d) pero cada una lleva su propia tabla de mejora carta a carta, sin insignia de estrella.
+- **Subir de Nivel = subir de Rareza, y es la única vía de progresión de una carta que ya tienes** *(decidido, sustituye la idea de uso acumulado)*: pagar al NPC especializado de su categoría, sin más requisito — ver §6d.
+- **Diseño visual — estrellas en la carta *(especificado, sin implementar todavía)*.** La insignia de Rareza ya existe (borde/marco coloreado por `data-rarity`, `components/design/GameCard.tsx` + `styles/components/_card.scss`) pero no muestra el escalón exacto, solo el color. Se añaden **de 1 a 5 estrellas pequeñas** (mismo color que la Rareza) junto al nombre de la carta, una por Nivel — no sustituyen el color (sigue siendo la lectura rápida a distancia), dan la cuenta exacta sin memorizar el orden cromático. Pendiente de implementar en esos dos ficheros (token de tamaño/posición nuevo en `styles/settings/`, por `AGENTS.md`).
 
 ## 4. Mazo y turno
 
-- El mazo de cada jugador = cartas de clase (básicas + especiales) + **items y mercenarios** obtenidos jugando (§3.2). Las **armas y armaduras van aparte**, en el sistema de equipo (§4a).
+- El mazo de cada jugador = cartas de habilidad de clase + **items y mercenarios** obtenidos jugando (§3.2). Las **armas y armaduras van aparte**, en el sistema de equipo (§4a).
 - **Mazo — dos zonas: el Mazo y "en juego" *(decidido)*:**
   - **Mazo del capítulo — hasta 20 cartas:** tu baraja personal = **cartas de clase + items + mercenarios** (más las **maldiciones** que te caigan). **Las armas y armaduras NO cuentan aquí** — van en el sistema de equipo aparte (§4a). Es un **tope duro**: los items/mercenarios nuevos entran jugando (botín, Tesoro, recompensas, compra, §6b), **no** con el Oteo; al llegar a 20, incorporar uno nuevo obliga a **cambiar una carta por otra** (swap 1-por-1).
-  - **En juego — tope fijo de 5 *(decidido, sustituye el tope elástico)*:** tu zona de cartas **preparadas**, las únicas que puedes jugar. Arranca con las **2 Básicas de clase que elegiste en el setup** (§1b, paso 4) y se llena poco a poco con el Oteo. **Clase, items y mercenarios compiten** por esos huecos (más de un tipo preparado = menos hueco para los demás).
+  - **En juego — tope fijo de 5 *(decidido, sustituye el tope elástico)*:** tu zona de cartas **preparadas**, las únicas que puedes jugar. Arranca con las **2 cartas de habilidad de clase que elegiste en el setup** (§1b, paso 4) y se llena poco a poco con el Oteo. **Clase, items y mercenarios compiten** por esos huecos (más de un tipo preparado = menos hueco para los demás).
 
     Antes el tope era una fórmula elástica `techo(Mazo ÷ 2)` entre 3 y 10, pensada para que un 10 fijo no quedara **muerto** al empezar la partida (con un Mazo de 7-8 cartas nunca lo alcanzabas). Un **5 fijo** no tiene ese problema: arrancas con 2 en juego del propio setup y el Oteo llena los otros 3 en pocos turnos incluso con el Mazo inicial más pequeño, así que se alcanza —y se empieza a sustituir— pronto en cualquier punto de la progresión, sin necesitar una fórmula que dependa del tamaño del Mazo.
   - **Otear *(decidido)*:** al **empezar tu turno**, antes de mover o actuar, revelas **2 cartas al azar de tu Mazo** y **eliges 1** para ponerla **en juego**; la otra **vuelve al Mazo**. Así "en juego" crece ~1 carta por turno hasta llenar sus 5 huecos. Las cartas en juego las usas **cuando quieras** (una poción, un mercenario, una carta de acción…), dentro de la economía de acción (§4b.3); no caducan si no las usas.
   - **Mazo con menos de 2 cartas *(decidido)*:** si en el Mazo queda **1 sola** carta sin preparar, el Oteo revela **esa 1** (la tomas o la dejas); si el Mazo está **vacío**, **no hay Oteo** ese turno. Es un caso de borde real, no teórico: con un Mazo pequeño se alcanza en pocos turnos.
 
-  > **Aviso de contenido — el Oteo necesita un Mazo mínimo.** Para que el Oteo sea una decisión de verdad, el Mazo debe tener **siempre ≥3-4 cartas sin preparar**. Con solo las 4 cartas de clase de nivel 1, el Mazo se vacía en el **turno 3** y en el turno 4 ya tienes toda tu baraja en juego: cero suerte, cero decisión. Por eso el **kit inicial regala items** (§1b, `characters/heroes.md` §2d) hasta unas **7-8 cartas** de arranque. Ampliar el catálogo de cartas de clase (`cards/class.md`) sigue mereciendo la pena por sabor e identidad, pero **no es el arreglo estructural**: subir un héroe de nivel 1 a 8-10 habilidades infla su presupuesto de poder y diluye la clase.
+  > **Aviso de contenido — el Oteo necesita un Mazo mínimo.** Para que el Oteo sea una decisión de verdad, el Mazo debe tener **siempre ≥3-4 cartas sin preparar**. Con las **8 cartas de habilidad de clase** que trae cada héroe desde el arranque (ya no 4: §3.1, `cards/class.md`) el Mazo ya no se vacía enseguida por sí solo; el **kit inicial también regala items** (§1b, `characters/heroes.md` §2d) por variedad de utilidad, no ya por necesidad estructural. Ampliar el catálogo de cartas de clase (`cards/class.md`) sigue mereciendo la pena por sabor e identidad, pero con cuidado: subir el roster de un héroe demasiado infla su presupuesto de poder y diluye la clase.
 
   Sustituye la idea anterior de "20 construidas + 10 drafteadas aparte (~30 en juego)". Detalle en [`cards/README.md`](cards/README.md).
 
@@ -158,9 +159,11 @@ Aplica a cartas de Arma/Armadura/Item (y previsiblemente Maldición). Las cartas
   >
   > Así el Oteo es una **decisión con información** —"rechazo estas 2 porque sé que me quedan dos mejores"— en vez de una apuesta a ciegas, que es lo que hace que componer el Mazo (qué compras, qué vendes, qué te quedas del botín) tenga consecuencias que puedes razonar. Además el **swap 1-por-1** al llegar a 20 lo exige: no puedes elegir qué carta sacrificas si no ves lo que tienes.
 - **Sin "mano" clásica:** no se roba y descarta una **mano completa** cada turno como en un juego de cartas al uso; el Oteo solo saca **2 al azar**, preparas 1 y lo que preparas **se queda en juego** hasta que lo juegas. Una vez una carta está **en juego**, es una opción **siempre disponible** hasta que la juegues (dentro del recurso de acción del turno, §4b.3): curarte, ayudar en la aventura, subir estadísticas, atacar, etc.
-- **Ninguna carta se pierde al jugarla *(decidido)*:** jugar una carta del mazo personal (equipo, clase, item) cuesta el recurso de turno que le corresponda (Movimiento/Acción/Acción rápida/Carta de Efecto, §4b.3), pero la carta **vuelve al Mazo** (§4) y puede volver a prepararse con el Oteo más adelante — **hoy** no hay descarte permanente ni cartas de "un solo uso" en el mazo personal (podría añadirse como excepción puntual en el futuro; de momento ninguna carta lo lleva). Textos como "un uso" o "se consume" en cartas de equipo/item **no aplican** y son restos de una idea descartada. El único límite real de repetición son las etiquetas explícitas **1/combate** o **1/descanso** de las Cartas Especiales de Clase (§3.1).
+- **Ninguna carta se pierde al jugarla *(decidido)*:** jugar una carta del mazo personal (equipo, clase, item) Tipo `Accion` cuesta tu Acción principal (`cards/class.md` §1); Tipo `Pasiva`/`Turnos` no gastan Acción (se pagan con el hueco de "en juego" que ocupan, ver abajo). La carta **vuelve al Mazo** cuando corresponda (§4) y puede volver a prepararse con el Oteo más adelante — **hoy** no hay descarte permanente ni cartas de "un solo uso" en el mazo personal (podría añadirse como excepción puntual en el futuro; de momento ninguna carta lo lleva). Textos como "un uso" o "se consume" en cartas de equipo/item **no aplican** y son restos de una idea descartada. El único límite real de repetición son las etiquetas explícitas **1/combate** o **1/descanso** que algunas Cartas de Habilidad de Clase llevan (§3.1).
 
-  > **Regla madre — jugar una carta la saca de "en juego" *(decidido, resuelve una contradicción entre documentos)*.** "Nada se pierde" **no** significa "se puede repetir". Al jugarla, la carta **abandona la zona "en juego"** y vuelve al Mazo; para volver a usarla tiene que **salirte otra vez en un Oteo** y ocupar de nuevo un hueco preparado. O sea: **"en juego" es munición preparada, no un equipamiento permanente.**
+  > **Regla madre — jugar una carta la saca de "en juego" *(decidido, resuelve una contradicción entre documentos)*.** "Nada se pierde" **no** significa "se puede repetir". Al jugar una carta Tipo `Accion`, **abandona la zona "en juego"** y vuelve al Mazo; para volver a usarla tiene que **salirte otra vez en un Oteo** y ocupar de nuevo un hueco preparado. O sea: **"en juego" es munición preparada, no un equipamiento permanente.**
+  >
+  > **Excepción — Tipo `Pasiva` y Tipo `Turnos` *(decidido)*.** Estos dos tipos, al jugarlos, **no** vuelven al Mazo: se quedan ocupando su hueco de "en juego". `Pasiva` lo ocupa **para siempre** (hasta que decidas sustituirla en un Oteo posterior, como cualquier carta preparada); `Turnos` lo ocupa **durante los turnos que indique su Efecto** y, al cumplirse, se descarta y vuelve sola al Mazo. El coste real de estos dos tipos es el hueco que sacrifican, no la Acción — detalle y ejemplos en `cards/class.md` §1.
   >
   > Esto contradecía a [`cards/class.md`](cards/class.md) §1 ("las Básicas son reutilizables cada turno; lo único que impide spamearlas es que cuestan la Acción"), a §3.1 de este documento y a [`cards/mercenaries.md`](cards/mercenaries.md) §1 ("un aliado al que das la orden una vez por turno") — **los tres eran texto viejo y quedan corregidos**; manda esta regla. Con la lectura contraria, "en juego" se convertía en un *loadout* fijo que montas en 4-6 turnos y luego repites hasta el final: el Oteo dejaba de decidir nada a partir del turno 6, y una sola carta de curación preparada volvía el combate imposible de perder.
   >
@@ -204,11 +207,11 @@ Cada turno el héroe dispone de:
 | Recurso | Qué permite |
 |---|---|
 | **Movimiento (2 hex)** | Moverse hasta 2 hexágonos (coste modificado por terreno, §2.2). Se puede repartir antes y después de la Acción. |
-| **1 Acción principal** | Un ataque con arma equipada, lanzar un hechizo, activar una Carta Especial de Clase, o interactuar con una ficha contigua. |
-| **1 Acción rápida** (1/turno) | Beber una poción, jugar una carta de Item "rápido", o hacer un **ataque secundario** con tu equipo (ver abajo). |
+| **1 Acción principal** | Un ataque con arma equipada, lanzar un hechizo, activar una Carta de Habilidad de Clase, o interactuar con una ficha contigua. |
+| **1 Acción rápida** (1/turno) | Hacer un **ataque secundario** con tu equipo (ver abajo). Es el único uso: ninguna carta cuesta ya Acción rápida (`cards/class.md` §1, `cards/items.md` §4). |
 | **Cartas de Efecto/modificador** | Enganchadas a una tirada concreta (tuya o del enemigo). **Hasta 1 por tirada** — así "juegas cualquier carta cuando quieras" (§4) sin poder apilar infinitas. No gastan la Acción. |
 
-Las **Cartas Especiales de Clase** son potentes y de uso limitado: **1 vez por combate o por descanso** (§3.1).
+Algunas **Cartas de Habilidad de Clase** son potentes y de uso limitado: **1 vez por combate o por descanso** (§3.1).
 
 **Ataque secundario *(decidido — sustituye al "dual-wield con arma ligera")*.** Cualquier héroe puede gastar su **Acción rápida** en un segundo ataque con el equipo que lleve puesto, sin necesitar ninguna carta:
 
@@ -219,7 +222,7 @@ Las **Cartas Especiales de Clase** son potentes y de uso limitado: **1 vez por c
 
 - La tirada de ataque es normal (`1d20 + mod`, §4b.4) en los dos casos; lo que cambia es el daño.
 - **Por qué así:** el escudo (+2 CA, [`cards/weapons.md`](cards/weapons.md) §3) y las dos armas dejan de ser la misma cosa — **escudo = defensa, dos armas = ofensiva** —, y ya no hace falta la propiedad **"Ligera"**, que se referenciaba en dos reglas y **no existía en ningún catálogo** (`cards/weapons.md` §4). La columna de Manos ✋/🤲 hace ese trabajo con datos que ya están escritos.
-- **Por qué existe:** con la regla madre de §4 (jugar una carta gasta su preparación), el turno en el que el Oteo no te da nada útil se quedaba en *un solo* ataque de ~3,5 de daño frente a Élite de 30-35 PV. El ataque secundario sube el daño sostenido de la plantilla a **4,0-5,9** sin depender de la suerte, y convierte la Acción rápida en una decisión real cada turno: **¿poción, item, o pegar otra vez?**
+- **Por qué existe:** con la regla madre de §4 (jugar una carta gasta su preparación), el turno en el que el Oteo no te da nada útil se quedaba en *un solo* ataque de ~3,5 de daño frente a Élite de 30-35 PV. El ataque secundario sube el daño sostenido de la plantilla a **4,0-5,9** sin depender de la suerte: siempre puedes **pegar otra vez** aunque el Oteo no te dé nada que jugar.
 - **Excepción:** la **Ballesta pesada** no admite ataque secundario (regla de Recarga, [`cards/weapons.md`](cards/weapons.md) §4).
 
 ### 4b.4 Resolución de un ataque (paso a paso)
@@ -246,7 +249,7 @@ Los enemigos **sí se mueven**, pero solo tras **detectar al héroe**. Modelo de
 
 > **El *kiting* por velocidad no funciona, y es a propósito *(decidido)*.** Un enemigo puede **mover su Velocidad completa y atacar en el mismo turno** (`characters/enemies.md` §5b.6, paso 4). Con la Velocidad igualada a 2, uno melee que esté a 3 hex se te pega y te golpea en un turno; si tú retrocedes 2, él vuelve a pegarse — y encima retroceder te cuesta una tirada de **Desengancharse** (§4b.11). O sea que **alejarte a pie es estrictamente peor que quedarte quieto**.
 >
-> No se arregla dando velocidad extra al héroe (eso convierte a todo enemigo lento en gratis). La forma de crear distancia es el **control**: *Enredo gélido* → **Inmovilizado**, Ralentizado, *Escabullirse* / *Desaparecer* → **Oculto** ([`effects.md`](effects.md)). Por eso *Enredo gélido* pasa a **Acción rápida** ([`cards/class.md`](cards/class.md) §3): si frenar al enemigo te costaba la Acción, frenarlo salía igual de caro que matarlo y nunca compensaba.
+> No se arregla dando velocidad extra al héroe (eso convierte a todo enemigo lento en gratis). La forma de crear distancia es el **control**: *Enredo gélido* → **Inmovilizado**, Ralentizado, *Escabullirse* / *Desaparecer* → **Oculto** ([`effects.md`](effects.md), [`cards/class.md`](cards/class.md) §3).
 >
 > Consecuencia para el rol del Mago: **no es un *kiter*, es un frágil que castiga desde lejos y compra turnos con control** (`cards/class.md` §3, reescrito). Sobrevive por PV (16, §2), por *Escudo arcano* y por poder disparar a bocajarro (§4b.1), no por correr más.
 
@@ -262,7 +265,7 @@ Resuelve el cross-reference pendiente entre §4 (solo hablaba del mazo personal)
 
 ### 4b.7 Hechizos (sin recurso de puntos)
 
-En el prototipo los hechizos son simplemente **Cartas de clase** (Especiales 1/combate o 1/descanso, y Básicas de ataque mágico como *Descarga arcana* o *Llama sagrada*) o **Pergaminos** (Item). Viven en el Mazo y se **preparan con el Oteo** como cualquier otra carta (§4): **no hay un subsistema de "preparar hechizos" aparte**, ni maná, ni espacios de conjuro. Se lanzan gastando la Acción que indique la carta y se resuelven con `1d20 + INT/SAB` vs CD/Defensa (§4b.4).
+En el prototipo los hechizos son simplemente **Cartas de habilidad de clase** (algunas con uso limitado 1/combate o 1/descanso, como *Bola de fuego*; otras de uso libre, como *Descarga arcana* o *Llama sagrada*) o **Pergaminos** (Item). Viven en el Mazo y se **preparan con el Oteo** como cualquier otra carta (§4): **no hay un subsistema de "preparar hechizos" aparte**, ni maná, ni espacios de conjuro. Se lanzan gastando la Acción que indique la carta y se resuelven con `1d20 + INT/SAB` vs CD/Defensa (§4b.4).
 
 **Foco *(decidido)*:** el **Libro de hechizos** (Mago) y el **Símbolo sagrado** (Clérigo) son **armas equipadas** (§4a, [`cards/weapons.md`](cards/weapons.md) §3) que dan **+1 a las tiradas y CD de tus hechizos** mientras las empuñas —como el Bastón del poder—; potencian, no son requisito para lanzar. La granularidad de caster (tipos de magia, debilidades elementales, subclases de mago) queda como desarrollo posterior.
 
@@ -279,7 +282,7 @@ En el prototipo los hechizos son simplemente **Cartas de clase** (Especiales 1/c
 | **El enemigo escapa** — completa su *leash* de 2 turnos (`characters/enemies.md` §5b.6) | Se resetean al completarse el leash |
 | **Escapas tú** — te mantienes fuera de la detección y la línea de visión de todos los enemigos Activos durante **2 turnos** (el mismo leash de `characters/enemies.md` §2, aplicado en tu dirección) | Se resetean **al completarse esos 2 turnos**, no al salir corriendo |
 
-> **Por qué el reset no es inmediato al huir.** Si lo fuera, el bucle óptimo sería: lanzas *Bola de fuego*, te alejas un hexágono, vuelves con la Especial recargada. Exigir los 2 turnos completos de leash lo cierra sin inventar ninguna regla nueva —reutiliza el leash que ya existe— y le pone un precio real: **+8 de Nivel de Amenaza por huir** (§6c.2) más los dos turnos perdidos. Si el enemigo te vuelve a detectar antes de completarlos, **es el mismo combate**: el contador de turnos se reinicia y tus `1/combate` siguen gastados.
+> **Por qué el reset no es inmediato al huir.** Si lo fuera, el bucle óptimo sería: lanzas *Bola de fuego*, te alejas un hexágono, vuelves con la carta recargada. Exigir los 2 turnos completos de leash lo cierra sin inventar ninguna regla nueva —reutiliza el leash que ya existe— y le pone un precio real: **+8 de Nivel de Amenaza por huir** (§6c.2) más los dos turnos perdidos. Si el enemigo te vuelve a detectar antes de completarlos, **es el mismo combate**: el contador de turnos se reinicia y tus `1/combate` siguen gastados.
 - **Derrota (héroe a 0 PV):** con un solo héroe (`characters/heroes.md`), 0 PV = caído. Partida rápida → fin de partida; Modo Campaña → reiniciar el mapa/capítulo (el nivel y el mazo persisten). La recuperación entre combates se define en §4c (Descanso y recuperación).
 
 ### 4b.9 Estados de combate (borrador)
@@ -356,7 +359,7 @@ Es la ventana que se buscaba: **el equipo solo no basta y el mazo decide la pele
 
 ### 4c.1 Consumibles — en cualquier momento (incluido combate)
 
-- **Poción de vida** ([`cards/items.md`](cards/items.md)): Acción rápida (§4b.3), recupera PV al instante. La vía rápida de emergencia dentro del combate.
+- **Poción de vida** ([`cards/items.md`](cards/items.md) §4): Tipo `Accion`, cuesta tu Acción principal y recupera PV al instante. Curarte en combate significa renunciar a atacar ese turno, no un extra barato.
 - Otros consumibles (pergaminos de curación, antídotos que quitan Envenenado, etc.) siguen el mismo patrón.
 
 ### 4c.2 Acampar — carta Hoguera (fuera de combate) = descanso corto
@@ -386,11 +389,23 @@ Motivo: el modelo de DV fiel a D&D se rompe justo en el prototipo. Con la progre
 
 > **Ojo al reactivarlo:** cartas y maldiciones ya referencian DV — *Saco de dormir* (+1 DV al acampar, [`cards/items.md`](cards/items.md)) y *Fatiga eterna* (−1 DV, [`cards/curses.md`](cards/curses.md)). Con cura fija, ambas quedan **inactivas** (mismo caso que las cartas que esperan el sistema de grupos/tiles, `board/board-map.md` §8): *Saco de dormir* pasa a "+2 PV al acampar" y *Fatiga eterna* a "la Hoguera cura un cuarto en vez de la mitad" mientras dure el prototipo.
 
-## 5. Progresión de personaje
+## 5. Progresión de personaje *(formalizada, decidido)*
 
-- Subir de nivel por hitos de historia (como D&D 5e "milestone leveling"), no por XP acumulada — encaja mejor con partidas cortas de cartas.
-- Cada nivel: PV extra (dado de vida de la clase + mod CON, §2), posible mejora de estadística, y desbloqueo de 1 carta especial de clase nueva que se añade al mazo personal.
-- El equipo se consigue jugando —botín, tesoro, compra (§6b)—, no por nivel: **armas y armaduras** se equipan aparte (§4a) y los **items/mercenarios** entran al Mazo (§4). Dos ejes de progresión en paralelo (personaje vs. equipo/mazo), igual que en Viajes (colección de cartas de Objeto) combinado con el nivel de personaje de D&D.
+- **Subir de Nivel por hitos de historia** (como D&D 5e "milestone leveling"), no por XP acumulada — encaja mejor con partidas cortas de cartas. **Cada hito ya alcanzado concede +1 Nivel**, no hace falta ningún disparador nuevo.
+- **Mismo rango 1-5 que las cartas (§3.3), mismo lenguaje de estrellas** — un héroe/enemigo de Nivel 3 se lee con ★★★ igual que una carta Rara. Es un eje **aparte** del Nivel de carta (subir de Nivel una Espada no sube el Nivel del héroe, y viceversa) y del reloj de Amenaza (§6c.5, que mide tiempo, no historia).
+- **PV por nivel** — `dado de vida de la clase (promedio, redondeo arriba) + mod Constitución`, sumado cada nivel a partir del 2 (el Nivel 1 ya fija su PV con la fórmula de §2: dado máximo + mod CON + 10 de aguante):
+
+  | Héroe | Dado | PV Nivel 1 | +PV por nivel (2→5) | PV en Nivel 5 |
+  |---|---|---|---|---|
+  | Guerrero (CON +2) | d10 | 22 | +8 | 22+8×4 = **54** |
+  | Clérigo (CON +2) | d8 | 20 | +7 | 20+7×4 = **48** |
+  | Pícaro (CON +1) | d8 | 19 | +6 | 19+6×4 = **43** |
+  | Mago (CON +0) | d6 | 16 | +4 | 16+4×4 = **32** |
+
+  Los enemigos usan la misma lógica de Dados de Vida — ver `characters/enemies.md` §5d.
+- **Mejora de estadística — en los Niveles 3 y 5 *(decidido, sustituye "posible mejora")*:** +1 a la estadística principal del héroe (`characters/heroes.md` §2b), aplicado dos veces en todo el arco de 5 niveles — no es D&D con ASI cada 4 niveles, es una escala corta y las dos subidas se sienten en un arco de 5.
+- **El Nivel de personaje ya no desbloquea cartas nuevas** *(decidido — elimina la distinción Básica/Especial de las cartas de clase)*: las **8 cartas de habilidad** de cada héroe están disponibles desde el arranque (`cards/class.md`), y suben de Nivel de forma independiente pagando al Instructor (§6d.5). Subir de Nivel el personaje solo da PV y mejora de estadística — son dos ejes que ya no se tocan entre sí.
+- El equipo se consigue jugando —botín, tesoro, compra (§6b)—, no por nivel: **armas y armaduras** se equipan aparte (§4a) y los **items/mercenarios** entran al Mazo (§4). Dos ejes de progresión en paralelo (personaje vs. equipo/mazo), igual que en Viajes (colección de cartas de Objeto) combinado con el nivel de personaje de D&D. **Nivel de carta (§6d) es un tercer eje**, sobre cartas concretas, no sobre el personaje.
 
 ## 6. Ventajas/Desventajas y objetivo de las cartas
 
@@ -426,7 +441,7 @@ Esto es clave para que el "deckbuilding" tenga sentido táctico: no solo mejoras
 - **Comprar cartas** en tiendas (Mercader — Items, Herrero — armas/armaduras, Mago/Encantador — hechizos; `characters/npcs.md`): precio por Rareza (§6b.3).
 - **Comprar cartas de Mercenario** (`characters/npcs.md`, [`cards/mercenaries.md`](cards/mercenaries.md)): coste según su Rareza; van a tu mazo (vía segura frente a reclutarlas con una prueba).
 - **Limpiar una Maldición** en el Templo / **Sacerdote-Sanador** (`characters/npcs.md`, [`cards/curses.md`](cards/curses.md)): coste fijo (o prueba).
-- **Herrero** (`characters/npcs.md`): reparar/mejorar una carta de equipo (subir de rareza o reforjar) — coste por definir.
+- **Herrero** (`characters/npcs.md`): sube de Nivel una carta de equipo que ya tengas (§6d) — coste = trade-in de §6b.3.
 - El **descanso largo** básico en Pueblo es gratis (§4c.3); solo los servicios premium cuestan oro.
 
 ### 6b.3 Precios por Rareza
@@ -602,12 +617,66 @@ Escalados **de una sola vez** al cruzar cada cuarto. Con el tope a 40 (§6c.1), 
 - **Partida rápida**: da urgencia real (no puedes farmear el mapa sin fin); el boss de la Guarida (`board/board-map.md` §2b) debe caer antes del turno **40**. Como la travesía hasta él son 15-20 turnos, el reloj se traduce en una pregunta concreta cada turno: **¿me desvío a esta ficha o sigo hacia la Guarida?**
 - **Tabla de loot** (§6b.6): está calibrada sobre estos 40 turnos. Si mañana cambia la duración, hay que rehacer el calibrado del Mazo — son el mismo número visto desde dos sitios.
 
+## 6d. Reforjar: subir de Nivel una carta *(decidido, sustituye la versión con uso)*
+
+Cierra la idea que llevaba aparcada desde julio (`ideas.md`, "los items suben de nivel") y la nota pendiente de `status.md`. **No es la progresión de personaje** (§5, por hitos de historia): esto es subir de Nivel una **carta concreta** de tu Mazo o tu equipo — un tercer eje de progresión, independiente del personaje (§5) y del reloj de Amenaza (§6c.5).
+
+### 6d.1 Mecanismo único: pagar al NPC especializado, sin uso *(decidido — retira el umbral de uso de la versión anterior)*
+
+- Subir de Nivel una carta que ya tienes (equipada o en el Mazo) exige **una sola cosa**: pagar al NPC que trata su categoría (§6d.2) el coste de su escalón.
+- **No hace falta haberla jugado, atacado con ella ni llevarla puesta un mínimo de combates.** La versión anterior de este apartado exigía acumular usos antes de poder pagar; queda retirada.
+- **Coste — el mismo trade-in de siempre, ahora la única puerta:** `Comprar(escalón siguiente) − Vender(escalón actual)` de la tabla de precios de §6b.3. Como esa tabla depende solo del Nivel/Rareza y no de qué carta concreta sea, **el coste es el mismo para las cinco categorías**, cartas de clase incluidas (§6d.5):
+
+  | Salto de Nivel | Coste |
+  |---|---|
+  | 1→2 (Común → Poco común) | 21 oro |
+  | 2→3 (Poco común → Raro) | 50 oro |
+  | 3→4 (Raro → Épico) | 125 oro |
+  | 4→5 (Épico → Legendario) | 340 oro |
+
+  Solo se sube **1 escalón por visita**; llegar de 1 a 5 exige las cuatro visitas y sus cuatro costes (496 oro en total) — una meta de Campaña completa (el oro persiste entre mapas, §6b), no de una sola Partida rápida (~40-60 oro por partida, §6b.6).
+
+> **Por qué solo oro, sin uso *(decidido, sustituye la razón anterior)*.** La versión anterior exigía uso **y** oro para que reforjar no fuera solo "comprar directamente el siguiente escalón" (§6b.2, que ya existía). Dario ha decidido simplificarlo a **NPC + oro únicamente**, sin contador de uso que el motor tenga que trackear por carta. Sigue sin ser gratis ni instantáneo —el oro es el recurso más disputado del juego (§6b)— y sigue sin depender de jugar/grindear una carta concreta, coherente con que el personaje tampoco sube por XP acumulada (§5): **ningún eje de progresión del juego se basa en repetir una acción**, todos son hitos (personaje, §5) o economía (cartas, aquí).
+
+### 6d.2 Categoría por categoría
+
+| Categoría | NPC que reforja | Escalera que usa |
+|---|---|---|
+| Arma / Armadura | Herrero | Completa 1-5 (`cards/weapons.md` §5b, `cards/armor.md` §6b) |
+| Item | Mercader | Parcial — solo ejemplos ilustrativos, ver §6d.3 |
+| Mercenario | Capitán de mercenarios | Completa 1-5 en las tres familias (`cards/mercenaries.md` §3b) |
+| Cartas de habilidad de clase | **Instructor** (`characters/npcs.md` §2) | Sin Rareza — tabla propia carta a carta, ver §6d.5 |
+| Maldición | **Sacerdote/Sanador** (`characters/npcs.md` §2) | **Invertida**: el pago baja 1 Nivel en vez de subirlo — ver §6d.6 |
+
+### 6d.3 Items — falta la escalera por familia
+
+`cards/items.md` no tenía el patrón "misma familia, más potencia por escalón" de armas/armaduras: cada item era una carta única con una sola Rareza. Ya está hecho para los **9 items del kit inicial** (`characters/heroes.md` §2d) a los 5 escalones completos (`cards/items.md` §5b y su §5 de movimiento) — el Mercader ya puede reforjar todo lo que trae un héroe al empezar. Queda pendiente el resto del catálogo (Catalejo, objetos mágicos...), sin bloquear nada.
+
+### 6d.4 Mercenarios
+
+`cards/mercenaries.md` §3b agrupa el catálogo en familias por alcance (Melee, Distancia, Soporte). Las tres cubren ya los 5 escalones de punta a punta, así que el Capitán de mercenarios puede reforjar cualquier mercenario del catálogo del prototipo sin huecos.
+
+### 6d.5 Cartas de clase — el Instructor
+
+Las cartas de clase no llevan Rareza (§3.3) ni pasan por ninguna tienda, así que necesitan un NPC propio: el **Instructor**, en `characters/npcs.md` §2 (como el Tabernero o el Sacerdote, no vende/compra cartas — solo cobra un servicio). **Usa la misma tabla de coste de §6d.1** (21/50/125/340 oro): esa tabla nunca dependió del precio de mercado de la carta concreta, solo del escalón de Rareza, así que se aplica igual a una carta sin Rareza propia — no hace falta una tabla de precio aparte. Cada una de las 8 cartas de habilidad de un héroe necesita su propia fila de mejora carta a carta en `cards/class.md`, con el mismo espíritu que la regla de derivación de `weapons.md` §5b (mismo efecto base, +1 magnitud o +1 alcance/duración por escalón) — hecho para las **8 cartas de los 4 héroes** (`cards/class.md` §6a, §6b). Falta balancear las cifras.
+
+### 6d.6 Maldiciones — el Sacerdote paga para bajar, no para subir
+
+Invertido a propósito: nadie paga para que su propia Maldición empeore. En vez de subir de Nivel, el Sacerdote/Sanador cobra por **bajarlo 1**, usando la misma tabla de §6d.1 leída al revés — bajar desde un escalón caro (Épico/Legendario) cuesta lo mismo que subir hasta él (125/340 oro); bajar desde uno barato (Poco común), poco (21 oro).
+
+**Ya no hay reloj de desgaste gratis** *(decidido, retira la versión anterior)*: antes aguantar una Maldición la debilitaba sola con el tiempo (15 turnos por escalón, sin pagar nada). Con la regla general de "solo NPC + oro" para las cinco categorías, esa vía gratuita queda retirada: una Maldición se queda en su Nivel hasta que la pagas, sin excepción. Los 5 escalones de severidad y el catálogo actualizado están en `cards/curses.md` §1-§2.
+
+### 6d.7 Relación con lo ya aparcado
+
+- **No compite con la progresión de personaje** (§5): son ejes independientes, igual que §6c.5 ya separa Amenaza (tiempo) de hitos (historia) — este es el tercero, **cartas** (Nivel + oro).
+- **No es "Desgaste y reparación de equipo"** (`ideas.md`): esa idea aparcada es que el equipo empeore con el uso y haya que repararlo; ésta es la contraria, el equipo mejora si pagas. Podrían convivir en el futuro (desgaste hacia abajo + reforjado hacia arriba), pero hoy son ideas separadas y solo ésta queda decidida.
+
 ## 7. Próximos pasos / temas a documentar
 
 ### Dudas/inconsistencias detectadas al revisar contra board-map.md, enemies.md, npcs.md y heroes.md
 
 1. ~~Faltaba el sistema de puntos de movimiento por turno~~ → **Resuelto (§2.2):** 2 movimientos estándar para todos (no depende de raza ni stat), con extras vía fichas/cartas de movimiento/cartas de clase.
-2. ~~Faltaba el sistema de rango de visión / habilidades de exploración~~ → **Resuelto en parte (§2.3):** el rango de visión base lo gobierna Sabiduría. Sigue pendiente diseñar las Cartas Especiales de Clase de exploración que lo amplíen más (ver checklist).
+2. ~~Faltaba el sistema de rango de visión / habilidades de exploración~~ → **Resuelto en parte (§2.3):** el rango de visión base lo gobierna Sabiduría. Sigue pendiente diseñar más Cartas de Habilidad de Clase de exploración que lo amplíen más (ver checklist).
 3. ~~Falta un recurso de economía/moneda.~~ → **Resuelto (§6b):** el recurso es **Oro** (contador de personaje), con fuentes (enemigos, tesoros, venta) y sumideros (tiendas, mercenarios, descanso premium, limpiar maldiciones) y precios ligados a la Rareza.
 4. ~~El tracker de Miedo seguía como "candidato" pero otros documentos lo asumían adoptado~~ → **Resuelto (evolucionado):** el tracker se **descarta**; el **Miedo** pasa a ser un **Efecto negativo** ([`effects.md`](effects.md)) y la presión temporal la cubre el nuevo **Nivel de Amenaza** (§6c). `board/board-map.md`, `characters/heroes.md` e `ideas.md` actualizados para no depender del tracker.
 5. ~~Tensión entre CR de `characters/enemies.md` y el leveling por hitos (§5).~~ → **Resuelto:** en vez de un CR 1:1, la **escala de dificultad** (`characters/enemies.md` §5c) decide qué categorías de enemigo aparecen según la zona del mapa (**Partida rápida**) o el nivel/capítulo (Campaña).
@@ -616,7 +685,7 @@ Escalados **de una sola vez** al cruzar cada cuarto. Con el tope a 40 (§6c.1), 
 
 ### Checklist
 
-- [x] Definir lista de clases iniciales con sus cartas básicas — los **4 héroes** (Guerrero, Mago, Pícaro, Clérigo) tienen Básicas + 1 Especial en [`cards/class.md`](cards/class.md). Roster en [`characters/heroes.md`](characters/heroes.md); falta balancear y decidir si el prototipo arranca con 2-3 o los 4.
+- [x] Definir lista de clases iniciales con sus cartas de habilidad — los **4 héroes** (Guerrero, Mago, Pícaro, Clérigo) tienen 8 cartas cada uno en [`cards/class.md`](cards/class.md). Roster en [`characters/heroes.md`](characters/heroes.md); falta balancear y decidir si el prototipo arranca con 2-3 o los 4.
 - [x] Definir resolución exacta de pruebas — **1d20 + modificador** contra CD/Defensa, con las cartas como modificadores de la tirada (§4, §6).
 - [x] Bocetar el catálogo de cartas de equipo por categoría (arma, armadura, item) — ver [`cards/`](cards/README.md) ([`weapons`](cards/weapons.md)/[`armor`](cards/armor.md)/[`items`](cards/items.md)). Cartas de **clase** bocetadas para Guerrero/Mago en [`cards/class.md`](cards/class.md). Bocetos iniciales de [`Efecto/Estado`](effects.md), [`Maldición`](cards/curses.md) y [`Mazo de encuentro`](cards/encounter.md) creados (pendientes de detalle).
 - [x] Definir combate: orden de turno, cómo se resuelve un ataque paso a paso — ver **§4b** (adyacencia, iniciativa, recurso de acción por turno, ataque paso a paso, mazo de encuentro). Falta solo confirmar §4b.5 (movimiento de enemigos en combate).
@@ -631,14 +700,14 @@ Escalados **de una sola vez** al cruzar cada cuarto. Con el tope a 40 (§6c.1), 
 - [x] **Resolver si una carta jugada se queda "en juego" o vuelve al Mazo** → **vuelve al Mazo** (regla madre de §4). `cards/class.md` §1, §3.1 de este documento y `cards/mercenaries.md` §1 decían lo contrario y quedan corregidos. Era la contradicción más grave del sistema: decidía si "en juego" es un *loadout* que se spamea o **munición preparada**.
 - [x] **Cuadrar la matemática del combate** → §4b.12: PV de protagonista (§2), **ataque secundario** (§4b.3) y recorte de los Élite (`characters/enemies.md` §5b.3). Antes los tres Élite ganaban a los cuatro héroes y el Mago perdía contra un lobo suelto.
 - [x] **Tope de 2 enemigos simultáneos** (`characters/enemies.md` §5b.6) — límite de economía de acción, no de balance.
-- [x] **Definir cuándo termina un combate** (de lo que dependen los contadores `1/combate`) → §4b.8, por victoria / leash del enemigo / leash tuyo, cerrando el exploit de huir para recargar Especiales.
+- [x] **Definir cuándo termina un combate** (de lo que dependen los contadores `1/combate`) → §4b.8, por victoria / leash del enemigo / leash tuyo, cerrando el exploit de huir para recargar las cartas `1/combate`.
 - [x] **Ataques a distancia contra un enemigo adyacente** → §4b.1, **a bocajarro con Desventaja**. Hace real la referencia que `effects.md` ya hacía y evita que el Mago se quede sin ataque.
 - [x] **Críticos de los enemigos** → simétricos con el héroe (§4b.4 paso 5, `characters/enemies.md` §5b.1).
 - [x] **El daño suma siempre el modificador**, hechizos incluidos → §4b.4 paso 4; corregidas *Descarga arcana* y *Llama sagrada*.
-- [x] **Primer combate jugable** → §1b paso 4: eliges **2 Básicas** que arrancan preparadas. Antes el primer combate se peleaba con 0-2 cartas al azar y el Mago moría por sorteo.
+- [x] **Primer combate jugable** → §1b paso 4: eliges **2 cartas de habilidad** (de las 8 del héroe) que arrancan preparadas. Antes el primer combate se peleaba con 0-2 cartas al azar y el Mago moría por sorteo.
 - [x] **Retirar la propiedad fantasma "Ligera"**, de la que colgaban dos reglas sin existir en ningún catálogo → `cards/weapons.md` §4.
 - [x] **Dar contenido a la progresión de equipo** → `cards/weapons.md` §5b y `cards/armor.md` §6b: escalones Poco común/Raro para las familias del prototipo. Todo el catálogo era Común, así que no había nada que encontrar (ni a lo que apuntar desde la tabla de loot).
-- [ ] Definir las primeras Cartas Especiales de Clase de exploración que amplíen el rango de visión (duda 2, queda solo esta parte).
+- [ ] Definir las primeras Cartas de Habilidad de Clase de exploración adicionales que amplíen el rango de visión (duda 2, queda solo esta parte).
 - [x] **Tabla de loot** *(decidido)* → §6b.6: tres pasos (¿cae carta? · ¿qué rareza? · ¿qué tipo?), con el calibrado que la ata al objetivo elegido —**botín moderado, Mazo de 8 a ~14-16**— y la regla de caída para Épico/Legendario, que casi no existen en el catálogo del prototipo.
 - [x] **Duración de una Partida rápida y reescalado del Nivel de Amenaza** *(decidido)* → **40 turnos** (§6c.1): el tope pasa de 100 a 40, los umbrales caen en los turnos 10/20/30 y las subidas de golpe se reescriben como "cuántos turnos te cuesta" (+3 acampar, +2 alertar/huir, +5 Mal augurio, −10 el Tabernero). Con tope 100 el reloj daba **cinco veces** lo necesario para la travesía de 22 hexes y no ejercía ninguna presión.
 - [x] **¿Puede el jugador consultar su Mazo?** *(decidido)* → **sí, la lista completa y en cualquier momento** (§4). No estaba escrito, y el swap 1-por-1 ya lo exigía.
@@ -647,6 +716,8 @@ Escalados **de una sola vez** al cruzar cada cuarto. Con el tope a 40 (§6c.1), 
 - [x] Definir cómo se traduce capítulo/hito de Campaña a CR de enemigo esperado (duda 5) → **escala de dificultad** por zona/nivel (`characters/enemies.md` §5c).
 - [x] Confirmar si el máximo de cartas del mazo (§4, ej. 10) cuenta solo el equipo o también las cartas de clase → **cuenta todas** (clase + equipo). El límite podrá subirse más adelante si hace falta.
 - [x] Terminar de definir la mecánica de Maldición (§3.2) → [`cards/curses.md`](cards/curses.md): severidad Leve/Grave, catálogo de 8, fuentes, y limpieza (Templo por oro o prueba). Falta balancear.
+- [x] Definir el sistema de subir de nivel las **cartas** (no confundir con el personaje, §5) → **§6d Reforjar**: solo NPC + oro (sin uso), coste = trade-in de la tabla de §6b.3, igual para las cinco categorías. Arma/Armadura/Mercenario/cartas de clase ya completan su escalera 1-5; Item queda con catálogo por completar más allá del kit inicial (§6d.3).
+- [x] Formalizar la progresión de **personaje** (§5), aparcada hasta ahora → mismo rango 1-5 que las cartas, hitos ya conceden el nivel, PV/estadística concretados por héroe; ya **no** desbloquea cartas (eso quedó eliminado al fusionar Básica/Especial, `cards/class.md` §6, con las 8 cartas de cada héroe ya con tabla 1-5). Falta balancear.
 
 ## Referencias de inspiración
 

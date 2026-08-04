@@ -45,6 +45,13 @@ const SEVERITY: Record<NonNullable<CardRecord["severity"]>, { icon: string; labe
   grave: { icon: "🔴", label: "Grave" },
 };
 
+// Ciclo de vida de la carta (cards/class.md §1).
+const CARD_TYPE: Record<NonNullable<CardRecord["type"]>, string> = {
+  accion: "Acción",
+  pasiva: "Pasiva",
+  turnos: "Turnos",
+};
+
 const MAX_TILT = 10;
 
 // Nivel de ajuste (1/2/3) según la longitud del efecto ya renderizado: reduce
@@ -138,13 +145,13 @@ export default function GameCard({
           {SEVERITY[card.severity].icon}
         </span>
       )}
-      {card.cost && <span className="card__cost">{card.cost}</span>}
+      {card.type && <span className="card__cost">{CARD_TYPE[card.type]}</span>}
       <div className="card__art">
         <span className="emoji">{card.emoji}</span>
       </div>
       <h3 className="card__name">{card.name}</h3>
       <p className="card__text">
-        {card.cost && <span className="card__cost-line">{card.cost}</span>}
+        {card.type && <span className="card__cost-line">{CARD_TYPE[card.type]}</span>}
         {body}
       </p>
       <footer className="card__footer">

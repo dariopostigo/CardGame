@@ -71,6 +71,8 @@ Aplica igual a Arma/Armadura/Item (Rareza general en `../game-design.md` §3.3, 
 |---|---|
 | **Poco común** | **+1 al bono de CA** |
 | **Raro** | **+1 al bono de CA** y, si la tenía, **pierde la desventaja de sigilo** |
+| **Épico** | **+1 al bono de CA** más una **resistencia a un tipo de daño** propia de familia (`../game-design.md` §4b.10) |
+| **Legendario** | **+2 al bono de CA** (el doble del Raro) y la resistencia de Épico **ampliada** a un segundo tipo |
 
 **Ligeras 🥼** (familia: Cuero tachonado)
 
@@ -80,6 +82,8 @@ Aplica igual a Arma/Armadura/Item (Rareza general en `../game-design.md` §3.3, 
 |---|---|---|---|
 | Cuero endurecido | +3 | — | Poco común |
 | Piel de sombra | +4 | **+2** a la prueba de sigilo (`../characters/enemies.md` §2b) | Raro |
+| Cuero de dragón curtido | +5 | +2 a sigilo · resistente a 🏹 Perforante | Épico |
+| Manto del cazador eterno | +6 | +2 a sigilo · resistente a 🏹 Perforante y 🗡️ Cortante | Legendario |
 
 **Medias 👕** (familia: Cota de escamas)
 
@@ -89,6 +93,8 @@ Aplica igual a Arma/Armadura/Item (Rareza general en `../game-design.md` §3.3, 
 |---|---|---|---|
 | Escamas de wyvern | +5 | Desventaja para evitar detección | Poco común |
 | Escamas silentes | +5 | **Sin** desventaja de sigilo — este escalón gasta su mejora en silenciarla en vez de en CA | Raro |
+| Escamas del dragón joven | +6 | Sin desventaja de sigilo · resistente a 🔥 Fuego | Épico |
+| Escamas del dragón ancestral | +7 | Sin desventaja de sigilo · resistente a 🔥 Fuego y ☀️ Radiante | Legendario |
 
 **Pesadas 🧥** (familia: Cota de malla)
 
@@ -98,8 +104,12 @@ Aplica igual a Arma/Armadura/Item (Rareza general en `../game-design.md` §3.3, 
 |---|---|---|---|---|
 | Malla enana | +7 | FUE 13 | Desventaja para evitar detección | Poco común |
 | Égida del centinela | +8 | FUE 13 | Desventaja para evitar detección | Raro |
+| Coraza del último bastión | +9 | FUE 13 | Desventaja para evitar detección · resistente a 🗡️ Cortante | Épico |
+| Muralla viviente | +10 | FUE 13 | Desventaja para evitar detección · resistente a 🗡️ Cortante y 🏹 Perforante | Legendario |
 
 **Por qué existe esta tabla.** Todas las armaduras del catálogo eran **Común**, así que no había armadura que *encontrar* — y la CA es la palanca de supervivencia más directa que tiene el héroe. La **tabla de loot** (`../game-design.md` §7) necesita este contenido. Techo intencionado: la Égida del centinela deja al Guerrero en **CA 20** con escudo, contra la que un Élite (ataque +3) acierta 1 de cada 5 — es premio de final de partida, no de zona media (`../characters/enemies.md` §5c).
+
+**Subir un escalón sin encontrarlo/comprarlo — reforjar en el Herrero:** además de salir como loot o compra, tu armadura concreta puede subir un escalón de esta misma tabla pagando al Herrero (`../game-design.md` §6d) — sin más requisito que el oro.
 
 ## 7. Próximos pasos
 
@@ -107,4 +117,5 @@ Aplica igual a Arma/Armadura/Item (Rareza general en `../game-design.md` §3.3, 
 - [ ] Decidir si más armaduras pesadas penalizan el movimiento.
 - [ ] Crear variantes mágicas (ligar con [`items.md`](items.md) §3) y asignar su Rareza.
 - [x] Subconjunto del prototipo *(decidido)*: **Acolchada, Cuero, Cuero tachonado** (🥼), **Cota de escamas** (👕) y **Cota de malla** (🧥) — las de los kits iniciales (`../characters/heroes.md` §2d) más las tres familias con escalón de rareza en §6b.
-- [x] Ampliar cada familia con variantes de rareza siguiendo la progresión de §6 → **§6b**: Poco común (+1 CA) y Raro (+1 CA y, si la tenía, sin desventaja de sigilo) para Cuero tachonado, Cota de escamas y Cota de malla.
+- [x] Ampliar cada familia con variantes de rareza siguiendo la progresión de §6 → **§6b**: Cuero tachonado, Cota de escamas y Cota de malla cubren ya los 5 escalones (Épico/Legendario añaden resistencia a un tipo de daño por familia).
+- [x] Enganchar la escalera de rareza con el **reforjado** *(decidido)* → §6b: el Herrero sube un escalón de esta tabla pagando oro, sin uso ni loot nuevo (`../game-design.md` §6d).
