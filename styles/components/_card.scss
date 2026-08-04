@@ -68,6 +68,14 @@ $sub-chip-left: chip-center-left($chip-sub-size);
     }
   }
 
+  // Tramos de severidad de Maldición: mismo atributo data-rarity, mapa de
+  // color aparte (sin solape de nombres con $rarity, ver _colors.scss).
+  @each $name, $tokens in $severity {
+    [data-rarity="#{$name}"] {
+      @include severity-vars($name);
+    }
+  }
+
   // ----------------------------------------------------- Esqueleto de zonas
   .card {
     position: relative;
@@ -168,16 +176,46 @@ $sub-chip-left: chip-center-left($chip-sub-size);
     transform: translateZ(depth("chip"));
   }
 
-  // --- Nombre -------------------------------------------------------------
-  .card__name {
+  // --- Nombre + estrellas de Nivel -----------------------------------------
+  // Comparten el mismo grid-area apilados en columna: las estrellas son un
+  // segundo renglón fijo bajo el nombre, no inline con el texto (con nombres
+  // de longitud tan distinta, "junto al nombre" en la misma línea las movería
+  // de sitio carta a carta; debajo, su posición es predecible en todo el
+  // catálogo).
+  .card__name-block {
     grid-area: name;
     z-index: z("content");
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card__name {
     text-align: center;
     font-size: card-font("name");
     font-weight: 700;
     margin: 0;
-    padding: 8px 12px;
+    padding: 8px 12px 2px;
     letter-spacing: 0.01em;
+  }
+
+  // Nivel de Rareza (game-design.md §3.3): de 1 a 5, mismo color que el
+  // filete de la carta (--rarity). Solo se pinta si la carta tiene un Nivel
+  // real — ver starsFor() en lib/rarity.ts. Maldición cuenta (su Nivel de
+  // severidad es el mismo eje, leído al revés); clase y encuentro reutilizan
+  // el raíl de color por categoría, no por Nivel, así que no muestran
+  // estrellas todavía.
+  .card__stars {
+    display: flex;
+    gap: $chip-gap;
+    padding-bottom: 6px;
+    font-size: card-font("stars");
+    line-height: 1;
+    color: var(--rarity);
+  }
+
+  .card__star--empty {
+    opacity: 0.28;
   }
 
   // --- Descripción --------------------------------------------------------

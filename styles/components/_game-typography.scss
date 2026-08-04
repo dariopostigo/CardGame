@@ -1,0 +1,81 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// La letra del tema de producción (app/repository-pro/typography), sacada de
+// example1.jpg (public/assets/UI/): cuatro papeles de texto, no una escala de
+// tamaños —el tamaño lo pone quien use la clase, esto solo fija familia,
+// peso y color—.
+//
+//   · display  — titular grande (pantallas de victoria/derrota, aún sin
+//     construir). Único que lleva degradado recortado al glifo: es el único
+//     tamaño con alto de sobra para que un remate de tres paradas se lea.
+//   · heading  — título de panel grabado (PARTY INTERFACE, CHANGE CLASS).
+//     Mismo oro que el titular, pero plano: comparte receta con
+//     game-button__label vía game-engraved-text() (styles/tools/_mixins).
+//   · body     — texto primario sobre cuero (USERNAME).
+//   · meta     — texto secundario apagado (Lvl. 20 · K&D Ratio: 2.1, Not in
+//     Game): mismo cuerpo, tostado en vez de crema.
+//
+// Las muestras van sobre game-demo-surface, no sobre el lienzo de la
+// vitrina, por la misma razón que .game-swatch-row lleva su propio fondo
+// (_game-swatch.scss): un token de este tema no se lee contra el blanco o el
+// azul noche de las herramientas.
+// -------------------------------------------------------------------------
+
+.game-demo-surface {
+  display: inline-flex;
+  padding: 1.1rem 1.4rem;
+  border-radius: radius("md");
+  background: game("surface");
+}
+
+.game-type-display {
+  font-family: $font-game-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background-image: linear-gradient(to bottom, game("gold-hi") 0%, game("gold") 60%, game("gold-lo") 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.7);
+}
+
+.game-type-heading {
+  font-family: $font-game-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  @include game-engraved-text;
+}
+
+.game-type-body {
+  font-family: $font-sans;
+  color: game("text");
+}
+
+.game-type-meta {
+  font-family: $font-sans;
+  color: game("muted");
+}
+
+// Cifra de estadística (Strength: 200, Health: 2.200): etiqueta tostada +
+// valor crema en negrita, tal cual sale en la ficha de personaje de la
+// referencia — no son alias de game-type-body/meta a propósito, porque el
+// valor va más grueso que cualquiera de los dos.
+.game-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-family: $font-sans;
+
+  &__label {
+    color: game("muted");
+  }
+
+  &__value {
+    font-weight: 700;
+    color: game("text");
+  }
+}

@@ -10,13 +10,13 @@ Cada carta se define por estos campos:
 
 | Campo | Valores posibles |
 |---|---|
-| **Tipo** | `Accion` (se usa una vez y vuelve al Mazo) · `Pasiva` (se queda en juego para siempre) · `Turnos` (se queda en juego hasta cumplir la duración que indique su Efecto) — ciclo de vida en juego, ver regla madre abajo. El coste de activación (Movimiento/Acción/Acción rápida) es un recurso de turno aparte, [`../game-design.md`](../game-design.md) §4b.3, y no depende del Tipo de la carta. |
-| **Uso** | Por defecto, **sin tope de veces** — pero **cada uso gasta la preparación** (ver abajo). Algunas cartas llevan además su propio límite explícito, `1/combate` o `1/descanso` (marcado con "—" cuando no aplica); es una propiedad de la carta en sí, no de ninguna categoría. |
+| **Tipo** | `Accion` (se usa una vez y vuelve al Mazo) · `Pasiva` (se queda en juego para siempre) · `Turnos` (se queda en juego hasta cumplir la duración que indique su propia columna **Uso**) — ciclo de vida en juego, ver regla madre abajo. El coste de activación (Movimiento/Acción/Acción rápida) es un recurso de turno aparte, [`../game-design.md`](../game-design.md) §4b.3, y no depende del Tipo de la carta. |
+| **Uso** | Solo aplica a Tipo `Turnos`: cuántos turnos permanece **en juego** antes de descartarse y volver al Mazo (p. ej. `2 turnos`). Marcado "—" en `Accion` y `Pasiva`, que no tienen esta duración. No hay límite de repeticiones: cualquier carta se puede jugar tantas veces como el Oteo te la vuelva a ofrecer *(decidido — ver más abajo)*. |
 | **Efecto** | Qué hace, con sus tiradas/dados. |
 
 - **Jugar una carta Tipo Accion la saca de "en juego" *(corregido)*.** Manda la **regla madre** de [`../game-design.md`](../game-design.md) §4: al jugarla, la carta **vuelve al Mazo** y para repetirla tiene que **volver a salirte en un Oteo**. *(Este apartado decía antes que estas cartas eran "reutilizables cada turno" y que lo único que impedía spamear *Golpe firme* era su coste de Acción. Era texto anterior a que se cerrara §4 y **no es la regla**: con esa lectura, "en juego" se volvía un equipamiento fijo y el Oteo dejaba de decidir nada a partir del turno 6.)*
-- **Tipo Pasiva y Tipo Turnos no vuelven al Mazo al jugarlas.** Pasiva se queda **en juego para siempre** (sacrificas ese hueco preparado a cambio de un efecto constante); Turnos se queda **en juego durante los turnos que indique su Efecto** y, al cumplirse, se descarta y vuelve al Mazo. Es la excepción explícita a la regla madre — detalle en `../game-design.md` §4.
-- **Qué significa "ilimitado" en una carta sin etiqueta de Uso:** que **no lleva contador propio** — puedes jugarla tantas veces como el Oteo te la vuelva a ofrecer. Las que sí llevan `1/combate` o `1/descanso` tienen ese tope **encima** de eso: aunque el Oteo te devuelva *Bola de fuego* en el mismo combate, no puedes lanzarla dos veces.
+- **Tipo Pasiva y Tipo Turnos no vuelven al Mazo al jugarlas.** Pasiva se queda **en juego para siempre** (sacrificas ese hueco preparado a cambio de un efecto constante); Turnos se queda **en juego durante los turnos que indique su columna Uso** y, al cumplirse, se descarta y vuelve al Mazo. Es la excepción explícita a la regla madre — detalle en `../game-design.md` §4.
+- **Ya no existe el tope `1/combate`/`1/descanso` *(decidido, elimina la versión anterior)*.** Cualquier carta —de clase, de item, de mercenario— se puede repetir tantas veces como el Oteo te la vuelva a ofrecer, sin excepción: el propio ritmo del Oteo (2 cartas al azar por turno, con Mazo de hasta 20 y combates de 5-6 turnos, `../game-design.md` §4b.12) ya es el único límite de repetición. *(Antes algunas cartas con efecto excepcional —impacto garantizado, área grande, mitigar la mitad del daño— llevaban ese tope para no repetirse en la misma pelea; era un mecanismo aparte del Tipo, no de Uso. Al quitarlo, cartas como Bola de fuego o Meteoro sí pueden salir dos veces en el mismo combate si el Oteo coopera — punto a vigilar al testear, §7.)*
 - **Tu ataque normal no es una carta.** El ataque con el arma equipada es gratis y siempre está disponible (`../game-design.md` §4a), y desde §4b.3 tienes además un **ataque secundario** con la Acción rápida — un recurso del héroe, no ligado a ninguna carta. Las cartas de clase son lo que hace ese ataque **mejor o distinto** (ventaja, alcance, daño extra, control), no la única forma de pegar — que es lo que hace jugable el turno en el que el Oteo no te da nada.
 - **Cuentan para el Mazo y para "en juego" — decidido:** las cartas de clase **ocupan hueco** tanto en el Mazo (≤20) como en la zona **"en juego"** (tope fijo de 5), compitiendo con los items y mercenarios por esos huecos y por lo que preparas con el Oteo (ver [`README.md`](README.md) y [`../game-design.md`](../game-design.md) §4). Habrá una explicación in-fiction por desarrollar; si el límite queda demasiado ajustado con el roster completo de 8 cartas por héroe desde el arranque, se podrá subir más adelante.
 - **El tipo `Pasiva` se reintroduce con otro significado *(decidido)*.** El `Pasiva` viejo estaba definido como "siempre activa mientras esté **en el mazo**", lo que **se saltaba el Oteo** —el corazón del juego— y contradecía `../game-design.md` §4; ninguna carta lo usaba. El `Pasiva` de hoy es la idea que vivía aparcada en [`../ideas.md`](../ideas.md) bajo *cartas de Aura/Postura*: activa **mientras esté en juego**, pagando un hueco preparado para siempre. Así el coste es real y encaja con la economía del Oteo en vez de esquivarla. `Turnos` es la misma idea con duración limitada.
@@ -33,13 +33,13 @@ Rol: tanque melee fiable. Sus cartas premian **impactar con seguridad**, **aguan
 | Carta | Tipo | Uso | Efecto |
 |---|---|---|---|
 | **Golpe firme** | Accion | — | Ataque cuerpo a cuerpo a un enemigo adyacente **con ventaja** (2d20, coges el mejor). El guerrero rara vez falla. |
-| **Postura defensiva** | Turnos | — | Ganas **Escudado +2 CA** ([`../effects.md`](../effects.md)) durante **2 turnos**. No puedes combinarla con Embestida el mismo turno (te plantas, no cargas). |
+| **Postura defensiva** | Turnos | 2 turnos | Ganas **Escudado +2 CA** ([`../effects.md`](../effects.md)) durante **2 turnos**. No puedes combinarla con Embestida el mismo turno (te plantas, no cargas). |
 | **Embestida** | Accion | — | Muévete hasta 2 hex hacia un enemigo y haz un ataque melee al terminar. Si te moviste ≥1 hex, **+2 al daño** (impulso de la carga). |
-| **Segundo aliento** | Accion | 1/descanso | Recuperas **1d10 + nivel** PV. (Toca también el sistema de descanso — ver checklist de `../game-design.md`.) |
-| **Golpe demoledor** | Accion | 1/combate | Tu próximo ataque melee **ignora la mitad de la CA** del objetivo. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Grito de guerra** | Turnos | 1/combate | Ganas **Bendecido** ([`../effects.md`](../effects.md)) durante 2 turnos. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Postura inquebrantable** | Turnos | 1/combate | Durante 1 turno recibes **la mitad de todo el daño**. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Golpe final** | Accion | 1/combate | Ataque con ventaja que impacta a **daño máximo** (sin tirar). *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Segundo aliento** | Accion | — | Recuperas **1d10 + nivel** PV. |
+| **Golpe demoledor** | Accion | — | Tu próximo ataque melee **ignora la mitad de la CA** del objetivo. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Grito de guerra** | Turnos | 2 turnos | Ganas **Bendecido** ([`../effects.md`](../effects.md)) durante 2 turnos. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Postura inquebrantable** | Turnos | 1 turno | Durante 1 turno recibes **la mitad de todo el daño**. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Golpe final** | Accion | — | Ataque con ventaja que impacta a **daño máximo** (sin tirar). *(Nivel 1; tabla 1-5 en §6b.)* |
 
 ## 3. Mago *(Wizard — INT 15/+2, DES 14/+2, d6, PV 16 — `../characters/heroes.md` §2b-2c)*
 
@@ -54,13 +54,13 @@ Rol: daño a distancia y control, el más frágil (PV 16). Sus cartas premian **
 | Carta | Tipo | Uso | Efecto |
 |---|---|---|---|
 | **Descarga arcana** | Accion | — | Ataque a distancia (alcance **4 hex**): `1d20 + mod INT` vs Defensa; si impacta, **1d8 + mod INT** de daño 🔮 (arcano). Es el ataque a distancia fiable del mago (sus armas cuerpo a cuerpo son flojas). |
-| **Escudo arcano** | Turnos | — | Ganas **Escudado +3 CA** ([`../effects.md`](../effects.md)) durante **2 turnos**. La red de seguridad del mago frágil. |
+| **Escudo arcano** | Turnos | 2 turnos | Ganas **Escudado +3 CA** ([`../effects.md`](../effects.md)) durante **2 turnos**. La red de seguridad del mago frágil. |
 | **Enredo gélido** | Accion | — | A distancia (alcance 3 hex): si impacta (`1d20 + mod INT` vs Defensa), el enemigo queda **Inmovilizado** (salvación DES, [`../effects.md`](../effects.md)). Sin daño: control puro. |
-| **Bola de fuego** | Accion | 1/combate | Explosión a distancia (alcance 4 hex): daño **3d6 de fuego** al enemigo objetivo y a los adyacentes a él. Cada afectado hace una salvación de Destreza (`1d20 + mod DES` vs CD) para recibir la mitad. |
-| **Rayo de escarcha** | Accion | 1/combate | A distancia: **2d6 de daño frío**, el objetivo queda **Ralentizado** 2 turnos. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Contrahechizo** | Turnos | 1/combate | Anula la próxima habilidad especial de un enemigo. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Muro de fuerza** | Turnos | 1/combate | Bloquea 1 hexágono a los enemigos durante 3 turnos. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Meteoro** | Accion | 1/combate | **6d6 de daño de fuego** en radio 2 hex. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Bola de fuego** | Accion | — | Explosión a distancia (alcance 4 hex): daño **3d6 de fuego** al enemigo objetivo y a los adyacentes a él. Cada afectado hace una salvación de Destreza (`1d20 + mod DES` vs CD) para recibir la mitad. |
+| **Rayo de escarcha** | Accion | — | A distancia: **2d6 de daño frío**, el objetivo queda **Ralentizado** 2 turnos. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Contrahechizo** | Turnos | — | Anula la próxima habilidad especial de un enemigo. *(Nivel 1; tabla 1-5 en §6b. Sin duración fija todavía — pendiente de cerrar, §7.)* |
+| **Muro de fuerza** | Turnos | 3 turnos | Bloquea 1 hexágono a los enemigos durante 3 turnos. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Meteoro** | Accion | — | **6d6 de daño de fuego** en radio 2 hex. *(Nivel 1; tabla 1-5 en §6b.)* |
 
 ## 4. Pícaro *(Rogue — DES 15/+2, CAR 14/+2, d8, PV 19 — `../characters/heroes.md` §2b-2c)*
 
@@ -73,13 +73,13 @@ Rol: sigilo, daño furtivo y exploración. Sus cartas premian **atacar desde la 
 | Carta | Tipo | Uso | Efecto |
 |---|---|---|---|
 | **Ataque furtivo** | Accion | — | Ataque con un arma de **1 mano ✋** o **a distancia** ([`weapons.md`](weapons.md)). Si estás **Oculto** ([`../effects.md`](../effects.md)) o atacas con ventaja, **+2d6 de daño**. El pan de cada día del pícaro. *(Antes decía "arma ligera": esa propiedad **no existe** en el catálogo, así que la carta no podía dispararse nunca — ver `weapons.md` §4.)* |
-| **Escabullirse** | Turnos | — | Te mueves 1 hex **desengachándote sin tirar** (éxito automático, `../game-design.md` §4b.11) y ganas **+2 para evitar detección** (prueba de sigilo, [`../characters/enemies.md`](../characters/enemies.md) §2b) durante **2 turnos**; si terminas en Bosque u otro terreno de ocultación, quedas **Oculto**. |
-| **Ojo avizor** | Turnos | — | Adelanta a **Detectado** un grupo vecino sin explorar, o **+1 a tus dos rangos de visión** (detalle y terreno) durante **2 turnos** (`../board/board-map.md` §4, `../game-design.md` §2.3). Exploración pura, sin combate. *(En el prototipo de niebla simple solo aplica el +1 de rango de visión; la parte de "grupo Detectado" se activa con el sistema de grupos/tiles, `../board/board-map.md` §8.)* |
-| **Desaparecer** | Accion | 1/combate | Quedas **Oculto** aunque estés a la vista (los enemigos pierden tu rastro) hasta que ataques o interactúes. Prepara un Ataque furtivo demoledor o una huida. |
-| **Golpe en la sombra** | Accion | 1/combate | Tu próximo Ataque furtivo suma su daño extra aunque no estés Oculto ni tengas ventaja. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Reflejos felinos** | Turnos | 1/combate | Si un enemigo te ataca y falla, te desenganchas de él sin tirar. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Danza de sombras** | Accion | 1/combate | Quedas Oculto y te mueves 2 hex sin gastar Movimiento. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Golpe fantasma** | Accion | 1/combate | Impacto automático de Ataque furtivo contra un enemigo que no te haya detectado. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Escabullirse** | Turnos | 2 turnos | Te mueves 1 hex **desengachándote sin tirar** (éxito automático, `../game-design.md` §4b.11) y ganas **+2 para evitar detección** (prueba de sigilo, [`../characters/enemies.md`](../characters/enemies.md) §2b) durante **2 turnos**; si terminas en Bosque u otro terreno de ocultación, quedas **Oculto**. |
+| **Ojo avizor** | Turnos | 2 turnos | Adelanta a **Detectado** un grupo vecino sin explorar, o **+1 a tus dos rangos de visión** (detalle y terreno) durante **2 turnos** (`../board/board-map.md` §4, `../game-design.md` §2.3). Exploración pura, sin combate. *(En el prototipo de niebla simple solo aplica el +1 de rango de visión; la parte de "grupo Detectado" se activa con el sistema de grupos/tiles, `../board/board-map.md` §8. La rama instantánea no tiene duración — Uso refleja solo la rama de visión, ver §7.)* |
+| **Desaparecer** | Accion | — | Quedas **Oculto** aunque estés a la vista (los enemigos pierden tu rastro) hasta que ataques o interactúes. Prepara un Ataque furtivo demoledor o una huida. |
+| **Golpe en la sombra** | Accion | — | Tu próximo Ataque furtivo suma su daño extra aunque no estés Oculto ni tengas ventaja. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Reflejos felinos** | Turnos | — | Si un enemigo te ataca y falla, te desenganchas de él sin tirar. *(Nivel 1; tabla 1-5 en §6b. Sin duración fija todavía — pendiente de cerrar, §7.)* |
+| **Danza de sombras** | Accion | — | Quedas Oculto y te mueves 2 hex sin gastar Movimiento. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Golpe fantasma** | Accion | — | Impacto automático de Ataque furtivo contra un enemigo que no te haya detectado. *(Nivel 1; tabla 1-5 en §6b.)* |
 
 ## 5. Clérigo *(Cleric — SAB 15/+2, CON 14/+2, d8, PV 20 — `../characters/heroes.md` §2b-2c)*
 
@@ -93,12 +93,12 @@ Rol: curación, soporte y algo de daño divino. Sus cartas premian **mantenerte 
 |---|---|---|---|
 | **Palabra sanadora** | Accion | — | Recuperas tú (o un aliado adyacente) **1d8 + mod SAB** PV. Curación fiable y repetible. |
 | **Llama sagrada** | Accion | — | Ataque divino a distancia (alcance 3 hex): `1d20 + mod SAB` vs Defensa; **1d8 + mod SAB** de daño ☀️ (radiante), especialmente efectivo vs no-muertos (`../characters/enemies.md` §5). |
-| **Escudo de fe** | Turnos | — | Concede **Escudado +2 CA** ([`../effects.md`](../effects.md)) durante **2 turnos** a ti o a un aliado adyacente. |
-| **Bendición** | Turnos | 1/combate | Durante 3 turnos ganas **Bendecido** ([`../effects.md`](../effects.md)): +1d4 a tus tiradas de ataque y de salvación. |
-| **Imposición de manos** | Accion | 1/combate | Cura instantánea de 3d8 PV a ti o a un aliado adyacente. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Castigo divino** | Accion | 1/combate | Tu próxima Llama sagrada hace daño doble contra No-muertos. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Círculo protector** | Turnos | 1/combate | Tú y un aliado adyacente ganáis Escudado +3 CA durante 3 turnos. *(Nivel 1; tabla 1-5 en §6b.)* |
-| **Resurrección menor** | Turnos | 1/combate | Si caes a 0 PV en este combate, te levantas una vez con la mitad de tus PV máximos. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Escudo de fe** | Turnos | 2 turnos | Concede **Escudado +2 CA** ([`../effects.md`](../effects.md)) durante **2 turnos** a ti o a un aliado adyacente. |
+| **Bendición** | Turnos | 3 turnos | Durante 3 turnos ganas **Bendecido** ([`../effects.md`](../effects.md)): +1d4 a tus tiradas de ataque y de salvación. |
+| **Imposición de manos** | Accion | — | Cura instantánea de 3d8 PV a ti o a un aliado adyacente. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Castigo divino** | Accion | — | Tu próxima Llama sagrada hace daño doble contra No-muertos. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Círculo protector** | Turnos | 3 turnos | Tú y un aliado adyacente ganáis Escudado +3 CA durante 3 turnos. *(Nivel 1; tabla 1-5 en §6b.)* |
+| **Resurrección menor** | Turnos | — | Si caes a 0 PV en este combate, te levantas una vez con la mitad de tus PV máximos. *(Nivel 1; tabla 1-5 en §6b. Sin duración fija todavía — pendiente de cerrar, §7.)* |
 
 ## 6. Progresión — reforjar con el Instructor
 
@@ -182,7 +182,7 @@ Las cartas que antes vivían como "Especial de ejemplo" o "concepto de nivel 2-5
 |---|---|---|---|---|---|
 | Bendición | Bendecido 3 turnos (+1d4 ataque/salvación) | Bendecido 4 turnos | Igual, y un aliado adyacente también lo gana | Bendecido 4 turnos (tú y aliado), +1d6 en vez de +1d4 | Bendecido 5 turnos (tú y aliado), +1d6 |
 | Imposición de manos | 3d8 PV a ti o aliado adyacente | 4d8 PV | Igual, y quita 1 estado negativo del objetivo | 5d8 PV, quita 1 estado negativo | 6d8 PV, quita hasta 2 estados negativos |
-| Castigo divino | Tu próxima Llama sagrada hace daño doble a No-muertos | Igual, +1 al ataque de esa tirada | Igual, daño doble a cualquier enemigo | Igual, +2 al ataque | Igual, y si el objetivo muere, recuperas el uso de esta carta este combate |
+| Castigo divino | Tu próxima Llama sagrada hace daño doble a No-muertos | Igual, +1 al ataque de esa tirada | Igual, daño doble a cualquier enemigo | Igual, +2 al ataque | Igual, y si el objetivo muere, recuperas el uso de esta carta este combate *(perk obsoleto: dependía del tope 1/combate ya eliminado — pendiente de rediseñar, §7)* |
 | Círculo protector | Tú y aliado adyacente: Escudado +3 CA, 3 turnos | +3 CA, 4 turnos | +4 CA, 4 turnos | Igual, y cura 1d4 PV cada turno a ambos | +5 CA, 4 turnos, cura 1d6 PV cada turno a ambos |
 | Resurrección menor | Si caes a 0 PV, te levantas una vez con la mitad de tus PV máx. | Igual, y sin ningún estado negativo activo | Igual, y recuperas tu Acción rápida ese turno | Igual, te levantas con dos tercios de tus PV máx. | Igual, y protege también a un aliado adyacente (el que caiga primero) |
 
@@ -197,3 +197,7 @@ Las cartas que antes vivían como "Especial de ejemplo" o "concepto de nivel 2-5
 - [ ] Cuando quieras, añadir más cartas a cualquier clase.
 - [x] Definir la progresión de las cartas de clase → **§6**: un solo mecanismo (reforjar con el Instructor), sin distinción Básica/Especial. Las **8 cartas de cada héroe** ya tienen tabla 1-5 completa (§6a, §6b). Falta balancear las cifras al testear.
 - [ ] **Ojo avizor** tiene efecto doble (Detectado inmediato **o** +1 visión 2 turnos) pero una sola fila de Tipo — se marcó `Turnos` por tener al menos una rama con duración, pero podría partirse en dos cartas o dejarse `Accion` si se prefiere. Decidir al testear.
+- [x] **Quitar el tope `1/combate`/`1/descanso` de todo el juego** *(decidido)*: ya no existe ningún límite de repeticiones por combate/descanso, en ninguna categoría de carta — el Oteo es el único que raciona. §1 explica el porqué; ver también `../game-design.md` §4b.8 (la definición de "fin de combate" ya no depende de esto) e `items.md` (Legendarios/Épicos que llevaban la etiqueta).
+- [ ] **Tres cartas Tipo `Turnos` sin duración fija todavía** — al convertir Uso en "turnos en juego" se hizo visible que **Contrahechizo** (Mago), **Reflejos felinos** (Pícaro) y **Resurrección menor** (Clérigo) nunca tuvieron un número de turnos: funcionan más como "dura hasta que se cumpla su condición o acabe el combate" que como un buff de duración fija. Falta decidir si se les pone un número (p. ej. 2-3 turnos) o se deja ese comportamiento como una tercera semántica de Uso.
+- [ ] **Balance a vigilar sin el tope 1/combate**: cartas antes limitadas por él (Bola de fuego, Meteoro, Golpe final, Golpe demoledor, Golpe fantasma, Danza de sombras, Desaparecer, Golpe en la sombra, Imposición de manos, Castigo divino) ahora pueden repetirse en el mismo combate si el Oteo las reofrece — probar si algún caso rompe el ritmo calibrado en `../game-design.md` §4b.12.
+- [ ] **Perk de nivel 5 de Castigo divino obsoleto** (§6b): "recuperas el uso de esta carta este combate" no tiene sentido sin el tope 1/combate — rediseñar ese escalón.

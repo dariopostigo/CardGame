@@ -81,6 +81,20 @@ $chip-side: 34px;        // por dentro de la escuadra de la esquina
     }
   }
 
+  // Metal del marco por severidad de Maldición: mismas claves que $severity
+  // (ver _card.scss, que hace lo mismo para --rarity/--rarity-soft). Sin este
+  // bucle el marco se queda en el metal "comun" por defecto aunque las
+  // estrellas ya muestren el color correcto.
+  @each $name, $tokens in $severity {
+    $b: severity($name, "base");
+    .card[data-rarity="#{$name}"] {
+      --m: #{$b};
+      --m-hi: color-mix(in srgb, white 52%, #{$b});
+      --m-lo: color-mix(in srgb, black 42%, #{$b});
+      --m-edge: color-mix(in srgb, black 70%, #{$b});
+    }
+  }
+
   .card__frame {
     display: block;
   }

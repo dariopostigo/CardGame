@@ -4,6 +4,10 @@
 // (.card-lab[data-theme="…"]) y deben poder pisar el esqueleto.
 @use "prose";
 @use "button";
+@use "game-button";
+@use "game-swatch";
+@use "game-typography";
+@use "game-form";
 @use "form-control";
 @use "callout";
 @use "icon-tip";

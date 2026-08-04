@@ -1,0 +1,153 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Campos y selectores de producción (components/game/ui/GameCheckbox,
+// GameSelect, GameSlider).
+//
+// La casilla sale de example1.jpg (SELECT GAME MODE): cuadro hueco de acero
+// oscuro, sin relleno propio, que solo enseña un check dorado al marcarse.
+// El desplegable y el deslizador no están en esa referencia —ahí no hay
+// ninguno—, así que salen de preview-03/04_*.webp (misma carpeta, kit
+// "Crownfall"): se toma la FORMA de esos controles, no su paleta cálida
+// propia, y se redibujan con $game para no mezclar dos lenguajes de color
+// en un mismo tema.
+// -------------------------------------------------------------------------
+
+.game-checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  cursor: pointer;
+
+  &__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+
+    &:checked ~ .game-checkbox__box .pi {
+      opacity: 1;
+    }
+
+    &:focus-visible ~ .game-checkbox__box {
+      outline: 2px solid game("gold");
+      outline-offset: 2px;
+    }
+  }
+
+  &__box {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.15rem;
+    border: 1px solid game("border");
+    border-radius: radius("xs");
+    background: game("surface-2");
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+
+    .pi {
+      font-size: 0.8rem;
+      color: game("gold-hi");
+      opacity: 0;
+      transition: opacity 0.1s ease;
+    }
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__hint {
+    font-style: italic;
+  }
+}
+
+.game-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  &__control {
+    appearance: none;
+    padding: 0.55rem 2.2rem 0.55rem 0.9rem;
+    border: 1px solid game("border");
+    border-radius: radius("xs");
+    background: game("surface-2");
+    font-family: $font-sans;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: game("gold-hi");
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid game("gold");
+      outline-offset: 2px;
+    }
+  }
+
+  &__chevron {
+    position: absolute;
+    right: 0.9rem;
+    font-size: 0.65rem;
+    color: game("gold");
+    pointer-events: none;
+  }
+}
+
+.game-slider {
+  appearance: none;
+  width: 100%;
+  height: 0.35rem;
+  border: 1px solid game("border");
+  border-radius: radius("xs");
+  // Chrome/Safari no tienen un pseudo-elemento para el tramo recorrido: se
+  // pinta a mano con un degradado de corte seco en el propio fondo del
+  // <input>, siguiendo --game-slider-fill (GameSlider.tsx la mantiene al
+  // día). Firefox ignora este fondo y usa ::-moz-range-progress más abajo.
+  background: linear-gradient(
+    to right,
+    game("gold") var(--game-slider-fill, 50%),
+    game("stone-lo") var(--game-slider-fill, 50%)
+  );
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: game("gold-hi");
+    border: 1px solid game("gold-lo");
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+
+  &::-moz-range-track {
+    height: 0.35rem;
+    border-radius: radius("xs");
+    background: game("stone-lo");
+  }
+
+  &::-moz-range-progress {
+    height: 0.35rem;
+    border-radius: radius("xs");
+    background: game("gold");
+  }
+
+  &::-moz-range-thumb {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: game("gold-hi");
+    border: 1px solid game("gold-lo");
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+
+  &:focus-visible {
+    outline: 2px solid game("gold");
+    outline-offset: 3px;
+  }
+}

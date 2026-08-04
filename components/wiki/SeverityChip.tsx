@@ -6,12 +6,15 @@ import type { SeverityLevel } from "@/lib/severity";
 
 const LABEL: Record<SeverityLevel, string> = {
   leve: "Leve",
+  molesta: "Molesta",
   grave: "Grave",
+  severa: "Severa",
+  malefica: "Maléfica",
 };
 
-// Mini-carta de color para la columna Severidad de cards/curses.md — mismo
-// mecanismo que RarityChip.tsx pero con la paleta ámbar/rojo de lib/severity.ts,
-// para no confundirse con la Rareza de las cartas buenas.
+// Mini-carta de color para la columna Nivel de cards/curses.md — mismo
+// mecanismo que RarityChip.tsx pero con la paleta ámbar→púrpura de
+// lib/severity.ts, para no confundirse con la Rareza de las cartas buenas.
 export default function SeverityChip({ level }: { level: SeverityLevel }) {
   const ref = useRef<HTMLSpanElement>(null);
   const label = LABEL[level] ?? level;

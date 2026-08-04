@@ -40,7 +40,7 @@ La categoría es obligatoria (`clase`, `arma`, `armadura`, `item`, `maldicion`, 
 | `rareza=` | Raíl de color cuando la tabla no tiene columna Rareza | `<!-- cards: encuentro rareza=enemigo -->` |
 | `icono=` | Icono del badge, si el de la categoría no distingue | `<!-- cards: encuentro icono=⚔️ -->` |
 
-De las columnas se encarga la convención: la **primera** es el nombre; `Rareza`, `Severidad`, `Manos`, `Peso` y `Tipo` alimentan las fichas de la carta; `Efecto`/`Propiedades`/`Notas` son el cuerpo; y **cualquier otra columna acaba como ficha en el pie** con su encabezado como etiqueta — o sea que añadir una columna a una tabla la hace aparecer en la carta sin tocar código. El detalle está en `lib/card-table.ts`.
+De las columnas se encarga la convención: la **primera** es el nombre; `Rareza`, `Nivel` (Maldición, mismo eje 1-5 leído al revés), `Manos`, `Peso`, `Uso` y `Tipo` alimentan las fichas de la carta; `Efecto`/`Propiedades`/`Notas` son el cuerpo; y **cualquier otra columna acaba como ficha en el pie** con su encabezado como etiqueta — o sea que añadir una columna a una tabla la hace aparecer en la carta sin tocar código. El detalle está en `lib/card-table.ts`.
 
 ## Reglas de mazo (resumen, `../game-design.md` §4)
 

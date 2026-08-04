@@ -1,0 +1,77 @@
+// -------------------------------------------------------------------------
+// Fundamentos del tema de producción (repository-pro/foundations)
+//
+// Constante de diseño, como $rarity o $terrain en _colors.scss: NO cambia con
+// el tema claro/oscuro de las herramientas —un botón de hierro no se aclara
+// porque la wiki esté en modo claro—, así que $game se pide con una función
+// de acceso a mapa (game(), en tools/_functions.scss) y no con custom
+// properties conmutables como skin().
+//
+// Paleta sacada de public/assets/UI/example1.jpg (referencia elegida por
+// Dario): cuero y metal casi negros, sangre seca como acento y oro para el
+// texto grabado. Se descarta el pergamino que proponía el primer boceto de
+// este repositorio —esta referencia no tiene ni una superficie clara— así
+// que el tema pasa de "aventura a la luz del día" a "hierro y cuero
+// oscuro". "gold" es SU PROPIA familia, no un alias de $gold en _colors.scss
+// (el oro del marco legendario): son visualmente parecidos hoy, pero ya hay
+// un precedente de que compartir una constante de otro concepto sale mal en
+// cuanto una de las dos tiene que moverse sola (ver la nota de $deck-select).
+// -------------------------------------------------------------------------
+
+$game: (
+  // --- Superficies ---------------------------------------------------------
+  "bg": #100c0a,
+  // mesa: el fondo bajo todo, casi negro con un pelo cálido
+  "surface": #1a1411,
+  // panel base — cuero y hierro oscuros (party_panel de la referencia)
+  "surface-2": #241d18,
+  // superficie elevada — filas, chip neutro, hover
+  "stone-hi": #8d7b70,
+  // luz de la loseta de piedra: arranque del bisel de cabeceras y botón neutro
+  "stone-lo": #26201c,
+  // sombra de la loseta de piedra: cierre del mismo bisel
+  "border": #0a0706,
+  // filete oscuro — divisores de fila y contorno exterior
+
+  // --- Texto ---------------------------------------------------------------
+  "text": #ede3d4,
+  // cuerpo, crema — USERNAME de la referencia
+  "muted": #a6937a,
+  // secundario, tostado apagado — "Lvl 20 · Not in Game"
+
+  // --- Acento: sangre (acción principal) ------------------------------------
+  "accent": #4b120d,
+  // relleno base del botón primario (PLAY NOW / READY)
+  "accent-hi": #d9422c,
+  // brillo del bisel superior y del hover
+  "accent-lo": #230705,
+  // sombra del bisel inferior y del pulsado
+  "accent-glow": rgba(217, 66, 44, 0.45),
+  // halo ambiental alrededor de la acción principal
+
+  // --- Oro: texto grabado y filetes ----------------------------------------
+  "gold": #d9a53c,
+  // dorado medio — iconos y filetes finos
+  "gold-hi": #fff0bd,
+  // dorado claro — el texto de los botones (plano, no degradado: a su tamaño
+  // real un remate de varias paradas no tiene alto para leerse, así que el
+  // relieve lo da el text-shadow de _game-button.scss). Arranque del degradado
+  // grande de $font-game-display, que sí tiene alto de sobra para mostrarlo.
+  "gold-lo": #ffab27,
+  // ámbar — cierre de ese degradado grande, tomado del propio píxel más
+  // oscuro que aparece en example1.jpg. La primera versión (#e0932a) ya
+  // evitaba el marrón, pero seguía por debajo de ese muestreo: a tamaño de
+  // titular real se notaba y el remate se leía sucio contra el fondo casi
+  // negro. NO es un marrón oscuro a propósito: surface/accent-lo son igual
+  // de oscuros y un dorado que baje hasta ahí se funde con el propio panel.
+);
+
+// --- Tipografía -----------------------------------------------------------
+// Rótulo: condensada y pesada, la que hace de "PLAY NOW"/"PARTY INTERFACE" en
+// la referencia. Geist ($font-sans, styles/settings/_typography.scss) no
+// tiene ese peso pensado para un rótulo grabado, así que el tema pide la
+// suya —Oswald, cargada por components/game/ui/game-fonts.ts, mismo mecanismo
+// que $font-serif-display con Cormorant en card-fonts.ts—. El cuerpo (stats,
+// texto largo) SÍ reutiliza $font-sans: en la referencia es un sans genérico
+// sin peculiaridad, así que no hace falta una segunda familia por capricho.
+$font-game-display: var(--font-oswald), "Arial Narrow", sans-serif;

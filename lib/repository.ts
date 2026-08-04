@@ -112,26 +112,28 @@ export const REPO_PRO_GROUPS: readonly ComponentGroup[] = [
     slug: "foundations",
     label: "Fundamentos del tema",
     summary:
-      "Los tokens --game-*: paleta de pergamino, hierro, madera y sangre; tipografías de rótulo y de cuerpo; texturas y filetes. Sin esto no hay tema, solo componentes sueltos.",
+      "El mapa $game: cuero y hierro casi negros, sangre como acento y oro para el texto grabado —inspirado en public/assets/UI/example1.jpg, no en el pergamino del primer boceto—, más la tipografía de rótulo (Oswald) y de cuerpo. Sin esto no hay tema, solo componentes sueltos.",
     icon: "pi pi-palette",
-    status: "planificado",
-    source: "styles/settings/_game.scss (por crear)",
+    status: "en-curso",
+    source: "styles/settings/_game.scss",
   },
   {
     slug: "typography",
     label: "Títulos y textos",
     summary:
-      "Rótulos grabados, capitulares, cuerpo legible sobre pergamino y la cifra de las estadísticas. La letra del juego no es la letra de las herramientas.",
+      "Rótulos grabados —de titular y de panel—, cuerpo legible sobre cuero, texto secundario apagado y la cifra de las estadísticas. La letra del juego no es la letra de las herramientas.",
     icon: "pi pi-align-left",
-    status: "planificado",
+    status: "en-curso",
+    source: "styles/components/_game-typography.scss",
   },
   {
     slug: "buttons",
     label: "Botones y acciones",
     summary:
-      "Botón de hierro, botón secundario de cuero, sello de cera para la acción principal, y sus estados: reposo, sobre, pulsado, sin puntos de acción.",
+      "El remache con bisel de example1.jpg: botón neutro de acero/cuero y botón primario de sangre con halo, con sus estados de reposo, sobre, pulsado y sin puntos de acción.",
     icon: "pi pi-stop",
-    status: "planificado",
+    status: "en-curso",
+    source: "components/game/ui/GameButton.tsx",
   },
   {
     slug: "panels",
@@ -147,7 +149,8 @@ export const REPO_PRO_GROUPS: readonly ComponentGroup[] = [
     summary:
       "Desplegables, casillas y deslizadores vestidos de época, para los ajustes y la creación de partida. Poco frecuentes en juego, imprescindibles en los menús.",
     icon: "pi pi-sliders-h",
-    status: "planificado",
+    status: "en-curso",
+    source: "components/game/ui/GameCheckbox.tsx, GameSelect.tsx, GameSlider.tsx",
   },
   {
     slug: "hud",

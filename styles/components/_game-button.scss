@@ -1,0 +1,135 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Botón de producción (components/game/ui/GameButton.tsx).
+//
+// Inspirado en example1.jpg (public/assets/UI/): un remache con bisel, no el
+// botón plano de las herramientas (_button.scss). El bisel son dos capas —el
+// degradado de fondo (luz arriba, sombra abajo) y un inset-shadow que dibuja
+// el canto metálico— y se invierten al pulsar, no se sustituyen: la sombra
+// pasa de fuera a dentro para que el botón se lea hundido, no solo más oscuro.
+//
+// El texto NO lleva degradado recortado al glifo: a 0.82rem (13px reales) un
+// remate de tres paradas no tiene alto suficiente para leerse como tal, y lo
+// único que se nota es que se ensucia. gold-hi plano + una sombra de contacto
+// firme es la misma receta que usa cualquier UI de RPG en botones de este
+// tamaño: el degradado se reserva para rótulos grandes (Fundamentos, la
+// muestra de $font-game-display), que sí tienen alto para mostrarlo.
+// -------------------------------------------------------------------------
+
+.game-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  border: 1px solid game("border");
+  border-radius: radius("xs");
+  cursor: pointer;
+  font-family: $font-game-display;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition:
+    filter 0.15s ease,
+    transform 0.08s ease,
+    box-shadow 0.15s ease;
+
+  .pi {
+    font-size: 1.15em;
+    color: game("gold");
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    @include game-engraved-text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid game("gold");
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.5) brightness(0.65);
+  }
+
+  // --- Variantes -----------------------------------------------------------
+
+  // Neutro: acero y cuero oscuros. El peso por defecto — LEADERBOARDS, GAME
+  // OPTIONS, ACCEPT/CANCEL, CHANGE CLASS en la referencia.
+  &--neutral {
+    background: linear-gradient(
+      to bottom,
+      game("stone-hi") 0%,
+      game("surface-2") 14%,
+      game("surface") 65%,
+      game("stone-lo") 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+
+    &:hover:not(:disabled) {
+      filter: brightness(1.14);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.55),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  // Primario: sangre. La acción que la pantalla existe para ejecutar — PLAY
+  // NOW, READY — así que lleva halo propio y va sola por panel.
+  &--primary {
+    border-color: game("accent-lo");
+    background: linear-gradient(to bottom, game("accent-hi") 0%, game("accent") 45%, game("accent-lo") 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -3px 5px rgba(0, 0, 0, 0.55),
+      0 0 16px game("accent-glow");
+
+    &:hover:not(:disabled) {
+      filter: brightness(1.14);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow:
+        inset 0 2px 5px rgba(0, 0, 0, 0.6),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+        0 0 10px game("accent-glow");
+    }
+  }
+
+  // --- Tamaños y formas ------------------------------------------------------
+  &--sm {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.7rem;
+  }
+
+  // Solo icono: cuadrado, como en _button.scss.
+  &--icon {
+    padding: 0.6rem;
+    width: 2.5rem;
+    height: 2.5rem;
+
+    &.game-button--sm {
+      padding: 0.35rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  &--block {
+    width: 100%;
+  }
+}

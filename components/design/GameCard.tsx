@@ -19,6 +19,7 @@ import remarkGfm from "remark-gfm";
 import { useMemo, type PointerEvent, type ReactNode } from "react";
 import { textLength, type CardRecord } from "@/lib/card-table";
 import { CATEGORY_BADGE } from "@/lib/card-art";
+import { starsFor } from "@/lib/rarity";
 import { CARD_FRAMES, type CardTheme } from "./card-frames";
 
 // Iconos de tipo de daño (game-design.md §4b.10).
@@ -37,12 +38,6 @@ const WEIGHT: Record<NonNullable<CardRecord["weight"]>, { icon: string; label: s
   ligera: { icon: "🥼", label: "Ligera" },
   media: { icon: "👕", label: "Media" },
   pesada: { icon: "🧥", label: "Pesada" },
-};
-
-// Iconos de severidad de Maldición (cards/curses.md §2).
-const SEVERITY: Record<NonNullable<CardRecord["severity"]>, { icon: string; label: string }> = {
-  leve: { icon: "🟡", label: "Leve" },
-  grave: { icon: "🔴", label: "Grave" },
 };
 
 // Ciclo de vida de la carta (cards/class.md §1).
@@ -82,6 +77,7 @@ export default function GameCard({
   tilt?: boolean;
 }) {
   const Frame = CARD_FRAMES[theme];
+  const stars = starsFor(card.rarity);
 
   // El efecto se parsea una vez por carta: en el catálogo del lab hay más de
   // cien en pantalla y sin esto cada cambio de estado (el Tilt 3D, p. ej.)
@@ -140,16 +136,27 @@ export default function GameCard({
           {WEIGHT[card.weight].icon}
         </span>
       )}
-      {card.severity && (
-        <span className="card__hands" title={`Severidad ${SEVERITY[card.severity].label}`}>
-          {SEVERITY[card.severity].icon}
+      {card.usage != null && (
+        <span className="card__hands" title={`${card.usage} turno${card.usage === 1 ? "" : "s"} en juego`}>
+          {card.usage}
         </span>
       )}
       {card.type && <span className="card__cost">{CARD_TYPE[card.type]}</span>}
       <div className="card__art">
         <span className="emoji">{card.emoji}</span>
       </div>
-      <h3 className="card__name">{card.name}</h3>
+      <div className="card__name-block">
+        <h3 className="card__name">{card.name}</h3>
+        {stars > 0 && (
+          <div className="card__stars" title={`Nivel ${stars} de 5`} aria-hidden="true">
+            {Array.from({ length: 5 }, (_, i) => (
+              <span key={i} className={i < stars ? "card__star" : "card__star card__star--empty"}>
+                ★
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
       <p className="card__text">
         {card.type && <span className="card__cost-line">{CARD_TYPE[card.type]}</span>}
         {body}

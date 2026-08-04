@@ -227,12 +227,17 @@ $tile-anchor-line: rgba(255, 255, 255, 0.9);
 // loseta pero se puede añadir con un clic.
 $tile-candidate-line: rgba(120, 120, 130, 0.55);
 
-// --- Severidad de Maldiciones (cards/curses.md §2) ------------------------
-// Paleta propia, no la de rareza: mide peligro, no calidad, y confundirlas
-// haría ilegibles las tablas (SeverityChip.tsx).
+// --- Severidad de Maldiciones (cards/curses.md §1-2) -----------------------
+// Paleta propia, no la de rareza: mide peligro creciente (ámbar → naranja →
+// rojo → púrpura), no calidad, y confundirlas haría ilegibles las tablas
+// (SeverityChip.tsx) y las cartas del lab (donde alimenta el mismo --rarity
+// que Rareza, ver la carta de Maldición en _card.scss).
 $severity: (
   "leve": ("base": #d97706, "soft": rgba(217, 119, 6, 0.35)),
+  "molesta": ("base": #ea580c, "soft": rgba(234, 88, 12, 0.35)),
   "grave": ("base": #b91c1c, "soft": rgba(185, 28, 28, 0.4)),
+  "severa": ("base": #7f1d1d, "soft": rgba(127, 29, 29, 0.42)),
+  "malefica": ("base": #3b0764, "soft": rgba(59, 7, 100, 0.45)),
 );
 
 // --- Marco dorado de legendaria -------------------------------------------

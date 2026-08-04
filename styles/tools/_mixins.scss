@@ -29,6 +29,14 @@
   --rarity-soft: #{rarity($name, "soft")};
 }
 
+// Mismo raíl que rarity-vars, pero leyendo $severity: la carta de Maldición
+// usa las mismas custom properties (--rarity/--rarity-soft), solo que su
+// tramo 1-5 vive en un mapa de color aparte (styles/settings/_colors.scss).
+@mixin severity-vars($name) {
+  --rarity: #{severity($name, "base")};
+  --rarity-soft: #{severity($name, "soft")};
+}
+
 // Mini-carta de las tablas de la wiki (rareza y severidad comparten forma).
 @mixin chip-vars($base, $soft) {
   --chip-color: #{$base};
@@ -60,6 +68,18 @@
 @mixin line-clamp-lines($lines) {
   -webkit-line-clamp: $lines;
   line-clamp: $lines;
+}
+
+// Oro plano + sombra de contacto: la receta de texto grabado del tema de
+// producción. La comparten game-button__label y game-type-heading porque a
+// su tamaño (botón, título de panel) un degradado recortado al glifo no
+// tiene alto para leerse —se ensucia en vez de brillar—; el degradado real
+// (game-type-display) se reserva para texto de tamaño titular.
+@mixin game-engraved-text {
+  color: game("gold-hi");
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.9),
+    0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 // Ficha circular flotante sobre el arte (badge de categoría y sub-fichas).

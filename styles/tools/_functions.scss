@@ -73,6 +73,15 @@
   @return map.get($severity, $name, $key);
 }
 
+// Token del tema de producción (repository-pro). Constante de diseño, no
+// custom property: no conmuta con el skin claro/oscuro de las herramientas.
+@function game($name) {
+  @if not map.has-key($game, $name) {
+    @error "game(): no existe el token '#{$name}'. Disponibles: #{map.keys($game)}.";
+  }
+  @return map.get($game, $name);
+}
+
 @function card-font($name) {
   @if not map.has-key($card-font, $name) {
     @error "card-font(): no existe el tamaño '#{$name}'. Disponibles: #{map.keys($card-font)}.";

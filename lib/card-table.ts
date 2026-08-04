@@ -23,7 +23,7 @@
 // =========================================================================
 
 import { RARITY_LABEL_TO_LEVEL } from "./rarity";
-import { SEVERITY_LABEL_TO_LEVEL, type SeverityLevel } from "./severity";
+import { SEVERITY_LABEL_TO_LEVEL } from "./severity";
 import { artFor } from "./card-art";
 
 export type CardCategory =
@@ -47,11 +47,17 @@ export type DamageType =
 export type CardWeight = "ligera" | "media" | "pesada";
 export type Hands = "1h" | "2h";
 
+// Turnos que una carta Tipo Turnos permanece en juego antes de descartarse y
+// volver al Mazo (class.md §1). Solo aplica a Turnos: Accion/Pasiva no llevan
+// este dato (opcional, como hands/weight/damageType). No hay ya ningún tope
+// de repeticiones por combate/descanso — decidido, ver class.md §1.
+export type CardUsage = number;
+
 // Ciclo de vida de la carta al jugarla (class.md §1): Accion se usa una vez y
 // vuelve al Mazo (regla madre, game-design.md §4); Pasiva se queda en juego
 // para siempre; Turnos se queda en juego hasta cumplir la duración que
-// indique su propio Efecto. No describe coste de activación: ese recurso de
-// turno (Movimiento/Acción/Acción rápida, game-design.md §4b.3) es aparte y
+// indique su propia columna Uso. No describe coste de activación: ese recurso
+// de turno (Movimiento/Acción/Acción rápida, game-design.md §4b.3) es aparte y
 // no depende del Tipo de la carta.
 export type CardType = "accion" | "pasiva" | "turnos";
 
@@ -60,7 +66,11 @@ export type CardStat = { k?: string; v?: string; label?: string };
 export type CardRecord = {
   id: string;
   category: CardCategory;
-  /** Raíl de color: nivel de rareza o rareza de categoría ($rarity en _colors.scss). */
+  /**
+   * Raíl de color: nivel de rareza, tramo de severidad de Maldición (mismo
+   * eje 1-5, leído al revés) o rareza fija de categoría ($rarity/$severity en
+   * _colors.scss).
+   */
   rarity: string;
   name: string;
   /** Markdown en línea (negritas incluidas), ya limpio de referencias a docs. */
@@ -74,7 +84,8 @@ export type CardRecord = {
   hands?: Hands;
   damageType?: DamageType;
   weight?: CardWeight;
-  severity?: SeverityLevel;
+  /** Turnos en juego de una carta Tipo Turnos (class.md §1). Solo en cartas de clase. */
+  usage?: CardUsage;
   legendary?: boolean;
 };
 
@@ -91,7 +102,9 @@ export const CATEGORIES: { key: CardCategory; label: string }[] = [
 const CATEGORY_KEYS = new Set<string>(CATEGORIES.map((c) => c.key));
 
 // Raíl de color por defecto de las categorías que no llevan columna Rareza
-// (las cartas de clase no tienen rareza por diseño, class.md §3.3).
+// (las cartas de clase no tienen rareza por diseño, class.md §3.3). El de
+// Maldición es un respaldo que no debería usarse nunca en la práctica: toda
+// fila de curses.md trae su columna Nivel, que ya fija el raíl real (severity role).
 const CATEGORY_RARITY: Partial<Record<CardCategory, string>> = {
   clase: "clase",
   maldicion: "maldicion",
@@ -310,6 +323,7 @@ type Role =
   | { kind: "weight" }
   | { kind: "damage" }
   | { kind: "type" }
+  | { kind: "usage" }
   | { kind: "stat"; k: string };
 
 /** ¿Todos los valores no vacíos de la columna están en `set` (comparando iconos)? */
@@ -332,9 +346,10 @@ function roleFor(header: string, values: string[], index: number): Role {
   if (index === 0) return { kind: "name" };
   if (TEXT_HEADERS.has(h)) return { kind: "text" };
   if (h === "rareza") return { kind: "rarity" };
-  if (h === "severidad") return { kind: "severity" };
+  if (h === "nivel") return { kind: "severity" }; // Nivel de Maldición (curses.md §2): mismo eje que Rareza, leído al revés.
   if (h === "manos") return { kind: "hands" };
   if (h === "peso") return { kind: "weight" };
+  if (h === "uso") return { kind: "usage" };
   if (allIcons(values, DAMAGE_BY_ICON)) return { kind: "damage" };
   if (allIcons(values, WEIGHT_BY_ICON)) return { kind: "weight" };
   if (allIcons(values, HANDS_BY_ICON)) return { kind: "hands" };
@@ -402,7 +417,11 @@ export function cardsFromTable(
           break;
         }
         case "severity": {
-          card.severity = SEVERITY_LABEL_TO_LEVEL[plain(cell)];
+          // "★★★ Grave": el nº de estrellas ya lo lee starsFor() desde el
+          // propio nombre del tramo (lib/rarity.ts); aquí solo hace falta la
+          // etiqueta para saber qué raíl de color usar.
+          const level = SEVERITY_LABEL_TO_LEVEL[plain(cell).replace(/^★+\s*/, "")];
+          if (level) card.rarity = level;
           break;
         }
         case "hands":
@@ -417,6 +436,13 @@ export function cardsFromTable(
         case "type":
           card.type = TYPE_VALUES[norm(plain(cell))];
           break;
+        case "usage": {
+          // "2 turnos" / "1 turno" → 2 / 1. Otro texto (p. ej. una duración
+          // aún sin cerrar) se ignora: sin número no hay dato que pintar.
+          const m = /^(\d+)\s*turnos?$/.exec(norm(plain(cell)));
+          if (m) card.usage = Number(m[1]);
+          break;
+        }
         case "stat":
           card.stats.push({ k: role.k, v: plain(cell) });
           break;

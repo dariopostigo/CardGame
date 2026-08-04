@@ -100,7 +100,7 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 
 ### 3.1 Por origen
 
-1. **Cartas de Habilidad de Clase** — inspiradas en las cartas "Básica 1/2/3" de Viajes. Cada clase tiene un set fijo de cartas genéricas, **todas disponibles desde el nivel 1** (p. ej. Guerrero: "Golpe firme", "Postura defensiva"): ya no hay un subconjunto que se desbloquee por nivel/hito de personaje *(decidido — elimina la distinción anterior entre "Básica" y "Especial")*, cada carta sube de Nivel por su cuenta pagando al Instructor (§6d.5). Algunas tienen uso limitado (`1/combate` o `1/descanso`), como propiedad de la carta y no de ninguna categoría. Catálogo en [`cards/class.md`](cards/class.md).
+1. **Cartas de Habilidad de Clase** — inspiradas en las cartas "Básica 1/2/3" de Viajes. Cada clase tiene un set fijo de cartas genéricas, **todas disponibles desde el nivel 1** (p. ej. Guerrero: "Golpe firme", "Postura defensiva"): ya no hay un subconjunto que se desbloquee por nivel/hito de personaje *(decidido — elimina la distinción anterior entre "Básica" y "Especial")*, cada carta sube de Nivel por su cuenta pagando al Instructor (§6d.5). Las de Tipo `Turnos` indican en su columna Uso cuántos turnos permanecen en juego; no hay ningún límite de repeticiones más allá del propio ritmo del Oteo (`cards/class.md` §1). Catálogo en [`cards/class.md`](cards/class.md).
 2. **Cartas de equipo** — armas, armaduras e items conseguidos jugando (botín, tesoro, recompensas, compra; ver §3.2 y [`cards/`](cards/README.md)). Las **armas y armaduras** se **equipan** aparte (§4a); los **items** entran al **Mazo** (§4). Nada de esto se consigue con el Oteo.
 3. **Cartas de Mercenario** — compañías a sueldo que se **reclutan** superando una prueba de Carisma en una ficha del tablero (fallarla la convierte en enemigo) o se **compran** por oro; van al Mazo como cartas de Acción. Como cualquier carta, **al darles la orden vuelven al Mazo** (regla madre de §4): son una ráfaga preparada, no un aliado permanente en el tablero. Catálogo en [`cards/mercenaries.md`](cards/mercenaries.md).
 
@@ -112,7 +112,7 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 | **Armadura** | Escudo/coraza | Suma a la Defensa/CA; puede restar Destreza si es pesada | Solo 1 equipada a la vez (§2.4) |
 | **Item** | Bolsa | Categoría amplia: pociones (efecto instantáneo), hechizos (cartas de habilidad de clase o Pergaminos), objetos de aventura/herramientas/objetos mágicos raros — ver [`cards/items.md`](cards/items.md) | El más variado de los 4 tipos |
 | **Mercenario** | 🪖 Casco/estandarte | Carta de Acción: das la orden a una compañía a sueldo (atacar, curarte, etc.); cuesta tu Acción y, como toda carta, **gasta su preparación** al jugarse (regla madre de §4) | Origen (reclutar/comprar) y catálogo en [`cards/mercenaries.md`](cards/mercenaries.md) |
-| **Maldición** | Calavera/nube negra | Efecto negativo persistente que **ocupa un hueco del mazo** (a diferencia de un Efecto/Estado temporal de combate) — ej. -1 movimiento, 1 de daño cada 2 turnos, −1 al rango de visión | Definida en [`cards/curses.md`](cards/curses.md) (severidad Leve/Grave, fuentes, limpieza); da incentivo a "limpiar" el mazo |
+| **Maldición** | Calavera/nube negra | Efecto negativo persistente que **ocupa un hueco del mazo** (a diferencia de un Efecto/Estado temporal de combate) — ej. -1 movimiento, 1 de daño cada 2 turnos, −1 al rango de visión | Definida en [`cards/curses.md`](cards/curses.md) (Nivel 1-5 con estrellas, leído al revés; fuentes, limpieza); da incentivo a "limpiar" el mazo |
 
 > **Dónde vive cada tipo:** **armas** y **armaduras** son el **sistema de equipo** (§4a) — se equipan, no ocupan hueco del Mazo ni pasan por el Oteo. **Items**, **mercenarios** y **maldiciones** sí viven en el **Mazo** (§4).
 
@@ -159,7 +159,7 @@ Determina lo poderosa que es una carta y la dificultad de encontrarla/comprarla 
   >
   > Así el Oteo es una **decisión con información** —"rechazo estas 2 porque sé que me quedan dos mejores"— en vez de una apuesta a ciegas, que es lo que hace que componer el Mazo (qué compras, qué vendes, qué te quedas del botín) tenga consecuencias que puedes razonar. Además el **swap 1-por-1** al llegar a 20 lo exige: no puedes elegir qué carta sacrificas si no ves lo que tienes.
 - **Sin "mano" clásica:** no se roba y descarta una **mano completa** cada turno como en un juego de cartas al uso; el Oteo solo saca **2 al azar**, preparas 1 y lo que preparas **se queda en juego** hasta que lo juegas. Una vez una carta está **en juego**, es una opción **siempre disponible** hasta que la juegues (dentro del recurso de acción del turno, §4b.3): curarte, ayudar en la aventura, subir estadísticas, atacar, etc.
-- **Ninguna carta se pierde al jugarla *(decidido)*:** jugar una carta del mazo personal (equipo, clase, item) Tipo `Accion` cuesta tu Acción principal (`cards/class.md` §1); Tipo `Pasiva`/`Turnos` no gastan Acción (se pagan con el hueco de "en juego" que ocupan, ver abajo). La carta **vuelve al Mazo** cuando corresponda (§4) y puede volver a prepararse con el Oteo más adelante — **hoy** no hay descarte permanente ni cartas de "un solo uso" en el mazo personal (podría añadirse como excepción puntual en el futuro; de momento ninguna carta lo lleva). Textos como "un uso" o "se consume" en cartas de equipo/item **no aplican** y son restos de una idea descartada. El único límite real de repetición son las etiquetas explícitas **1/combate** o **1/descanso** que algunas Cartas de Habilidad de Clase llevan (§3.1).
+- **Ninguna carta se pierde al jugarla *(decidido)*:** jugar una carta del mazo personal (equipo, clase, item) Tipo `Accion` cuesta tu Acción principal (`cards/class.md` §1); Tipo `Pasiva`/`Turnos` no gastan Acción (se pagan con el hueco de "en juego" que ocupan, ver abajo). La carta **vuelve al Mazo** cuando corresponda (§4) y puede volver a prepararse con el Oteo más adelante — **hoy** no hay descarte permanente ni cartas de "un solo uso" en el mazo personal (podría añadirse como excepción puntual en el futuro; de momento ninguna carta lo lleva). Textos como "un uso" o "se consume" en cartas de equipo/item **no aplican** y son restos de una idea descartada. **No hay ningún límite de repetición más allá del propio ritmo del Oteo** *(decidido — se quitó el tope `1/combate`/`1/descanso` que antes llevaban algunas Cartas de Habilidad de Clase, `cards/class.md` §1)*.
 
   > **Regla madre — jugar una carta la saca de "en juego" *(decidido, resuelve una contradicción entre documentos)*.** "Nada se pierde" **no** significa "se puede repetir". Al jugar una carta Tipo `Accion`, **abandona la zona "en juego"** y vuelve al Mazo; para volver a usarla tiene que **salirte otra vez en un Oteo** y ocupar de nuevo un hueco preparado. O sea: **"en juego" es munición preparada, no un equipamiento permanente.**
   >
@@ -265,7 +265,7 @@ Resuelve el cross-reference pendiente entre §4 (solo hablaba del mazo personal)
 
 ### 4b.7 Hechizos (sin recurso de puntos)
 
-En el prototipo los hechizos son simplemente **Cartas de habilidad de clase** (algunas con uso limitado 1/combate o 1/descanso, como *Bola de fuego*; otras de uso libre, como *Descarga arcana* o *Llama sagrada*) o **Pergaminos** (Item). Viven en el Mazo y se **preparan con el Oteo** como cualquier otra carta (§4): **no hay un subsistema de "preparar hechizos" aparte**, ni maná, ni espacios de conjuro. Se lanzan gastando la Acción que indique la carta y se resuelven con `1d20 + INT/SAB` vs CD/Defensa (§4b.4).
+En el prototipo los hechizos son simplemente **Cartas de habilidad de clase** (todas de uso libre — *Bola de fuego* igual que *Descarga arcana* o *Llama sagrada*, sin ningún tope de repetición) o **Pergaminos** (Item). Viven en el Mazo y se **preparan con el Oteo** como cualquier otra carta (§4): **no hay un subsistema de "preparar hechizos" aparte**, ni maná, ni espacios de conjuro. Se lanzan gastando la Acción que indique la carta y se resuelven con `1d20 + INT/SAB` vs CD/Defensa (§4b.4).
 
 **Foco *(decidido)*:** el **Libro de hechizos** (Mago) y el **Símbolo sagrado** (Clérigo) son **armas equipadas** (§4a, [`cards/weapons.md`](cards/weapons.md) §3) que dan **+1 a las tiradas y CD de tus hechizos** mientras las empuñas —como el Bastón del poder—; potencian, no son requisito para lanzar. La granularidad de caster (tipos de magia, debilidades elementales, subclases de mago) queda como desarrollo posterior.
 
@@ -274,15 +274,15 @@ En el prototipo los hechizos son simplemente **Cartas de habilidad de clase** (a
 - **Huir:** usar el Movimiento para salir de adyacencia/alcance. Si un enemigo **Activo** está adyacente, salir de su lado exige **Desengancharse** (§4b.11).
 - **Victoria:** todos los enemigos a 0 PV → recompensas (loot de la ficha de Tesoro si aplica, posible carta del mazo de encuentro, y avance de hito si era un jefe).
 
-**Cuándo termina exactamente un combate *(decidido)*.** Hacía falta definirlo porque de ello dependen los contadores **1/combate** (§3.1) y no estaba escrito. El combate termina cuando **no queda ningún enemigo Activo que te tenga localizado**, por cualquiera de estas tres vías:
+**Cuándo termina exactamente un combate *(decidido)*.** Hacía falta definirlo porque de ello depende cuándo vuelves a estar **fuera de combate** —la condición que exige la Hoguera para acampar (§4c.2)— y no estaba escrito. El combate termina cuando **no queda ningún enemigo Activo que te tenga localizado**, por cualquiera de estas tres vías:
 
-| Vía | Qué pasa con los `1/combate` |
+| Vía | Cuándo se considera terminado |
 |---|---|
-| **Victoria** — todos a 0 PV | Se resetean **ya** |
-| **El enemigo escapa** — completa su *leash* de 2 turnos (`characters/enemies.md` §5b.6) | Se resetean al completarse el leash |
-| **Escapas tú** — te mantienes fuera de la detección y la línea de visión de todos los enemigos Activos durante **2 turnos** (el mismo leash de `characters/enemies.md` §2, aplicado en tu dirección) | Se resetean **al completarse esos 2 turnos**, no al salir corriendo |
+| **Victoria** — todos a 0 PV | Ya, al instante |
+| **El enemigo escapa** — completa su *leash* de 2 turnos (`characters/enemies.md` §5b.6) | Al completarse el leash |
+| **Escapas tú** — te mantienes fuera de la detección y la línea de visión de todos los enemigos Activos durante **2 turnos** (el mismo leash de `characters/enemies.md` §2, aplicado en tu dirección) | Al completarse esos 2 turnos, no al salir corriendo |
 
-> **Por qué el reset no es inmediato al huir.** Si lo fuera, el bucle óptimo sería: lanzas *Bola de fuego*, te alejas un hexágono, vuelves con la carta recargada. Exigir los 2 turnos completos de leash lo cierra sin inventar ninguna regla nueva —reutiliza el leash que ya existe— y le pone un precio real: **+8 de Nivel de Amenaza por huir** (§6c.2) más los dos turnos perdidos. Si el enemigo te vuelve a detectar antes de completarlos, **es el mismo combate**: el contador de turnos se reinicia y tus `1/combate` siguen gastados.
+> **Por qué el fin de combate no es inmediato al huir.** Si lo fuera, el bucle óptimo sería: te alejas un hexágono y ya puedes acampar y curarte gratis a un paso de los mismos enemigos, antes de volver a por ellos. Exigir los 2 turnos completos de leash lo cierra sin inventar ninguna regla nueva —reutiliza el leash que ya existe— y le pone un precio real: **+2 de Nivel de Amenaza por huir** (§6c.2, corregido — la cifra vieja +8 era de antes del reescalado a tope 40) más los dos turnos perdidos. Si el enemigo te vuelve a detectar antes de completarlos, **es el mismo combate**: el contador de turnos se reinicia. *(Antes esta regla también cerraba el exploit de recargar cartas `1/combate` huyendo un hex; ese tope ya no existe en ningún sitio, `cards/class.md` §1 — el anti-abuso de acampar sigue siendo motivo suficiente por sí solo.)*
 - **Derrota (héroe a 0 PV):** con un solo héroe (`characters/heroes.md`), 0 PV = caído. Partida rápida → fin de partida; Modo Campaña → reiniciar el mapa/capítulo (el nivel y el mazo persisten). La recuperación entre combates se define en §4c (Descanso y recuperación).
 
 ### 4b.9 Estados de combate (borrador)
@@ -365,14 +365,14 @@ Es la ventana que se buscaba: **el equipo solo no basta y el mazo decide la pele
 ### 4c.2 Acampar — carta Hoguera (fuera de combate) = descanso corto
 
 - La carta **Hoguera/Campamento** ([`cards/items.md`](cards/items.md)) solo se juega **fuera de combate**.
-- **Efecto:** gastas Dados de Vida (§4c.4) para curarte y **reseteas tus habilidades 1/descanso** (ej. Segundo aliento del Guerrero, [`cards/class.md`](cards/class.md)).
+- **Efecto:** gastas Dados de Vida (§4c.4) para curarte.
 - **Riesgo (tensión + anti-abuso):** acampar en terreno inseguro obliga a robar 1 carta del **mazo de encuentro** ([`cards/encounter.md`](cards/encounter.md)) o a una prueba de detección — puede saltar una **emboscada**. El terreno modifica el riesgo: Bosque es seguro (ocultación), Llanura/Camino quedan expuestos (`board/board-map.md` §3-4). Esto limita de forma natural y temática el acampar en bucle.
 - Además, no puedes volver a acampar hasta que **ocurra algo** (entrar en combate o explorar un grupo nuevo) — evita re-acampar sin avanzar.
 
 ### 4c.3 Localización segura — descanso largo
 
 - En **Pueblo/Aldea**, **Taberna** o **Templo/Santuario** (`board/board-map.md` §3b, `characters/npcs.md`):
-- **Efecto:** recuperas **todos los PV**, **recuperas todos los Dados de Vida** gastados, retiras estados negativos y reseteas 1/descanso. **Sin riesgo** (zona segura).
+- **Efecto:** recuperas **todos los PV**, **recuperas todos los Dados de Vida** gastados y retiras estados negativos. **Sin riesgo** (zona segura).
 - Puede costar **oro** (economía pendiente) en la Taberna, o ser gratis según el lugar. El Templo puede además limpiar una Maldición ([`cards/curses.md`](cards/curses.md)).
 
 ### 4c.4 Dados de Vida (DV)
@@ -569,7 +569,7 @@ Sube más rápido con acciones "lentas" o ruidosas y se frena avanzando — ahí
 | Sube la Amenaza | | Equivale a |
 |---|---|---|
 | Fin de turno (base) | **+1** | 1 turno |
-| Acampar / descanso corto (§4c.2) | **+3** | 3 turnos — curarte medio PV y resetear habilidades cuesta tiempo de verdad, y refuerza el anti-abuso de §4c.2 |
+| Acampar / descanso corto (§4c.2) | **+3** | 3 turnos — curarte medio PV cuesta tiempo de verdad, y refuerza el anti-abuso de §4c.2 |
 | Fallar una prueba de sigilo y alertar una zona (`characters/enemies.md` §2b) | **+2** | 2 turnos |
 | Huir de un combate (`characters/enemies.md` §5b.6) | **+2** | 2 turnos — mismo peso que alertar: los dos son un contratiempo, no una elección deliberada como acampar. Se suman a los 2 turnos de *leash* que ya cuesta escapar (§4b.8) |
 | Carta de Suceso **Mal augurio** ([`cards/encounter.md`](cards/encounter.md) §4) | **+5** | 5 turnos — la subida de golpe más dura del juego, y por eso es la peor carta del mazo de Suceso |
@@ -700,7 +700,7 @@ Invertido a propósito: nadie paga para que su propia Maldición empeore. En vez
 - [x] **Resolver si una carta jugada se queda "en juego" o vuelve al Mazo** → **vuelve al Mazo** (regla madre de §4). `cards/class.md` §1, §3.1 de este documento y `cards/mercenaries.md` §1 decían lo contrario y quedan corregidos. Era la contradicción más grave del sistema: decidía si "en juego" es un *loadout* que se spamea o **munición preparada**.
 - [x] **Cuadrar la matemática del combate** → §4b.12: PV de protagonista (§2), **ataque secundario** (§4b.3) y recorte de los Élite (`characters/enemies.md` §5b.3). Antes los tres Élite ganaban a los cuatro héroes y el Mago perdía contra un lobo suelto.
 - [x] **Tope de 2 enemigos simultáneos** (`characters/enemies.md` §5b.6) — límite de economía de acción, no de balance.
-- [x] **Definir cuándo termina un combate** (de lo que dependen los contadores `1/combate`) → §4b.8, por victoria / leash del enemigo / leash tuyo, cerrando el exploit de huir para recargar las cartas `1/combate`.
+- [x] **Definir cuándo termina un combate** (de lo que depende cuándo puedes volver a acampar) → §4b.8, por victoria / leash del enemigo / leash tuyo, cerrando el exploit de huir y acampar gratis a un paso de la pelea.
 - [x] **Ataques a distancia contra un enemigo adyacente** → §4b.1, **a bocajarro con Desventaja**. Hace real la referencia que `effects.md` ya hacía y evita que el Mago se quede sin ataque.
 - [x] **Críticos de los enemigos** → simétricos con el héroe (§4b.4 paso 5, `characters/enemies.md` §5b.1).
 - [x] **El daño suma siempre el modificador**, hechizos incluidos → §4b.4 paso 4; corregidas *Descarga arcana* y *Llama sagrada*.
@@ -715,7 +715,7 @@ Invertido a propósito: nadie paga para que su propia Maldición empeore. En vez
 - [x] Definir dado de vida por clase — ver `characters/heroes.md` §2c (Guerrero d10, Pícaro/Clérigo d8, Mago d6).
 - [x] Definir cómo se traduce capítulo/hito de Campaña a CR de enemigo esperado (duda 5) → **escala de dificultad** por zona/nivel (`characters/enemies.md` §5c).
 - [x] Confirmar si el máximo de cartas del mazo (§4, ej. 10) cuenta solo el equipo o también las cartas de clase → **cuenta todas** (clase + equipo). El límite podrá subirse más adelante si hace falta.
-- [x] Terminar de definir la mecánica de Maldición (§3.2) → [`cards/curses.md`](cards/curses.md): severidad Leve/Grave, catálogo de 8, fuentes, y limpieza (Templo por oro o prueba). Falta balancear.
+- [x] Terminar de definir la mecánica de Maldición (§3.2) → [`cards/curses.md`](cards/curses.md): Nivel 1-5 con estrellas (leído al revés), catálogo de 9, fuentes, y limpieza (Templo por oro o prueba). Falta balancear.
 - [x] Definir el sistema de subir de nivel las **cartas** (no confundir con el personaje, §5) → **§6d Reforjar**: solo NPC + oro (sin uso), coste = trade-in de la tabla de §6b.3, igual para las cinco categorías. Arma/Armadura/Mercenario/cartas de clase ya completan su escalera 1-5; Item queda con catálogo por completar más allá del kit inicial (§6d.3).
 - [x] Formalizar la progresión de **personaje** (§5), aparcada hasta ahora → mismo rango 1-5 que las cartas, hitos ya conceden el nivel, PV/estadística concretados por héroe; ya **no** desbloquea cartas (eso quedó eliminado al fusionar Básica/Especial, `cards/class.md` §6, con las 8 cartas de cada héroe ya con tabla 1-5). Falta balancear.
 

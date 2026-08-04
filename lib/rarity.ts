@@ -1,3 +1,5 @@
+import { SEVERITY_LEVELS } from "./severity";
+
 // Paleta de rareza compartida entre el lab de cartas y la mini-carta de rareza
 // de la wiki (components/wiki/RarityChip.tsx). Espejo de $rarity en
 // styles/settings/_colors.scss: si cambia una, cambia la otra.
@@ -24,3 +26,23 @@ export const RARITY_COLORS: Record<RarityLevel, { color: string; soft: string }>
   epico: { color: "#a855f7", soft: "rgba(168,85,247,.38)" },
   legendario: { color: "#e2b53c", soft: "rgba(226,181,60,.45)" },
 };
+
+// Orden de progresión = nº de estrellas (game-design.md §3.3: 1★ Común … 5★
+// Legendario). Espejo de $rarity-levels en styles/settings/_colors.scss.
+export const RARITY_LEVELS: readonly RarityLevel[] = [
+  "comun",
+  "poco-comun",
+  "raro",
+  "epico",
+  "legendario",
+];
+
+/**
+ * Nº de estrellas de un raíl de color, o 0 si no es un Nivel real (p. ej.
+ * "clase"/"enemigo"). Mira también los tramos de severidad de Maldición
+ * (lib/severity.ts): son el mismo eje 1-5 con estrellas, leído al revés.
+ */
+export function starsFor(rarity: string): number {
+  const step = RARITY_LEVELS.indexOf(rarity as RarityLevel) + 1;
+  return step > 0 ? step : SEVERITY_LEVELS.indexOf(rarity as (typeof SEVERITY_LEVELS)[number]) + 1;
+}

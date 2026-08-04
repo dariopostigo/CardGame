@@ -16,17 +16,19 @@ export default function RepositoryProIndexPage() {
       intro={
         <>
           <p>
-            Los componentes que verá el <b>jugador</b>, con tema medieval: pergamino, hierro, madera
-            y sangre. Está <b>vacío a propósito</b> —no hay ni un componente de producción todavía—
-            y lo que sí hay es la lista completa de familias por construir, que es el mapa del
-            trabajo.
+            Los componentes que verá el <b>jugador</b>, con tema medieval: cuero, hierro y sangre,
+            con remaches de oro —inspirado en <code>public/assets/UI/example1.jpg</code>—. Ya tiene
+            sus dos primeras familias en marcha; el resto sigue siendo la lista de lo que falta por
+            construir, que es el mapa del trabajo.
           </p>
           <p className="mt-2">
-            Empieza por <b>Fundamentos del tema</b>: hasta que existan los tokens{" "}
-            <code>--game-*</code> lo demás son componentes sueltos sin tema. Y no son los{" "}
-            <code>--wiki-*</code> con otros valores: el skin de las herramientas es{" "}
-            <i>chrome</i> con modo claro y oscuro, y este es diegético —forma parte de la ficción, y
-            un pergamino no tiene modo oscuro.
+            Empieza por <b>Fundamentos del tema</b>: hasta que exista la paleta de{" "}
+            <code>$game</code> (<code>styles/settings/_game.scss</code>) lo demás son componentes
+            sueltos sin tema. Y no es el skin <code>--wiki-*</code> con otros valores: el de las
+            herramientas es <i>chrome</i>, conmuta con el claro/oscuro y vive en custom properties;
+            este es diegético —forma parte de la ficción del juego, y un cuero curtido no tiene modo
+            oscuro— así que es una constante de diseño, como <code>rarity()</code> o{" "}
+            <code>terrain()</code>.
           </p>
           <p className="mt-2">
             El marco que estás viendo seguirá siendo sobrio cuando esto se llene: lo medieval va{" "}

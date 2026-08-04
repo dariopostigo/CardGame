@@ -58,17 +58,17 @@ Se **encuentran** (loot de Élite/Jefe, cofres de alta rareza) y, de momento, ta
 
 | Objeto | Tipo | Efecto | Rareza |
 |---|---|---|---|
-| Manto de invisibilidad | Accion | Quedas **Oculto** ([`../effects.md`](../effects.md)) sin necesitar terreno; 1/combate | Legendario |
+| Manto de invisibilidad | Accion | Quedas **Oculto** ([`../effects.md`](../effects.md)) sin necesitar terreno | Legendario |
 | Anillo de deseo | Accion | Copia el efecto de una carta de habilidad de clase que hayas visto este combate, o cúrate al máximo | Legendario |
-| Orbe de dragón | Accion | 1/combate: aliento de 4d6 de fuego en un hex y sus adyacentes (salvación DES por mitad) | Legendario |
+| Orbe de dragón | Accion | Aliento de 4d6 de fuego en un hex y sus adyacentes (salvación DES por mitad) | Legendario |
 | Guantelete del ogro | Pasiva | +2 de Fuerza efectiva para armas y pruebas; +2 al daño cuerpo a cuerpo | Épico |
-| Botas de teletransporte | Accion | 1/combate: te teletransportas hasta 3 hex (ignora terreno y adyacencia) | Épico |
+| Botas de teletransporte | Accion | Te teletransportas hasta 3 hex (ignora terreno y adyacencia) | Épico |
 
 ## 4. Consumibles
 
 Pociones (efecto instantáneo: curación, buff temporal), Pergaminos (lanzan un hechizo concreto — sostienen el modelo de hechizos-como-cartas, sin maná, de `../game-design.md` §4b.7). Todos son Tipo Accion: se juegan gastando tu Acción principal (`../game-design.md` §4b.3).
 
-> **Un consumible es un uso por preparación, no un grifo abierto.** Por la **regla madre** de `../game-design.md` §4, beber la Poción la **saca de "en juego"** y la devuelve al Mazo: para volver a beberla tiene que **salirte otra vez en un Oteo**. Ahí está su límite natural, y por eso **ninguna carta de curación necesita una etiqueta `1/combate`**: el techo sostenible de curación es el ritmo del Oteo (~1 carta por turno), y gastar tu Acción en curarte es renunciar a tu ataque normal ese turno. *(Punto a vigilar al testear: un Clérigo que dedique cada Oteo a **Palabra sanadora** en vez de atacar puede superar el daño entrante de un Élite a cambio de todo su ritmo ofensivo. Es una estrategia legítima de desgaste, la paga en turnos y en Nivel de Amenaza — pero si al jugar convierte los combates en una eternidad, la palanca es bajar la curación de esa carta, no tocar la regla.)*
+> **Un consumible es un uso por preparación, no un grifo abierto.** Por la **regla madre** de `../game-design.md` §4, beber la Poción la **saca de "en juego"** y la devuelve al Mazo: para volver a beberla tiene que **salirte otra vez en un Oteo**. Ahí está su límite natural — ya no hace falta ninguna etiqueta de tope aparte (§3.1 de `class.md`): el techo sostenible de curación es el ritmo del Oteo (~1 carta por turno), y gastar tu Acción en curarte es renunciar a tu ataque normal ese turno. *(Punto a vigilar al testear: un Clérigo que dedique cada Oteo a **Palabra sanadora** en vez de atacar puede superar el daño entrante de un Élite a cambio de todo su ritmo ofensivo. Es una estrategia legítima de desgaste, la paga en turnos y en Nivel de Amenaza — pero si al jugar convierte los combates en una eternidad, la palanca es bajar la curación de esa carta, no tocar la regla.)*
 
 <!-- cards: item -->
 
@@ -88,7 +88,7 @@ Cartas ligadas al sistema de **Descanso y recuperación** (`../game-design.md` �
 
 | Carta | Tipo | Efecto | Rareza |
 |---|---|---|---|
-| **Hoguera / Campamento** | Accion | **Solo fuera de combate.** **Descanso corto:** recuperas **la mitad de tus PV máximos** (redondeo arriba) y reseteas habilidades 1/descanso. Acampar en terreno inseguro **arriesga una emboscada** (roba del [`encounter.md`](encounter.md)); Bosque es seguro. No re-acampable hasta que ocurra algo (`../game-design.md` §4c.2). *(Cura fija en el prototipo; con la progresión de nivel pasa a gastar Dados de Vida, §4c.4.)* | Común |
+| **Hoguera / Campamento** | Accion | **Solo fuera de combate.** **Descanso corto:** recuperas **la mitad de tus PV máximos** (redondeo arriba). Acampar en terreno inseguro **arriesga una emboscada** (roba del [`encounter.md`](encounter.md)); Bosque es seguro. No re-acampable hasta que ocurra algo (`../game-design.md` §4c.2). *(Cura fija en el prototipo; con la progresión de nivel pasa a gastar Dados de Vida, §4c.4.)* | Común |
 
 > También es la base de una familia completa (Poco común → Legendario en §5b): más curación y, a partir de Raro, quita el riesgo de emboscada al acampar.
 
@@ -128,10 +128,10 @@ A diferencia de Arma/Armadura ([`weapons.md`](weapons.md) §5b, [`armor.md`](arm
 | Antídoto puro | Antídoto | Retira **Envenenado** y cualquier otro estado negativo leve | Raro |
 | Elixir purificador | Antídoto | Retira cualquier estado negativo (incluidos los graves) y recuperas **2d4** PV | Épico |
 | Panacea universal | Antídoto | Retira **todos** los estados negativos, recuperas **4d4** PV y ganas inmunidad a Envenenado durante 3 turnos | Legendario |
-| Hoguera abrigada | Hoguera / Campamento | Cura mitad de PV máx (redondeo arriba) **+1d6** extra, resetea 1/descanso | Poco común |
-| Campamento fortificado | Hoguera / Campamento | Cura mitad de PV máx **+2d6** extra, resetea 1/descanso, **sin riesgo de emboscada** en terreno inseguro (§4b.2) | Raro |
-| Santuario portátil | Hoguera / Campamento | Cura mitad de PV máx **+3d6** extra, resetea 1/descanso, sin riesgo de emboscada, además retira un estado negativo leve | Épico |
-| Círculo de los ancestros | Hoguera / Campamento | Recuperas **todos** tus PV, resetea 1/descanso, sin riesgo de emboscada, retira cualquier estado negativo | Legendario |
+| Hoguera abrigada | Hoguera / Campamento | Cura mitad de PV máx (redondeo arriba) **+1d6** extra | Poco común |
+| Campamento fortificado | Hoguera / Campamento | Cura mitad de PV máx **+2d6** extra, **sin riesgo de emboscada** en terreno inseguro (§4b.2) | Raro |
+| Santuario portátil | Hoguera / Campamento | Cura mitad de PV máx **+3d6** extra, sin riesgo de emboscada, además retira un estado negativo leve | Épico |
+| Círculo de los ancestros | Hoguera / Campamento | Recuperas **todos** tus PV, sin riesgo de emboscada, retira cualquier estado negativo | Legendario |
 | Raciones abundantes | Raciones de viaje | **+2 PV** al curarte en el próximo Descanso corto | Poco común |
 | Raciones del explorador | Raciones de viaje | **+3 PV** al próximo Descanso corto, además la mitad de riesgo de emboscada al acampar (§4b.2) | Raro |
 | Provisiones del gremio | Raciones de viaje | **+4 PV** al próximo Descanso corto, sin riesgo de emboscada al acampar | Épico |
