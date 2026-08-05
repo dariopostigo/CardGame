@@ -197,6 +197,15 @@ $board-base: #2b2420;
 // convierte en un objeto encima de una mesa en vez de un dibujo.
 $board-shadow: rgba(12, 9, 7, 0.45);
 
+// El resalte de "aquí puedes llegar" (board__hex-highlight[data-reachable],
+// HexBoard.tsx §4b / lib/rules/movement.ts `reachableHexes`). Celeste fijo, no
+// el "accent" de la wiki (índigo, y que además cambia con el skin claro/oscuro):
+// el resto del mapa no sigue esa regla —ver el comentario de $board-tile-edge—
+// y un simple tinte de relleno se perdía contra terrenos oscuros como la
+// Mazmorra. Mismo criterio que $deck-select más abajo: color propio del juego,
+// constante en los dos temas.
+$board-reachable: #38bdf8;
+
 // LA MESA: el fondo sobre el que está el tablero, y es el fondo del JUEGO —el
 // mismo en el laboratorio y en la partida—. Marrón casi negro, la referencia es
 // `public/assets/viajesTierraMedia/map1.webp`.

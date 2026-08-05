@@ -192,13 +192,16 @@
     stroke-width $duration-fast $ease,
     filter $duration-fast $ease;
 
-  // Alcance de movimiento (lib/rules/movement.ts `reachableHexes`): un tinte
-  // de relleno, no un trazo, para no competir con el hover/selección de abajo
-  // —los tres pueden coincidir en el mismo hexágono— y para leerse como "aquí
-  // SÍ puedes llegar", no como un simple cursor encima.
+  // Alcance de movimiento (lib/rules/movement.ts `reachableHexes`): tinte de
+  // relleno MÁS un trazo sólido, no solo relleno como antes —contra terrenos
+  // oscuros (Mazmorra) un tinte translúcido a secas no se leía—. El trazo es
+  // más fino que el de hover/selección para que esos dos, si coinciden en el
+  // mismo hexágono, sigan leyéndose como el estado "de encima".
   &[data-reachable="true"] {
-    fill: skin("accent");
-    fill-opacity: 0.18;
+    fill: $board-reachable;
+    fill-opacity: 0.32;
+    stroke: $board-reachable;
+    stroke-width: 1.5;
   }
 
   &[data-hover="true"] {
