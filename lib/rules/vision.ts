@@ -18,9 +18,9 @@ import type { HexCoord, HexKey } from "./hex";
 import type { Board, Hex as HexCell } from "./state";
 import { TERRAINS, type TerrainId } from "./terrain";
 
-/** Visión de detalle: `3 + mod SAB`, nunca por debajo de 1. */
+/** Visión de detalle: `2 + mod SAB`, nunca por debajo de 1. */
 export function detailRadius(sabMod: number): number {
-  return Math.max(1, 3 + sabMod);
+  return Math.max(1, 2 + sabMod);
 }
 
 /** Visión de terreno: la de detalle + 2, nunca por debajo de 2. */

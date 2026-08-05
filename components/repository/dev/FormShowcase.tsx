@@ -20,6 +20,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { RadioButton } from "primereact/radiobutton";
+import { SelectButton } from "primereact/selectbutton";
 import { Slider } from "primereact/slider";
 import { Cluster, Family, Specimen, SpecimenGrid } from "@/components/repository/Showcase";
 
@@ -40,6 +41,8 @@ const TERRAINS = [
   { label: "Vado", value: "V" },
 ];
 
+const HERO_CLASSES = ["Guerrero", "Pícaro", "Mago", "Clérigo"];
+
 const LABEL = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
 
 export default function FormShowcase() {
@@ -48,6 +51,7 @@ export default function FormShowcase() {
   const [tileCount, setTileCount] = useState<number | null>(9);
   const [size, setSize] = useState<string>("pequena");
   const [terrain, setTerrain] = useState<string>("B");
+  const [heroClass, setHeroClass] = useState<string>(HERO_CLASSES[0]);
   const [weight, setWeight] = useState<number>(8);
   const [anchors, setAnchors] = useState<string[]>(["NE"]);
   const [showFog, setShowFog] = useState(true);
@@ -183,7 +187,10 @@ export default function FormShowcase() {
             Radios para lo <b>excluyente</b> (un hexágono tiene un terreno y solo uno), casillas
             para lo <b>acumulable</b> (una loseta tiene las anclas que haga falta). El{" "}
             <code>inputId</code> y su <code>&lt;label&gt;</code> no son opcionales: sin ellos el
-            área de clic es la casilla de 22px.
+            área de clic es la casilla de 22px. <code>SelectButton</code> es la misma exclusividad
+            que los radios pero en botones: se usa cuando el rótulo de fuera ya dice qué se elige y
+            las opciones son pocas y cortas, como la clase del héroe en{" "}
+            <code>MovementLab</code>.
           </>
         }
       >
@@ -210,6 +217,17 @@ export default function FormShowcase() {
                   </div>
                 ))}
               </div>
+            </div>
+          </Specimen>
+          <Specimen label="Grupo de botones" hint={<code>SelectButton</code>}>
+            <div className="w-full">
+              <span className={`${LABEL} mb-2 block`}>Clase del héroe</span>
+              <SelectButton
+                value={heroClass}
+                onChange={(e) => e.value !== null && setHeroClass(e.value)}
+                options={HERO_CLASSES}
+                allowEmpty={false}
+              />
             </div>
           </Specimen>
           <Specimen

@@ -91,7 +91,7 @@ Valores derivados según `../game-design.md` §2.2-§2.3 (movimiento estándar, 
 
 El dado de vida sigue la convención D&D por rol (marcial > semi-marcial > caster puro): Guerrero d10 (el más resistente), Pícaro/Clérigo d8, Mago d6 (el más frágil, coherente con su Fuerza/Constitución bajas).
 
-**Visión** = `3 + mod SAB` de detalle (fichas) y `+2` más de terreno (silueta del mapa), `../game-design.md` §2.3. El Clérigo ve más lejos y el **Pícaro es el que menos** (Sabiduría 10) — decidido a propósito: su ventaja exploradora es el sigilo y *Ojo avizor*, no la percepción bruta.
+**Visión** = `2 + mod SAB` de detalle (fichas) y `+2` más de terreno (silueta del mapa), `../game-design.md` §2.3. El Clérigo ve más lejos y el **Pícaro es el que menos** (Sabiduría 10) — decidido a propósito: su ventaja exploradora es el sigilo y *Ojo avizor*, no la percepción bruta.
 
 **Dados de Vida:** en el prototipo **no se usan** — la Hoguera cura una cantidad fija (mitad de los PV máximos, `../game-design.md` §4c.4), porque a nivel 1 el héroe tendría 1 solo DV y el descanso corto sería inservible. Cuando llegue la progresión de nivel, cada héroe pasa a tener **DV = su nivel**, del tamaño de su dado de clase, recuperables en el descanso largo.
 

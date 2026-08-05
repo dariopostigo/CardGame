@@ -23,7 +23,7 @@ import type { HexCoord, HexKey } from "@/lib/rules/hex";
 import { generateBoard } from "@/lib/rules/board-gen";
 import type { Board, Hex as HexCell } from "@/lib/rules/state";
 import { TERRAINS, TERRAIN_IDS } from "@/lib/rules/terrain";
-import { MOVE_BASE, movePointsForTurn, reachableHexes } from "@/lib/rules/movement";
+import { MOVE_BASE, movePointsForTurn, reachableHexes, type ReachableInfo } from "@/lib/rules/movement";
 import { revealFromPosition, visionRadii } from "@/lib/rules/vision";
 import HexBoard from "@/components/game/board/HexBoard";
 import { TOKEN_ART } from "@/components/game/board/piece-art";
@@ -79,7 +79,7 @@ export default function MovementLab() {
       </p>
       <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
         La niebla tiene <b>dos capas</b>: visión de <b>terreno</b> (la silueta del mapa) y
-        de <b>detalle</b> (las fichas), <code>3 + mod SAB</code> la de detalle y esa
+        de <b>detalle</b> (las fichas), <code>2 + mod SAB</code> la de detalle y esa
         misma +2 la de terreno (§2.3). El Bosque y la Mazmorra ciegan al héroe que está
         de pie en ellos; la Montaña corta la línea de visión del todo. Una vez revelado,
         un hexágono se queda revelado: la niebla es acumulativa y permanente, no vuelve a
@@ -105,7 +105,7 @@ export default function MovementLab() {
 
         <div
           className="flex flex-col gap-1"
-          title="Determina los dos radios de visión: 3 + mod SAB de detalle (mínimo 1), esa cifra + 2 de terreno (mínimo 2)."
+          title="Determina los dos radios de visión: 2 + mod SAB de detalle (mínimo 1), esa cifra + 2 de terreno (mínimo 2)."
         >
           <span className={label}>Clase</span>
           <SelectButton
@@ -178,6 +178,10 @@ function MovementSession({ board, sabMod, modifiers }: SessionProps) {
   const [pointsLeft, setPointsLeft] = useState(() =>
     movePointsForTurn(MOVE_BASE, modifierValues(modifiers)),
   );
+  // El bono de Camino es "una vez por turno", no "una vez por movimiento":
+  // se queda gastado para el resto del turno en cuanto un desplazamiento lo
+  // usa, y solo se recarga en `endTurn`.
+  const [roadBonusUsed, setRoadBonusUsed] = useState(false);
   // Qué casilla está seleccionada: CUALQUIER ficha se puede seleccionar para
   // inspeccionarla (panel de abajo), pero el alcance de movimiento solo
   // aparece cuando la seleccionada es la del propio héroe — seleccionar no es
@@ -186,8 +190,11 @@ function MovementSession({ board, sabMod, modifiers }: SessionProps) {
   const heroSelected = selected !== null && Hex.equals(selected, heroAt);
 
   const reachable = useMemo(
-    () => (heroSelected ? reachableHexes(revealedBoard, heroAt, pointsLeft) : new Map<HexKey, number>()),
-    [heroSelected, revealedBoard, heroAt, pointsLeft],
+    () =>
+      heroSelected
+        ? reachableHexes(revealedBoard, heroAt, pointsLeft, !roadBonusUsed)
+        : new Map<HexKey, ReachableInfo>(),
+    [heroSelected, revealedBoard, heroAt, pointsLeft, roadBonusUsed],
   );
   // El propio hexágono del héroe entra en `reachable` (coste 0, quedarte donde
   // estás) pero resaltarlo confundiría con "aquí puedes ir": ya lo marca la
@@ -210,10 +217,11 @@ function MovementSession({ board, sabMod, modifiers }: SessionProps) {
     // "actuar". Su propia casilla no cuenta como destino, solo como toggle de
     // selección (rama de abajo).
     if (heroSelected && !Hex.equals(hex.coord, heroAt)) {
-      const remaining = reachable.get(Hex.key(hex.coord));
-      if (remaining !== undefined) {
+      const step = reachable.get(Hex.key(hex.coord));
+      if (step !== undefined) {
         setHeroAt(hex.coord);
-        setPointsLeft(remaining);
+        setPointsLeft(step.pointsLeft);
+        setRoadBonusUsed(step.roadBonusUsed);
         setRevealedBoard((prev) => revealFromPosition(prev, hex.coord, sabMod));
         setSelected(hex.coord); // el héroe sigue seleccionado en su nueva casilla
         return;
@@ -229,6 +237,7 @@ function MovementSession({ board, sabMod, modifiers }: SessionProps) {
   function endTurn() {
     setTurn((t) => t + 1);
     setPointsLeft(turnBudget);
+    setRoadBonusUsed(false);
   }
 
   return (
@@ -240,7 +249,7 @@ function MovementSession({ board, sabMod, modifiers }: SessionProps) {
         <span title="Se recarga a este valor al terminar turno; el suelo de 1 hexágono (§2.2) ya está aplicado.">
           <b>Movimiento:</b> {pointsLeft} de {turnBudget}
         </span>
-        <span title="Fichas, enemigos y localizaciones: 3 + mod SAB, mínimo 1, con el modificador del terreno donde estás de pie.">
+        <span title="Fichas, enemigos y localizaciones: 2 + mod SAB, mínimo 1, con el modificador del terreno donde estás de pie.">
           <b>Visión de detalle:</b> {radii.detail} hexágonos
         </span>
         <span title="Solo la silueta del terreno: visión de detalle + 2, mínimo 2.">

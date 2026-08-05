@@ -6,8 +6,12 @@
 // primera vez que se entra en él ese turno (`ROAD_MOVEMENT_BONUS` en
 // terrain.ts) — no se acumula por cruzar varios, así que el alcance se busca
 // con un estado doblado por hexágono: "bonus todavía disponible" / "ya
-// gastado". El suelo de 1 (§2.2, "nunca baja de 1 hexágono") es aparte: es
-// el total de puntos del turno, no el coste de una casilla.
+// gastado". Ese estado es POR TURNO, no por llamada: si el héroe ya se movió
+// una vez este turno y gastó el bono, la llamada siguiente recibe
+// `roadBonusAvailable = false` para no volver a concedérselo paso a paso
+// (eso es lo que lo volvía prácticamente ilimitado). El suelo de 1 (§2.2,
+// "nunca baja de 1 hexágono") es aparte: es el total de puntos del turno, no
+// el coste de una casilla.
 // =========================================================================
 
 import * as Hex from "./hex";
@@ -27,26 +31,38 @@ export function movePointsForTurn(base: number, modifiers: readonly number[] = [
   return Math.max(MOVE_FLOOR, total);
 }
 
+/** Alcance de un hexágono: puntos que quedarían y si ese camino ya gastó el bono de Camino. */
+export type ReachableInfo = {
+  readonly pointsLeft: number;
+  readonly roadBonusUsed: boolean;
+};
+
 /**
  * Hexágonos alcanzables desde `from` con `points` de movimiento, con el
- * coste de terreno de cada uno y el bonus de Camino (una vez por turno).
+ * coste de terreno de cada uno y el bonus de Camino (una vez por turno, no
+ * una vez por llamada: `roadBonusAvailable` es el estado real del turno —
+ * si ya se gastó en un movimiento anterior, se pasa `false` para que no
+ * vuelva a concederse aquí).
  *
- * @returns Puntos restantes por hexágono alcanzable (incluido `from`, con
- *   `points` intactos). No filtra por terreno "abierto": la Montaña es
- *   transitable de verdad (coste 3), solo los huecos cerrados quedan fuera
- *   por no estar en `board.hexes`.
+ * @returns Info por hexágono alcanzable (incluido `from`, con `points`
+ *   intactos). No filtra por terreno "abierto": la Montaña es transitable
+ *   de verdad (coste 3), solo los huecos cerrados quedan fuera por no estar
+ *   en `board.hexes`.
  */
 export function reachableHexes(
   board: Board,
   from: HexCoord,
   points: number,
-): ReadonlyMap<HexKey, number> {
+  roadBonusAvailable: boolean = true,
+): ReadonlyMap<HexKey, ReachableInfo> {
   // Coste mínimo para llegar a cada hexágono en cada estado del bonus de
   // Camino: [0] = todavía disponible, [1] = ya gastado.
   const cost = new Map<HexKey, [number, number]>();
-  cost.set(Hex.key(from), [0, Infinity]);
+  cost.set(Hex.key(from), roadBonusAvailable ? [0, Infinity] : [Infinity, 0]);
 
-  const queue: Array<{ coord: HexCoord; roadUsed: boolean }> = [{ coord: from, roadUsed: false }];
+  const queue: Array<{ coord: HexCoord; roadUsed: boolean }> = [
+    { coord: from, roadUsed: !roadBonusAvailable },
+  ];
   for (let head = 0; head < queue.length; head++) {
     const { coord, roadUsed } = queue[head];
     const here = cost.get(Hex.key(coord))![roadUsed ? 1 : 0];
@@ -71,10 +87,13 @@ export function reachableHexes(
     }
   }
 
-  const best = new Map<HexKey, number>();
+  const best = new Map<HexKey, ReachableInfo>();
   for (const [key, [noRoad, road]] of cost) {
-    const spent = Math.min(noRoad, road);
-    if (spent <= points) best.set(key, points - spent);
+    // Empate a coste → se prefiere NO haber gastado el bono, para no
+    // consumirlo de más cuando había una ruta igual de barata sin Camino.
+    const roadBonusUsed = road < noRoad;
+    const spent = roadBonusUsed ? road : noRoad;
+    if (spent <= points) best.set(key, { pointsLeft: points - spent, roadBonusUsed });
   }
   return best;
 }

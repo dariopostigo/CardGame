@@ -30,8 +30,10 @@ Esta distinción da dos sabores de encuentro: la sorpresa de la Amenaza (tensió
 Formaliza cómo el héroe se acerca a un enemigo **Latente** antes de que empiece el combate, y define la **prueba de evitar detección** que ya asumían varias cartas (armadura ruidosa, *Escabullirse* del Pícaro, *Marca del cazador*, estado *Oculto*) pero que no estaba escrita.
 
 **Los alcances en juego** (independientes: **normalmente ves al enemigo antes de que él pueda detectarte**, y eso es un invariante de balance a preservar, no una casualidad — `../game-design.md` §2.3):
-- **Visión de detalle del héroe** (`3 + mod SAB`, `../game-design.md` §2.3): revela al enemigo en el mapa. En el roster actual va de **3** (Pícaro) a **5** (Clérigo).
+- **Visión de detalle del héroe** (`2 + mod SAB`, `../game-design.md` §2.3): revela al enemigo en el mapa. En el roster actual va de **2** (Pícaro) a **4** (Clérigo).
 - **Detección del enemigo** (`2 + mod SAB` del enemigo, §2), reducida por la ocultación del terreno del héroe (Bosque −1). En el bestiario actual va de **1** (Bandido) a **4** (jefe final).
+
+> Con la base de detalle bajada de 3 a 2 (`../game-design.md` §2.3, 2026-08-05), el Pícaro empata en vez de superar al Lobo, Trasgo y Esqueleto (detección 2 los tres): el invariante ya solo se cumple estricto contra el Bandido. No es un descuido, es la perilla que se movió para acortar cuánto veía el héroe; si el sigilo del Pícaro se siente injusto contra esos tres, la corrección va aquí, no en el mapa.
 
 > Con los radios anteriores (visión del héroe 1 vs. detección enemiga 2) pasaba **exactamente lo contrario**: el enemigo te detectaba antes de que tú lo vieras, así que la fase de aproximación de abajo casi nunca podía dispararse y todo el sistema de sigilo quedaba muerto sobre el papel. Arreglado en `../game-design.md` §2.3.
 

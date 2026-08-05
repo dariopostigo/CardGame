@@ -69,20 +69,21 @@ Fuentes de movimiento **extra** por encima del estándar:
 
 | Radio | Qué revela | Fórmula |
 |---|---|---|
-| **Visión de detalle** | Las **fichas** del tablero (Enemigo, Amenaza, Tesoro, NPC…) y las localizaciones especiales | `3 + mod SAB` (mínimo 1) |
+| **Visión de detalle** | Las **fichas** del tablero (Enemigo, Amenaza, Tesoro, NPC…) y las localizaciones especiales | `2 + mod SAB` (mínimo 1) |
 | **Visión de terreno** | Solo el **tipo de terreno** de cada hexágono — la silueta del mapa, sin su contenido | `visión de detalle + 2` (mínimo 2) |
 
 | Héroe | mod SAB | Detalle | Terreno |
 |---|---|---|---|
-| Guerrero (SAB 12) | +1 | 4 | 6 |
-| Pícaro (SAB 10) | +0 | 3 | 5 |
-| Mago (SAB 13) | +1 | 4 | 6 |
-| Clérigo (SAB 15) | +2 | 5 | 7 |
+| Guerrero (SAB 12) | +1 | 3 | 5 |
+| Pícaro (SAB 10) | +0 | 2 | 4 |
+| Mago (SAB 13) | +1 | 3 | 5 |
+| Clérigo (SAB 15) | +2 | 4 | 6 |
 
 - **Escala +1 por punto de modificador de SAB.** Sustituye el "+1 por cada +2 de mod" anterior, que daba **+0 a tres de los cuatro héroes** — con él la Sabiduría no diferenciaba nada.
+- **Base bajada de 3 a 2 (2026-08-05):** con `/dev/movimiento` jugado de verdad, los radios de `3 + mod SAB` se sentían demasiado largos frente al mapa real y al pool de 2 puntos de movimiento por turno. Un punto menos de base en los dos radios.
 - **Terreno:** Bosque **−1 a ambos radios** (`board/board-map.md` §3a); Montaña **bloquea la línea de visión**.
 - **Invariantes de balance.** Los valores absolutos son perilla libre —no se pueden cerrar del todo hasta ver el tablero real jugando—, pero al afinarlos hay que preservar estas dos relaciones:
-  - `detalle > detección enemiga` (detección = 2 + mod SAB del enemigo, `characters/enemies.md` §2) → **el héroe ve al enemigo antes de que el enemigo pueda detectarle**, que es exactamente lo que asume la fase de aproximación de `characters/enemies.md` §2b. Con el radio único anterior (visión 1 vs. detección 2) pasaba lo contrario y el sigilo quedaba muerto.
+  - `detalle > detección enemiga` (detección = 2 + mod SAB del enemigo, `characters/enemies.md` §2) → **el héroe ve al enemigo antes de que el enemigo pueda detectarle**, que es exactamente lo que asume la fase de aproximación de `characters/enemies.md` §2b. Con el radio único anterior (visión 1 vs. detección 2) pasaba lo contrario y el sigilo quedaba muerto. **Ojo con la base 2:** el Pícaro (detalle 2) ya solo cumple el invariante contra el Bandido (detección 1); iguala —no supera— a Lobo/Trasgo/Esqueleto (detección 2), así que para esos tres el sigilo automático deja de estar garantizado y pasa a depender de la prueba (§2b). Si se nota mal jugando, la primera perilla a tocar es esta, no el mapa.
   - `terreno > detalle` → siempre conoces la silueta antes que el contenido.
 - Entrar por una **esquina** del mapa (`board/board-map.md` §2c) hace que estos radios sean seguros: un disco de radio 6 desde una esquina solo cae ~1/3 sobre el tablero (~20 hexes de 144), no medio mapa. Desde el centro habría que recortarlos.
 - **Nota de diseño:** el **Pícaro tiene la peor visión del roster** (SAB 10), lo cual es irónico para el explorador. Es a propósito: su ventaja en exploración no es la percepción bruta sino *Ojo avizor*, el sigilo y **Oculto** ([`cards/class.md`](cards/class.md), [`effects.md`](effects.md)).
@@ -691,7 +692,7 @@ Invertido a propósito: nadie paga para que su propia Maldición empeore. En vez
 - [x] Definir combate: orden de turno, cómo se resuelve un ataque paso a paso — ver **§4b** (adyacencia, iniciativa, recurso de acción por turno, ataque paso a paso, mazo de encuentro). Falta solo confirmar §4b.5 (movimiento de enemigos en combate).
 - [x] Definir condición de victoria/derrota y estructura de "descanso" (recuperar recursos) — victoria/derrota en §4b.8; **descanso** en §4c (consumibles / carta Hoguera con riesgo / localización segura, sobre Dados de Vida). Falta balancear valores.
 - [x] Definir el **setup inicial** de una partida (modalidad → héroe → kit → entrada) → §1b, con los kits concretos en `characters/heroes.md` §2d.
-- [x] Definir el **rango de visión** en condiciones → §2.3: dos radios (detalle `3 + mod SAB` / terreno `detalle + 2`), escala +1 por punto de mod, con los invariantes `detalle > detección enemiga` y `terreno > detalle`. Falta afinar cifras contra el tablero real.
+- [x] Definir el **rango de visión** en condiciones → §2.3: dos radios (detalle `2 + mod SAB` / terreno `detalle + 2`), escala +1 por punto de mod, con los invariantes `detalle > detección enemiga` y `terreno > detalle`. Cifras afinadas una vez jugado `/dev/movimiento` (2026-08-05); base bajada de 3 a 2.
 - [x] Resolver el **"golpe de oportunidad"** referenciado pero nunca definido → §4b.11 **Desengancharse**: tirada enfrentada de DES, misma regla para héroe y enemigo, sin reacciones.
 - [x] Elegir modelo de **iniciativa** (§4b.2) → **tirada** 1d20 + mod DES *(decidido)*.
 - [x] Elegir modelo de **recuperación** (§4c.4) → **cura fija** (mitad de PV máx) en el prototipo; DV completos llegan con la progresión.
