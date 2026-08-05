@@ -27,8 +27,10 @@
 
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import Link from "next/link";
+import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
+import { SelectButton } from "primereact/selectbutton";
 import * as Hex from "@/lib/rules/hex";
 import type { HexCoord } from "@/lib/rules/hex";
 import { TERRAINS, TERRAIN_IDS, targetShare, type TerrainId } from "@/lib/rules/terrain";
@@ -432,24 +434,27 @@ export default function TileLab() {
 
         <div className="flex flex-col gap-1">
           <span className={label}>Giro</span>
-          <div className="flex items-center gap-2">
-            {[0, 1, 2, 3, 4, 5].map((step) => (
-              <button
-                key={step}
-                className={btn(rotation === step)}
-                onClick={() => setRotation(step)}
-              >
-                {step * 60}°
-              </button>
-            ))}
-          </div>
+          <SelectButton
+            value={rotation}
+            onChange={(e) => setRotation(Number(e.value))}
+            options={[0, 1, 2, 3, 4, 5]}
+            itemTemplate={(step: number) => `${step * 60}°`}
+            allowEmpty={false}
+          />
         </div>
 
         <div className="flex flex-col gap-1">
           <span className={label}>Vista</span>
-          <button className={btn(showCoords)} onClick={() => setShowCoords((v) => !v)}>
-            Coordenadas
-          </button>
+          <div className="flex items-center gap-2">
+            <InputSwitch
+              inputId="tiles-show-coords"
+              checked={showCoords}
+              onChange={(e) => setShowCoords(Boolean(e.value))}
+            />
+            <label htmlFor="tiles-show-coords" className="cursor-pointer text-sm text-[var(--wiki-text)]">
+              Coordenadas
+            </label>
+          </div>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -567,18 +572,15 @@ export default function TileLab() {
           <div className="mb-4 flex flex-wrap items-end gap-x-6 gap-y-3">
             <div className="flex flex-col gap-1">
               <span className={label}>Tamaño del boceto</span>
-              <div className="flex flex-wrap items-center gap-2">
-                {TILE_SIZES.map((s) => (
-                  <button
-                    key={s.level}
-                    className={btn(sketch.sizeLevel === s.level)}
-                    onClick={() => patch((current) => setSizeLevel(current, s.level))}
-                    title={`Hasta ${s.capacity} hexágonos`}
-                  >
-                    {s.label} · {s.capacity}
-                  </button>
-                ))}
-              </div>
+              <SelectButton
+                value={sketch.sizeLevel}
+                onChange={(e) => patch((current) => setSizeLevel(current, Number(e.value)))}
+                options={[...TILE_SIZES]}
+                optionLabel="label"
+                optionValue="level"
+                itemTemplate={(s: (typeof TILE_SIZES)[number]) => `${s.label} · ${s.capacity}`}
+                allowEmpty={false}
+              />
             </div>
 
             <div className="flex flex-col gap-1">
@@ -621,35 +623,38 @@ export default function TileLab() {
           >
             {/* Lienzo */}
             <div className="rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3">
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                {MODES.map((m) => (
-                  <button key={m.id} className={btn(mode === m.id)} onClick={() => setMode(m.id)}>
-                    {m.label}
-                  </button>
-                ))}
+              <div className="mb-3">
+                <SelectButton
+                  value={mode}
+                  onChange={(e) => setMode(e.value as EditorMode)}
+                  options={[...MODES]}
+                  optionLabel="label"
+                  optionValue="id"
+                  allowEmpty={false}
+                />
               </div>
 
               {/* Paleta de terreno: se enseña siempre, porque también es la leyenda
                   de los colores del lienzo, pero solo pinta en el modo Terreno —y
                   por eso se apaga cuando no toca. */}
-              <div
-                className={`mb-3 flex flex-wrap items-center gap-2 ${
-                  mode === "terreno" ? "" : "opacity-60"
-                }`}
-              >
-                {PALETTE.map((p) => (
-                  <button
-                    key={p.id}
-                    className={buttonClass({ active: brush === p.id, size: "sm" })}
-                    onClick={() => {
-                      setBrush(p.id);
-                      setMode("terreno");
-                    }}
-                  >
-                    <span className="tile-swatch" data-terrain={p.id} />
-                    {p.label}
-                  </button>
-                ))}
+              <div className={`mb-3 ${mode === "terreno" ? "" : "opacity-60"}`}>
+                <SelectButton
+                  value={brush}
+                  onChange={(e) => {
+                    setBrush(e.value as TerrainId);
+                    setMode("terreno");
+                  }}
+                  options={[...PALETTE]}
+                  optionLabel="label"
+                  optionValue="id"
+                  itemTemplate={(p: (typeof PALETTE)[number]) => (
+                    <>
+                      <span className="tile-swatch" data-terrain={p.id} />
+                      {p.label}
+                    </>
+                  )}
+                  allowEmpty={false}
+                />
               </div>
 
               <TileCanvas
@@ -693,18 +698,14 @@ export default function TileLab() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className={label}>Tipo</span>
-                  <div className="flex flex-wrap items-center gap-2">
-                    {types.map((t) => (
-                      <button
-                        key={t.id}
-                        className={btn(sketch.typeId === t.id)}
-                        onClick={() => patch((s) => ({ ...s, typeId: t.id }))}
-                        title={`Guardar esta variante en ${t.label}`}
-                      >
-                        {t.label}
-                      </button>
-                    ))}
-                  </div>
+                  <SelectButton
+                    value={sketch.typeId}
+                    onChange={(e) => patch((s) => ({ ...s, typeId: String(e.value) }))}
+                    options={types}
+                    optionLabel="label"
+                    optionValue="id"
+                    allowEmpty={false}
+                  />
                 </div>
               </div>
 
@@ -862,30 +863,31 @@ function TypeSection({
             </div>
             <div className="flex flex-col gap-1">
               <span className={labelClass}>Peso en la bolsa</span>
-              <div className="flex items-center gap-2">
-                {WEIGHTS.map((w) => (
-                  <button key={w} className={btn(form.weight === w)} onClick={() => onForm({ ...form, weight: w })}>
-                    {w}
-                  </button>
-                ))}
-              </div>
+              <SelectButton
+                value={form.weight}
+                onChange={(e) => onForm({ ...form, weight: Number(e.value) })}
+                options={WEIGHTS}
+                allowEmpty={false}
+              />
             </div>
           </div>
 
           <div className="flex flex-col gap-1">
             <span className={labelClass}>Terreno que define el tipo</span>
-            <div className="flex flex-wrap items-center gap-2">
-              {TERRAIN_IDS.map((id) => (
-                <button
-                  key={id}
-                  className={buttonClass({ active: form.terrain === id, size: "sm" })}
-                  onClick={() => onForm({ ...form, terrain: id })}
-                >
-                  <span className="tile-swatch" data-terrain={id} />
-                  {TERRAINS[id].label}
-                </button>
-              ))}
-            </div>
+            <SelectButton
+              value={form.terrain}
+              onChange={(e) => onForm({ ...form, terrain: e.value as TerrainId })}
+              options={TERRAIN_IDS.map((id) => ({ id, label: TERRAINS[id].label }))}
+              optionLabel="label"
+              optionValue="id"
+              itemTemplate={(t: { id: TerrainId; label: string }) => (
+                <>
+                  <span className="tile-swatch" data-terrain={t.id} />
+                  {t.label}
+                </>
+              )}
+              allowEmpty={false}
+            />
           </div>
 
           <div className="flex flex-col gap-1">

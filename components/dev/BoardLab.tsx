@@ -20,7 +20,9 @@
 
 import { useMemo, useState, type ChangeEvent } from "react";
 import Link from "next/link";
+import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
+import { SelectButton } from "primereact/selectbutton";
 import * as Hex from "@/lib/rules/hex";
 import { generateBoard } from "@/lib/rules/board-gen";
 import type { BoardToken, Hex as HexCell } from "@/lib/rules/state";
@@ -147,53 +149,70 @@ export default function BoardLab() {
           title="Los tres tamaños de tablero. 12 es el mínimo: la bolsa va de 4 a 37 hexágonos por pieza (media 8,6), así que salen ~103, ~129 y ~155 hexágonos, y por debajo de 12 el mapa no da para una travesía."
         >
           <span className={label}>Losetas</span>
-          <div className="flex items-center gap-2">
-            {TILE_COUNTS.map((n) => (
-              <button key={n} className={btn(tileCount === n)} onClick={() => setTileCount(n)}>
-                {n}
-              </button>
-            ))}
-          </div>
+          <SelectButton
+            value={tileCount}
+            onChange={(e) => setTileCount(Number(e.value))}
+            options={TILE_COUNTS}
+            allowEmpty={false}
+          />
         </div>
 
         <div className="flex flex-col gap-1">
           <span className={label}>Silueta</span>
-          <div className="flex items-center gap-2">
-            {SHAPES.map((s) => (
-              <button
-                key={s.label}
-                className={btn(sprawl === s.sprawl)}
-                onClick={() => setSprawl(s.sprawl)}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
+          <SelectButton
+            value={sprawl}
+            onChange={(e) => setSprawl(Number(e.value))}
+            options={SHAPES}
+            optionLabel="label"
+            optionValue="sprawl"
+            allowEmpty={false}
+          />
         </div>
 
         <div className="flex flex-col gap-1">
           <span className={label}>Densidad de fichas</span>
-          <div className="flex items-center gap-2">
-            {DENSITIES.map((d) => (
-              <button key={d} className={btn(tokenDensity === d)} onClick={() => setTokenDensity(d)}>
-                {Math.round(d * 100)} %
-              </button>
-            ))}
-          </div>
+          <SelectButton
+            value={tokenDensity}
+            onChange={(e) => setTokenDensity(Number(e.value))}
+            options={DENSITIES}
+            itemTemplate={(d: number) => `${Math.round(d * 100)} %`}
+            allowEmpty={false}
+          />
         </div>
 
         <div className="flex flex-col gap-1">
           <span className={label}>Vista</span>
-          <div className="flex items-center gap-2">
-            <button className={btn(revealAll)} onClick={() => setRevealAll((v) => !v)}>
-              Revelar todo
-            </button>
-            <button className={btn(showTiles)} onClick={() => setShowTiles((v) => !v)}>
-              Losetas
-            </button>
-            <button className={btn(showCoords)} onClick={() => setShowCoords((v) => !v)}>
-              Coordenadas
-            </button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <InputSwitch
+                inputId="board-reveal-all"
+                checked={revealAll}
+                onChange={(e) => setRevealAll(Boolean(e.value))}
+              />
+              <label htmlFor="board-reveal-all" className="cursor-pointer text-sm text-[var(--wiki-text)]">
+                Revelar todo
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <InputSwitch
+                inputId="board-show-tiles"
+                checked={showTiles}
+                onChange={(e) => setShowTiles(Boolean(e.value))}
+              />
+              <label htmlFor="board-show-tiles" className="cursor-pointer text-sm text-[var(--wiki-text)]">
+                Losetas
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <InputSwitch
+                inputId="board-show-coords"
+                checked={showCoords}
+                onChange={(e) => setShowCoords(Boolean(e.value))}
+              />
+              <label htmlFor="board-show-coords" className="cursor-pointer text-sm text-[var(--wiki-text)]">
+                Coordenadas
+              </label>
+            </div>
           </div>
         </div>
 

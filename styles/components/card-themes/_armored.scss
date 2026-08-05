@@ -24,14 +24,10 @@ $bg: #140800;            // fondo bajo el arte (solo se ve en los redondeos)
 $art-lo: #0c0300;        // viñeta del arte
 $art-hi: rgba(66, 26, 2, 0.8); // luz cálida del centro del arte
 $gilt: #d18c3e;          // oro medio (aros de las fichas)
-$gilt-hi: #f8dda6;       // oro claro (luces)
-$gilt-lo: #7d4f1f;       // oro en sombra
 $ink: #2a1d0b;           // tinta sobre vitela
 $ink-strong: #170e02;    // tinta de los términos en negrita
 $rule: rgba(94, 68, 26, 0.55); // filete bajo el titular
 $emboss: rgba(255, 252, 240, 0.6); // realce del texto sobre claro
-$stat-bg: #3c2109;       // pastilla de stat
-$stat-ink: #f4e0b4;
 
 // --- Cotas ligadas al viewBox del marco (ver cabecera) --------------------
 $art-height-theme: 176px;
@@ -169,27 +165,6 @@ $chip-side: 34px;        // por dentro de la escuadra de la esquina
     top: $chip-top + $sub-size + $sub-gap;
   }
 
-  // --- Coste: placa de bronce a la derecha, a la altura de las fichas -----
-  .card__cost {
-    top: $chip-top;
-    right: $chip-side;
-    height: 22px;
-    min-width: 22px;
-    padding: 0 8px;
-    border-radius: radius("sm");
-    font-family: $font-serif-body;
-    font-size: 0.64rem;
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0;
-    background: linear-gradient(180deg, #5b3a14, #241405);
-    color: $gilt-hi;
-    border: 1.5px solid $gilt;
-    box-shadow:
-      inset 0 1px 0 rgba(248, 221, 166, 0.3),
-      0 2px 6px rgba(0, 0, 0, 0.55);
-  }
-
   // --- Nombre: escrito sobre la vitela, bajo el medallón ------------------
   .card__name {
     margin: ($gem-center + $gem-half - $crest-base + 6px) 20px 0;
@@ -211,14 +186,18 @@ $chip-side: 34px;        // por dentro de la escuadra de la esquina
   }
 
   // --- Descripción --------------------------------------------------------
-  .card__text {
-    margin: 7px 0 0;
-    padding: 0 20px 4px;
+  .card__text,
+  .card__footer-text {
     font-family: $font-serif-body;
     font-size: 0.86rem;
     font-weight: 500;
     line-height: 1.36;
     color: $ink;
+  }
+
+  .card__text {
+    margin: 7px 0 0;
+    padding: 0 20px 4px;
 
     b {
       color: $ink-strong;
@@ -226,43 +205,19 @@ $chip-side: 34px;        // por dentro de la escuadra de la esquina
     }
   }
 
-  .card[data-fit="2"] .card__text {
+  .card[data-fit="2"] .card__text,
+  .card[data-fit="2"] .card__footer-text {
     font-size: 0.78rem;
   }
 
-  .card[data-fit="3"] .card__text {
+  .card[data-fit="3"] .card__text,
+  .card[data-fit="3"] .card__footer-text {
     font-size: 0.72rem;
   }
 
-  // --- Pie: pastillas oscuras, que sobre vitela contrastan aún mejor ------
+  // --- Pie: vacío en Arma/Armadura, texto en el resto ---------------------
   .card__footer {
     padding: 6px 14px 15px;
-    gap: 4px 5px;
-  }
-
-  .stat {
-    padding: 2px 9px;
-    border-radius: radius("pill");
-    font-family: $font-serif-body;
-    background: linear-gradient(180deg, #56340f, $stat-bg);
-    border: 1px solid color-mix(in srgb, #{$gilt-lo} 75%, transparent);
-    color: $stat-ink;
-    box-shadow:
-      inset 0 1px 0 rgba(248, 221, 166, 0.2),
-      0 1px 3px rgba(0, 0, 0, 0.3);
-  }
-
-  .stat__k {
-    color: color-mix(in srgb, #{$stat-ink} 62%, transparent);
-    opacity: 1;
-  }
-
-  .stat__v {
-    color: $gilt-hi;
-  }
-
-  .card__cost-line {
-    display: none;
   }
 
   // --- Escenario: penumbra cálida de cripta -------------------------------

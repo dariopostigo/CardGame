@@ -147,10 +147,11 @@ export const REPO_PRO_GROUPS: readonly ComponentGroup[] = [
     slug: "forms",
     label: "Campos y selectores",
     summary:
-      "Desplegables, casillas y deslizadores vestidos de época, para los ajustes y la creación de partida. Poco frecuentes en juego, imprescindibles en los menús.",
+      "Casillas, radios, interruptores, desplegables, campos de texto y deslizadores vestidos de época, para los ajustes y la creación de partida. Todos revisten componentes reales de PrimeReact.",
     icon: "pi pi-sliders-h",
     status: "en-curso",
-    source: "components/game/ui/GameCheckbox.tsx, GameSelect.tsx, GameSlider.tsx",
+    source:
+      "components/game/ui/GameCheckbox.tsx, GameRadio.tsx, GameSwitch.tsx, GameSelect.tsx, GameInput.tsx, GameSlider.tsx",
   },
   {
     slug: "hud",

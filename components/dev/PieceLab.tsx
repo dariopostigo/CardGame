@@ -24,6 +24,7 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
+import { SelectButton } from "primereact/selectbutton";
 import * as Hex from "@/lib/rules/hex";
 import { TERRAINS, TERRAIN_IDS, type TerrainId } from "@/lib/rules/terrain";
 import BoardPiece, {
@@ -39,7 +40,6 @@ import {
   TOKEN_IDS,
   type PawnId,
 } from "@/components/game/board/piece-art";
-import { buttonClass } from "@/components/ui/Button";
 
 // «De partida» es el radio que usa el tablero de verdad (HexBoard, 30) y es el
 // que manda para decidir si una ficha se lee jugando; los otros dos están para
@@ -67,7 +67,6 @@ export default function PieceLab() {
   const [hexSize, setHexSize] = useState(INITIAL_HEX_SIZE);
   const [terrain, setTerrain] = useState<TerrainId>("llanura");
 
-  const btn = (active: boolean) => buttonClass({ active });
   const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
   const heading = "mb-1 mt-8 text-lg font-semibold text-[var(--wiki-text)]";
   const note = "mb-3 max-w-3xl text-sm text-[var(--wiki-muted)]";
@@ -120,24 +119,26 @@ export default function PieceLab() {
       <div className="mb-6 flex flex-wrap items-end gap-x-6 gap-y-3">
         <div className="flex flex-col gap-1">
           <span className={label}>Tamaño del hexágono</span>
-          <div className="flex items-center gap-2">
-            {HEX_SIZES.map((s) => (
-              <button key={s.size} className={btn(hexSize === s.size)} onClick={() => setHexSize(s.size)}>
-                {s.label}
-              </button>
-            ))}
-          </div>
+          <SelectButton
+            value={hexSize}
+            onChange={(e) => setHexSize(Number(e.value))}
+            options={HEX_SIZES}
+            optionLabel="label"
+            optionValue="size"
+            allowEmpty={false}
+          />
         </div>
 
         <div className="flex flex-col gap-1">
           <span className={label}>Terreno del catálogo</span>
-          <div className="flex items-center gap-2">
-            {TERRAIN_IDS.map((id) => (
-              <button key={id} className={btn(terrain === id)} onClick={() => setTerrain(id)}>
-                {TERRAINS[id].label}
-              </button>
-            ))}
-          </div>
+          <SelectButton
+            value={terrain}
+            onChange={(e) => setTerrain(e.value as TerrainId)}
+            options={TERRAIN_IDS.map((id) => ({ id, label: TERRAINS[id].label }))}
+            optionLabel="label"
+            optionValue="id"
+            allowEmpty={false}
+          />
         </div>
       </div>
 

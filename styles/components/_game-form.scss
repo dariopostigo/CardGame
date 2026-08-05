@@ -2,15 +2,32 @@
 
 // -------------------------------------------------------------------------
 // Campos y selectores de producción (components/game/ui/GameCheckbox,
-// GameSelect, GameSlider).
+// GameRadio, GameSelect, GameSlider, GameSwitch, GameInput).
+//
+// Toda la familia reviste componentes reales de PrimeReact —ya dependencia
+// del lado de herramientas (styles/vendor/_primereact.scss, tema Lara
+// ámbar)— en vez de <input> nativos con estilos encima: el estado marcado,
+// enfocado, deshabilitado y (en el desplegable) el panel abierto ya los
+// gestiona la librería con nodos HTML reales, así que aquí solo hace falta
+// pintarlos con $game. Sus reglas p-* llegan dentro de `@layer primereact`
+// y las nuestras no llevan capa —ganan solas, sin !important—.
 //
 // La casilla sale de example1.jpg (SELECT GAME MODE): cuadro hueco de acero
 // oscuro, sin relleno propio, que solo enseña un check dorado al marcarse.
-// El desplegable y el deslizador no están en esa referencia —ahí no hay
-// ninguno—, así que salen de preview-03/04_*.webp (misma carpeta, kit
-// "Crownfall"): se toma la FORMA de esos controles, no su paleta cálida
-// propia, y se redibujan con $game para no mezclar dos lenguajes de color
-// en un mismo tema.
+// El desplegable y el deslizador toman la FORMA de preview-03/04_*.webp
+// (kit "Crownfall"), redibujada con $game en vez de su paleta cálida propia.
+// El radio, el interruptor y el campo de texto no están en ninguna
+// referencia —ninguna imagen del kit los enseña sueltos—, así que extienden
+// el mismo vocabulario (caja de acero oscuro, borde y check dorados) en vez
+// de calcar una captura.
+//
+// className cae en el MISMO elemento raíz que la clase p-* de cada
+// componente (Checkbox/RadioButton/Dropdown/Slider/InputSwitch/InputText
+// fusionan props.className con la suya, no envuelven en un <div> aparte),
+// así que el reskin del cascarón va plano, sin anidar una capa extra.
+// El panel del desplegable es la única pieza que PrimeReact monta fuera del
+// árbol (document.body): por eso .game-select-panel es una regla separada,
+// no un descendiente de .game-select.
 // -------------------------------------------------------------------------
 
 .game-checkbox {
@@ -19,46 +36,52 @@
   gap: 0.65rem;
   cursor: pointer;
 
-  &__input {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-
-    &:checked ~ .game-checkbox__box .pi {
-      opacity: 1;
-    }
-
-    &:focus-visible ~ .game-checkbox__box {
-      outline: 2px solid game("gold");
-      outline-offset: 2px;
-    }
-  }
-
-  &__box {
-    display: grid;
+  &__control.p-checkbox {
     flex: none;
-    place-items: center;
     width: 1.35rem;
     height: 1.35rem;
     margin-top: 0.15rem;
+  }
+
+  &__control .p-checkbox-box {
+    width: 1.35rem;
+    height: 1.35rem;
     border: 1px solid game("border");
     border-radius: radius("xs");
     background: game("surface-2");
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
 
-    .pi {
-      font-size: 0.8rem;
-      color: game("gold-hi");
-      opacity: 0;
-      transition: opacity 0.1s ease;
-    }
+  &__control .p-checkbox-icon {
+    width: 0.8rem;
+    height: 0.8rem;
+    color: game("gold-hi");
+  }
+
+  &__control.p-highlight .p-checkbox-box {
+    border-color: game("gold");
+    background: game("surface-2");
+  }
+
+  &__control:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
+    border-color: game("gold");
+  }
+
+  &__control:not(.p-disabled):has(.p-checkbox-input:focus-visible) .p-checkbox-box {
+    outline: 2px solid game("gold");
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  &__control.p-disabled .p-checkbox-box {
+    filter: grayscale(0.5) brightness(0.65);
   }
 
   &__text {
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
+    cursor: pointer;
   }
 
   &__hint {
@@ -66,88 +89,259 @@
   }
 }
 
-.game-select {
-  position: relative;
+.game-radio {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  cursor: pointer;
+
+  &__control.p-radiobutton {
+    flex: none;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.15rem;
+  }
+
+  &__control .p-radiobutton-box {
+    width: 1.35rem;
+    height: 1.35rem;
+    border: 1px solid game("border");
+    background: game("surface-2");
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+
+  &__control .p-radiobutton-icon {
+    width: 0.55rem;
+    height: 0.55rem;
+    background-color: game("gold-hi");
+  }
+
+  &__control.p-highlight .p-radiobutton-box {
+    border-color: game("gold");
+    background: game("surface-2");
+  }
+
+  &__control:not(.p-disabled):has(.p-radiobutton-input:hover) .p-radiobutton-box {
+    border-color: game("gold");
+  }
+
+  &__control:not(.p-disabled):has(.p-radiobutton-input:hover).p-highlight .p-radiobutton-box .p-radiobutton-icon {
+    background-color: game("gold-hi");
+  }
+
+  &__control:not(.p-disabled):has(.p-radiobutton-input:focus-visible) .p-radiobutton-box {
+    outline: 2px solid game("gold");
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  &__control.p-disabled .p-radiobutton-box {
+    filter: grayscale(0.5) brightness(0.65);
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    cursor: pointer;
+  }
+
+  &__hint {
+    font-style: italic;
+  }
+}
+
+.game-switch {
   display: inline-flex;
   align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
 
-  &__control {
-    appearance: none;
-    padding: 0.55rem 2.2rem 0.55rem 0.9rem;
+  &__control.p-inputswitch {
+    flex: none;
+    width: 2.75rem;
+    height: 1.5rem;
+  }
+
+  &__control .p-inputswitch-slider {
+    background: game("stone-lo");
     border: 1px solid game("border");
-    border-radius: radius("xs");
+    border-radius: radius("lg");
+  }
+
+  &__control .p-inputswitch-slider::before {
+    width: 1.1rem;
+    height: 1.1rem;
+    left: 0.1rem;
+    margin-top: -0.55rem;
+    background: game("text");
+  }
+
+  &__control.p-highlight .p-inputswitch-slider {
+    background: game("gold");
+    border-color: game("gold-lo");
+  }
+
+  &__control.p-highlight .p-inputswitch-slider::before {
     background: game("surface-2");
+    transform: translateX(1.25rem);
+  }
+
+  &__control:not(.p-disabled):has(.p-inputswitch-input:focus-visible) .p-inputswitch-slider {
+    outline: 2px solid game("gold");
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  &__control.p-disabled .p-inputswitch-slider {
+    filter: grayscale(0.5) brightness(0.65);
+  }
+
+  &__text {
+    cursor: pointer;
+  }
+
+  &__hint {
+    font-style: italic;
+  }
+}
+
+.game-input {
+  font-family: $font-sans;
+  font-size: 0.85rem;
+  color: game("text");
+  background: game("surface-2");
+  border: 1px solid game("border");
+  border-radius: radius("xs");
+  padding: 0.55rem 0.9rem;
+
+  &::placeholder {
+    color: game("muted");
+  }
+
+  &:enabled:hover {
+    border-color: game("gold");
+  }
+
+  &:enabled:focus {
+    border-color: game("gold");
+    outline: 2px solid game("gold");
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  &.p-disabled {
+    filter: grayscale(0.5) brightness(0.65);
+  }
+}
+
+// .game-select y .p-dropdown caen en el MISMO <div> (Dropdown funde
+// props.className con sus propias clases, no envuelve en un contenedor
+// aparte), así que el reskin del cascarón va plano, sin anidar.
+.game-select {
+  align-items: center;
+  border: 1px solid game("border");
+  border-radius: radius("xs");
+  background: game("surface-2");
+  box-shadow: none;
+
+  &.p-focus {
+    outline: 2px solid game("gold");
+    outline-offset: 2px;
+  }
+
+  &.p-disabled {
+    filter: grayscale(0.5) brightness(0.65);
+  }
+
+  .p-dropdown-label {
+    padding: 0.55rem 0.9rem;
     font-family: $font-sans;
     font-size: 0.85rem;
     font-weight: 600;
     color: game("gold-hi");
-    cursor: pointer;
 
-    &:focus-visible {
-      outline: 2px solid game("gold");
-      outline-offset: 2px;
+    &.p-placeholder {
+      color: game("muted");
     }
   }
 
-  &__chevron {
-    position: absolute;
-    right: 0.9rem;
-    font-size: 0.65rem;
+  .p-dropdown-trigger {
+    width: 2.2rem;
     color: game("gold");
-    pointer-events: none;
+  }
+}
+
+// Panel desplegado: PrimeReact lo monta en document.body, nunca dentro de
+// .game-select, así que su reskin va sin anidar bajo esa clase.
+.game-select-panel {
+  border: 1px solid game("border");
+  border-radius: radius("xs");
+  background: game("surface-2");
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+
+  .p-dropdown-items {
+    padding: 0.35rem;
+  }
+
+  .p-dropdown-item {
+    padding: 0.5rem 0.75rem;
+    border-radius: radius("xs");
+    font-family: $font-sans;
+    font-size: 0.85rem;
+    color: game("text");
+
+    &.p-highlight {
+      background: game("accent");
+      color: game("gold-hi");
+    }
+
+    // El estado a pintar es .p-focus, no :hover —PrimeReact lo pone tanto al
+    // pasar el ratón como al navegar con flechas—. Dejarlo solo en :hover
+    // dejaba la navegación por teclado (y cualquier .p-focus sin ratón
+    // encima) cayendo al estilo de fábrica de PrimeReact —claro casi blanco,
+    // pensado para el tema Lara ámbar, no para este panel oscuro— con el
+    // texto crema encima prácticamente ilegible.
+    &:not(.p-highlight).p-focus {
+      background: game("surface");
+    }
   }
 }
 
 .game-slider {
-  appearance: none;
-  width: 100%;
   height: 0.35rem;
-  border: 1px solid game("border");
   border-radius: radius("xs");
-  // Chrome/Safari no tienen un pseudo-elemento para el tramo recorrido: se
-  // pinta a mano con un degradado de corte seco en el propio fondo del
-  // <input>, siguiendo --game-slider-fill (GameSlider.tsx la mantiene al
-  // día). Firefox ignora este fondo y usa ::-moz-range-progress más abajo.
-  background: linear-gradient(
-    to right,
-    game("gold") var(--game-slider-fill, 50%),
-    game("stone-lo") var(--game-slider-fill, 50%)
-  );
-  cursor: pointer;
+  background: game("stone-lo");
+  border: 1px solid game("border");
 
-  &::-webkit-slider-thumb {
-    appearance: none;
-    width: 1.1rem;
-    height: 1.1rem;
-    border-radius: 50%;
-    background: game("gold-hi");
-    border: 1px solid game("gold-lo");
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-  }
-
-  &::-moz-range-track {
-    height: 0.35rem;
-    border-radius: radius("xs");
-    background: game("stone-lo");
-  }
-
-  &::-moz-range-progress {
-    height: 0.35rem;
-    border-radius: radius("xs");
+  .p-slider-range {
     background: game("gold");
+    border-radius: radius("xs");
   }
 
-  &::-moz-range-thumb {
+  .p-slider-handle {
     width: 1.1rem;
     height: 1.1rem;
-    border-radius: 50%;
+    margin-top: -0.55rem;
+    margin-left: -0.55rem;
     background: game("gold-hi");
     border: 1px solid game("gold-lo");
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+
+    &:focus {
+      outline: 2px solid game("gold");
+      outline-offset: 3px;
+      box-shadow: none;
+    }
   }
 
-  &:focus-visible {
-    outline: 2px solid game("gold");
-    outline-offset: 3px;
+  &:not(.p-disabled) .p-slider-handle:hover {
+    background: game("gold-hi");
+    border-color: game("gold");
+  }
+
+  &.p-disabled {
+    filter: grayscale(0.5) brightness(0.65);
   }
 }

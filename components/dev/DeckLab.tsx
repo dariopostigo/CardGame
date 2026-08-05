@@ -26,6 +26,7 @@
 // =========================================================================
 
 import { useLayoutEffect, useRef, useState } from "react";
+import { SelectButton } from "primereact/selectbutton";
 import { cardFontVars } from "@/components/design/card-fonts";
 import { CardBack, CardFrameDefs, DEFAULT_CARD_THEME } from "@/components/design/card-frames";
 import GameCard from "@/components/design/GameCard";
@@ -499,20 +500,16 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
       <div className="mb-5 flex flex-wrap items-end gap-x-6 gap-y-3">
         <div className="flex flex-col gap-1">
           <span className={label}>Héroe</span>
-          <div className="flex items-center gap-2">
-            {HEROES.map((h) => (
-              <button
-                key={h}
-                className={btn(hero === h)}
-                onClick={() => {
-                  setHero(h);
-                  reset(h);
-                }}
-              >
-                {h}
-              </button>
-            ))}
-          </div>
+          <SelectButton
+            value={hero}
+            onChange={(e) => {
+              const next = e.value as (typeof HEROES)[number];
+              setHero(next);
+              reset(next);
+            }}
+            options={[...HEROES]}
+            allowEmpty={false}
+          />
         </div>
 
         <div className="flex flex-col gap-1">

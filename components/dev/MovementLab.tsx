@@ -15,7 +15,9 @@
 // =========================================================================
 
 import { useMemo, useState, type ChangeEvent } from "react";
+import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
+import { SelectButton } from "primereact/selectbutton";
 import * as Hex from "@/lib/rules/hex";
 import type { HexCoord, HexKey } from "@/lib/rules/hex";
 import { generateBoard } from "@/lib/rules/board-gen";
@@ -106,17 +108,14 @@ export default function MovementLab() {
           title="Determina los dos radios de visión: 3 + mod SAB de detalle (mínimo 1), esa cifra + 2 de terreno (mínimo 2)."
         >
           <span className={label}>Clase</span>
-          <div className="flex items-center gap-2">
-            {HERO_CLASSES.map((c) => (
-              <button
-                key={c.label}
-                className={btn(heroClass.label === c.label)}
-                onClick={() => setHeroClass(c)}
-              >
-                {c.label}
-              </button>
-            ))}
-          </div>
+          <SelectButton
+            value={heroClass.label}
+            onChange={(e) => setHeroClass(HERO_CLASSES.find((c) => c.label === e.value)!)}
+            options={[...HERO_CLASSES]}
+            optionLabel="label"
+            optionValue="label"
+            allowEmpty={false}
+          />
         </div>
 
         <div
@@ -124,21 +123,30 @@ export default function MovementLab() {
           title="Se suman al pool base de 2 al terminar turno, no a mitad de uno en curso. Actívalos los dos a la vez para ver el suelo de 1 hexágono (§2.2) atrapar la suma antes de llegar a 0."
         >
           <span className={label}>Modificadores del próximo turno</span>
-          <div className="flex items-center gap-2">
-            <button
-              className={btn(modifiers.slowed)}
-              onClick={() => setModifiers((m) => ({ ...m, slowed: !m.slowed }))}
-            >
-              Ralentizado (−1)
-            </button>
-            <button
-              className={btn(modifiers.cursedWeight)}
-              onClick={() =>
-                setModifiers((m) => ({ ...m, cursedWeight: !m.cursedWeight }))
-              }
-            >
-              Peso maldito (−1)
-            </button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <InputSwitch
+                inputId="movement-slowed"
+                checked={modifiers.slowed}
+                onChange={(e) => setModifiers((m) => ({ ...m, slowed: Boolean(e.value) }))}
+              />
+              <label htmlFor="movement-slowed" className="cursor-pointer text-sm text-[var(--wiki-text)]">
+                Ralentizado (−1)
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <InputSwitch
+                inputId="movement-cursed-weight"
+                checked={modifiers.cursedWeight}
+                onChange={(e) => setModifiers((m) => ({ ...m, cursedWeight: Boolean(e.value) }))}
+              />
+              <label
+                htmlFor="movement-cursed-weight"
+                className="cursor-pointer text-sm text-[var(--wiki-text)]"
+              >
+                Peso maldito (−1)
+              </label>
+            </div>
           </div>
         </div>
       </div>

@@ -108,8 +108,8 @@ $sub-chip-left: chip-center-left($chip-sub-size);
 
   // --- Marco vectorial ----------------------------------------------------
   // Lienzo SVG a sangre (components/design/card-frames.tsx) que dibuja marco,
-  // ola y ornamentos. Oculto por defecto, igual que .card__cost-line: cada
-  // tema lo activa en su parcial cuando su marco es SVG.
+  // ola y ornamentos. Oculto por defecto: cada tema lo activa en su parcial
+  // cuando su marco es SVG.
   .card__frame {
     display: none;
     position: absolute;
@@ -157,25 +157,6 @@ $sub-chip-left: chip-center-left($chip-sub-size);
     left: $sub-chip-left;
   }
 
-  // Coste: pastilla, no ficha circular, y en la esquina opuesta al badge.
-  .card__cost {
-    position: absolute;
-    top: $chip-inset;
-    right: $chip-inset;
-    z-index: z("chip");
-    min-width: 34px;
-    height: 34px;
-    padding: 0 8px;
-    display: grid;
-    place-items: center;
-    border-radius: radius("pill");
-    font-size: card-font("footer");
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    transform: translateZ(depth("chip"));
-  }
-
   // --- Nombre + estrellas de Nivel -----------------------------------------
   // Comparten el mismo grid-area apilados en columna: las estrellas son un
   // segundo renglón fijo bajo el nombre, no inline con el texto (con nombres
@@ -219,14 +200,21 @@ $sub-chip-left: chip-center-left($chip-sub-size);
   }
 
   // --- Descripción --------------------------------------------------------
-  .card__text {
-    grid-area: text;
-    z-index: z("content");
+  // .card__footer-text comparte esta tipografía (pie en modo texto de las
+  // categorías sin equipo, ver .card__footer-text más abajo): mismo tamaño y
+  // interlineado que la descripción, solo cambia el estilo (cursiva).
+  .card__text,
+  .card__footer-text {
     margin: 0;
-    padding: 8px 14px;
     font-size: card-fit(1, "size");
     line-height: card-fit(1, "leading");
     text-align: center;
+  }
+
+  .card__text {
+    grid-area: text;
+    z-index: z("content");
+    padding: 8px 14px;
     @include line-clamp(card-fit(1, "lines"));
 
     b {
@@ -234,18 +222,16 @@ $sub-chip-left: chip-center-left($chip-sub-size);
     }
   }
 
-  // Línea de coste/activación dentro de la descripción. Oculta por defecto:
-  // cada tema decide si la usa (otro podría preferir el pill .card__cost).
-  .card__cost-line {
-    display: none;
-  }
-
   // Escalones de ajuste según longitud del texto (fitStep en
   // CardDesignLab.tsx): se reduce el cuerpo y se permite una línea más.
   @each $step in (2, 3) {
-    .card[data-fit="#{$step}"] .card__text {
+    .card[data-fit="#{$step}"] .card__text,
+    .card[data-fit="#{$step}"] .card__footer-text {
       font-size: card-fit($step, "size");
       line-height: card-fit($step, "leading");
+    }
+
+    .card[data-fit="#{$step}"] .card__text {
       @include line-clamp-lines(card-fit($step, "lines"));
     }
 
@@ -255,38 +241,23 @@ $sub-chip-left: chip-center-left($chip-sub-size);
     }
   }
 
-  // --- Pie de stats -------------------------------------------------------
+  // --- Pie ------------------------------------------------------------
+  // Arma/Armadura lo dejan vacío (sus fichas se cuelan en el Efecto, ver
+  // GameCard.tsx); el resto de categorías pintan aquí el Tipo y sus fichas
+  // sueltas como texto — ver .card__footer-text arriba.
   .card__footer {
     grid-area: footer;
     z-index: z("content");
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px 6px;
     align-items: center;
     justify-content: center;
     padding: 8px 10px 12px;
-    font-size: card-font("footer");
     max-height: 56px;
     overflow: hidden;
   }
 
-  .stat {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    padding: 2px 7px;
-    border-radius: 6px;
-    white-space: nowrap;
-    font-weight: 600;
-  }
-
-  .stat__k {
-    opacity: 0.7;
-    font-weight: 600;
-  }
-
-  .stat__v {
-    font-weight: 800;
+  .card__footer-text {
+    font-style: italic;
   }
 
   // ------------------------------------------------------------- Efectos
