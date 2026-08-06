@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "cannon-es": "^0.20.0",
     "next": "16.2.11",
     "primeicons": "^8.0.0",
     "primereact": "^10.9.8",
@@ -18,7 +19,8 @@
     "react-markdown": "^10.1.0",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
@@ -27,6 +29,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.185.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.11",
     "sass": "^1.102.0",

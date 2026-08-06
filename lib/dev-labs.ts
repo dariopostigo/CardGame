@@ -88,6 +88,15 @@ export const DEV_LABS: readonly DevLab[] = [
     doc: { href: "/docs/game-design", label: "Movimiento y visión" },
   },
   {
+    slug: "dice",
+    label: "Tirada de dados",
+    summary:
+      "Dados físicos de verdad (Three.js + cannon-es) para los 7 tipos de D&D, en vez de un botón que hace random(): arrastra y suelta o pulsa «Tirar», y el resultado sale de qué cara mira hacia arriba una vez parado el dado.",
+    icon: "pi pi-th-large",
+    status: "en-curso",
+    doc: { href: "/docs/game-design", label: "Resolución de pruebas §4b" },
+  },
+  {
     slug: "combate",
     label: "Combate",
     summary:

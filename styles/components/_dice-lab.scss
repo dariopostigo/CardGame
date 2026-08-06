@@ -1,0 +1,84 @@
+@use "../abstracts" as *;
+
+// =========================================================================
+// Lab de Tirada de dados — ver components/dev/DiceLab.tsx
+//
+// El propio <canvas> de Three.js lo crea dice-scene.ts a pelo (WebGL, no
+// hay nada que pedirle a Sass ahí dentro); esta hoja solo viste el marco
+// donde vive y el panel de resultado de debajo, igual que .board__viewport
+// viste el SVG del tablero. Misma mesa que el tablero (board-table): un
+// dado también se tira SOBRE la mesa de la partida, no sobre un panel de
+// herramienta.
+// =========================================================================
+
+.dice-lab {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__stage {
+    position: relative;
+    height: 26rem;
+    min-height: 18rem;
+    border-radius: radius("md");
+    overflow: hidden;
+    background:
+      radial-gradient(125% 95% at 50% 40%, rgba($board-table-edge, 0) 30%, $board-table-edge 100%),
+      $board-table;
+    // El arrastre lo lleva dice-scene.ts (Pointer Events): sin esto, en
+    // pantalla táctil el gesto lo capturaría el scroll de la página, igual
+    // que en .board__viewport.
+    touch-action: none;
+    user-select: none;
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__result {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    min-height: 3rem;
+    padding: 10px;
+    border-radius: radius("md");
+    background: skin("surface-2");
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity $duration-fast $ease,
+      transform $duration-fast $ease;
+
+    &--show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__total {
+    font-size: 2rem;
+    font-weight: 800;
+    color: skin("accent");
+    line-height: 1;
+  }
+
+  &__detail {
+    font-size: 0.9rem;
+    color: skin("muted");
+  }
+
+  &__rolling {
+    font-size: 0.9rem;
+    color: skin("muted");
+  }
+
+  @include reduced-motion {
+    &__result {
+      transition: none;
+    }
+  }
+}
