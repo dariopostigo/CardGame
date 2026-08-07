@@ -15,7 +15,7 @@ Documento dedicado a los NPCs **no hostiles** que aparecen en el mapa mediante l
 | NPC | Qué ofrece | Notas |
 |---|---|---|
 | Vendedor/Mercader | Compra/vende **Items** (objetos de aventurero, pociones, pergaminos — [`../cards/items.md`](../cards/items.md)); **no** vende armas ni armaduras (eso es el Herrero) — precios por Rareza y **venta a ≈40 %** (`../game-design.md` §6b.3); stock limitado/rotatorio | El más genérico; aparece tanto en Pueblo como suelto en el mapa |
-| Tabernero | Ofrece el **descanso largo** (`../game-design.md` §4c.3): cura total, recupera Dados de Vida, quita estados negativos; puede dar rumores/pistas. Posible coste de oro. **Además**, pagando **50 oro** puede **reducir en 25 el Nivel de Amenaza** (`../game-design.md` §6c.2) — acción usable **1 vez por partida/capítulo** | Aparece en el Pueblo o en una **posada** suelta en mitad de un camino |
+| Tabernero | Ofrece el **descanso largo** (`../game-design.md` §4c.3): cura total, recupera Dados de Vida, quita estados negativos; puede dar rumores/pistas. Posible coste de oro. **Además**, pagando **50 oro** puede **reducir en 10 el Nivel de Amenaza** (`../game-design.md` §6c.2) — acción usable **1 vez por partida/capítulo** *(cifra corregida — el reescalado a tope 40 de `../game-design.md` §6c.2 ya estaba en −10; esta tabla se había quedado en la cifra vieja, −25)* | Aparece en el Pueblo o en una **posada** suelta en mitad de un camino |
 | Sacerdote/Sanador | **Baja 1 Nivel una Maldición** ([`../cards/curses.md`](../cards/curses.md) §4) pagando el coste de su Nivel actual, o mediante la prueba gratuita arriesgada — curarla del todo puede exigir varias visitas si empezó alta | Hace de **Templo del prototipo** (`../board/board-map.md` §3b, §8); vive en el Pueblo. Sumidero de oro (`../game-design.md` §6b.2) |
 | Mago/Encantador | Vende hechizos, pergaminos, encanta objetos existentes | Contrapunto arcano del vendedor; encaja con la localización Torre de mago (`../board/board-map.md` §3b) |
 | Capitán de mercenarios | **Vende cartas de Mercenario** por oro ([`../cards/mercenaries.md`](../cards/mercenaries.md) §2b) — la vía **segura**. Reclutarlas gratis (con riesgo de combate) es un **encuentro** en una ficha ambigua (`../cards/mercenaries.md` §2a), no este NPC | Cartas de tipo Acción que van a tu mazo; coste por Rareza (`../game-design.md` §6b.3). **Solo aparece en Pueblos** |
@@ -40,7 +40,7 @@ No hay comprador universal. **El NPC que vende una categoría de carta también 
 
 - Las **Maldiciones no se venden** ([`../cards/curses.md`](../cards/curses.md)): se limpian pagando al Sacerdote/Sanador o con la prueba arriesgada.
 - **Vender armas/armaduras es la fuente de oro más estable** del juego: su colección es ilimitada y no ocupa Mazo (`../game-design.md` §4a), así que el equipo obsoleto se acumula sin coste y siempre hay algo que liquidar.
-- Por eso la generación de mapa garantiza **1 Pueblo** (`../board/board-map.md` §2c): es donde se concentran estos NPCs. Sin él no habría dónde vender, ni descanso largo, ni limpieza de Maldiciones.
+- **El Pueblo ya NO está garantizado** *(corregido — `../board/board-map.md` §2c revirtió esta garantía)*: lo trae maquetado una loseta en el 81-95 % de los tableros según su tamaño, y en el resto no hay Pueblo esa partida. Es donde se concentran estos NPCs cuando aparece; sin él no hay dónde vender, ni descanso largo, ni limpieza de Maldiciones esa partida.
 
 ## 3. Stock: cuántas cartas ofrece cada NPC
 
@@ -48,7 +48,7 @@ No hay comprador universal. **El NPC que vende una categoría de carta también 
 
 - **Se sortea al empezar el capítulo:** al entrar en un capítulo, cada NPC del mapa recibe de golpe su oferta, elegida **aleatoriamente** del catálogo que le corresponde.
 - **Es fija durante todo el capítulo:** no rota, no se reinicia ni cambia a mitad. Salir del Pueblo y volver **no** genera una oferta nueva — lo que viste es lo que hay, así que no existe el "reroll" por entrar y salir.
-- **Lo que compras se agota:** la carta comprada desaparece de esa oferta para el resto del capítulo (el stock no se repone).
+- **Lo que compras se agota, pero solo para ti** *(matizado 2026-08-06, §3c — antes esta línea no distinguía jugadores)*: la carta comprada desaparece de **tu** copia de esa oferta para el resto del capítulo; no se comparte pool entre los 1-4 héroes, así que un compañero sigue viendo esa misma carta disponible en la suya.
 - **Cambio de capítulo (Campaña):** al pasar al siguiente capítulo se sortea una **oferta nueva y distinta**. Es la única forma de renovar el stock.
 - **Partida rápida:** al ser un único mapa/capítulo (`../board/board-map.md` §2b), la oferta inicial es la de toda la partida.
 
@@ -66,6 +66,20 @@ Consecuencia de diseño: la decisión de compra es "¿me lo llevo ahora o ahorro
 - **Sin tope de rareza (de momento):** cualquier carta del catálogo puede salir en la oferta, **incluidos los Legendarios**, con su precio de `../game-design.md` §6b.3. Limitar el mercado por rareza queda como palanca de balance para más adelante ([`../ideas.md`](../ideas.md)).
 - El resto de NPCs (Tabernero, Sacerdote/Sanador, Informante, Instructor) **no venden cartas**: ofrecen servicios (§2), así que no tienen stock.
 
+## 3c. E3 — pantalla del Pueblo *(decidido 2026-08-06)*
+
+Con el co-op de 1-4 héroes (`heroes.md` §4), interactuar con los NPCs de un Pueblo pasa a tener **pantalla propia** (E3), la tercera junto a la Exploración (E1, [`../board/board-map.md`](../board/board-map.md)) y la Batalla (E2, [`../board/battle.md`](../board/battle.md)). El Pueblo **sigue siendo terreno multi-hexágono** maquetado en la loseta (§3b del tablero) — solo **un** hexágono es la puerta a esta pantalla; cuántos NPC hay dentro lo sigue decidiendo el **tipo de loseta** (§1), no la pantalla.
+
+**Dos pantallas, ninguna tercera:**
+- **Plaza:** una lámina con puntos clicables — los 8 oficios de §2 + Tablón + Salida. Los oficios sin NPC sembrado en esta instancia de Pueblo se ven apagados (grises), no ocultos.
+- **Panel de oficio:** retrato + oro del equipo + lista de opciones (comprar/vender, servicios, reforjar). Se cierra y se vuelve a la plaza. El mismo panel sirve para las **fichas de Personaje sueltas** del resto del mapa (~3,1 por partida, `../board/board-map.md` §2c) — se construye una vez y cubre las ~5,5 fichas de NPC totales.
+
+**Stock independiente por jugador, no compartido:** cada jugador tiene su propia interacción con el NPC — la oferta se sortea una vez por capítulo como hasta ahora (§3), pero **lo que compra un jugador no se agota para los demás**: no hay un pool único que vaciar entre los 1-4 héroes. Las cantidades **no cambian** (4/3/3/2, §3b): ya estaban calibradas para "un comprador", que ahora es literalmente cada jugador por separado.
+
+**Coste de visitar E3: igual que interactuar con cualquier ficha de Personaje hoy** — sin coste extra de Acción ni de reloj más allá de moverte hasta el hex en E1. No se inventa una regla nueva solo para el Pueblo.
+
+**Arranca sin arte:** los puntos de la Plaza son letreros con el mismo disco tumbado de `../board/board-map.md` §4c, con un flag que decide si las posiciones salen de una rejilla o de coordenadas de imagen — el resto del código es idéntico cuando llegue el arte.
+
 ## 4. Cómo se resuelve la interacción
 
 - Interacción de menú/diálogo simple (no un mini-combate ni prueba de estadística obligatoria), aunque algunos NPCs puedan ofrecer una prueba opcional (ej. Carisma para conseguir mejor precio).
@@ -79,6 +93,7 @@ Consecuencia de diseño: la decisión de compra es "¿me lo llevo ahora o ahorro
 - [x] Definir el stock/rotación concreto de cada tienda → **§3**: oferta aleatoria fijada al empezar el capítulo, sin rotación intracapítulo, renovada al cambiar de capítulo; 4/3/3/2 cartas y sin tope de rareza por ahora. Falta balancear si esas cantidades dan demasiada o poca elección.
 - [x] Subconjunto del prototipo → **7 de los 8 tipos** de §2 entran en el prototipo (incluido el nuevo Sacerdote/Sanador); solo el Dador de misión queda para Campaña.
 - [ ] Definir 2-3 NPCs de ejemplo con nombre propio para el prototipo (mínimo: un tabernero y un mercader).
-- [x] Decidir si el Mercenario usa stats/mazo propio o efecto pasivo simple → **ninguno de los dos**: es una **carta de Acción** que va a tu mazo, reclutada con una prueba de Carisma en una ficha ambigua o comprada por oro ([`../cards/mercenaries.md`](../cards/mercenaries.md)).
+- [x] Decidir si el Mercenario usa stats/mazo propio o efecto pasivo simple → **ficha con bloque de combate por Rareza** *(revisado 2026-08-06 — versión anterior decía "ninguno de los dos", carta de efecto sin ficha)*, invocada por una carta de Acción reclutada con una prueba de Carisma en una ficha ambigua o comprada por oro ([`../cards/mercenaries.md`](../cards/mercenaries.md) §1b).
 - [ ] Cuando quieras, ir añadiendo más tipos de NPC a la tabla de §2.
+- [x] **Pantalla propia para interactuar con NPCs (E3)** → §3c: Plaza + panel de oficio, stock independiente por jugador (no compartido), coste de visita igual que cualquier ficha de Personaje.
 - [x] Añadir el **Instructor**, NPC nuevo que reforja cartas de clase (`../game-design.md` §6d.5) → §2, §2b. Coste ya resuelto (tabla universal de §6d.1); nombre propio **Kaelen Dorsh** (§2) — capitán mercenario retirado.

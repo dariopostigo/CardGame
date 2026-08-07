@@ -100,10 +100,10 @@ export const DEV_LABS: readonly DevLab[] = [
     slug: "combate",
     label: "Combate",
     summary:
-      "Iniciativa, adyacencia, ataque y estados, con el árbol de prioridades de la IA enemiga y el tope de 2 enemigos activos.",
+      "Pantalla de batalla propia: iniciativa, adyacencia, ataque y estados, con el árbol de prioridades de la IA enemiga y el presupuesto de composición del bando enemigo.",
     icon: "pi pi-bolt",
     status: "planificado",
-    doc: { href: "/docs/characters/enemies", label: "Enemigos" },
+    doc: { href: "/docs/board/battle", label: "Pantalla de batalla" },
   },
   {
     slug: "animaciones",

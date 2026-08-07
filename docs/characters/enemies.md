@@ -17,11 +17,11 @@ Esta distinción da dos sabores de encuentro: la sorpresa de la Amenaza (tensió
 
 - **¿Estáticos o con movimiento?** → **Resuelto (`../game-design.md` §4b.5):** modelo de **activación por detección** en dos estados:
   - **Latente:** anclado en su hexágono, **no patrulla**, mientras no detecte al héroe. (Se conserva la idea de "no deambula por el mapa" del prototipo.)
-  - **Activo:** una vez **detectado** el héroe (prueba de sigilo fallada, §2b), se mueve hacia él por el mapa (persecución), inicia combate al quedar adyacente y se sigue moviendo dentro del combate.
+  - **Activo:** una vez **detectado** el héroe (prueba de sigilo fallada, §2b), se mueve hacia él por el mapa (persecución) hasta que se abre la **pantalla de batalla** (`../board/battle.md`, decisión raíz #1) — a partir de ahí, el movimiento y el combate ocurren ya en esa pantalla, no en este mapa.
 - **¿Detección activa?** → **Sí, es el disparador del movimiento.** Cuando el héroe entra en el **rango de detección** del enemigo se resuelve una **prueba de sigilo** (§2b): el enemigo solo pasa a Activo si la falla (o si el héroe no puede ser sigiloso). Reglas del rango (los detalles de la prueba, en §2b):
-  - **Rango de detección** = **2 hex base + 1 por punto de modificador de Sabiduría** del enemigo (misma escala que la visión del héroe, `../game-design.md` §2.3, pero con base 2 frente a la base 3 del héroe: el enemigo está alerta en su puesto, pero el héroe **debe** ver primero — es el invariante de §2b).
+  - **Rango de detección** = **2 hex base + 1 por punto de modificador de Sabiduría** del enemigo (misma escala que la visión del héroe, `../game-design.md` §2.3, con la misma base 2 que la visión de detalle del héroe desde el reescalado del 2026-08-05 — el invariante `detalle > detección` de §2b se sostiene ya no por la base, sino por el modificador de Sabiduría de cada bando).
   - **Reducción por terreno/sigilo:** la ocultación del terreno del héroe resta al rango (**Bosque −1**; Llanura/Camino sin reducción — `../board/board-map.md` §3/§4). El estado **Oculto** ([`../effects.md`](../effects.md)) hace al héroe **indetectable** hasta que actúe.
-  - **Persecución (leash):** si el héroe sale del rango de detección y de la línea de visión del enemigo durante **2 turnos seguidos**, el enemigo **desiste**, vuelve a su hexágono ancla, recupera sus PV y pasa de nuevo a Latente. Esto da sentido mecánico a huir/ocultarse.
+  - **Persecución (leash):** si el héroe sale del rango de detección y de la línea de visión del enemigo durante **2 turnos seguidos**, el enemigo **desiste**, vuelve a su hexágono ancla y pasa de nuevo a Latente. **Ya no recupera los PV de golpe** *(corregido — `../board/battle.md` §9 ya lo señalaba sin que se hubiera aplicado aquí)*: las bajas de una composición son permanentes, y las supervivientes recuperan PV poco a poco, ligado al mismo +1 que sube el reloj de Amenaza al huir de una batalla — así curarse rápido es siempre contra un enemigo más entero. Esto da sentido mecánico a huir/ocultarse.
   - *(Idea futura, aún sin decidir — nota del diseñador:* enemigos o eventos "cazadores" que busquen proactivamente al héroe por el mapa **antes** de detectarlo por visión. Por ahora la activación es siempre reactiva, por detección. **No se engancha al Nivel de Amenaza** (`../game-design.md` §6c.3) — los umbrales de Amenaza no cambian el comportamiento de detección/movimiento de los enemigos, solo los hacen más peligrosos en combate y más perceptivos, ver §6c.3.)
 - **¿Reaparecen?** → **No (decidido):** los enemigos **no reaparecen** con el tiempo; se **colocan al generar el mapa** y una zona limpiada queda **despejada** (progreso permanente). Su ubicación es cosa de la generación (`../board/board-map.md` §2, §2c): con el sistema de **tiles** se pintan en **agrupaciones temáticas** (un campamento en una esquina de una Llanura, salas con enemigos repartidos en una mazmorra…); en el **prototipo** se siembran **aleatoriamente** por la tabla B (`../board/board-map.md` §2c). *(En Campaña, un evento scriptado podría añadir enemigos puntualmente — idea futura, no un respawn automático.)*
 
@@ -48,7 +48,7 @@ Formaliza cómo el héroe se acerca a un enemigo **Latente** antes de que empiec
    - **Fallo** → el enemigo pasa a **Activo** (§2): te ha detectado, arranca la persecución/combate (§5b.6).
 3. **Ataque desde el sigilo = emboscada:** si llegas a adyacencia (melee) o abres fuego (a distancia) **sin haber sido detectado**, es una **emboscada**: atacas **con ventaja** y **actúas primero** (ignoras la iniciativa el primer turno) — coherente con la emboscada de Bosque (`../board/board-map.md` §3a) y *Golpe de las sombras* ([`../cards/encounter.md`](../cards/encounter.md)).
 
-**Por qué importa el alcance del enemigo:** contra un enemigo **a distancia**, colarte sin ser detectado te deja **pegarte a él**, y desde ahí solo puede dispararte **a bocajarro, con Desventaja** (§5b.6 paso 3, `../game-design.md` §4b.1); si te detecta de lejos, abrirá fuego desde su alcance con la tirada limpia. Contra uno melee, la emboscada te da el primer golpe con ventaja.
+**Por qué importa el alcance del enemigo:** contra un enemigo **a distancia**, colarte sin ser detectado te deja **pegarte a él**, y desde ahí solo puede dispararte **a bocajarro, con Desventaja** (§5b.6 paso 3, `../board/battle.md` §2); si te detecta de lejos, abrirá fuego desde su alcance con la tirada limpia. Contra uno melee, la emboscada te da el primer golpe con ventaja.
 
 **Fichas ambiguas (Amenaza):** esta fase solo aplica a enemigos que **ya ves** (ficha de Enemigo o ya detectados). Una ficha de **Amenaza** (`../board/board-map.md` §4) es incierta hasta interactuar: puede **sorprenderte** y arrancar el combate sin fase de aproximación previa (el mazo de encuentro puede dar *¡Emboscada!* a su favor, [`../cards/encounter.md`](../cards/encounter.md)).
 
@@ -110,7 +110,7 @@ Al quedar adyacente a una ficha de Amenaza (revelada como enemigo) o de Enemigo,
 
 | Enemigo | FUE | DES | CON | INT | SAB | CAR | Dónde | Idea de gancho mecánico |
 |---|---|---|---|---|---|---|---|---|
-| Capitán bandido | 16 | 12 | 13 | 8 | 10 | 15 | Guarida en Llanura/Camino | Llega acompañado de **1** Normal de refuerzo (tope de 2 enemigos, §5b.6); CAR alto porque lidera |
+| Capitán bandido | 16 | 12 | 13 | 8 | 10 | 15 | Guarida en Llanura/Camino | Llega acompañado de **1** Normal de refuerzo (cuesta 1 del presupuesto de composición, §5b.6); CAR alto porque lidera |
 | Trol de las minas | 16 | 13 | 15 | 8 | 12 | 10 | Guarida en Mina | Mucho HP (CON alta), golpe que ignora parte de la armadura ligera |
 | Araña matriarca | 12 | 16 | 15 | 10 | 13 | 8 | Guarida en Montaña/Mazmorra | Versión grande de la Araña cavernaria, veneno más fuerte |
 
@@ -195,22 +195,24 @@ Convierte cada enemigo (sus 6 stats de §5 + categoría) en algo **jugable** en 
 
 Cómo decide un enemigo **Activo** (§2) qué hacer en su turno. Es **determinista**: no hay tirada para decidir, se recorre una lista de prioridades y se ejecuta la primera opción aplicable — así el jugador puede anticipar al enemigo y el balance es predecible. Por ahora es **un único patrón para todos los enemigos**; los arquetipos de comportamiento (melee agresivo, kiter a distancia, soporte-invocador, escaramuzador) son una **evolución futura** ([`../ideas.md`](../ideas.md)).
 
-**Objetivo:** el enemigo actúa siempre contra el **héroe más cercano** (en el prototipo, el único). Empate de distancia → el objetivo con menos PV. *(Con varios héroes/aliados en el futuro se afinará la selección de objetivo.)*
+**Objetivo:** el enemigo actúa siempre contra la **ficha aliada más cercana** — héroe o mercenario invocado (`../cards/mercenaries.md` §1b), sin distinción entre los dos: el mercenario cuenta como objetivo válido igual que un héroe *(decidido 2026-08-06, para el prototipo del co-op de 1-4 héroes, `heroes.md` §4)*. Empate de distancia → el objetivo con menos PV.
+
+> **Refinamiento diferido a Fase 2, no del primer pase:** un tope de 2 criaturas enemigas por objetivo/ronda con desempate por rol de Naturaleza (Soporte/Invocador antes que Tanque) queda escrito como mejora futura de este mismo árbol — sustituiría el simple "menos PV" de arriba cuando varias criaturas deterministas convergen sobre el mismo objetivo. No bloquea el prototipo: se construye cuando se rediseñe la IA de verdad.
 
 **Árbol de prioridades (en su turno, de arriba abajo — ejecuta la primera opción aplicable):**
 
 0. **Inicio de turno (automático, no es una elección):** resolver lo que se dispara "al inicio de tu turno" — regeneración (Trol), daño de estados que sufra el propio enemigo (Envenenado, [`../effects.md`](../effects.md)) y avanzar contadores de habilidad (Invocar cada 2 turnos, Aura cada 3). Comprobar umbrales de PV (multifase / huida).
 1. **¿Debe huir?** Si una habilidad lo ordena (ej. Bandido *Escurridizo* por debajo del 50 % de PV): intenta la **huida** (ver abajo).
 2. **¿Habilidad lista y útil?** Si tiene una habilidad activa disponible cuyo disparador se cumple y mejora su situación (ej. *Invocar* del Heraldo, *Telaraña* si el héroe no está ya Inmovilizado), la usa como su **Acción**.
-3. **¿Puede atacar ya?** Si el objetivo está **en alcance** (adyacente para melee; dentro de alcance para distancia, `../game-design.md` §4b.1), **ataca** (§5b.5).
-   - **Enemigo a distancia con el héroe encima *(precisado)*:** dispara **a bocajarro con Desventaja** (`../game-design.md` §4b.1) — **no** se aleja. Antes este paso decía que primero retrocedía hasta ≥2 hex ("kiting"), y eso era imposible de resolver: salir de tu adyacencia le obliga a **Desengancharse** (§4b.11) y, con la Velocidad igualada, el héroe se le vuelve a pegar en su turno. El enemigo pagaba un golpe gratis cada turno para no ganar nada. Disparar con Desventaja es la opción determinista y además simétrica con lo que puede hacer el héroe.
+3. **¿Puede atacar ya?** Si el objetivo está **en alcance** (adyacente para melee; dentro de alcance para distancia, `../board/battle.md` §2), **ataca** (§5b.5).
+   - **Enemigo a distancia con el héroe encima *(precisado)*:** dispara **a bocajarro con Desventaja** (`../board/battle.md` §2) — **no** se aleja. Antes este paso decía que primero retrocedía hasta ≥2 hex ("kiting"), y eso era imposible de resolver: salir de tu adyacencia le obliga a **Desengancharse** (§4b.11) y, con la Velocidad igualada, el héroe se le vuelve a pegar en su turno. El enemigo pagaba un golpe gratis cada turno para no ganar nada. Disparar con Desventaja es la opción determinista y además simétrica con lo que puede hacer el héroe.
 4. **¿Acercarse?** Si el objetivo está fuera de alcance, gasta **Movimiento** para acercarse por la ruta transitable más corta (coste de terreno, `../board/board-map.md` §3a). Si tras moverse queda en alcance, ataca (paso 3).
 5. **Sin nada útil** (bloqueado, sin ruta): se acerca lo máximo posible y termina el turno.
 
-**Huida — es la regla de Desengancharse *(decidido)*:** el enemigo que huye usa la **misma** tirada enfrentada `1d20 + mod DES` que el héroe cuando huye él (`../game-design.md` §4b.11 — una sola regla para los dos sentidos, en vez de las dos distintas que había antes):
-- **Gana el enemigo** → se desengancha limpio: usa su Movimiento para alejarse.
+**Huida — es la regla de Desengancharse, pero ya no sale de la pantalla de batalla *(corregido 2026-08-07)*:** el enemigo que huye usa la **misma** tirada enfrentada `1d20 + mod DES` que el héroe cuando huye él (`../game-design.md` §4b.11 — una sola regla para los dos sentidos, en vez de las dos distintas que había antes):
+- **Gana el enemigo** → se desengancha limpio: usa su Movimiento para alejarse dentro del tablero de batalla.
 - **Gana el héroe** → el enemigo **recibe el daño del ataque básico del héroe sin tirada de ataque** y **se aleja igualmente**. *(Antes esto era "no logra soltarse y se queda"; ahora ambos bandos siguen la misma resolución: huir siempre funciona, pero puede costarte un golpe.)*
-- Si el enemigo se mantiene fuera de tu detección y visión durante el **leash (2 turnos, §2)**, **escapa del combate** y **se pierde su loot** (se llevó lo robado, en el caso del Bandido).
+- **Los enemigos no salen del tablero de batalla — de momento solo lo hacen héroes y jugadores, vía Retirada** (`../board/battle.md` §8) *(decidido 2026-08-07)*. Un enemigo "que huye" se reposiciona con Desengancharse dentro de la rejilla, pero sigue en la pelea hasta caer a 0 PV o hasta que el combate termine por alguna de las condiciones de `../board/battle.md` §9. **Retirado el viejo mecanismo de leash-escape** (2 turnos sin detección/visión → escapa y se pierde el loot), pensado para cuando combate y exploración compartían el mismo mapa grande — en una rejilla de 35 hex no hay a dónde perderse.
 
 **Disparadores de habilidad (unificados):** cada habilidad de un bloque (§5b) se cuelga de uno de estos momentos, para que la IA sepa cuándo evaluarla:
 
@@ -223,12 +225,21 @@ Cómo decide un enemigo **Activo** (§2) qué hacer en su turno. Es **determinis
 
 **Varios enemigos a la vez:**
 - Cada enemigo tira su **propia iniciativa** (`../game-design.md` §4b.2) y corre el árbol por su cuenta en su turno — sin coordinación táctica compleja (coherente con "determinista simple").
-- **Refuerzos** (Capitán *Comandante*, carta *Refuerzos* del mazo de encuentro, [`../cards/encounter.md`](../cards/encounter.md)) entran **Activos** en el hexágono libre más cercano al combate y actúan desde el turno siguiente (tiran iniciativa al aparecer).
-- **Tope de 2 enemigos simultáneos en el prototipo *(decidido)*.** Nunca hay más de **2 enemigos actuando a la vez** contra el héroe (incluidos refuerzos e invocaciones): si una habilidad quiere meter un tercero, **espera** a que caiga uno.
+- **Refuerzos** (habilidad propia del Jefe *Capitán Comandante* — ya no depende de la carta *Refuerzos* del mazo de encuentro, retirada por no encajar con el presupuesto de composición, [`../cards/encounter.md`](../cards/encounter.md)) entran **Activos** en el hexágono libre más cercano al combate y actúan desde el turno siguiente (tiran iniciativa al aparecer); cuenta contra el mismo presupuesto de composición de abajo, nunca por encima del tope 6.
+- **El tope fijo de 2 enemigos simultáneos se sustituye por un presupuesto de composición ligado al tamaño del bando aliado** *(decidido 2026-08-06, ver también [`../board/battle.md`](../board/battle.md) §4)*. Con el juego pasado a co-op de 1-4 héroes (`heroes.md` §4) y el combate movido a su propia pantalla (E2), una cifra fija dejó de tener sentido: **presupuesto = héroes que entran a la batalla + 1** (tope 6), con coste por categoría Normal 1 / Élite 2 / Jefe 3, y **+1 más si alguien invoca un mercenario** (`../cards/mercenaries.md` §1b) — una ficha aliada con turno propio sube el presupuesto enemigo igual que si fuera un jugador más.
 
-  > **Por qué hay tope.** El héroe tiene **1 turno**; N enemigos tienen **N turnos**. Con 3 Normales el daño entrante era ~4,7 por turno y el héroe necesitaba 9,5 turnos para limpiarlos: matemáticamente imposible, y no por los valores de cada bloque sino por la **economía de acción**. El ataque secundario (`../game-design.md` §4b.3) compensa hasta **2** atacantes; a partir de ahí no hay número que salve el encuentro. Por eso el tope es una regla y no una recomendación de balance, y por eso el *Comandante* del Capitán trae **1** refuerzo y no 1-2 (§5b.3).
+  | Héroes que entran | Presupuesto | Ejemplo de composición |
+  |---|---|---|
+  | 1 (solo) | 2 | 2 Normales, o 1 Élite — **es el tope de hoy, sin cambios** |
+  | 2 | 3 | 3 Normales, o 1 Élite + 1 Normal |
+  | 3 | 4 | 2 Lobos + 2 Esqueletos, o 1 Élite + 2 Normales |
+  | 4 | 5-6 | 2 Lobos + 2 Esqueletos + 1 Lobo alfa (Élite, cuesta 2) = 6 |
+
+  > **Por qué el tope de 1 existía y qué conserva la fórmula.** El héroe tenía **1 turno**; N enemigos tenían **N turnos**. Con 3 Normales el daño entrante era ~4,7 por turno y el héroe necesitaba 9,5 turnos para limpiarlos: matemáticamente imposible, y no por los valores de cada bloque sino por la **economía de acción**. El presupuesto de arriba es la traducción literal de ese mismo motivo a un bando de tamaño variable: con 1 héroe da exactamente el tope de 2 que ya había, y escala junto con la economía de acción real de la mesa (más héroes con Acción rápida cada uno = más presupuesto enemigo), en vez de congelarse en una cifra pensada para un único atacante.
   >
-  > Subir el tope a 3 es viable **cuando** el héroe pueda tener aliados que actúen en su propio turno (grupo de héroes o mercenarios como ficha en el tablero, [`../ideas.md`](../ideas.md)) — no antes.
+  > **El dial de dificultad extra sigue siendo el Nivel (1-5, §5d), no más fichas nuevas.** Un "Lobo alfa" no necesita bloque propio: es un Lobo de las lindes en **Nivel 3-4** (mismo gancho de *Cazador de manada*, más PV y mejor ataque/CA por la fórmula de §5d) — así no se rompe "2 Élite distintos como máximo por partida" (§5c) al llenar presupuestos de 5-6.
+  >
+  > La composición de una ficha concreta (mezcla de Normales/Élite disponible en esa zona) sigue viniendo de §5c; lo que cambia es **cuánto** de esa mezcla entra a pelear, decidido en el momento de abrir la batalla según cuántos héroes (y mercenarios) se presentan, no al generar el mapa.
 
 ## 5c. Escala de dificultad (resuelve "hito → CR")
 
@@ -236,13 +247,13 @@ Como el leveling es por **hitos** (no XP; `../game-design.md` §5), no traducimo
 
 **Partida rápida — por distancia a la entrada:**
 
-| Zona del mapa | Categorías que aparecen |
+| Zona del mapa | Categorías disponibles en esa ficha |
 |---|---|
-| Cerca de la entrada | **1** Normal suelto |
-| Zona media | **2** Normales, o 1 Élite suelto |
-| Zona lejana / Guarida | 1 Élite (+1 Normal), y el **boss** en la Guarida (§2c del `../board/board-map.md`) |
+| Cerca de la entrada | Normales |
+| Zona media | Normales, o 1 Élite suelto |
+| Zona lejana / Guarida | Élite, y el **boss** en la Guarida (§2c del `../board/board-map.md`) |
 
-Las cantidades respetan el **tope de 2 enemigos simultáneos** (§5b.6): "Normales en grupo" era antes indefinido y con 3 el encuentro no se podía ganar.
+**Esta tabla ya no fija la cantidad exacta, solo qué categorías puede tener esa ficha** *(corregido 2026-08-06 — antes decía "2 Normales", "1 Élite (+1 Normal)")*: cuántas criaturas entran realmente a pelear lo decide el **presupuesto de composición** de §5b.6 en el momento de abrir la batalla, según cuántos héroes (y mercenarios) se presenten — con 1 héroe solo, el resultado sigue siendo el mismo tope de 2 que había antes de esta revisión.
 
 **Los tres Élite en una misma partida *(decidido)*.** Se reparten así, para que no se repita ninguno:
 
@@ -271,7 +282,7 @@ Un enemigo tiene, además de su **Categoría** (§3 — qué criatura es, con su
 - **Categoría** decide **qué es** (un Lobo, un Trol, un jefe) y **dónde puede aparecer** (§5c).
 - **Nivel** escala **esa misma criatura** hacia arriba sin cambiar lo que es: un Lobo de las lindes Nivel 3 sigue siendo un Lobo — misma IA (§5b.6), mismo gancho (*Cazador de manada*), solo más resistente y más certero. No sustituye a la Categoría ni la duplica: un Élite Nivel 1 sigue siendo más peligroso que un Normal Nivel 5 en términos absolutos, el Nivel solo ajusta dentro de su propia Categoría.
 
-**Por qué un eje aparte y no una quinta Categoría.** Las 4 Categorías ya hacen un trabajo real (variedad de bestiario, dónde aparece cada una, el tope de 2 enemigos simultáneos por Categoría de refuerzo, §5b.6) que no hay que tocar. Lo que faltaba era un mando de precisión para subir la dificultad de una criatura concreta sin escribir un bloque nuevo — sobre todo para Modo Campaña, donde §5c ya liga nivel de héroe a qué Categorías aparecen; ahora también puede subir el **Nivel** de esas mismas Categorías en capítulos avanzados en vez de solo cambiar cuál sale.
+**Por qué un eje aparte y no una quinta Categoría.** Las 4 Categorías ya hacen un trabajo real (variedad de bestiario, dónde aparece cada una, el coste por Categoría dentro del presupuesto de composición, §5b.6) que no hay que tocar. Lo que faltaba era un mando de precisión para subir la dificultad de una criatura concreta sin escribir un bloque nuevo — sobre todo para Modo Campaña, donde §5c ya liga nivel de héroe a qué Categorías aparecen; ahora también puede subir el **Nivel** de esas mismas Categorías en capítulos avanzados en vez de solo cambiar cuál sale.
 
 **Fórmula — mismo espíritu que la progresión de personaje (`../game-design.md` §5):**
 
@@ -303,7 +314,7 @@ Sin escribir un bloque nuevo, un Lobo Nivel 3 pasa de 12 a 24 PV y de +1 a +2 de
 - [x] Definir cómo escala la dificultad según profundidad del mapa / nivel del personaje → §5c (qué categorías aparecen por zona en **Partida rápida** y por nivel/capítulo en Campaña). Falta balancear cantidades.
 - [x] **Personalizar la Velocidad por criatura** *(decidido)*: base 2, **3** para Lobo / Araña matriarca / Sombra que Devora, **ningún enemigo a 1** (§5b.1). Cierra lo que estaba apuntado como futuro en `../ideas.md`.
 - [x] **Escribir los críticos de los enemigos** *(decidido)*: simétricos con el héroe, nat 20 dobla dados (§5b.1, §5b.5). No estaban definidos.
-- [x] **Tope de 2 enemigos simultáneos** *(decidido)* — §5b.6, con las cantidades por zona de §5c ajustadas. Es un límite de **economía de acción** (el héroe tiene 1 turno, N enemigos tienen N), no de balance de bloques.
+- [x] **Tope de 2 enemigos simultáneos** *(decidido, luego superado)* — era un límite de **economía de acción** (el héroe tiene 1 turno, N enemigos tienen N), no de balance de bloques. **Sustituido 2026-08-06** por el **presupuesto de composición** (§5b.6, arriba), que generaliza ese mismo motivo a 1-4 héroes: con 1 solo, el resultado sigue siendo 2, sin cambios.
 - [x] **Rebajar los Élite** *(decidido)*: 5 DV → **4** (24/28/28 PV) y regeneración del Trol +2 → **+1** (§5b.3). Con los valores anteriores los tres ganaban a los cuatro héroes.
 - [x] Resolver el paso 3 de la IA para enemigos a distancia con el héroe adyacente → **disparan a bocajarro con Desventaja**, no retroceden (§5b.6). El "kiting" anterior era irresoluble con la Velocidad igualada.
 - [ ] Decidir si los nombres/historia de los jefes de capítulo y final son estos provisionales o se rediseñan al escribir la Campaña de verdad.

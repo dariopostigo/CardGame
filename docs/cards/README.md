@@ -42,6 +42,14 @@ La categoría es obligatoria (`clase`, `arma`, `armadura`, `item`, `maldicion`, 
 
 De las columnas se encarga la convención: la **primera** es el nombre; `Rareza`, `Nivel` (Maldición, mismo eje 1-5 leído al revés), `Manos`, `Peso`, `Uso` y `Tipo` alimentan las fichas de la carta; `Efecto`/`Propiedades`/`Notas` son el cuerpo; y **cualquier otra columna acaba como ficha en el pie** con su encabezado como etiqueta — o sea que añadir una columna a una tabla la hace aparecer en la carta sin tocar código. El detalle está en `lib/card-table.ts`.
 
+## Campo Escenario *(decidido 2026-08-06, pendiente de asignar carta por carta)*
+
+Con el combate movido a su propia pantalla ([`../board/battle.md`](../board/battle.md), decisión raíz #1), cada carta lleva un campo **Escenario**: `Exploración` / `Batalla` / `Ambos`. Decide en qué Oteo puede salirte esa carta — al abrir la batalla se hace 1 Oteo filtrado a `Batalla`/`Ambos` (gratis), y al volver al mapa, el simétrico con `Exploración`/`Ambos` (`../board/battle.md` §10).
+
+**No se parte el Mazo en dos:** sigue habiendo un solo Mazo (≤20) y un solo "en juego" (tope 5) — partirlo en dos barajas de ~10 rompe el Oteo por aritmética (`../game-design.md` §4 exige ≥3-4 cartas sin preparar).
+
+**Pendiente (Fase 2, no bloquea el resto de esta ronda):** este documento fija el campo y su efecto; **asignar el valor a cada carta existente** de `class.md`, `weapons.md`, `armor.md`, `items.md`, `mercenaries.md`, `curses.md` y `encounter.md` es trabajo de contenido, no de regla — se hace catálogo por catálogo cuando se construya la pantalla de batalla, no aquí.
+
 ## Reglas de mazo (resumen, `../game-design.md` §4)
 
 - **Mazo personal** = cartas de clase (innatas) + **items y mercenarios** (conseguidos jugando) + maldiciones. No se roba una "mano": juegas cualquier carta que tengas **en juego**, dentro de la economía de acción (§4b.3).

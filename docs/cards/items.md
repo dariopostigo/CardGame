@@ -60,7 +60,7 @@ Se **encuentran** (loot de Élite/Jefe, cofres de alta rareza) y, de momento, ta
 |---|---|---|---|
 | Manto de invisibilidad | Accion | Quedas **Oculto** ([`../effects.md`](../effects.md)) sin necesitar terreno | Legendario |
 | Anillo de deseo | Accion | Copia el efecto de una carta de habilidad de clase que hayas visto este combate, o cúrate al máximo | Legendario |
-| Orbe de dragón | Accion | Aliento de 4d6 de fuego en un hex y sus adyacentes (salvación DES por mitad) | Legendario |
+| Orbe de dragón | Accion | Aliento de 4d6 de fuego a los **enemigos** en un hex y sus adyacentes (salvación DES por mitad; sin fuego amigo, `../ideas.md`) | Legendario |
 | Guantelete del ogro | Pasiva | +2 de Fuerza efectiva para armas y pruebas; +2 al daño cuerpo a cuerpo | Épico |
 | Botas de teletransporte | Accion | Te teletransportas hasta 3 hex (ignora terreno y adyacencia) | Épico |
 

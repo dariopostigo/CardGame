@@ -10,17 +10,17 @@ Cada jugador controla un personaje con estadísticas de tipo D&D. Tiene un **maz
 
 Flujo desde que el jugador abre la aplicación hasta que pisa el primer hexágono:
 
-1. **Partida nueva → elegir modalidad.** **Partida rápida** (la única disponible en el prototipo) o **Modo Campaña**, que a su vez contiene **varias historias distintas seleccionables** (no un único arco; se irán añadiendo — `board/board-map.md` §2b).
-2. **Elegir héroe** de los disponibles ([`characters/heroes.md`](characters/heroes.md)). La pantalla de selección muestra una **ficha completa** de cada uno: retrato, historia breve, puntos fuertes y débiles, las 6 estadísticas, PV, dado de vida y su kit inicial (`characters/heroes.md` §1b).
-3. **Kit inicial** — se otorga automáticamente, sin pasar por tienda ni gastar oro (**el oro inicial sigue siendo 0**, §6b):
+1. **Partida nueva → elegir modalidad y número de jugadores.** **Partida rápida** (la única disponible en el prototipo) o **Modo Campaña**, que a su vez contiene **varias historias distintas seleccionables** (no un único arco; se irán añadiendo — `board/board-map.md` §2b). **1 a 4 jugadores**, en los dos modos por igual (co-op, `characters/heroes.md` §4) — el número se fija aquí, antes de elegir héroe.
+2. **Cada jugador elige su héroe** de los disponibles ([`characters/heroes.md`](characters/heroes.md)). La pantalla de selección muestra una **ficha completa** de cada uno: retrato, historia breve, puntos fuertes y débiles, las 6 estadísticas, PV, dado de vida y su kit inicial (`characters/heroes.md` §1b). **Repetir clase entre jugadores está permitido** *(decidido 2026-08-07)*: el catálogo del prototipo solo tiene 2 héroes construidos (Guerrero + Mago, `characters/heroes.md` §4), así que una partida de 3-4 exige repetir hasta que se ample el roster — cada jugador lleva su propio Mazo y su propio Oteo aunque el kit de partida sea idéntico al de otro con la misma clase.
+3. **Kit inicial** — se otorga automáticamente a cada héroe, sin pasar por tienda ni gastar oro (**el oro inicial sigue siendo 0**, §6b):
    - **Todas sus cartas de habilidad de clase** (8 por héroe, sin distinción Básica/Especial, [`cards/class.md`](cards/class.md)) → van al **Mazo**.
    - Una **selección fija de armas y armaduras por clase** → van **equipadas** (§4a), no al Mazo.
    - Un **puñado de items de arranque por clase** → van al **Mazo**, ya no por necesidad estructural (con 8 cartas de clase el Mazo ya no se vacía enseguida) sino por variedad de utilidad — ver el aviso de §4.
    - Los kits concretos de los 4 héroes están en `characters/heroes.md` §2d.
-4. **Preparación de salida — eliges 2 cartas de habilidad de clase que arrancan ya "en juego"** *(decidido)*. La zona "en juego" (§4) no empieza vacía: escoges **2 de las 8 cartas de habilidad** de tu héroe ([`cards/class.md`](cards/class.md), cualquiera del roster) y salen preparadas desde el turno 1. Los otros 3 huecos (el tope fijo es 5, §4) los llena el Oteo.
+4. **Preparación de salida — cada jugador elige 2 cartas de habilidad de clase que arrancan ya "en juego"** *(decidido)*. La zona "en juego" (§4) no empieza vacía: escoges **2 de las 8 cartas de habilidad** de tu héroe ([`cards/class.md`](cards/class.md), cualquiera del roster) y salen preparadas desde el turno 1. Los otros 3 huecos (el tope fijo es 5, §4) los llena el Oteo.
 
    > **Por qué.** Sin esto, el **primer combate de la partida se peleaba con 0-2 cartas preparadas y al azar**, y para el Mago era una lotería de supervivencia: solo aguanta con *Escudo arcano* listo (CA 16 en vez de 13). Un héroe no debería morir por un sorteo antes de tomar ninguna decisión. Que **elijas** las 2 (en vez de dártelas todas) mantiene la decisión en tus manos y no infla el arranque: sigues empezando con 3 huecos libres. Al no haber ya distinción Básica/Especial, puedes elegir cualquiera de las 8 — el número exacto de partidas que esto cambia respecto a la cifra anterior está por recalcular.
-5. **Generación del mapa y entrada.** Se genera el mapa (`board/board-map.md` §2c) y el héroe entra por **una esquina**, la "puerta" del mapa (§2c, paso 0). A partir de ahí empieza el turno 1: oteas, mueves, actúas.
+5. **Generación del mapa y entrada.** Se genera el mapa (`board/board-map.md` §2c) y **todos los héroes entran juntos por el mismo hexágono**, **una esquina**, la "puerta" del mapa (§2c, paso 0) — pero cada uno como su **propia ficha independiente**, con su propio turno (Oteo → Mover → Actuar). El orden entre jugadores es libre; una **ronda de mesa** = que todos hayan jugado su turno, y es lo que hace avanzar el Nivel de Amenaza (§6c.1). A partir de ahí empieza la ronda 1.
 
 ## 2. Personaje y estadísticas
 
@@ -51,6 +51,8 @@ Otros valores derivados directamente de las estadísticas:
   > | Mago (8 PV) vs. **un lobo suelto** | 8 | **3,9** | 4,3 |
   >
   > Los tres Élite del bestiario ganaban a los cuatro héroes, y un crítico del Trol (2d10+3 = 14) mataba al Guerrero **de un golpe desde PV máximos**. No era una perilla de balance fino: faltaba aproximadamente el doble de aguante. Con +10 (Guerrero 22, Clérigo 20, Pícaro 19, Mago 16) el boss se pelea a 5-6 turnos por bando, que es la ventana que queremos. Va junto al ataque secundario de §4b.3 y al recorte de PV de los Élite (`characters/enemies.md` §5b) — las tres cosas son **un mismo ajuste**, no tres independientes.
+
+  > **Ojo, esta cuenta es de "protagonista solo" y ya no es la única configuración posible** *(nota añadida 2026-08-06)*: el juego pasó a co-op de 1-4 héroes + composición enemiga escalada (`characters/enemies.md` §5b.6, [`board/battle.md`](board/battle.md) §4). El +10 no se toca todavía —sigue siendo el suelo correcto para partidas en solo—, pero deja de ser una constante universal: la matemática de bando-vs-composición para 2-4 héroes es trabajo pendiente de rehacer jugando el prototipo (§4b.12 y [`board/battle.md`](board/battle.md) §12), no de recalcular en papel ahora.
 
 ### 2.2 Movimiento
 
@@ -112,7 +114,7 @@ Dos ejes distintos: **de dónde sale la carta** (clase vs. equipo encontrado) y 
 | **Arma** | Espada | Añade daño y tipo de daño (lista completa y resistencias en §4b.10); ocupa 1 o 2 manos (§2.4) | Puede requerir stat mínima para usarse sin penalización |
 | **Armadura** | Escudo/coraza | Suma a la Defensa/CA; puede restar Destreza si es pesada | Solo 1 equipada a la vez (§2.4) |
 | **Item** | Bolsa | Categoría amplia: pociones (efecto instantáneo), hechizos (cartas de habilidad de clase o Pergaminos), objetos de aventura/herramientas/objetos mágicos raros — ver [`cards/items.md`](cards/items.md) | El más variado de los 4 tipos |
-| **Mercenario** | 🪖 Casco/estandarte | Carta de Acción: das la orden a una compañía a sueldo (atacar, curarte, etc.); cuesta tu Acción y, como toda carta, **gasta su preparación** al jugarse (regla madre de §4) | Origen (reclutar/comprar) y catálogo en [`cards/mercenaries.md`](cards/mercenaries.md) |
+| **Mercenario** | 🪖 Casco/estandarte | Carta de Acción: **invoca una ficha propia** al tablero de batalla, con su bloque de combate por Rareza *(corregido 2026-08-06 — antes era un efecto sin ficha)*; cuesta tu Acción y, como toda carta, **vuelve al Mazo al invocar** (regla madre de §4) | Origen (reclutar/comprar), bloque de combate y catálogo en [`cards/mercenaries.md`](cards/mercenaries.md) |
 | **Maldición** | Calavera/nube negra | Efecto negativo persistente que **ocupa un hueco del mazo** (a diferencia de un Efecto/Estado temporal de combate) — ej. -1 movimiento, 1 de daño cada 2 turnos, −1 al rango de visión | Definida en [`cards/curses.md`](cards/curses.md) (Nivel 1-5 con estrellas, leído al revés; fuentes, limpieza); da incentivo a "limpiar" el mazo |
 
 > **Dónde vive cada tipo:** **armas** y **armaduras** son el **sistema de equipo** (§4a) — se equipan, no ocupan hueco del Mazo ni pasan por el Oteo. **Items**, **mercenarios** y **maldiciones** sí viven en el **Mazo** (§4).
@@ -182,23 +184,14 @@ Las **armas** ([`cards/weapons.md`](cards/weapons.md)) y **armaduras** ([`cards/
 
 ## 4b. Combate (borrador)
 
-Modelo elegido: **todo ocurre sobre el mismo tablero de hexágonos** (no hay pantalla de combate aparte). No es un "mini-juego" separado; el combate es una fase más de la exploración. Resuelve la duda abierta de `board/board-map.md` §8 ("¿el combate ocurre sobre el hex o en pantalla aparte?").
-
-### 4b.1 Regla de interacción: adyacencia
-
-- El héroe y cualquier otra entidad (enemigo, ficha) **nunca comparten hexágono**.
-- Se **actúa sobre un objetivo en un hexágono contiguo** (uno de los 6 vecinos) — atacar cuerpo a cuerpo, interactuar con una ficha (NPC, Tesoro, etc.). Nunca sobre el propio hexágono.
-- Ataques **a distancia y hechizos** tienen alcance en hexágonos (definido por el arma/hechizo, p. ej. Arco 3-4 hex), no requieren adyacencia.
-- **Alcance mínimo "a distancia": 2 hex** *(decidido)*. El cuerpo a cuerpo ya cubre el hexágono contiguo (1 hex); para que un ataque cuente como **a distancia** tiene que quedar al menos un hexágono vacío entre el héroe y el enemigo (2 hex = 1 hex vacío + el hex del enemigo). Ninguna arma o hechizo a distancia puede tener alcance 1 — ese hueco ya es cuerpo a cuerpo.
-- **A bocajarro *(decidido)*:** ese mínimo de 2 hex es el alcance **eficaz**, no una prohibición. **Sí puedes** disparar o lanzar un hechizo contra un enemigo **adyacente**, pero con **Desventaja** ([`effects.md`](effects.md)) — te está encima y no tienes espacio para apuntar.
-  - Hacía falta decidirlo por dos motivos concretos. Uno: [`effects.md`](effects.md) ya citaba "disparar a bocajarro" como fuente de Desventaja **y la regla no existía en ninguna parte**. Dos: sin ella, el **Mago** —cuyo Bastón tiene alcance 2 ([`cards/weapons.md`](cards/weapons.md) §2)— se quedaba literalmente **sin ningún ataque posible** en cuanto un enemigo se le pegaba, salvo que el Oteo le hubiera dado una carta. Nadie debe quedarse sin turno por su equipo.
-  - Sigue siendo cierto que **ningún arma o hechizo puede tener alcance 1** en su ficha: el 1 lo cubre esta regla, no el catálogo.
-- **Inicio del combate:** el héroe termina su movimiento en un hexágono adyacente a un enemigo (o una ficha de Amenaza se revela como enemigo junto a él). No se "entra" en el hexágono del enemigo; se combate desde el contiguo. *(Actualiza la redacción de `board/board-map.md` §4, ficha de Enemigo, que decía "inicia combate al entrar en el hexágono".)*
+> **El combate ya no ocurre sobre el tablero de exploración: tiene pantalla propia** *(decisión raíz #1, 2026-08-06, revierte el modelo original de este documento)*. Lo que decía este §4b sobre adyacencia-en-el-mapa (antiguo §4b.1), persecución dentro del combate (parte de §4b.5) y fin de combate (antiguo §4b.8) se trasladó a la pantalla de batalla — ver [`board/battle.md`](board/battle.md), que además cubre el co-op de 1-4 héroes y la ficha de mercenario. Lo que queda aquí es la **matemática de tirada compartida por los dos tableros** (iniciativa, recurso de acción, resolución de un ataque, hechizos, estados, tipos de daño) — es la misma en la exploración (encuentros previos a abrir la batalla, si los hay) y dentro de la pantalla de batalla, y por eso vive en un solo sitio.
+>
+> **Desengancharse** (antiguo §4b.11) también se trasladó a [`board/battle.md`](board/battle.md) §6, sin cambiar de fondo: como el combate ya solo ocurre en esa pantalla, es ahí donde se aplica.
 
 ### 4b.2 Iniciativa / orden de turno *(decidido)*
 
 - Al empezar el combate: **1d20 + mod Destreza** para el héroe y para cada enemigo. Actúa primero el más alto. Empates → mayor Destreza bruta → héroe gana.
-- **Se tira, no se compara** *(decidido)*: se descarta la alternativa de comparar modificadores a secas. Con tirada, la Destreza pesa pero no decide sola, y encaja con las otras dos tiradas enfrentadas del sistema (Desengancharse §4b.11, huida enemiga `characters/enemies.md` §5b.6).
+- **Se tira, no se compara** *(decidido)*: se descarta la alternativa de comparar modificadores a secas. Con tirada, la Destreza pesa pero no decide sola, y encaja con las otras dos tiradas enfrentadas del sistema (Desengancharse `board/battle.md` §6, huida enemiga `characters/enemies.md` §5b.6).
 - Una **emboscada** (atacar sin haber sido detectado, `characters/enemies.md` §2b) **se salta la iniciativa** el primer turno: actúas tú primero.
 
 ### 4b.3 Recurso de acción por turno *(el que faltaba en §4)*
@@ -212,7 +205,7 @@ Cada turno el héroe dispone de:
 | **1 Acción rápida** (1/turno) | Hacer un **ataque secundario** con tu equipo (ver abajo). Es el único uso: ninguna carta cuesta ya Acción rápida (`cards/class.md` §1, `cards/items.md` §4). |
 | **Cartas de Efecto/modificador** | Enganchadas a una tirada concreta (tuya o del enemigo). **Hasta 1 por tirada** — así "juegas cualquier carta cuando quieras" (§4) sin poder apilar infinitas. No gastan la Acción. |
 
-Algunas **Cartas de Habilidad de Clase** son potentes y de uso limitado: **1 vez por combate o por descanso** (§3.1).
+~~Algunas Cartas de Habilidad de Clase son potentes y de uso limitado: 1 vez por combate o por descanso (§3.1).~~ *(texto obsoleto — corregido)*: ese tope **ya no existe en ninguna categoría de carta** (`cards/class.md` §1, decidido). El único freno de repetición es el ritmo del Oteo (§4).
 
 **Ataque secundario *(decidido — sustituye al "dual-wield con arma ligera")*.** Cualquier héroe puede gastar su **Acción rápida** en un segundo ataque con el equipo que lleve puesto, sin necesitar ninguna carta:
 
@@ -245,14 +238,14 @@ Algunas **Cartas de Habilidad de Clase** son potentes y de uso limitado: **1 vez
 Los enemigos **sí se mueven**, pero solo tras **detectar al héroe**. Modelo de tres estados (detalle de comportamiento en `characters/enemies.md` §2):
 
 - **Latente:** anclado en su hexágono, no patrulla, mientras no **detecte** al héroe. Entrar en su rango de detección obliga a una **prueba de sigilo** (`characters/enemies.md` §2b); solo si el héroe la falla (o no es sigiloso) el enemigo despierta. Terreno como el Bosque acorta ese rango (`board/board-map.md` §3/§4).
-- **Activo (detectado el héroe — prueba de sigilo fallada, `characters/enemies.md` §2b):** se mueve hacia él por el mapa (persecución) e inicia combate al quedar adyacente. Dentro del combate sigue moviéndose (acercarse + golpear si melee, o reposicionarse si a distancia). El **bucle de decisión** turno a turno dentro del combate (IA determinista: mover / atacar / habilidad / huir) está en `characters/enemies.md` §5b.6.
+- **Activo (detectado el héroe — prueba de sigilo fallada, `characters/enemies.md` §2b):** se mueve hacia él por el mapa (persecución) hasta que se abre la pantalla de batalla (`board/battle.md`, decisión raíz #1) — a partir de ahí, el movimiento (acercarse y golpear si melee, o reposicionarse si a distancia) ocurre **dentro de esa pantalla**, no sobre este mapa. El **bucle de decisión** turno a turno dentro del combate (IA determinista: mover / atacar / habilidad / huir) está en `characters/enemies.md` §5b.6.
 - Esto reintroduce la **detección activa** que `characters/enemies.md` §2 tenía aplazada, y da valor mecánico al sigilo/ocultación (evitar o emboscar en vez de pelear siempre).
 
-> **El *kiting* por velocidad no funciona, y es a propósito *(decidido)*.** Un enemigo puede **mover su Velocidad completa y atacar en el mismo turno** (`characters/enemies.md` §5b.6, paso 4). Con la Velocidad igualada a 2, uno melee que esté a 3 hex se te pega y te golpea en un turno; si tú retrocedes 2, él vuelve a pegarse — y encima retroceder te cuesta una tirada de **Desengancharse** (§4b.11). O sea que **alejarte a pie es estrictamente peor que quedarte quieto**.
+> **El *kiting* por velocidad no funciona, y es a propósito *(decidido)*.** Un enemigo puede **mover su Velocidad completa y atacar en el mismo turno** (`characters/enemies.md` §5b.6, paso 4). Con la Velocidad igualada a 2, uno melee que esté a 3 hex se te pega y te golpea en un turno; si tú retrocedes 2, él vuelve a pegarse — y encima retroceder te cuesta una tirada de **Desengancharse** (`board/battle.md` §6). O sea que **alejarte a pie es estrictamente peor que quedarte quieto**.
 >
 > No se arregla dando velocidad extra al héroe (eso convierte a todo enemigo lento en gratis). La forma de crear distancia es el **control**: *Enredo gélido* → **Inmovilizado**, Ralentizado, *Escabullirse* / *Desaparecer* → **Oculto** ([`effects.md`](effects.md), [`cards/class.md`](cards/class.md) §3).
 >
-> Consecuencia para el rol del Mago: **no es un *kiter*, es un frágil que castiga desde lejos y compra turnos con control** (`cards/class.md` §3, reescrito). Sobrevive por PV (16, §2), por *Escudo arcano* y por poder disparar a bocajarro (§4b.1), no por correr más.
+> Consecuencia para el rol del Mago: **no es un *kiter*, es un frágil que castiga desde lejos y compra turnos con control** (`cards/class.md` §3, reescrito). Sobrevive por PV (16, §2), por *Escudo arcano* y por poder disparar a bocajarro (`board/battle.md` §2), no por correr más.
 
 *(Idea futura, aún sin decidir — nota del diseñador:* enemigos o eventos "cazadores" que buscan proactivamente al héroe por el mapa **antes** de detectarlo por visión. Por ahora la activación es siempre reactiva, por detección.)
 
@@ -270,21 +263,11 @@ En el prototipo los hechizos son simplemente **Cartas de habilidad de clase** (t
 
 **Foco *(decidido)*:** el **Libro de hechizos** (Mago) y el **Símbolo sagrado** (Clérigo) son **armas equipadas** (§4a, [`cards/weapons.md`](cards/weapons.md) §3) que dan **+1 a las tiradas y CD de tus hechizos** mientras las empuñas —como el Bastón del poder—; potencian, no son requisito para lanzar. La granularidad de caster (tipos de magia, debilidades elementales, subclases de mago) queda como desarrollo posterior.
 
-### 4b.8 Huir, victoria y derrota
+### 4b.8 Huir, victoria y derrota *(trasladado a `board/battle.md` §9)*
 
-- **Huir:** usar el Movimiento para salir de adyacencia/alcance. Si un enemigo **Activo** está adyacente, salir de su lado exige **Desengancharse** (§4b.11).
-- **Victoria:** todos los enemigos a 0 PV → recompensas (loot de la ficha de Tesoro si aplica, posible carta del mazo de encuentro, y avance de hito si era un jefe).
+El combate ya solo se resuelve en la pantalla de batalla (decisión raíz #1), así que victoria/retirada/derrota y la tabla de "cuándo termina exactamente un combate" viven en [`board/battle.md`](board/battle.md) §9, ya adaptadas al co-op de 1-4 héroes (estado **Derribado** rescatable en vez de derrota directa con compañeros presentes, §9.1). En **solo**, la regla dura de siempre se conserva: 0 PV = caído, Partida rápida → fin de partida, Campaña → reiniciar capítulo.
 
-**Cuándo termina exactamente un combate *(decidido)*.** Hacía falta definirlo porque de ello depende cuándo vuelves a estar **fuera de combate** —la condición que exige la Hoguera para acampar (§4c.2)— y no estaba escrito. El combate termina cuando **no queda ningún enemigo Activo que te tenga localizado**, por cualquiera de estas tres vías:
-
-| Vía | Cuándo se considera terminado |
-|---|---|
-| **Victoria** — todos a 0 PV | Ya, al instante |
-| **El enemigo escapa** — completa su *leash* de 2 turnos (`characters/enemies.md` §5b.6) | Al completarse el leash |
-| **Escapas tú** — te mantienes fuera de la detección y la línea de visión de todos los enemigos Activos durante **2 turnos** (el mismo leash de `characters/enemies.md` §2, aplicado en tu dirección) | Al completarse esos 2 turnos, no al salir corriendo |
-
-> **Por qué el fin de combate no es inmediato al huir.** Si lo fuera, el bucle óptimo sería: te alejas un hexágono y ya puedes acampar y curarte gratis a un paso de los mismos enemigos, antes de volver a por ellos. Exigir los 2 turnos completos de leash lo cierra sin inventar ninguna regla nueva —reutiliza el leash que ya existe— y le pone un precio real: **+2 de Nivel de Amenaza por huir** (§6c.2, corregido — la cifra vieja +8 era de antes del reescalado a tope 40) más los dos turnos perdidos. Si el enemigo te vuelve a detectar antes de completarlos, **es el mismo combate**: el contador de turnos se reinicia. *(Antes esta regla también cerraba el exploit de recargar cartas `1/combate` huyendo un hex; ese tope ya no existe en ningún sitio, `cards/class.md` §1 — el anti-abuso de acampar sigue siendo motivo suficiente por sí solo.)*
-- **Derrota (héroe a 0 PV):** con un solo héroe (`characters/heroes.md`), 0 PV = caído. Partida rápida → fin de partida; Modo Campaña → reiniciar el mapa/capítulo (el nivel y el mazo persisten). La recuperación entre combates se define en §4c (Descanso y recuperación).
+Lo que **sí** sigue aquí, porque no depende de dónde se resuelve el combate: la condición para volver a estar **fuera de combate** y poder acampar (§4c.2) sigue siendo "ningún enemigo Activo te tiene localizado", con el mismo *leash* de 2 turnos de `characters/enemies.md` §2 aplicado en tu dirección, y **+2 de Nivel de Amenaza por huir** (§6c.2) si sales de la batalla por Retirada (`board/battle.md` §8) en vez de por victoria.
 
 ### 4b.9 Estados de combate (borrador)
 
@@ -306,20 +289,9 @@ Cada arma/hechizo lleva un **tipo de daño** fijo (`cards/weapons.md`, `cards/cl
 
 Quién es resistente/vulnerable a qué **no se decide arma por arma ni enemigo por enemigo suelto**: lo fija la **Naturaleza de criatura** del objetivo (`characters/enemies.md` §3b), con posibles excepciones puntuales como habilidad especial de un enemigo concreto (ej. el Trol de las minas y el fuego, `characters/enemies.md` §5b.3). Los héroes no tienen resistencias propias por ahora (podría llegar más adelante vía armadura/objeto mágico).
 
-### 4b.11 Desengancharse *(decidido — sustituye al "golpe de oportunidad")*
+### 4b.11 Desengancharse *(trasladado a `board/battle.md` §6)*
 
-**No existe el golpe de oportunidad.** Se descarta como concepto: era una **reacción** (actuar fuera de tu turno) y el sistema no tiene timing de reacciones en ningún otro sitio, así que introducirlo solo para esto complicaría el motor a cambio de nada. En su lugar, una única regla simétrica:
-
-> **Salir de un hexágono adyacente a un enemigo Activo** (`characters/enemies.md` §2) exige una **tirada enfrentada `1d20 + mod DES`**: el que se va contra el que retiene.
-> - **Gana el que se va** → se mueve libremente.
-> - **Gana el que retiene** → el que se va **recibe el daño del ataque básico del rival sin tirada de ataque** (dado de daño + mod, se aplica directo, sin comparar con la CA) y **completa el movimiento igualmente**.
-> - **Máximo 1 vez por enemigo y por turno.** No gasta Acción de nadie: es parte del movimiento.
-> - **Empate** → gana el que se va (el movimiento se completa limpio).
-
-Por qué así:
-- **Una sola regla cubre los dos sentidos.** Antes había dos reglas distintas para lo mismo: la prueba de DES del héroe al huir (§4b.8) y la tirada **enfrentada** de DES del enemigo al huir (`characters/enemies.md` §5b.6). Ahora es la misma en ambas direcciones.
-- **"Fallo = daño pero te mueves"**, no "fallo = te quedas clavado". Quedarse pegado a un enemigo por una tirada fallida es un bucle frustrante y, con 8 PV, letal para el Mago; así el jugador nunca pierde el control de su movimiento, solo paga por él.
-- **Da texto real a las cartas de escape.** *Escabullirse* (Pícaro), *Botas de teletransporte* y equivalentes pasan a **desengancharse sin tirar** (éxito automático), que es un efecto concreto y valioso en vez de una referencia a una regla que no existía.
+Sin cambios de fondo — sustituye al "golpe de oportunidad" con una única tirada enfrentada `1d20 + mod DES` simétrica para héroe y enemigo. Se traslada porque, con el combate movido a su propia pantalla (decisión raíz #1), es ahí donde se sale de la adyacencia de un enemigo Activo, no en este mapa. Ver [`board/battle.md`](board/battle.md) §6 para el texto completo.
 
 ### 4b.12 Referencia de balance: las cuentas que sostienen §4b *(primer pase)*
 
@@ -335,7 +307,7 @@ Los números de §4b, §2 y `characters/enemies.md` §5b **no son independientes
 | Pícaro *(adyacente)* | Dagas 1d4+2 | Ballesta a bocajarro, Desventaja | **3,6** |
 
 - El **Pícaro** es el más bajo a propósito: su daño está en *Ataque furtivo* desde **Oculto** (+2d6 ≈ **10** ese turno), no en el intercambio de golpes. Con las dos armas en su rango (a 3 hex con la Ballesta) sube a ~5,0.
-- El **Mago adyacente** cae a ~2,3 (Desventaja a bocajarro, §4b.1). Es su penalización por dejarse alcanzar, no un error.
+- El **Mago adyacente** cae a ~2,3 (Desventaja a bocajarro, `board/battle.md` §2). Es su penalización por dejarse alcanzar, no un error.
 
 **El boss de la Partida rápida** (uno de los 3 Élite al azar, `characters/enemies.md` §5b.3) contra el **Guerrero** (22 PV, CA 15), sin jugar ninguna carta:
 
@@ -352,7 +324,7 @@ Es la ventana que se buscaba: **el equipo solo no basta y el mazo decide la pele
 > **Si cambias un número, revisa estas relaciones**, no la tabla:
 > - Daño/turno del héroe **× 5-6 ≈ PV del boss**.
 > - Daño/turno del boss **× 5-6 ≈ PV del héroe**.
-> - **Nunca más de 2 enemigos** a la vez (`characters/enemies.md` §5b.6): el héroe tiene 1 turno y N enemigos tienen N, y el ataque secundario solo compensa hasta 2.
+> - **Presupuesto de composición enemiga** (`board/battle.md` §4): héroes que entran + 1, tope 6 — sustituye al antiguo tope fijo de 2 enemigos simultáneos (`characters/enemies.md` §5b.6).
 
 ## 4c. Descanso y recuperación
 
@@ -473,7 +445,7 @@ Ligados a la Rareza de §3.3. Se **vende siempre por menos** de lo que cuesta co
 | Tabernero · Sacerdote/Sanador · Informante · Dador de misión | **Nada** — solo ofrecen servicios |
 
 - Las **Maldiciones no se venden nunca** ([`cards/curses.md`](cards/curses.md)): se limpian pagando al Sacerdote o con la prueba arriesgada.
-- **Consecuencia a tener en cuenta:** si el mapa generado no tiene Herrero, no puedes liquidar armaduras esa partida. Por eso la generación garantiza **1 Pueblo** (`board/board-map.md` §2c), que es donde se concentran los NPCs de tienda.
+- **Consecuencia a tener en cuenta:** si el mapa generado no tiene Herrero, no puedes liquidar armaduras esa partida. El Pueblo, donde se concentran los NPCs de tienda, **ya no está garantizado** *(corregido — `board/board-map.md` §2c revirtió esa garantía)*: sale en el 81-95 % de los tableros según su tamaño, y el resto se juega sin tienda.
 
 ### 6b.5 Cómo encaja con el mazo
 
@@ -557,7 +529,7 @@ Reloj de presión que impide que un capítulo (o una Partida rápida) se eternic
 ### 6c.1 El reloj
 
 - Barra **por capítulo** de **0 → 40**, se **reinicia** al empezar cada capítulo/mapa (en **Partida rápida**, el único mapa es "el capítulo").
-- **+1 al final de cada turno de héroe *(decidido)*.** Con la base a +1, el tope **es** la duración: **una partida son 40 turnos.**
+- **+1 al final de cada ronda de mesa** *(corregido 2026-08-06 — antes decía "por turno de héroe")*: con el juego pasado a co-op de 1-4 héroes (`characters/heroes.md` §4), subir por turno **de héroe** rompía la cuenta — con 4 héroes serían +4 por ronda, y la barra llegaría a 40 en 10 rondas (~20 hexes) contra una travesía de 22. Una **ronda de mesa** = que todos los jugadores presentes hayan jugado su turno; así el reloj sigue midiendo lo mismo en solo y en co-op. Con la base a +1 por ronda, el tope **es** la duración: **una partida son 40 rondas de mesa.**
 
   > **De dónde sale el 40 *(decidido — sustituye el tope 100)*.** El tope tenía que salir de una decisión de duración, no de un número redondo. Las referencias: el mapa del prototipo es **12×12** y el boss está en el hex más lejano a la entrada (`board/board-map.md` §2c), o sea una travesía de **22 hexes** ≈ **15-20 turnos** con coste de terreno. Con tope 100 tenías **cinco veces** lo necesario: podías recorrer el mapa entero dos veces y ganar de sobra, así que el reloj **no ejercía ninguna presión** — que es lo único para lo que existe. Con 40 llegas al boss holgado, te da para recoger ~55 % de las fichas del mapa y para una o dos acampadas, y **elegir entre explorar o avanzar vuelve a doler**. Es también la duración sobre la que está calibrada la tabla de loot (§6b.6).
 - **No se pausa nunca *(decidido)*:** sigue corriendo igual dentro de una localización especial/sub-mapa (Mazmorra, Mina... `board/board-map.md` §3b) que dentro del mapa principal — entrar en un sub-mapa no es un respiro para el reloj.
@@ -572,7 +544,7 @@ Sube más rápido con acciones "lentas" o ruidosas y se frena avanzando — ahí
 | Fin de turno (base) | **+1** | 1 turno |
 | Acampar / descanso corto (§4c.2) | **+3** | 3 turnos — curarte medio PV cuesta tiempo de verdad, y refuerza el anti-abuso de §4c.2 |
 | Fallar una prueba de sigilo y alertar una zona (`characters/enemies.md` §2b) | **+2** | 2 turnos |
-| Huir de un combate (`characters/enemies.md` §5b.6) | **+2** | 2 turnos — mismo peso que alertar: los dos son un contratiempo, no una elección deliberada como acampar. Se suman a los 2 turnos de *leash* que ya cuesta escapar (§4b.8) |
+| Huir de un combate (`characters/enemies.md` §5b.6) | **+2** | 2 turnos — mismo peso que alertar: los dos son un contratiempo, no una elección deliberada como acampar. Se suman a los 2 turnos de *leash* que ya cuesta escapar (`board/battle.md` §9) |
 | Carta de Suceso **Mal augurio** ([`cards/encounter.md`](cards/encounter.md) §4) | **+5** | 5 turnos — la subida de golpe más dura del juego, y por eso es la peor carta del mazo de Suceso |
 
 | Baja / congela la Amenaza | | Equivale a |
@@ -609,7 +581,7 @@ Escalados **de una sola vez** al cruzar cada cuarto. Con el tope a 40 (§6c.1), 
   | Cruzó 75 % (ganaste por los pelos) | Sin bonus |
 
   Reutiliza los mismos umbrales que ya disparan efectos (§6c.3) — no hace falta un tramo nuevo, y es fácil de calcular (basta el umbral más alto ya marcado).
-- **Perder** (la barra llega al **100 %**): igual que caer a 0 PV en Campaña (§4b.8) → **reintentas el capítulo** (barra a 0; héroe, nivel, mazo y oro persisten). En **Partida rápida**, reintentar = reiniciar/regenerar el mapa.
+- **Perder** (la barra llega al **100 %**): igual que caer a 0 PV en Campaña (`board/battle.md` §9) → **reintentas el capítulo** (barra a 0; héroe, nivel, mazo y oro persisten). En **Partida rápida**, reintentar = reiniciar/regenerar el mapa.
 
 ### 6c.5 Encaje con el resto
 
@@ -690,10 +662,10 @@ Invertido a propósito: nadie paga para que su propia Maldición empeore. En vez
 - [x] Definir resolución exacta de pruebas — **1d20 + modificador** contra CD/Defensa, con las cartas como modificadores de la tirada (§4, §6).
 - [x] Bocetar el catálogo de cartas de equipo por categoría (arma, armadura, item) — ver [`cards/`](cards/README.md) ([`weapons`](cards/weapons.md)/[`armor`](cards/armor.md)/[`items`](cards/items.md)). Cartas de **clase** bocetadas para Guerrero/Mago en [`cards/class.md`](cards/class.md). Bocetos iniciales de [`Efecto/Estado`](effects.md), [`Maldición`](cards/curses.md) y [`Mazo de encuentro`](cards/encounter.md) creados (pendientes de detalle).
 - [x] Definir combate: orden de turno, cómo se resuelve un ataque paso a paso — ver **§4b** (adyacencia, iniciativa, recurso de acción por turno, ataque paso a paso, mazo de encuentro). Falta solo confirmar §4b.5 (movimiento de enemigos en combate).
-- [x] Definir condición de victoria/derrota y estructura de "descanso" (recuperar recursos) — victoria/derrota en §4b.8; **descanso** en §4c (consumibles / carta Hoguera con riesgo / localización segura, sobre Dados de Vida). Falta balancear valores.
+- [x] Definir condición de victoria/derrota y estructura de "descanso" (recuperar recursos) — victoria/derrota en `board/battle.md` §9 (trasladado 2026-08-06, antes §4b.8 de este documento); **descanso** en §4c (consumibles / carta Hoguera con riesgo / localización segura, sobre Dados de Vida). Falta balancear valores.
 - [x] Definir el **setup inicial** de una partida (modalidad → héroe → kit → entrada) → §1b, con los kits concretos en `characters/heroes.md` §2d.
 - [x] Definir el **rango de visión** en condiciones → §2.3: dos radios (detalle `2 + mod SAB` / terreno `detalle + 2`), escala +1 por punto de mod, con los invariantes `detalle > detección enemiga` y `terreno > detalle`. Cifras afinadas una vez jugado `/dev/movimiento` (2026-08-05); base bajada de 3 a 2.
-- [x] Resolver el **"golpe de oportunidad"** referenciado pero nunca definido → §4b.11 **Desengancharse**: tirada enfrentada de DES, misma regla para héroe y enemigo, sin reacciones.
+- [x] Resolver el **"golpe de oportunidad"** referenciado pero nunca definido → **Desengancharse** (trasladado a `board/battle.md` §6, antes §4b.11 de este documento): tirada enfrentada de DES, misma regla para héroe y enemigo, sin reacciones.
 - [x] Elegir modelo de **iniciativa** (§4b.2) → **tirada** 1d20 + mod DES *(decidido)*.
 - [x] Elegir modelo de **recuperación** (§4c.4) → **cura fija** (mitad de PV máx) en el prototipo; DV completos llegan con la progresión.
 - [x] Cerrar **quién compra las cartas** que te sobran → §6b.4: cada NPC compra lo que vende.
@@ -701,8 +673,8 @@ Invertido a propósito: nadie paga para que su propia Maldición empeore. En vez
 - [x] **Resolver si una carta jugada se queda "en juego" o vuelve al Mazo** → **vuelve al Mazo** (regla madre de §4). `cards/class.md` §1, §3.1 de este documento y `cards/mercenaries.md` §1 decían lo contrario y quedan corregidos. Era la contradicción más grave del sistema: decidía si "en juego" es un *loadout* que se spamea o **munición preparada**.
 - [x] **Cuadrar la matemática del combate** → §4b.12: PV de protagonista (§2), **ataque secundario** (§4b.3) y recorte de los Élite (`characters/enemies.md` §5b.3). Antes los tres Élite ganaban a los cuatro héroes y el Mago perdía contra un lobo suelto.
 - [x] **Tope de 2 enemigos simultáneos** (`characters/enemies.md` §5b.6) — límite de economía de acción, no de balance.
-- [x] **Definir cuándo termina un combate** (de lo que depende cuándo puedes volver a acampar) → §4b.8, por victoria / leash del enemigo / leash tuyo, cerrando el exploit de huir y acampar gratis a un paso de la pelea.
-- [x] **Ataques a distancia contra un enemigo adyacente** → §4b.1, **a bocajarro con Desventaja**. Hace real la referencia que `effects.md` ya hacía y evita que el Mago se quede sin ataque.
+- [x] **Definir cuándo termina un combate** (de lo que depende cuándo puedes volver a acampar) → `board/battle.md` §9 (trasladado, antes §4b.8), por victoria / leash del enemigo / leash tuyo, cerrando el exploit de huir y acampar gratis a un paso de la pelea.
+- [x] **Ataques a distancia contra un enemigo adyacente** → `board/battle.md` §2 (trasladado, antes §4b.1), **a bocajarro con Desventaja**. Hace real la referencia que `effects.md` ya hacía y evita que el Mago se quede sin ataque.
 - [x] **Críticos de los enemigos** → simétricos con el héroe (§4b.4 paso 5, `characters/enemies.md` §5b.1).
 - [x] **El daño suma siempre el modificador**, hechizos incluidos → §4b.4 paso 4; corregidas *Descarga arcana* y *Llama sagrada*.
 - [x] **Primer combate jugable** → §1b paso 4: eliges **2 cartas de habilidad** (de las 8 del héroe) que arrancan preparadas. Antes el primer combate se peleaba con 0-2 cartas al azar y el Mago moría por sorteo.

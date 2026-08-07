@@ -17,7 +17,7 @@ Mazo **gestionado por el sistema** (no por el jugador) con cartas cortas que se 
 
 El terreno del hexágono aplica **además** su propio efecto (`../board/board-map.md` §3a): p. ej. atacar desde Bosque ya da emboscada por terreno, se sume a lo que diga la carta.
 
-## 3. Cartas de Combate (boceto, ~10)
+## 3. Cartas de Combate (boceto, ~8)
 
 <!-- cards: encuentro icono=⚔️ fichas="Combate" -->
 
@@ -25,14 +25,14 @@ El terreno del hexágono aplica **además** su propio efecto (`../board/board-ma
 |---|---|
 | Emboscada enemiga | Si el héroe iba expuesto (Llanura/Camino, no Oculto), el enemigo actúa primero e ignora la iniciativa el primer turno |
 | Golpe de las sombras | Si el héroe estaba **Oculto** o en **Bosque** ([`../effects.md`](../effects.md), `../board/board-map.md` §3a), abre con un ataque gratis con ventaja |
-| Refuerzos | Al final del turno 2 aparece 1 enemigo Normal adicional (`../characters/enemies.md` §5b) |
 | Terreno favorable | El héroe gana **+1 CA** durante todo el combate (cobertura natural) |
-| Terreno traicionero | Un hexágono de la zona es peligroso: entrar en él inflige 1d4 o causa **Ralentizado** |
 | El enemigo flaquea | Al bajar del 50 % de PV, el enemigo intenta **huir** usando su movimiento; si escapa, sueltas menos loot |
 | Frenesí | El enemigo ataca con **+1 al daño** pero **−2 CA** (todo o nada) |
 | Veterano solitario | Solo hay 1 enemigo, pero con **+25 % PV** y su habilidad reforzada |
 | Niebla | Los ataques a distancia sufren **Desventaja** este combate |
 | Botín inesperado | Al ganar, **1 carta extra** en la misma fila que la fuente del combate (`../game-design.md` §6b.6) o el doble de oro |
+
+> **Refuerzos y Terreno traicionero — retiradas 2026-08-06.** *Refuerzos* añadía un enemigo por encima del presupuesto de composición ya calibrado al abrir la batalla (`../board/battle.md` §4); *Terreno traicionero* quedó redundante en cuanto el terreno del mapa empezó a generar sus propios obstáculos por plantilla (`../board/battle.md` §7).
 
 ## 4. Cartas de Suceso (boceto, ~10)
 
@@ -74,6 +74,7 @@ Cruce con las 6 fichas de [`../board/board-map.md`](../board/board-map.md) §4:
 ## 7. Próximos pasos
 
 - [ ] Balancear frecuencias (cuántas de cada tipo, probabilidad de ¡Emboscada! vs. Hallazgo) al testear.
-- [x] Reparto Combate/Suceso y barajado *(decidido)*: **dos pilas separadas**, no un mazo mezclado — §1 siempre pide una carta *de un tipo concreto*, así que mezclarlas obligaría a descartar hasta encontrar el tipo bueno. Cada pila se baraja al agotarse (las cartas vuelven, como el mazo personal). Cantidades del prototipo = las ~10 + ~12 de §3-§4, sin repetidos; las frecuencias finas se afinan jugando.
+- [x] Reparto Combate/Suceso y barajado *(decidido)*: **dos pilas separadas**, no un mazo mezclado — §1 siempre pide una carta *de un tipo concreto*, así que mezclarlas obligaría a descartar hasta encontrar el tipo bueno. Cada pila se baraja al agotarse (las cartas vuelven, como el mazo personal). Cantidades del prototipo = las ~8 + ~12 de §3-§4, sin repetidos; las frecuencias finas se afinan jugando.
 - [ ] Afinar valores de daño/CD de las cartas de Suceso.
 - [ ] Cuando llegue la Campaña, diseñar los sesgos temáticos por capítulo (§6).
+- [x] **Retirar Refuerzos y Terreno traicionero** *(decidido 2026-08-06)* → §3: dejaron de encajar con la pantalla de batalla (presupuesto de composición y obstáculos por plantilla, `../board/battle.md` §4/§7). Cantidades de §3 pasan de ~10 a 8 cartas de Combate.

@@ -21,7 +21,7 @@ Catálogo de cartas de **Arma** (tipo/icono en [`../game-design.md`](../game-des
 
 ## 2. Armas a distancia
 
-Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hueco ya es cuerpo a cuerpo (`../game-design.md` §4b.1). *Columna Propiedades vacía a propósito, ver nota de §1.*
+Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hueco ya es cuerpo a cuerpo (`../board/battle.md` §2). *Columna Propiedades vacía a propósito, ver nota de §1.*
 
 <!-- cards: arma -->
 
@@ -48,12 +48,12 @@ Alcance mínimo 2 hex — ninguna arma a distancia puede tener alcance 1, ese hu
 - **Stat de ataque:** FUE (armas pesadas), DES (finesse y a distancia), "FUE/DES" = usa el mejor de los dos mod. Los hechizos usan INT/SAB (`../game-design.md` §2.1).
 - **No existe la propiedad "Ligera" *(decidido)*.** La columna **Manos ✋/🤲** hace ese trabajo, y la columna *Propiedades* sigue vacía a propósito (§1). Había **dos reglas** colgando de una propiedad que no estaba en ninguna tabla —el segundo ataque de dual-wield (`../game-design.md` §4b.3) y *Ataque furtivo* del Pícaro ([`class.md`](class.md) §4)—, así que **ninguna de las dos podía dispararse nunca**. Las dos se reescribieron para leer ✋/🤲 o "a distancia".
 - **Ataque secundario (`../game-design.md` §4b.3):** con la Acción rápida puedes atacar otra vez con lo que lleves puesto. Con **dos armas ✋** (una por mano) el segundo ataque usa la otra arma **y suma el mod de la stat**; con **una sola arma** (✋ con escudo o mano libre, o 🤲) es un segundo golpe con la misma arma **sin el mod**. Así el **escudo** (+2 CA, §3) y las **dos armas** son elecciones distintas y no una sola óptima.
-- **A bocajarro (`../game-design.md` §4b.1):** las armas a distancia **sí** pueden atacar a un enemigo adyacente, con **Desventaja** ([`../effects.md`](../effects.md)). El alcance mínimo de 2 hex de §2 es el alcance *eficaz*, no una prohibición — importa sobre todo para el **Bastón de mago** (alcance 2), que sin esta regla dejaba al Mago sin ningún ataque posible en melee.
+- **A bocajarro (`../board/battle.md` §2):** las armas a distancia **sí** pueden atacar a un enemigo adyacente, con **Desventaja** ([`../effects.md`](../effects.md)). El alcance mínimo de 2 hex de §2 es el alcance *eficaz*, no una prohibición — importa sobre todo para el **Bastón de mago** (alcance 2), que sin esta regla dejaba al Mago sin ningún ataque posible en melee.
 - **Bastón de mago — daño físico en v1:** de momento hace daño 🔨 contundente, no 🔮 arcano. Los tipos de daño mágico se reservan para los hechizos de clase; cuando se desarrollen las subclases de mago y las debilidades elementales de los enemigos, el bastón podrá volver a un tipo de daño mágico.
 - **Finesse/Ligera:** puede usarse con Destreza — beneficia al Pícaro ([`class.md`](class.md)).
 - **Ninguna arma melee es arrojadiza** *(decidido)*: el hueco de "atacar sin estar adyacente" ya lo cubren las armas a distancia (§2); no se duplica con dagas/hachas lanzables.
 - **Munición — infinita *(decidido)*:** las armas a distancia **no** gestionan munición; disparas sin límite. (Revisable si el balance pidiera introducir munición como recurso más adelante.)
-- **Alcance (Lanza):** ataca a un enemigo a 2 hex en línea sin estar adyacente — útil con el modelo de adyacencia (`../game-design.md` §4b.1).
+- **Alcance (Lanza):** ataca a un enemigo a 2 hex en línea sin estar adyacente — útil con el modelo de adyacencia (`../board/battle.md` §2).
 - **Recarga (Ballesta pesada):** solo 1 disparo por turno — es la **única excepción** al ataque secundario (`../game-design.md` §4b.3). Es su precio por ser el arma de más daño a distancia (1d10, 5 hex).
 - **Requisito de FUE:** las armas de 2 manos pesadas piden FUE 13; por debajo, **desventaja** en la tirada de ataque (el Mago FUE 8 no debería blandir un mandoble).
 

@@ -121,12 +121,15 @@ Enemy {                     // bloque de combate, enemies.md §5b
   resistances[], weaknesses[]
 }
 
-Combat {                    // game-design.md §4b.8 — hacía falta un objeto propio
-  enemies: Enemy[]          // TOPE DURO: máx. 2 con aiState 'activo' a la vez (enemies.md §5b.6)
-  pendingReinforcements: [] // los que esperan hueco por el tope de 2
-  initiativeOrder: []       // 1d20 + modDES por participante (§4b.2)
-  turnsOutOfContact         // contador del leash bidireccional; a 2 termina el combate (§4b.8)
-  disengagedThisTurn: Set   // Desengancharse: máx. 1 vez por enemigo y turno (§4b.11)
+Combat {                    // board/battle.md §9 (antes game-design.md §4b.8, trasladado 2026-08-06)
+  heroes: Hero[]            // 1-4, characters/heroes.md §4
+  enemies: Enemy[]          // tamaño = presupuesto de composición, no un tope fijo (enemies.md §5b.6, battle.md §4)
+  mercenaries: Mercenary[]  // fichas propias, cuentan +1 al presupuesto de enemies (cards/mercenaries.md §1b)
+  compositionBudget         // heroes.length + 1 (+1 por mercenario), tope 6 (enemies.md §5b.6)
+  pendingReinforcements: [] // los que esperan hueco por presupuesto
+  initiativeOrder: []       // 1d20 + modDES por participante, una sola vez al abrir (battle.md §6, game-design.md §4b.2)
+  turnsOutOfContact         // contador del leash bidireccional; a 2 termina el combate (battle.md §9)
+  disengagedThisTurn: Set   // Desengancharse: máx. 1 vez por enemigo y turno (battle.md §6)
 }
 
 Card {                      // cards/*
@@ -149,10 +152,9 @@ Esto no es el modelo final, solo una forma concreta de ver cómo encajan las pie
 - **Generación del prototipo (board-map.md §2c):** elegir hex de entrada en **una esquina**, hex-por-hex con pesos (tabla A), garantizar conectividad (BFS/flood-fill desde la entrada evitando Montaña), colocar lo **garantizado** (Guarida con el boss en el hex transitable más lejano —usar la distancia del mismo BFS—, y **1 Pueblo** en la mitad cercana a la entrada: con losetas el Pueblo ya llega maquetado y **no se garantiza** —si el encaje no saca loseta de Pueblo, ese tablero no tiene, porque la generación no repinta nada), y sembrar fichas por la tabla B. Sin tiles ni grupos en esta fase.
 - **Niebla del prototipo — dos capas por hex:** para cada hex dentro de `visionTerrain` marcar `terrainRevealed`, y dentro de `visionDetail` marcar además `contentRevealed` (board-map.md §2c). Ambas son **acumulativas y permanentes**: lo revelado no se vuelve a ocultar al alejarse. La niebla por grupo (3 estados) es solo para la versión con tiles.
 - **Recalcular visión** tras cada movimiento del héroe, y también al cambiar un modificador de visión (entrar/salir de Bosque, jugar *Ojo avizor*, ganar *Velo de sombras*). La Montaña **bloquea línea de visión**, así que no basta con el radio: hace falta un trazado de línea (supercover/line-of-sight sobre coordenadas cúbicas) por cada hex candidato.
-- **Desengancharse (game-design.md §4b.11):** se evalúa al **abandonar** un hex adyacente a un enemigo con `aiState === 'activo'`, una vez por enemigo y turno. Conviene resolverlo dentro del propio paso de movimiento, no como un evento aparte, para que el orden movimiento → daño → llegada sea determinista.
-- **Fin de combate (game-design.md §4b.8):** el combate **no** termina al huir. Hay que llevar `turnsOutOfContact` y solo considerar terminado el combate cuando llegue a 2 (o al morir todos los enemigos); si un enemigo te vuelve a detectar antes, el contador se **reinicia** y sigue siendo el mismo combate. Sin esto, huir un hex te dejaría acampar gratis a un paso de los enemigos.
-- **Tope de 2 enemigos activos (enemies.md §5b.6):** los refuerzos e invocaciones que no caben van a `pendingReinforcements` y entran cuando muere uno. Conviene comprobarlo en el sitio **donde se genera** el enemigo, no al pintarlo.
-- **Ataque a bocajarro (game-design.md §4b.1):** un ataque a distancia contra un objetivo adyacente es legal y aplica **Desventaja**; no hay que rechazar el objetivo por estar por debajo del alcance mínimo. Vale para el héroe y para la IA (`enemies.md` §5b.6 paso 3).
+- **Fin de combate, solo el leash de reengancharse (game-design.md §4b.8):** esto sí sigue siendo del mapa, aunque el combate en sí ya se resuelva en su propia pantalla — es la condición para volver a "fuera de combate" y poder acampar (`../game-design.md` §4c.2). Hay que llevar `turnsOutOfContact` y solo considerarlo cumplido cuando llegue a 2; si un enemigo te vuelve a detectar antes, el contador se **reinicia**. Sin esto, huir un hex te dejaría acampar gratis a un paso de los enemigos.
+
+> **Retirado de esta lista (2026-08-07): Desengancharse, tope de enemigos y ataque a bocajarro.** Los tres describían mecánica de combate que, con la pantalla de batalla propia (`../board/battle.md`, decisión raíz #1), ya no ocurre en este tablero — el propio `Combat{}` de §2 ya usa el presupuesto de composición (tope 6, no 2) y cita `battle.md`, así que estas tres entradas habían quedado contradichas por el resto del documento. No se reescriben aquí: son candidatas a un futuro documento técnico de la pantalla de batalla (`board/battle-dev.md` o equivalente), que todavía no existe.
 - **Tabla de loot (game-design.md §6b.6):** conviene una **sola función** `rollLoot(fuente)` que haga los tres pasos (¿cae carta? → rareza → tipo) y devuelva cartas concretas del catálogo, porque la llaman **seis** sitios distintos: matar un enemigo, ficha de Tesoro, Mazmorra, Suceso *Hallazgo*, Combate *Botín inesperado* y el umbral del 25 % de Amenaza (que le resta un escalón de rareza). Ojo con la **regla de caída**: si la rareza sorteada no existe para ese tipo de carta, baja al escalón más alto disponible — sin ella, un Épico de arma devuelve vacío, porque el catálogo solo llega a Raro.
 - **Nada abre sub-mapa en el prototipo (board-map.md §3b-bis):** Mazmorra, Mina, Cripta, Iglesia y Torre de mago se resuelven **en su hexágono** —y las cuatro últimas ni siquiera son localizaciones ya: la Mazmorra y el Pueblo son terreno, y la Iglesia y la Torre son tipos de loseta de Pueblo—. No hace falta ni un segundo generador, ni pila de mapas, ni estado de entrada/salida. El sub-mapa llega con los tiles.
 - **Ficha de Terreno (board-map.md §4b):** se resuelve **dentro del paso de movimiento**, como Desengancharse — la prueba decide si el hex cuesta o no y si pierdes el movimiento restante, así que no puede ser un evento posterior. La ficha **no se retira al fallar**.
