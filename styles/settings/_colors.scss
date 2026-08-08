@@ -138,7 +138,20 @@ $piece: (
   //   latente y el ladrillo de la Amenaza no queda hueco que se lea. Va en
   //   NEGRO con la tinta al rojo vivo —la única cara oscura del tablero—, y dice
   //   lo que tiene que decir: el bicho que dormía ya está despierto.
-  "heroe": ("field": #bcdcf2, "ink": #10222f),
+  //
+  // "heroe" pasó a "heroe-1".."heroe-4" con el co-op (characters/heroes.md
+  // §4): con 1-4 héroes en el mismo tablero, y repetir clase permitido, lo que
+  // hay que distinguir es EL JUGADOR, no la clase — así que el color es por
+  // puesto en la mesa, no por héroe/heroe.md. Mismo glifo de mago para los
+  // cuatro (piece-art.tsx), y paleta provisional como el resto de este mapa:
+  // heroe-1 conserva el azul pálido que ya había, heroe-2/3/4 se alejan de los
+  // rojos (Amenaza/Enemigo) y del violeta de Terreno. heroe-4 es el que más se
+  // arriesga a leerse verdoso sobre Bosque/Pantano — el primero a retocar si
+  // se confunde jugando.
+  "heroe-1": ("field": #bcdcf2, "ink": #10222f),
+  "heroe-2": ("field": #d97b3f, "ink": #2a1206),
+  "heroe-3": ("field": #c4568f, "ink": #2c0e1e),
+  "heroe-4": ("field": #3f9c94, "ink": #062220),
   "enemigo-activo": ("field": #241016, "ink": #ff6f4a),
   // Corona (emoji), campo morado imperial: ni un tercer rojo (Amenaza/Enemigo)
   // ni el violeta de Terreno — es a propósito, porque el Jefe no es "otro

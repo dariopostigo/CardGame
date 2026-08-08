@@ -100,7 +100,7 @@ Subtipo de Item que se juega para ganar **movimiento extra** ese turno, por enci
 
 Son también, las tres, el **premio fijo por acertar la prueba de la Ficha de Terreno** (`../board/board-map.md` §4b, `../game-design.md` §6b.6): una carta por escalón de rareza, así que la tirada de rareza de esa ficha ya elige cuál de las tres cae.
 
-<!-- cards: item -->
+<!-- cards: item fichas="Movimiento" -->
 
 | Carta | Tipo | Efecto | Rareza |
 |---|---|---|---|

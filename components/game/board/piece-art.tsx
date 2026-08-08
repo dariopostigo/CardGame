@@ -61,7 +61,14 @@ import type { BoardToken } from "@/lib/rules/state";
  * lo coloca): es diseño por delante del sistema, igual que ya pasó con los
  * bloques de combate de `enemies.md` §5b antes de que existiera el combate.
  */
-export type PawnId = "heroe" | "enemigo-activo" | "jefe";
+/**
+ * "heroe-1".."heroe-4" y no un "heroe" único: en co-op (characters/heroes.md
+ * §4, 1-4 fichas en el mismo tablero, repetir clase permitido) lo que hay que
+ * distinguir a golpe de vista es el PUESTO en la mesa, no la clase — dos
+ * Guerreros necesitan caras distintas. Los cuatro comparten el mismo glifo
+ * (mago); lo que cambia es el color, en $piece.
+ */
+export type PawnId = "heroe-1" | "heroe-2" | "heroe-3" | "heroe-4" | "enemigo-activo" | "jefe";
 
 export type PieceArt = {
   /** Qué representa, para el tooltip y la leyenda. */
@@ -181,25 +188,35 @@ function HornedSkull() {
  * tape al vecino de detrás— y de dibujar, que es lo que importa mientras el arte
  * siga siendo provisional.
  */
+/**
+ * Mago: U+1F9D9 + tono de piel U+1F3FB + U+200D U+2642 U+FE0F. Secuencia ZWJ
+ * de cuatro puntos de código, igual que el elfo de la ficha de Personaje, con
+ * el mismo riesgo: una fuente que no la tenga completa la parte en dos glifos
+ * (mago + símbolo de varón).
+ *
+ * Comparte glifo de FAMILIA con esa ficha —los dos son humanoides con
+ * capucha—, así que lo que tiene que separarlos es la cara, no el dibujo. Es
+ * función y no repetido cuatro veces (una por héroe-1..4) justo por eso: si se
+ * redibuja, se redibuja una vez, y los cuatro puestos de la mesa no pueden
+ * separarse por descuido — igual que `HornedSkull` para el enemigo.
+ */
+function MageGlyph() {
+  return (
+    <text x="12" y="12" fontSize="19" textAnchor="middle" dominantBaseline="central">
+      {"\u{1F9D9}\u{1F3FB}\u{200D}\u{2642}\u{FE0F}"}
+    </text>
+  );
+}
+
 export const PAWN_ART: Readonly<Record<PawnId, PieceArt>> = {
-  heroe: {
-    label: "Héroe: tu ficha en el tablero",
-    art: (
-      // Mago: U+1F9D9 + tono de piel U+1F3FB + U+200D U+2642 U+FE0F. Secuencia
-      // ZWJ de cuatro puntos de código, igual que el elfo de la ficha de
-      // Personaje, con el mismo riesgo: una fuente que no la tenga completa la
-      // parte en dos glifos (mago + símbolo de varón).
-      //
-      // Y comparte glifo de FAMILIA con esa ficha —los dos son humanoides con
-      // capucha—, así que lo que tiene que separarlos es la cara: el Personaje va
-      // en azul medio y el Héroe en azul PÁLIDO, que además le hace de papel al
-      // emoji. Validado a tamaño de partida en /dev/pieces (board-map.md §4c):
-      // aguanta para el prototipo.
-      <text x="12" y="12" fontSize="19" textAnchor="middle" dominantBaseline="central">
-        {"\u{1F9D9}\u{1F3FB}\u{200D}\u{2642}\u{FE0F}"}
-      </text>
-    ),
-  },
+  // Los cuatro puestos de la mesa (co-op, characters/heroes.md §4): mismo
+  // glifo, y lo único que los separa es la cara ($piece "heroe-1".."heroe-4").
+  // "heroe-1" es el azul PÁLIDO validado a tamaño de partida en /dev/pieces
+  // (board-map.md §4c) contra el azul medio de la ficha de Personaje.
+  "heroe-1": { label: "Héroe 1: tu ficha en el tablero", art: <MageGlyph /> },
+  "heroe-2": { label: "Héroe 2: tu ficha en el tablero", art: <MageGlyph /> },
+  "heroe-3": { label: "Héroe 3: tu ficha en el tablero", art: <MageGlyph /> },
+  "heroe-4": { label: "Héroe 4: tu ficha en el tablero", art: <MageGlyph /> },
   "enemigo-activo": {
     // La MISMA calavera con cuernos que el disco latente, y a propósito: es el
     // mismo enemigo, así que no se inventa un icono nuevo para decir que se ha
@@ -234,7 +251,14 @@ export const TOKEN_IDS: readonly BoardToken[] = [
   "terreno",
 ];
 
-export const PAWN_IDS: readonly PawnId[] = ["heroe", "enemigo-activo", "jefe"];
+export const PAWN_IDS: readonly PawnId[] = [
+  "heroe-1",
+  "heroe-2",
+  "heroe-3",
+  "heroe-4",
+  "enemigo-activo",
+  "jefe",
+];
 
 /** Nombre legible de los 3 Élite, para el resumen de la partida. */
 export const ELITE_LABEL: Record<string, string> = {

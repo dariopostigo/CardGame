@@ -322,6 +322,8 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
       // La niebla arranca cerrada; abrirla es trabajo de la visión del héroe.
       terrainRevealed: false,
       contentRevealed: false,
+      // Ninguna ficha arranca resuelta: eso lo decide interactuar con ella (lib/rules/tokens.ts).
+      resolved: false,
     });
   }
 

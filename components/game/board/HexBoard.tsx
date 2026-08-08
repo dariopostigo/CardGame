@@ -105,8 +105,21 @@ import { direction } from "@/lib/rules/tiles";
 import Button from "@/components/ui/Button";
 import BoardFog from "./BoardFog";
 import BoardPiece from "./BoardPiece";
-import { PAWN_ART, TOKEN_ART } from "./piece-art";
+import { TOKEN_ART, type PawnId } from "./piece-art";
 import { useBoardView } from "./use-board-view";
+
+/**
+ * Una ficha de héroe a pintar (co-op, characters/heroes.md §4): quién es,
+ * dónde está y con qué cara. `pieceId` es "heroe-1".."heroe-4" — el color por
+ * puesto en la mesa, no por clase (piece-art.tsx) —, así que dos héroes de la
+ * misma clase (repetir está permitido) siguen distinguiéndose.
+ */
+export type HeroMarker = {
+  readonly id: string;
+  readonly position: HexCoord;
+  readonly pieceId: PawnId;
+  readonly label: string;
+};
 
 type Props = {
   board: Board;
@@ -121,8 +134,13 @@ type Props = {
   selected?: HexCoord | null;
   /** Hexágonos dentro del alcance de movimiento actual (capa 4b, resalte de relleno). */
   reachable?: ReadonlySet<HexKey>;
-  /** Dónde está el héroe. Se pinta siempre, no depende de `contentRevealed`: se ve a sí mismo. */
-  heroAt?: HexCoord | null;
+  /**
+   * Los héroes en el tablero. Se pintan siempre, no dependen de
+   * `contentRevealed` (se ven a sí mismos). Si varios comparten hexágono —los
+   * 1-4 pueden arrancar juntos en la entrada— se reparten en abanico para no
+   * dibujarse exactamente superpuestos.
+   */
+  heroes?: readonly HeroMarker[];
   onHexClick?: (hex: HexCell) => void;
 };
 
@@ -165,7 +183,7 @@ export default function HexBoard({
   showTiles = true,
   selected = null,
   reachable,
-  heroAt = null,
+  heroes = [],
   onHexClick,
 }: Props) {
   // Alias local: la inclinación entra en cada fórmula de geometría de abajo y no
@@ -183,6 +201,38 @@ export default function HexBoard({
     () => [...board.hexes.values()].sort((a, b) => a.coord.r - b.coord.r || a.coord.q - b.coord.q),
     [board],
   );
+
+  // Centro en píxeles de cada héroe, repartiendo en abanico a los que
+  // comparten hexágono (co-op: los 1-4 pueden arrancar juntos en la entrada,
+  // characters/heroes.md §4). Con uno solo en la casilla no hay desplazamiento
+  // — se pinta en el centro, como el héroe único de siempre.
+  const heroPixels = useMemo(() => {
+    const byHex = new Map<HexKey, HeroMarker[]>();
+    for (const hero of heroes) {
+      const k = Hex.key(hero.position);
+      const group = byHex.get(k);
+      if (group) group.push(hero);
+      else byHex.set(k, [hero]);
+    }
+    const fanRadius = hexSize * 0.32;
+    const out: { hero: HeroMarker; x: number; y: number }[] = [];
+    for (const group of byHex.values()) {
+      const { x: cx, y: cy } = Hex.toPixel(group[0].position, hexSize, tilt);
+      group.forEach((hero, i) => {
+        if (group.length === 1) {
+          out.push({ hero, x: cx, y: cy });
+          return;
+        }
+        const angle = (i / group.length) * 2 * Math.PI - Math.PI / 2;
+        out.push({
+          hero,
+          x: cx + fanRadius * Math.cos(angle),
+          y: cy + fanRadius * Math.sin(angle) * tilt,
+        });
+      });
+    }
+    return out;
+  }, [heroes, hexSize, tilt]);
 
   // Cuánto cuelga el canto en pantalla. Es la altura de la loseta ya proyectada,
   // así que no lleva `tilt`: la pared es vertical y la inclinación de la cámara
@@ -442,27 +492,27 @@ export default function HexBoard({
                   y={y}
                   hexSize={hexSize}
                   tilt={tilt}
+                  state={cell.resolved ? "spent" : "placed"}
                   label={TOKEN_ART[cell.token].label}
                 />
               );
             })}
-            {/* El héroe, aparte de las fichas de contenido: no depende de
-                `contentRevealed` (se ve a sí mismo siempre) ni de `cell.token`
-                (no es contenido del hexágono, es quien anda por él). */}
-            {heroAt &&
-              (() => {
-                const { x, y } = Hex.toPixel(heroAt, hexSize, tilt);
-                return (
-                  <BoardPiece
-                    piece={{ family: "pawn", id: "heroe" }}
-                    x={x}
-                    y={y}
-                    hexSize={hexSize}
-                    tilt={tilt}
-                    label={PAWN_ART.heroe.label}
-                  />
-                );
-              })()}
+            {/* Los héroes, aparte de las fichas de contenido: no dependen de
+                `contentRevealed` (se ven a sí mismos siempre) ni de
+                `cell.token` (no son contenido del hexágono, son quienes andan
+                por él). `heroPixels` ya resolvió el abanico de los que
+                comparten casilla. */}
+            {heroPixels.map(({ hero, x, y }) => (
+              <BoardPiece
+                key={hero.id}
+                piece={{ family: "pawn", id: hero.pieceId }}
+                x={x}
+                y={y}
+                hexSize={hexSize}
+                tilt={tilt}
+                label={hero.label}
+              />
+            ))}
           </g>
 
           {/* 7. Pulso de selección: cualquier casilla seleccionada (héroe o

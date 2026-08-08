@@ -58,7 +58,10 @@ const CONTRAST_TERRAINS: readonly TerrainId[] = ["bosque", "camino"];
 
 /** Nombre legible de cada ficha de personaje, para tarjeta y tabla. */
 const PAWN_NAMES: Readonly<Record<PawnId, string>> = {
-  heroe: "Héroe",
+  "heroe-1": "Héroe 1",
+  "heroe-2": "Héroe 2",
+  "heroe-3": "Héroe 3",
+  "heroe-4": "Héroe 4",
   "enemigo-activo": "Enemigo activo",
   jefe: "Jefe",
 };
@@ -233,7 +236,7 @@ export default function PieceLab() {
         <div className={`${card} flex flex-col gap-2 text-sm`}>
           <span className="font-semibold text-[var(--wiki-text)]">Héroe contra Personaje</span>
           <div className="flex items-center gap-3">
-            <PieceOnHex piece={{ family: "pawn", id: "heroe" }} terrain={terrain} {...sample} />
+            <PieceOnHex piece={{ family: "pawn", id: "heroe-1" }} terrain={terrain} {...sample} />
             <PieceOnHex piece={{ family: "token", id: "personaje" }} terrain={terrain} {...sample} />
           </div>
           <span className="text-[var(--wiki-muted)]">

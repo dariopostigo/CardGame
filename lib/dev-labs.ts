@@ -70,6 +70,15 @@ export const DEV_LABS: readonly DevLab[] = [
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §4c" },
   },
   {
+    slug: "fichas",
+    label: "Fichas del tablero",
+    summary:
+      "Qué pasa al interactuar con cada ficha, no solo cuál sale: la prueba de Terreno, la tabla de loot de Tesoro, el mazo de encuentro para Amenaza/Exploración/Enemigo y el oficio de Personaje. Cada ficha resuelta se retira y queda su huella.",
+    icon: "pi pi-question-circle",
+    status: "en-curso",
+    doc: { href: "/docs/board/board-map", label: "Tablero y mapa §4" },
+  },
+  {
     slug: "baraja",
     label: "Baraja y Oteo",
     summary:

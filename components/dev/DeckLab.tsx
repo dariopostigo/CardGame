@@ -44,8 +44,8 @@ import {
   type DeckState,
   type OteoDraw,
 } from "@/lib/rules/deck";
-
-const HEROES = ["Guerrero", "Mago", "Pícaro", "Clérigo"] as const;
+import { HERO_CLASS_IDS, HERO_ROSTER } from "@/lib/rules/hero-roster";
+import type { HeroClassId } from "@/lib/rules/state";
 
 // Rect de origen de un vuelo Oteo → bandeja: se toma de la carta oteada (o de
 // su vista ampliada, si el vuelo llega desde una sustitución) en el instante
@@ -71,12 +71,12 @@ type DropFlight = { instanceId: string; card: DeckCard; from: DOMRect };
 // Todo el mazo arranca sin preparar: a diferencia de la partida real (§1b,
 // paso 4: 2 de las 8 cartas de habilidad empiezan ya "en juego"), aquí
 // interesa ver el Oteo construir el "en juego" desde cero, turno a turno.
-function emptyDeckState(hero: (typeof HEROES)[number], classCards: CatalogCard[]): DeckState {
-  return { deck: buildDeck(hero, classCards), inPlay: [] };
+function emptyDeckState(hero: HeroClassId, classCards: CatalogCard[]): DeckState {
+  return { deck: buildDeck(HERO_ROSTER[hero].label, classCards), inPlay: [] };
 }
 
 export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
-  const [hero, setHero] = useState<(typeof HEROES)[number]>(HEROES[0]);
+  const [hero, setHero] = useState<HeroClassId>(HERO_CLASS_IDS[0]);
   const [state, setState] = useState<DeckState>(() => emptyDeckState(hero, classCards));
   const [oteo, setOteo] = useState<OteoDraw>([]);
   const [pending, setPending] = useState<DeckCard | null>(null);
@@ -102,7 +102,7 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
   const btn = (active: boolean) => buttonClass({ active });
   const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
 
-  function reset(nextHero: (typeof HEROES)[number] = hero) {
+  function reset(nextHero: HeroClassId = hero) {
     if (dropHoldTimer.current) window.clearTimeout(dropHoldTimer.current);
     setState(emptyDeckState(nextHero, classCards));
     setOteo([]);
@@ -503,11 +503,14 @@ export default function DeckLab({ classCards }: { classCards: CatalogCard[] }) {
           <SelectButton
             value={hero}
             onChange={(e) => {
-              const next = e.value as (typeof HEROES)[number];
+              if (e.value == null) return;
+              const next = e.value as HeroClassId;
               setHero(next);
               reset(next);
             }}
-            options={[...HEROES]}
+            options={HERO_CLASS_IDS.map((id) => ({ label: HERO_ROSTER[id].label, id }))}
+            optionLabel="label"
+            optionValue="id"
             allowEmpty={false}
           />
         </div>
