@@ -94,8 +94,10 @@ export const DEFAULT_BOARD_CONFIG: Omit<BoardConfig, "seed"> = {
 };
 
 // Tabla B — pesos de ficha por terreno (§2c). La Montaña no lleva ficha.
-// El peso 1 de "terreno" en Bosque es deliberado (§4b): sin él la ficha de
-// Terreno salía ~0,6 veces por tablero y era casi inalcanzable.
+// El peso de "terreno" en Bosque y Pantano es deliberado (§4b): con los
+// pesos originales (Bosque 1, Pantano 2) salía ~0,86 veces por tablero y
+// era casi inalcanzable; subido a Bosque 2, Pantano 3 para acercarla a
+// ~1,8 (lote de semillas, ../status.md §6).
 const TOKEN_WEIGHTS: Readonly<Record<TerrainId, ReadonlyArray<readonly [BoardToken, number]>>> = {
   llanura: [
     ["enemigo", 2],
@@ -111,7 +113,7 @@ const TOKEN_WEIGHTS: Readonly<Record<TerrainId, ReadonlyArray<readonly [BoardTok
     ["amenaza", 3],
     ["tesoro", 2],
     ["exploracion", 2],
-    ["terreno", 1],
+    ["terreno", 2],
     ["personaje", 1],
     ["pueblo", 1],
   ],
@@ -120,7 +122,7 @@ const TOKEN_WEIGHTS: Readonly<Record<TerrainId, ReadonlyArray<readonly [BoardTok
     ["amenaza", 3],
     ["tesoro", 1],
     ["exploracion", 0],
-    ["terreno", 2],
+    ["terreno", 3],
     ["personaje", 0],
     ["pueblo", 0],
   ],
