@@ -1,0 +1,97 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Pantalla del Pueblo (Taberna) — ver components/dev/VillageScreen.tsx
+//
+// Mismo mecanismo que el backdrop de Oteo (_deck-lab.scss __backdrop), pero
+// OPACO: aquí no hay tablero que asomar detrás, es un cambio de pantalla y no
+// un modal sobre el mapa. Por eso vive en su propio plano ("screen"), por
+// encima incluso de la cabecera del lab.
+//
+// Sin arte todavía (docs/status.md §4): la fachada son tres trazos —tejado,
+// pared, puerta—, mismo lenguaje que los glifos de piece-art.tsx. El único
+// punto interactuable es la puerta, marcada con el mismo celeste que "aquí
+// puedes llegar" en el tablero ($board-reachable): un punto más de afordancia
+// del mismo juego, no un color nuevo.
+// -------------------------------------------------------------------------
+
+.village-screen {
+  position: fixed;
+  inset: 0;
+  z-index: z("screen");
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: $board-table;
+}
+
+.village-screen__exit {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+.village-screen__scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.village-screen__building {
+  width: min(60vw, 320px);
+  height: auto;
+  filter: drop-shadow(0 12px 20px $board-shadow);
+}
+
+.village-screen__roof {
+  fill: piece("pueblo", "ink");
+}
+
+.village-screen__wall {
+  fill: piece("pueblo", "field");
+}
+
+.village-screen__door {
+  cursor: pointer;
+
+  rect {
+    fill: $board-table-edge;
+    stroke: $board-reachable;
+    stroke-width: 2;
+    transition: filter 0.15s ease;
+  }
+
+  &:hover rect,
+  &:focus-visible rect {
+    filter: brightness(1.4);
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.village-screen__hint {
+  color: skin("muted");
+  font-size: 0.875rem;
+}
+
+// El panel placeholder de tienda: modal aparte, encima de la propia pantalla.
+.village-screen__shop-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: z("screen");
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.village-screen__shop-panel {
+  max-width: 24rem;
+  padding: 1.5rem;
+  border-radius: radius("lg");
+  border: 1px solid skin("border");
+  background: skin("surface");
+}

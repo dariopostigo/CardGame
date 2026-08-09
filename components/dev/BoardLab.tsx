@@ -18,7 +18,7 @@
 // laboratorio solo pide tableros y los enseña.
 // =========================================================================
 
-import { useMemo, useState, type ChangeEvent } from "react";
+import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import Link from "next/link";
 import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
@@ -47,6 +47,17 @@ const SHAPES: Array<{ label: string; sprawl: number }> = [
   { label: "Compacto", sprawl: 0.4 },
 ];
 
+// Tamaños de lote: 300 es la cifra que ya citan status.md y board-map.md ("sobre
+// 300 tableros"), así que es el valor por defecto — mantiene medible lo que ya
+// estaba medido, en vez de inventar otra base de comparación.
+const BATCH_SIZES = [100, 300, 1000];
+
+// Cuántos tableros generar entre cada respiro a la UI. generateBoard() es puro y
+// rápido (sin fetch, sin DOM), pero 1000 de golpe en el hilo principal congelan
+// el botón; cediendo cada 25 el navegador puede repintar el contador y seguir
+// aceptando el clic de "Cancelar".
+const BATCH_YIELD_EVERY = 25;
+
 export default function BoardLab() {
   const [seed, setSeed] = useState(INITIAL_SEED);
   const [tileCount, setTileCount] = useState(12);
@@ -56,6 +67,11 @@ export default function BoardLab() {
   const [showCoords, setShowCoords] = useState(false);
   const [showTiles, setShowTiles] = useState(true);
   const [selected, setSelected] = useState<HexCell | null>(null);
+  const [batchSize, setBatchSize] = useState(300);
+  const [batch, setBatch] = useState<BatchResult | null>(null);
+  const [batchRunning, setBatchRunning] = useState(false);
+  const [batchProgress, setBatchProgress] = useState(0);
+  const batchCancelled = useRef(false);
 
   const { board, chapter, stranded } = useMemo(
     () => generateBoard({ seed, tileCount, tokenDensity, sprawl }),
@@ -64,16 +80,6 @@ export default function BoardLab() {
 
   const stats = useMemo(() => summarize(board.hexes), [board]);
 
-  // Losetas de Pueblo colocadas. Se cuenta aparte del terreno porque es la
-  // pregunta que de verdad importa desde que la generación no funda pueblos: no
-  // «hay casas», sino «el encaje ha sacado el sitio donde vive la gente».
-  const villageTiles = useMemo(
-    () =>
-      board.tiles.filter((t) =>
-        (TILES_BY_ID[t.defId]?.cells ?? []).some((c) => c.terrain === "pueblo"),
-      ).length,
-    [board],
-  );
   const maxDistance = useMemo(
     () => Math.max(...[...board.distanceFromEntrance.values()].filter(Number.isFinite)),
     [board],
@@ -84,8 +90,89 @@ export default function BoardLab() {
   const btn = (active: boolean) => buttonClass({ active });
 
   const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
+  const card = "rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3";
 
   const selectedTile = selected ? board.tiles.find((t) => t.id === selected.tileId) : undefined;
+
+  // El lote reutiliza los mandos de arriba (losetas, silueta, densidad) y solo
+  // añade cuántos tableros correr: no es un panel aparte (lib/dev-labs.ts, nota
+  // sobre "el LOTE no es un laboratorio aparte"). Cada tablero saca su semilla de
+  // la del campo "Semilla" + su índice, así que el lote entero es reproducible
+  // igual que un tablero suelto: misma semilla base → mismo lote.
+  async function runBatch() {
+    batchCancelled.current = false;
+    setBatchRunning(true);
+    setBatchProgress(0);
+
+    const terrainHexes = Object.fromEntries(TERRAIN_IDS.map((id) => [id, 0])) as Record<
+      TerrainId,
+      number
+    >;
+    const tokenTotal = Object.fromEntries(TOKEN_IDS.map((t) => [t, 0])) as Record<BoardToken, number>;
+    const tokenCoverage = Object.fromEntries(TOKEN_IDS.map((t) => [t, 0])) as Record<
+      BoardToken,
+      number
+    >;
+    let totalHexes = 0;
+    let voidsBoards = 0;
+    let voidsHexesTotal = 0;
+    let strandedTotal = 0;
+    const maxDistances: number[] = [];
+    let dungeonEliteBoards = 0;
+    let shortfallBoards = 0;
+    let roadRunsTotal = 0;
+    let roadLongestTotal = 0;
+
+    for (let i = 0; i < batchSize; i++) {
+      if (batchCancelled.current) break;
+
+      const generated = generateBoard({ seed: `${seed}-lote-${i}`, tileCount, tokenDensity, sprawl });
+      const s = summarize(generated.board.hexes);
+
+      totalHexes += generated.board.hexes.size;
+      for (const id of TERRAIN_IDS) terrainHexes[id] += s.terrain[id];
+      for (const t of TOKEN_IDS) {
+        tokenTotal[t] += s.tokens[t];
+        if (s.tokens[t] > 0) tokenCoverage[t]++;
+      }
+      if (generated.board.voids.length > 0) {
+        voidsBoards++;
+        voidsHexesTotal += generated.board.voids.length;
+      }
+      strandedTotal += generated.stranded.length;
+      const dists = [...generated.board.distanceFromEntrance.values()].filter(Number.isFinite);
+      maxDistances.push(dists.length > 0 ? Math.max(...dists) : 0);
+      if (generated.chapter.dungeonElite) dungeonEliteBoards++;
+      if (generated.board.tiles.length < tileCount) shortfallBoards++;
+      roadRunsTotal += s.roadRuns;
+      roadLongestTotal += s.longestRoad;
+
+      if (i % BATCH_YIELD_EVERY === 0) {
+        setBatchProgress(i + 1);
+        await new Promise((r) => setTimeout(r, 0));
+      }
+    }
+
+    setBatch({
+      n: maxDistances.length,
+      tileCount,
+      seed,
+      totalHexes,
+      terrainHexes,
+      tokenTotal,
+      tokenCoverage,
+      voidsBoards,
+      voidsHexesTotal,
+      strandedTotal,
+      maxDistances,
+      dungeonEliteBoards,
+      shortfallBoards,
+      roadRunsTotal,
+      roadLongestTotal,
+    });
+    setBatchRunning(false);
+    setBatchProgress(0);
+  }
 
   return (
     <div>
@@ -122,9 +209,8 @@ export default function BoardLab() {
       </p>
       <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
         El <b>terreno no se sortea y no se repinta</b>: cada hexágono del tablero es el que dibujó
-        su loseta en el catálogo, sin una sola excepción. La generación no abre Montañas, no mueve
-        la entrada y <b>no funda pueblos</b>: si el encaje no saca ninguna loseta de Pueblo, esa
-        partida no tiene Pueblo, y lo que hay que subir es el peso de esos tipos en la bolsa.
+        su loseta en el catálogo, sin una sola excepción. La generación no abre Montañas y no mueve
+        la entrada.
       </p>
 
       {/* Controles */}
@@ -239,11 +325,11 @@ export default function BoardLab() {
           <b>Élite de Mazmorra:</b>{" "}
           {chapter.dungeonElite ? ELITE_LABEL[chapter.dungeonElite] : "este tablero no saca Mazmorra"}
         </span>
-        <span title="El Pueblo lo trae maquetado su loseta (Posada, Poblado, Iglesia, Torre de mago) y no se garantiza: si el encaje no saca ninguna, esta partida se queda sin tienda y sin descanso largo. Si sale «ninguno» a menudo, hay que subir el peso de los tipos de Pueblo en /dev/losetas.">
+        <span title="Pueblo es una ficha más de la tabla B, sorteada sobre terreno abierto igual que Amenaza o Tesoro: no la trae maquetada ninguna loseta. Si sale «ninguna» a menudo, hay que subir su peso en TOKEN_WEIGHTS (lib/rules/board-gen.ts).">
           <b>Pueblo:</b>{" "}
-          {stats.terrain.pueblo === 0
-            ? "ninguno"
-            : `${stats.terrain.pueblo} ${stats.terrain.pueblo === 1 ? "hexágono" : "hexágonos"} en ${villageTiles} ${villageTiles === 1 ? "loseta" : "losetas"}`}
+          {stats.tokens.pueblo === 0
+            ? "ninguna"
+            : `${stats.tokens.pueblo} ${stats.tokens.pueblo === 1 ? "ficha" : "fichas"}`}
         </span>
         <span>
           <b>Travesía máxima:</b> {maxDistance} hexágonos
@@ -346,11 +432,139 @@ export default function BoardLab() {
           </ul>
         </div>
       )}
+
+      {/* Lote de semillas: mismo generador y mismos mandos de arriba, mirando el
+          reparto de N tableros en vez del ejemplar (lib/dev-labs.ts). */}
+      <h2 className="mb-1 mt-8 text-lg font-semibold text-[var(--wiki-text)]">Lote de semillas</h2>
+      <p className="mb-3 max-w-3xl text-sm text-[var(--wiki-muted)]">
+        Corre <b>N</b> tableros con los mandos de arriba (losetas, silueta, densidad) — la semilla de
+        cada uno sale de «Semilla» + su índice («{seed}-lote-0», «-1»...), así que el lote entero es
+        tan reproducible como un tablero suelto. Hace falta para remedir el reparto: al quitar los 5
+        tipos de loseta de Pueblo cambió la bolsa entera, así que las cifras de «sobre 300 tableros»
+        que citan <code>board-map.md</code> y <code>status.md</code> §6 son de la biblioteca vieja.
+      </p>
+
+      <div className="mb-4 flex flex-wrap items-end gap-x-6 gap-y-3">
+        <div className="flex flex-col gap-1">
+          <span className={label}>Tableros</span>
+          <SelectButton
+            value={batchSize}
+            onChange={(e) => setBatchSize(Number(e.value))}
+            options={BATCH_SIZES}
+            allowEmpty={false}
+            disabled={batchRunning}
+          />
+        </div>
+        <button className={btn(false)} onClick={runBatch} disabled={batchRunning}>
+          {batchRunning ? `Generando… ${batchProgress}/${batchSize}` : "Correr lote"}
+        </button>
+        {batchRunning && (
+          <button className={btn(false)} onClick={() => (batchCancelled.current = true)}>
+            Cancelar
+          </button>
+        )}
+      </div>
+
+      {batch && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className={`${card} overflow-x-auto`}>
+            <div className="mb-2 text-sm font-semibold text-[var(--wiki-text)]">
+              Terreno — {batch.n} tableros de {batch.tileCount} losetas ({batch.totalHexes} hexágonos)
+            </div>
+            <table className="w-full text-sm">
+              <tbody>
+                {TERRAIN_IDS.map((id) => (
+                  <tr key={id} className="border-t border-[var(--wiki-border)] first:border-t-0">
+                    <td className="py-1 text-[var(--wiki-text)]">{TERRAINS[id].label}</td>
+                    <td className="py-1 text-right text-[var(--wiki-muted)]">
+                      {batch.terrainHexes[id]} hex
+                    </td>
+                    <td className="py-1 pl-3 text-right font-medium text-[var(--wiki-text)]">
+                      {pct(batch.terrainHexes[id], batch.totalHexes)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className={`${card} overflow-x-auto`}>
+            <div className="mb-2 text-sm font-semibold text-[var(--wiki-text)]">
+              Fichas — promedio por partida y cobertura
+            </div>
+            <table className="w-full text-sm">
+              <tbody>
+                {TOKEN_IDS.map((t) => (
+                  <tr key={t} className="border-t border-[var(--wiki-border)] first:border-t-0">
+                    <td className="py-1 text-[var(--wiki-text)]">{capitalize(t)}</td>
+                    <td className="py-1 text-right text-[var(--wiki-muted)]">
+                      {avg(batch.tokenTotal[t], batch.n)}/partida
+                    </td>
+                    <td className="py-1 pl-3 text-right font-medium text-[var(--wiki-text)]">
+                      {pct(batch.tokenCoverage[t], batch.n)} de partidas
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className={`${card} lg:col-span-2`}>
+            <div className="mb-2 text-sm font-semibold text-[var(--wiki-text)]">Métricas del encaje</div>
+            <ul className="grid gap-1 text-sm text-[var(--wiki-text)] sm:grid-cols-2">
+              <li>
+                <b>Huecos cerrados:</b> {pct(batch.voidsBoards, batch.n)} de partidas
+                {batch.voidsBoards > 0 &&
+                  ` · media ${avg(batch.voidsHexesTotal, batch.voidsBoards)} hexágonos cuando salen`}
+              </li>
+              <li>
+                <b>Incomunicado:</b> {batch.strandedTotal} hexágonos en total (objetivo: 0)
+              </li>
+              <li>
+                <b>Travesía máxima:</b> mín {Math.min(...batch.maxDistances)} · media{" "}
+                {avg(batch.maxDistances.reduce((a, b) => a + b, 0), batch.n)} · máx{" "}
+                {Math.max(...batch.maxDistances)} hexágonos
+              </li>
+              <li>
+                <b>Élite de Mazmorra:</b> {pct(batch.dungeonEliteBoards, batch.n)} de partidas
+              </li>
+              <li>
+                <b>Losetas colocadas:</b> {pct(batch.shortfallBoards, batch.n)} de partidas se quedaron
+                cortas de las {batch.tileCount} pedidas
+              </li>
+              <li>
+                <b>Sendero:</b> media {avg(batch.roadRunsTotal, batch.n)} tramos, mayor medio{" "}
+                {avg(batch.roadLongestTotal, batch.n)} hexágonos
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 // --- Helpers de presentación ----------------------------------------------
+
+/** Acumulado del lote de semillas: sumas y recuentos crudos de N tableros. */
+type BatchResult = {
+  readonly n: number;
+  readonly tileCount: number;
+  readonly seed: string;
+  readonly totalHexes: number;
+  readonly terrainHexes: Record<TerrainId, number>;
+  readonly tokenTotal: Record<BoardToken, number>;
+  /** Cuántos de los N tableros llevan al menos 1 de esa ficha. */
+  readonly tokenCoverage: Record<BoardToken, number>;
+  readonly voidsBoards: number;
+  readonly voidsHexesTotal: number;
+  readonly strandedTotal: number;
+  readonly maxDistances: readonly number[];
+  readonly dungeonEliteBoards: number;
+  readonly shortfallBoards: number;
+  readonly roadRunsTotal: number;
+  readonly roadLongestTotal: number;
+};
 
 type Summary = {
   terrain: Record<TerrainId, number>;
@@ -427,6 +641,16 @@ function randomSeed(): string {
 
 function signed(n: number): string {
   return n === 0 ? "sin cambio" : n > 0 ? `+${n}` : `${n}`;
+}
+
+/** Porcentaje de `part` sobre `total`, para las tablas del lote de semillas. */
+function pct(part: number, total: number): string {
+  return total === 0 ? "—" : `${((part / total) * 100).toFixed(1)}%`;
+}
+
+/** Media de `total` repartido entre `n` tableros. */
+function avg(total: number, n: number): string {
+  return n === 0 ? "—" : (total / n).toFixed(2);
 }
 
 function formatDistance(d: number | undefined): string {

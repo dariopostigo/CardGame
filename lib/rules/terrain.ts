@@ -1,5 +1,5 @@
 // =========================================================================
-// Los 7 terrenos del prototipo
+// Los 6 terrenos del prototipo
 //
 // Espejo en código de la tabla de mecánicas oficiales de
 // docs/board/board-map.md §3a y del peso de generación de la tabla A (§2c).
@@ -13,23 +13,16 @@
 //
 // Aun así, los terrenos no son todos la misma clase de cosa. Hay AMBIENTE
 // —llanura, bosque, pantano, montaña—, que es el fondo del mapa y del que se
-// espera que mande en la loseta donde aparece; y hay LUGAR —Camino, Mazmorra y
-// Pueblo—, que son una red, un agujero y un asentamiento: cruzan, perforan o se
-// asientan sobre el fondo, y nunca son la masa. Los tres de lugar tampoco tienen
-// cuota en la tabla A (`genWeight: 0` en Mazmorra y Pueblo): salen donde el
-// maquetado quiera ponerlos, y ni una vez más.
+// espera que mande en la loseta donde aparece; y hay LUGAR —Camino y
+// Mazmorra—, que son una red y un agujero: cruzan o perforan el fondo, y nunca
+// son la masa. Los dos de lugar tampoco tienen cuota en la tabla A
+// (`genWeight: 0` en Mazmorra): salen donde el maquetado quiera ponerlos, y ni
+// una vez más.
 //
 // TODAS las cifras son primer pase sin balancear (docs/status.md §4).
 // =========================================================================
 
-export type TerrainId =
-  | "llanura"
-  | "bosque"
-  | "pantano"
-  | "montana"
-  | "camino"
-  | "mazmorra"
-  | "pueblo";
+export type TerrainId = "llanura" | "bosque" | "pantano" | "montana" | "camino" | "mazmorra";
 
 /** Prueba de salvación que exige un terreno al cruzarlo. */
 export type Hazard = {
@@ -67,10 +60,10 @@ export type TerrainDef = {
    */
   readonly genWeight: number;
   /**
-   * Terreno de LUGAR: una red (el Camino), un agujero (la Mazmorra) o un
-   * asentamiento (el Pueblo), no el fondo del mapa. No tiene cuota que cumplir en
-   * la tabla A y no se espera que MANDE en su tipo de loseta: un hilo, un agujero
-   * y cuatro casas nunca son la masa (`typeNotes`).
+   * Terreno de LUGAR: una red (el Camino) o un agujero (la Mazmorra), no el
+   * fondo del mapa. No tiene cuota que cumplir en la tabla A y no se espera que
+   * MANDE en su tipo de loseta: un hilo y un agujero nunca son la masa
+   * (`typeNotes`).
    */
   readonly isPlace: boolean;
 };
@@ -163,26 +156,6 @@ export const TERRAINS: Readonly<Record<TerrainId, TerrainDef>> = {
     allowsAmbush: true,
     hazard: null,
     genWeight: 0, // no tiene cuota: sale donde la maquetes
-    isPlace: true,
-  },
-  // El Pueblo es el contrario exacto de la Mazmorra, y por eso sus cifras van
-  // todas al otro lado: se anda por calle hecha (coste 1), se duerme bajo techo
-  // (seguro para acampar) y no hay dónde esconderse —ni cobertura, ni emboscada,
-  // y el enemigo te ve venir igual que tú a él—. Lo que hace de verdad al Pueblo
-  // no es el terreno sino lo que se maqueta encima: el tipo de loseta decide si
-  // sale un tabernero, un vendedor o un mago (docs/board/board-map.md §3b).
-  pueblo: {
-    id: "pueblo",
-    label: "Pueblo",
-    moveCost: 1,
-    enemyDetectionMod: 0,
-    heroVisionMod: 0,
-    coverVsRanged: 0,
-    blocksLineOfSight: false,
-    safeToCamp: true,
-    allowsAmbush: false,
-    hazard: null,
-    genWeight: 0, // no tiene cuota: sale donde lo maquetes
     isPlace: true,
   },
 };

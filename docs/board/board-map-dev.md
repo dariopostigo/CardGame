@@ -13,7 +13,7 @@ Documento técnico complementario a [`board-map.md`](board-map.md) (el diseño d
 ```
 Hex {
   q, r                // coordenadas axiales
-  terrain             // Llanura | Bosque | Pantano | Montaña | Camino | Mazmorra | Pueblo (board-map.md §3a)
+  terrain             // Llanura | Bosque | Pantano | Montaña | Camino | Mazmorra (board-map.md §3a)
                       // Obligatorio: lo trae pintado la loseta, no se sortea (§2c, tabla A)
   tileId              // loseta a la que pertenece (obligatorio: no hay hexágono sin loseta,
                       // lib/rules/state.ts). El grupo/tile YA está construido (§2, §2c) — lo
@@ -22,10 +22,12 @@ Hex {
                       // por delante del motor: sin consumidor hasta que la niebla por grupo se
                       // retome (aparcada a propósito hasta que existan fichas de personaje, §4)
   location?           // Guarida | null  (la única localización que queda, e INVISIBLE: solo
-                      // marca dónde espera el boss. Pueblo y Mazmorra son terreno,
-                      // board-map.md §3a y §3b)
+                      // marca dónde espera el boss. La Mazmorra es terreno, board-map.md §3a;
+                      // el Pueblo es ficha, ver boardToken)
                       // En el prototipo NINGUNA abre sub-mapa: se resuelven en su hex (§3b-bis)
-  boardToken?         // Exploracion | Amenaza | Tesoro | Terreno | Personaje | Enemigo | null
+  boardToken?         // Exploracion | Amenaza | Tesoro | Terreno | Personaje | Enemigo | Pueblo | null
+                      // Pueblo nunca pasa a "Resuelta": es un edificio persistente, no contenido
+                      // que se consuma (lib/rules/tokens.ts) — la excepción del estado de abajo.
                       // NOTA: board-map.md §4c ya diseña un 4º estado de ficha ("Resuelta",
                       // con huella grabada) y una 3ª ficha de personaje (Jefe, corona morada)
                       // que este campo todavía no representa. Aparcado a propósito: el propio
@@ -84,8 +86,8 @@ Group (tile) {              // la niebla de grupo (§4) todavía no lee este dat
                             // ya existe (PlacedTile, arriba), lo que falta es la lógica de
                             // exploración por grupo, aparcada hasta las fichas de personaje (§4)
   id, terrain, hexes: Hex[], neighborGroupIds: []
-                            // "terrain" y no "terrainOrLocationType": Pueblo y Mazmorra ya son
-                            // terreno (board-map.md §3b), no una localización aparte del grupo
+                            // "terrain" y no "terrainOrLocationType": la Mazmorra ya es terreno
+                            // (board-map.md §3b), no una localización aparte del grupo
   explorationState          // 'sinExplorar' | 'detectado' | 'explorado' (§4)
 }
 
@@ -149,14 +151,14 @@ Esto no es el modelo final, solo una forma concreta de ver cómo encajan las pie
 
 ## 3. Algoritmos clave a tener en cuenta
 
-- **Generación del prototipo (board-map.md §2c):** elegir hex de entrada en **una esquina**, hex-por-hex con pesos (tabla A), garantizar conectividad (BFS/flood-fill desde la entrada evitando Montaña), colocar lo **garantizado** (Guarida con el boss en el hex transitable más lejano —usar la distancia del mismo BFS—, y **1 Pueblo** en la mitad cercana a la entrada: con losetas el Pueblo ya llega maquetado y **no se garantiza** —si el encaje no saca loseta de Pueblo, ese tablero no tiene, porque la generación no repinta nada), y sembrar fichas por la tabla B. Sin tiles ni grupos en esta fase.
+- **Generación del prototipo (board-map.md §2c):** elegir hex de entrada en **una esquina**, hex-por-hex con pesos (tabla A), garantizar conectividad (BFS/flood-fill desde la entrada evitando Montaña), colocar lo **garantizado** (Guarida con el boss en el hex transitable más lejano —usar la distancia del mismo BFS—), y sembrar fichas por la tabla B, Pueblo incluido —vuelve a ser una ficha más, sin garantía de aparecer. Sin tiles ni grupos en esta fase.
 - **Niebla del prototipo — dos capas por hex:** para cada hex dentro de `visionTerrain` marcar `terrainRevealed`, y dentro de `visionDetail` marcar además `contentRevealed` (board-map.md §2c). Ambas son **acumulativas y permanentes**: lo revelado no se vuelve a ocultar al alejarse. La niebla por grupo (3 estados) es solo para la versión con tiles.
 - **Recalcular visión** tras cada movimiento del héroe, y también al cambiar un modificador de visión (entrar/salir de Bosque, jugar *Ojo avizor*, ganar *Velo de sombras*). La Montaña **bloquea línea de visión**, así que no basta con el radio: hace falta un trazado de línea (supercover/line-of-sight sobre coordenadas cúbicas) por cada hex candidato.
 - **Fin de combate, solo el leash de reengancharse (game-design.md §4b.8):** esto sí sigue siendo del mapa, aunque el combate en sí ya se resuelva en su propia pantalla — es la condición para volver a "fuera de combate" y poder acampar (`../game-design.md` §4c.2). Hay que llevar `turnsOutOfContact` y solo considerarlo cumplido cuando llegue a 2; si un enemigo te vuelve a detectar antes, el contador se **reinicia**. Sin esto, huir un hex te dejaría acampar gratis a un paso de los enemigos.
 
 > **Retirado de esta lista (2026-08-07): Desengancharse, tope de enemigos y ataque a bocajarro.** Los tres describían mecánica de combate que, con la pantalla de batalla propia (`../board/battle.md`, decisión raíz #1), ya no ocurre en este tablero — el propio `Combat{}` de §2 ya usa el presupuesto de composición (tope 6, no 2) y cita `battle.md`, así que estas tres entradas habían quedado contradichas por el resto del documento. No se reescriben aquí: son candidatas a un futuro documento técnico de la pantalla de batalla (`board/battle-dev.md` o equivalente), que todavía no existe.
 - **Tabla de loot (game-design.md §6b.6):** conviene una **sola función** `rollLoot(fuente)` que haga los tres pasos (¿cae carta? → rareza → tipo) y devuelva cartas concretas del catálogo, porque la llaman **seis** sitios distintos: matar un enemigo, ficha de Tesoro, Mazmorra, Suceso *Hallazgo*, Combate *Botín inesperado* y el umbral del 25 % de Amenaza (que le resta un escalón de rareza). Ojo con la **regla de caída**: si la rareza sorteada no existe para ese tipo de carta, baja al escalón más alto disponible — sin ella, un Épico de arma devuelve vacío, porque el catálogo solo llega a Raro.
-- **Nada abre sub-mapa en el prototipo (board-map.md §3b-bis):** Mazmorra, Mina, Cripta, Iglesia y Torre de mago se resuelven **en su hexágono** —y las cuatro últimas ni siquiera son localizaciones ya: la Mazmorra y el Pueblo son terreno, y la Iglesia y la Torre son tipos de loseta de Pueblo—. No hace falta ni un segundo generador, ni pila de mapas, ni estado de entrada/salida. El sub-mapa llega con los tiles.
+- **Nada abre sub-mapa en el prototipo (board-map.md §3b-bis):** Mazmorra, Mina y Cripta se resuelven **en su hexágono**, y ni siquiera son localizaciones ya: la Mazmorra es terreno. El Pueblo tampoco abre sub-mapa, pero sí abre su propia **pantalla** (la Taberna, `characters/npcs.md` §3c) — es la única excepción, y es pantalla completa, no un hexágono reforzado. No hace falta ni un segundo generador, ni pila de mapas, ni estado de entrada/salida para las de terreno. El sub-mapa llega con los tiles.
 - **Ficha de Terreno (board-map.md §4b):** se resuelve **dentro del paso de movimiento**, como Desengancharse — la prueba decide si el hex cuesta o no y si pierdes el movimiento restante, así que no puede ser un evento posterior. La ficha **no se retira al fallar**.
 - **Encaje de tiles (board-map.md §2, post-prototipo):** definir cada tile con "sockets" de borde (qué terrenos puede tocar en cada lado), similar a cómo encajan las piezas en juegos tipo Carcassonne, para que la generación aleatoria no produzca uniones raras entre grupos.
 - **Propagación de niebla de guerra (board-map.md §4):** cuando un grupo pasa a `explorado`, recorrer sus `neighborGroupIds` y ponerlos en `detectado` si seguían en `sinExplorar`. Es una operación local (solo vecinos directos), no hace falta recalcular todo el mapa.

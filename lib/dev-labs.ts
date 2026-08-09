@@ -32,8 +32,9 @@ export type DevLab = {
 
 export const LAB_STATUS_LABEL = BUILD_STATUS_LABEL;
 
-// El orden importa: primero la loseta, luego el tablero que se monta con ellas,
-// y luego las fichas que se ponen encima del tablero ya montado.
+// El orden es el del menú de /dev, fijado a mano: Losetas, Diseño de fichas,
+// Baraja y Oteo y Tirada de dados van primero porque son los laboratorios que
+// más se usan; el resto mantiene su orden anterior a continuación.
 export const DEV_LABS: readonly DevLab[] = [
   {
     slug: "losetas",
@@ -43,6 +44,33 @@ export const DEV_LABS: readonly DevLab[] = [
     icon: "pi pi-box",
     status: "en-curso",
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §2" },
+  },
+  {
+    slug: "pieces",
+    label: "Diseño de fichas",
+    summary:
+      "La pieza que se pone encima: las 6 fichas de contenido y las 3 de personaje, todas en el mismo disco tumbado. Dibujo vectorial, legibilidad a tamaño de partida sobre los siete terrenos, y los estados de la niebla más la ficha ya resuelta.",
+    icon: "pi pi-circle-fill",
+    status: "en-curso",
+    doc: { href: "/docs/board/board-map", label: "Tablero y mapa §4c" },
+  },
+  {
+    slug: "baraja",
+    label: "Baraja y Oteo",
+    summary:
+      "Mazo, zona «en juego» con tope fijo de 5 y el Oteo de 2 cartas por turno. Es donde se prueba la regla madre: jugar una carta la devuelve al Mazo.",
+    icon: "pi pi-clone",
+    status: "en-curso",
+    doc: { href: "/docs/game-design", label: "Mazo y Oteo" },
+  },
+  {
+    slug: "dice",
+    label: "Tirada de dados",
+    summary:
+      "Dados físicos de verdad (Three.js + cannon-es) para los 7 tipos de D&D, en vez de un botón que hace random(): arrastra y suelta o pulsa «Tirar», y el resultado sale de qué cara mira hacia arriba una vez parado el dado.",
+    icon: "pi pi-th-large",
+    status: "en-curso",
+    doc: { href: "/docs/game-design", label: "Resolución de pruebas §4b" },
   },
   // El LOTE de semillas no es un laboratorio aparte: es este mismo generador con
   // estos mismos mandos, mirando el reparto de cientos de tableros en vez del
@@ -61,15 +89,6 @@ export const DEV_LABS: readonly DevLab[] = [
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §2c" },
   },
   {
-    slug: "pieces",
-    label: "Diseño de fichas",
-    summary:
-      "La pieza que se pone encima: las 6 fichas de contenido y las 3 de personaje, todas en el mismo disco tumbado. Dibujo vectorial, legibilidad a tamaño de partida sobre los siete terrenos, y los estados de la niebla más la ficha ya resuelta.",
-    icon: "pi pi-circle-fill",
-    status: "en-curso",
-    doc: { href: "/docs/board/board-map", label: "Tablero y mapa §4c" },
-  },
-  {
     slug: "fichas",
     label: "Fichas del tablero",
     summary:
@@ -79,15 +98,6 @@ export const DEV_LABS: readonly DevLab[] = [
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §4" },
   },
   {
-    slug: "baraja",
-    label: "Baraja y Oteo",
-    summary:
-      "Mazo, zona «en juego» con tope fijo de 5 y el Oteo de 2 cartas por turno. Es donde se prueba la regla madre: jugar una carta la devuelve al Mazo.",
-    icon: "pi pi-clone",
-    status: "en-curso",
-    doc: { href: "/docs/game-design", label: "Mazo y Oteo" },
-  },
-  {
     slug: "movimiento",
     label: "Movimiento y visión",
     summary:
@@ -95,15 +105,6 @@ export const DEV_LABS: readonly DevLab[] = [
     icon: "pi pi-directions",
     status: "en-curso",
     doc: { href: "/docs/game-design", label: "Movimiento y visión" },
-  },
-  {
-    slug: "dice",
-    label: "Tirada de dados",
-    summary:
-      "Dados físicos de verdad (Three.js + cannon-es) para los 7 tipos de D&D, en vez de un botón que hace random(): arrastra y suelta o pulsa «Tirar», y el resultado sale de qué cara mira hacia arriba una vez parado el dado.",
-    icon: "pi pi-th-large",
-    status: "en-curso",
-    doc: { href: "/docs/game-design", label: "Resolución de pruebas §4b" },
   },
   {
     slug: "combate",

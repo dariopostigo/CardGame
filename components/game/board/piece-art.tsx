@@ -7,27 +7,28 @@
 // de settings, y la geometría del disco la monta BoardPiece.tsx.
 //
 // VOCABULARIO (dos cosas distintas, dos familias distintas):
-//   · ficha de contenido (`BoardToken`) — las 6 de board-map.md §4. Es lo que
-//     hay EN el hexágono, y se retira al resolverlo.
+//   · ficha de contenido (`BoardToken`) — las 7 de board-map.md §4. Es lo que
+//     hay EN el hexágono, y se retira al resolverlo (salvo Pueblo, que es un
+//     edificio persistente: no se retira nunca, ver lib/rules/tokens.ts).
 //   · ficha de personaje (`PawnId`)     — el héroe y el enemigo ya activo. Es
 //     quien SE MUEVE por el tablero, y eso es lo único que la separa de la otra
 //     familia: una ficha de contenido espera donde está, un personaje anda.
 //
 // Las dos van igual: DISCO tumbado en la loseta. La familia de localización
-// —Pueblo, Mazmorra, Guarida como placa impresa en el suelo— ya no existe: el
-// Pueblo y la Mazmorra son terreno de la loseta (`TerrainId`) y la Guarida es un
-// dato invisible del motor (`LocationId`), así que no hay nada que dibujar.
+// —Pueblo, Mazmorra, Guarida como placa impresa en el suelo— ya no existe: la
+// Mazmorra es terreno de la loseta (`TerrainId`), el Pueblo volvió a ser ficha
+// de contenido y la Guarida es un dato invisible del motor (`LocationId`).
 //
 // DOS TIPOS DE DIBUJO conviven aquí, y la diferencia importa:
 //   · ruta (Amenaza, Enemigo y el Enemigo activo) — pinta con `currentColor`,
 //     así que coge la tinta que le da $piece y se adapta a la cara de su ficha.
-//   · emoji en un <text> (Tesoro, Exploración, Personaje, el Héroe, Terreno y
-//     Jefe) — trae SUS colores y no obedece a la tinta de $piece, así que la
-//     cara de esas seis tiene que hacerle de PAPEL: por eso Tesoro va en oro
-//     claro y el Héroe en azul pálido. Además dependen de la fuente del
+//   · emoji en un <text> (Tesoro, Exploración, Personaje, Pueblo, el Héroe,
+//     Terreno y Jefe) — trae SUS colores y no obedece a la tinta de $piece, así
+//     que la cara de esas siete tiene que hacerle de PAPEL: por eso Tesoro va
+//     en oro claro y el Héroe en azul pálido. Además dependen de la fuente del
 //     sistema: se pintan distinto en cada uno, y si es vieja sale el
 //     rectángulo de carácter desconocido. Se usan porque son los que se han
-//     pedido; si un día hay que uniformar la paleta, son las seis que hay que
+//     pedido; si un día hay que uniformar la paleta, son las siete que hay que
 //     redibujar.
 //
 // Todo es arte provisional en cualquier caso: la fase de arte está diferida
@@ -77,7 +78,7 @@ export type PieceArt = {
   readonly art: ReactNode;
 };
 
-// --- Las 6 fichas de contenido (board-map.md §4) ---------------------------
+// --- Las 7 fichas de contenido (board-map.md §4) ---------------------------
 
 export const TOKEN_ART: Readonly<Record<BoardToken, PieceArt>> = {
   exploracion: {
@@ -137,6 +138,16 @@ export const TOKEN_ART: Readonly<Record<BoardToken, PieceArt>> = {
   enemigo: {
     label: "Enemigo: combate al quedar adyacente",
     art: <HornedSkull />,
+  },
+  pueblo: {
+    label: "Pueblo: entra a la Taberna (tienda, sin resolver aún)",
+    art: (
+      // Casa: U+1F3E0. No se retira nunca al interactuar —es un edificio
+      // persistente, no contenido que se consuma (lib/rules/tokens.ts)—.
+      <text x="12" y="12" fontSize="19" textAnchor="middle" dominantBaseline="central">
+        {"\u{1F3E0}"}
+      </text>
+    ),
   },
 };
 
@@ -248,6 +259,7 @@ export const TOKEN_IDS: readonly BoardToken[] = [
   "enemigo",
   "tesoro",
   "exploracion",
+  "pueblo",
   "terreno",
 ];
 

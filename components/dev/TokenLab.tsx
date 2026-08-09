@@ -15,6 +15,8 @@
 // depende de sistemas que no existen todavía (Maldición, reloj de Amenaza,
 // Mercenario, pantalla de batalla). Personaje es solo lectura: qué oficio es
 // y qué ofrece, sin comprar/vender de verdad (Hero no tiene oro todavía).
+// Pueblo abre VillageScreen, una pantalla propia a pantalla completa con un
+// placeholder de tienda — nunca se retira, es un edificio, no contenido.
 // =========================================================================
 
 import { useMemo, useState, type ChangeEvent } from "react";
@@ -41,8 +43,9 @@ import { buildEncounterState, type EncounterState } from "@/lib/rules/encounter"
 import type { DeckCard } from "@/lib/rules/deck";
 import type { CatalogCard } from "@/lib/card-catalog";
 import HexBoard from "@/components/game/board/HexBoard";
-import { TOKEN_ART } from "@/components/game/board/piece-art";
+import { TOKEN_ART, TOKEN_IDS } from "@/components/game/board/piece-art";
 import { buttonClass } from "@/components/ui/Button";
+import VillageScreen from "@/components/dev/VillageScreen";
 
 const INITIAL_SEED = "cofre-1";
 
@@ -51,7 +54,8 @@ type Resolution =
   | { readonly kind: "tesoro"; readonly cards: readonly CatalogCard[] }
   | { readonly kind: "suceso"; readonly ficha: "amenaza" | "exploracion"; readonly card: DeckCard }
   | { readonly kind: "enemigo"; readonly card: DeckCard }
-  | { readonly kind: "personaje" };
+  | { readonly kind: "personaje" }
+  | { readonly kind: "pueblo" };
 
 type HistoryEntry = { readonly coord: HexCoord; readonly cell: HexCell; readonly resolution: Resolution };
 
@@ -73,12 +77,14 @@ export default function TokenLab({ catalog }: { catalog: readonly CatalogCard[] 
     <div>
       <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">Fichas del tablero</h1>
       <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
-        Las 6 fichas de contenido (<code>docs/board/board-map.md</code> §4) ya salían en el
+        Las 7 fichas de contenido (<code>docs/board/board-map.md</code> §4) ya salían en el
         tablero, pero nada resolvía qué pasa al interactuar con ellas. Clica una ficha para
         resolverla: <b>Terreno</b> tira su prueba, <b>Tesoro</b> sortea la tabla de loot,{" "}
         <b>Amenaza</b>/<b>Exploración</b> roban una carta de Suceso, <b>Enemigo</b> roba una de
-        Combate y <b>Personaje</b> muestra su oficio. Una ficha resuelta se retira y deja su huella
-        (§4c) — Terreno es la excepción: si fallas la prueba se queda para reintentar o rodearla.
+        Combate, <b>Personaje</b> muestra su oficio y <b>Pueblo</b> abre la pantalla de la Taberna.
+        Una ficha resuelta se retira y deja su huella (§4c) — <b>Terreno</b> y <b>Pueblo</b> son la
+        excepción: Terreno se queda si fallas la prueba, y Pueblo no se retira nunca (es un
+        edificio, no contenido que se consuma).
       </p>
 
       <div className="mb-5 flex flex-wrap items-end gap-x-6 gap-y-3">
@@ -143,6 +149,7 @@ function TokenSession({ board: initialBoard, heroClass, catalog }: SessionProps)
   const [encounterState, setEncounterState] = useState<EncounterState>(() => buildEncounterState(catalog));
   const [selected, setSelected] = useState<HexCoord | null>(null);
   const [history, setHistory] = useState<readonly HistoryEntry[]>([]);
+  const [villageAt, setVillageAt] = useState<HexCoord | null>(null);
 
   function record(coord: HexCoord, cell: HexCell, resolution: Resolution) {
     setHistory((h) => [...h, { coord, cell, resolution }]);
@@ -193,6 +200,14 @@ function TokenSession({ board: initialBoard, heroClass, catalog }: SessionProps)
       return;
     }
 
+    if (hex.token === "pueblo") {
+      // Nunca se retira: es un edificio persistente, no contenido que se
+      // consuma. Se puede volver a entrar cuantas veces haga falta.
+      setVillageAt(hex.coord);
+      record(hex.coord, hex, { kind: "pueblo" });
+      return;
+    }
+
     // "personaje"
     setBoard((b) => retireToken(b, hex.coord));
     record(hex.coord, hex, { kind: "personaje" });
@@ -228,7 +243,7 @@ function TokenSession({ board: initialBoard, heroClass, catalog }: SessionProps)
         <HexBoard board={board} revealAll selected={selected} onHexClick={handleHexClick} />
 
         <div className="board__legend">
-          {(["exploracion", "amenaza", "tesoro", "terreno", "personaje", "enemigo"] as const).map((t) => (
+          {TOKEN_IDS.map((t) => (
             <span key={t} className="board__legend-item" title={TOKEN_ART[t].label}>
               {TOKEN_ART[t].label.split(":")[0]}
             </span>
@@ -239,6 +254,8 @@ function TokenSession({ board: initialBoard, heroClass, catalog }: SessionProps)
       {selectedCell && (
         <TokenPanel cell={selectedCell} resolution={latestForSelected?.resolution ?? null} />
       )}
+
+      {villageAt && <VillageScreen onExit={() => setVillageAt(null)} />}
 
       {history.length > 0 && (
         <details className="mt-4 text-sm text-[var(--wiki-muted)]" open>
@@ -278,6 +295,8 @@ function summarize(resolution: Resolution): string {
       return `Enemigo — ${resolution.card.card.name}`;
     case "personaje":
       return "Personaje";
+    case "pueblo":
+      return "Pueblo — entra a la Taberna";
   }
 }
 
@@ -307,12 +326,20 @@ function TokenPanel({ cell, resolution }: { cell: HexCell; resolution: Resolutio
               oficio <b>{NPC_LABEL[cell.npcType]}</b>. {NPC_BLURB[cell.npcType]}
             </>
           ) : (
-            "sin oficio asignado todavía (solo se resuelve en Pueblo, board-gen.ts)."
+            "sin oficio asignado todavía (falta el sistema que lo decida)."
           )}
         </p>
       )}
 
-      {resolution && resolution.kind !== "personaje" && <ResolutionView resolution={resolution} />}
+      {resolution?.kind === "pueblo" && (
+        <p className="text-[var(--wiki-text)]">
+          Pueblo: entra a la Taberna. Vuelve a clicar la ficha para reabrir la pantalla.
+        </p>
+      )}
+
+      {resolution && resolution.kind !== "personaje" && resolution.kind !== "pueblo" && (
+        <ResolutionView resolution={resolution} />
+      )}
     </div>
   );
 }
@@ -321,7 +348,11 @@ function cardLine(card: CatalogCard): string {
   return `${card.name} (${card.rarity})`;
 }
 
-function ResolutionView({ resolution }: { resolution: Exclude<Resolution, { kind: "personaje" }> }) {
+function ResolutionView({
+  resolution,
+}: {
+  resolution: Exclude<Resolution, { kind: "personaje" } | { kind: "pueblo" }>;
+}) {
   if (resolution.kind === "terreno") {
     const { outcome } = resolution;
     if (outcome.kind === "exito") {

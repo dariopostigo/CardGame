@@ -151,9 +151,8 @@ export function terrainCounts(def: TileDef): Map<TerrainId, number> {
 /**
  * El carácter con el que se dibuja cada terreno. Fuente única de la letra: la
  * lee `drawn()` para leer un dibujo y `TERRAIN_CHAR` para escribirlo.
- * Dos letras no son la inicial porque la inicial estaba pedida: la Mazmorra es
- * "Z" (ma-Z-morra, la M es de Montaña) y el Pueblo es "U" (p-U-eblo, la P es de
- * Pantano).
+ * Una letra no es la inicial porque la inicial estaba pedida: la Mazmorra es
+ * "Z" (ma-Z-morra, la M es de Montaña).
  */
 export const TERRAIN_CHARS: ReadonlyMap<string, TerrainId> = new Map<string, TerrainId>([
   ["L", "llanura"],
@@ -162,7 +161,6 @@ export const TERRAIN_CHARS: ReadonlyMap<string, TerrainId> = new Map<string, Ter
   ["P", "pantano"],
   ["M", "montana"],
   ["Z", "mazmorra"],
-  ["U", "pueblo"],
 ]);
 
 /** La inversa: el carácter de cada terreno, para escribir un dibujo. */
@@ -719,11 +717,11 @@ export function validateTileTypes(types: readonly TileType[]): string[] {
 export function typeNotes(type: TileType): string[] {
   const notes: string[] = [];
   const label = TERRAINS[type.terrain]?.label ?? type.terrain;
-  // Los terrenos de LUGAR (`isPlace`: Camino, Mazmorra y Pueblo) no tienen por
-  // qué mandar en su loseta. Un camino es un hilo que cruza otra cosa, una
-  // mazmorra es un agujero en la roca y un pueblo son cuatro casas en un claro:
-  // pedirles que sean mayoría sería pedirles que dejaran de ser lo que son. Del
-  // terreno de ambiente sí se espera que domine.
+  // Los terrenos de LUGAR (`isPlace`: Camino y Mazmorra) no tienen por qué
+  // mandar en su loseta. Un camino es un hilo que cruza otra cosa y una
+  // mazmorra es un agujero en la roca: pedirles que sean mayoría sería
+  // pedirles que dejaran de ser lo que son. Del terreno de ambiente sí se
+  // espera que domine.
   const mustDominate = !TERRAINS[type.terrain]?.isPlace;
 
   for (const def of type.variants) {

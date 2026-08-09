@@ -32,20 +32,22 @@ import type { TerrainId } from "./terrain";
 
 // --- Contenido de un hexágono ---------------------------------------------
 
-/** Las 6 fichas del tablero (docs/board/board-map.md §4, tabla de tokens). */
+/** Las 7 fichas del tablero (docs/board/board-map.md §4, tabla de tokens). */
 export type BoardToken =
   | "exploracion"
   | "amenaza"
   | "tesoro"
   | "terreno"
   | "personaje"
-  | "enemigo";
+  | "enemigo"
+  | "pueblo";
 
 /**
  * Los 7 tipos de NPC del prototipo (docs/characters/npcs.md §2), sin el Dador
- * de misión (solo Campaña). Se decide al generar el tablero y no al
- * interactuar, porque hace falta saberlo ya para no repetir oficio dentro de
- * un mismo Pueblo (board-gen.ts, `seedTokens`).
+ * de misión (solo Campaña). Todavía sin un sitio que lo asigne: Pueblo volvió
+ * a ser ficha (`BoardToken` "pueblo") y ya no siembra oficio al generar el
+ * tablero, así que este campo se queda en `null` hasta que exista un sistema
+ * de tienda/NPC que lo decida.
  */
 export type NpcType =
   | "vendedor"
@@ -78,9 +80,9 @@ export type Hex = {
   readonly location: LocationId | null;
   readonly token: BoardToken | null;
   /**
-   * El oficio del NPC, si `token` es "personaje" y sale de un Pueblo. Los NPC
-   * sueltos del resto del mapa todavía no tienen tipo (docs/characters/npcs.md
-   * §5): null en todo lo que no sea Pueblo.
+   * El oficio del NPC de una ficha "personaje". Todavía sin asignar en ningún
+   * caso (docs/characters/npcs.md §5): siempre `null` hasta que exista el
+   * sistema que lo decida.
    */
   readonly npcType: NpcType | null;
   /** Loseta a la que pertenece — board-map.md §2. */

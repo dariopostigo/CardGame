@@ -55,16 +55,17 @@ El terreno del hexágono aplica **además** su propio efecto (`../board/board-ma
 
 ## 5. Qué ficha del tablero usa el mazo
 
-Cruce con las 6 fichas de [`../board/board-map.md`](../board/board-map.md) §4:
+Cruce con las 7 fichas de [`../board/board-map.md`](../board/board-map.md) §4:
 
 | Ficha | Usa el mazo |
 |---|---|
 | Enemigo | Sí — 1 carta de **Combate** al iniciar la pelea |
 | Amenaza | Sí — 1 carta de **Suceso** (puede salir ¡Emboscada!, Trampa, o nada) |
 | Exploración (comodín) | Sí — 1 carta de **Suceso** (rango completo: hallazgo, NPC, mercenarios, trampa, vacío…) |
-| Terreno | **No** *(corregido)* — la prueba se resuelve sola (`../board/board-map.md` §4b: `1d20 + FUE/DES` vs CD 12, éxito = cruzas gratis +1 mov, fallo = pierdes el movimiento y sufres el peligro del hex). Solo roba un Suceso si la ficha cae en una localización especial |
+| Terreno | **No** *(corregido)* — la prueba se resuelve sola (`../board/board-map.md` §4b: `1d20 + FUE/DES` vs CD 12, éxito = cruzas gratis +1 mov, fallo = pierdes el movimiento y sufres el peligro del hex). Solo roba un Suceso si la ficha cae en terreno de Mazmorra |
 | Tesoro | **No** — da loot directo (`../board/board-map.md` §4) |
 | Personaje (NPC) | **No** — interacción de calma, sin mazo (`../characters/npcs.md` §4) |
+| Pueblo | **No** — navega a la pantalla de la Taberna (`../characters/npcs.md` §3c); ahí solo hay un placeholder de tienda, sin mazo de encuentro |
 
 ## 6. ¿Un mazo o varios? *(decidido)*
 

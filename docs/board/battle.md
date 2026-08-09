@@ -91,7 +91,7 @@ El mercenario es una **ficha propia** con bloque de combate por Rareza — ver [
 | **Agua/lodo** | Coste 2, al entrar salvación CON CD 12 o Envenenado | Pantano |
 | **Barricada** | Intransitable, bloquea visión, +1 CA a los adyacentes contra ataques a distancia | — (nueva, mismo número de cobertura que Bosque) |
 
-**El terreno del mapa genera el campo — 7 plantillas.** El hexágono del mapa donde se abre la batalla decide cantidad y tipo de obstáculos, sembrados con la semilla de la partida:
+**El terreno del mapa genera el campo — 6 plantillas.** El hexágono del mapa donde se abre la batalla decide cantidad y tipo de obstáculos, sembrados con la semilla de la partida:
 
 | Terreno del mapa | Plantilla del campo | Efecto global |
 |---|---|---|
@@ -101,7 +101,8 @@ El mercenario es una **ficha propia** con bloque de combate por Rareza — ver [
 | Montaña | 10 Rocas en dos crestas, 2 pasos de 1 hex | El campo más táctico: los tiradores solo disparan por los pasos |
 | Camino | 2 Barricadas + 1 Roca, banda de camino de 3 hex | +1 punto de Movimiento la primera vez que se cruza en el turno |
 | Mazmorra | 8 Rocas en pasillos y 2 salas | Sin fuente de luz equipada, alcance máximo a distancia = 2 y los enemigos actúan primero en la ronda 1 (usa por fin la Antorcha) |
-| Pueblo | 4 Barricadas | Ni cobertura ni emboscada — en una plaza no hay dónde esconderse |
+
+*(Pueblo tenía fila propia —4 Barricadas— de cuando era terreno; **retirada 2026-08-09** al volver a ser ficha, `board-map.md` §4. Ya no genera su propio campo: una batalla que se abra en un hexágono con ficha de Pueblo encima usa la plantilla de su terreno de debajo —Llanura, Bosque o Camino, los únicos donde `TOKEN_WEIGHTS` la deja caer (`lib/rules/board-gen.ts`)—, igual que cualquier otra ficha de contenido.)*
 
 Invariante al generar: siempre existe ruta transitable entre las dos bandas de despliegue (mismo criterio de "medir e informar, no repintar" que ya usa `board-gen.ts`).
 

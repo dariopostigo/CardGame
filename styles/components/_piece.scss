@@ -12,9 +12,9 @@
 // en $piece más su dibujo en piece-art.tsx, y nada más en esta hoja.
 //
 // Hay UNA geometría y no tres: la placa de localización y la peana de personaje
-// se retiraron —el Pueblo y la Mazmorra son terreno, y el héroe y el enemigo
-// activo pasaron al disco—, así que lo que distingue a una ficha de otra es su
-// dibujo y su color.
+// se retiraron —la Mazmorra es terreno y el Pueblo es ficha, y el héroe y el
+// enemigo activo pasaron al disco—, así que lo que distingue a una ficha de
+// otra es su dibujo y su color.
 //
 // El disco se pinta con DOS filetes, y no es adorno: el oscuro de fuera lo
 // separa del Bosque y de la Mazmorra, y el claro de la cara lo separa del Camino
