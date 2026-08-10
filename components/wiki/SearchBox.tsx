@@ -113,7 +113,7 @@ export default function SearchBox() {
               }
             }}
             placeholder="Buscar…"
-            className="w-40 sm:w-56"
+            className="w-20 sm:w-40 md:w-56"
           />
         )}
       />

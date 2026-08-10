@@ -268,7 +268,7 @@ export default function BoardLab() {
 
         <div className="flex flex-col gap-1">
           <span className={label}>Vista</span>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <div className="flex items-center gap-2">
               <InputSwitch
                 inputId="board-reveal-all"

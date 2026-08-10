@@ -215,19 +215,39 @@ export function classifyFaceEdges(triIndices: [number, number, number][]): [bool
 }
 
 const ROUND_SUBDIVISIONS = 6;
-// Cuánto se abomba una cara cerca de su borde real, en fracción de su
-// propio radio — no hacia una esfera común (el d10 no la tiene: el polo y
-// el anillo están a distancias distintas del centro), sino radialmente
-// desde el propio centro del dado, así que vale igual para cualquier
-// forma. 0 en el centro de cada triángulo, máximo en sus aristas.
-const ROUND_BULGE = 0.09;
+// Cuánto se HUNDE una cara hacia el centro del dado cerca de su borde real,
+// en fracción de su propio radio — no hacia una esfera común (el d10 no la
+// tiene: el polo y el anillo están a distancias distintas del centro), sino
+// radialmente desde el propio centro del dado, así que vale igual para
+// cualquier forma. 0 en el centro de cada triángulo (la cara se queda
+// PLANA ahí), máximo en sus aristas.
+//
+// El signo importa: un bisel de verdad (como el RoundedBoxGeometry del d6)
+// deja la cara plana en el medio y RECOGE el borde hacia dentro para
+// fundirse con la cara vecina — nunca lo empuja más allá del plano de la
+// cara. Empujarlo hacia fuera (lo que había antes) deja el borde como un
+// reborde hinchado y, en contraste, el centro de la cara —que no se toca—
+// se ve hundido: la cara entera parece un cuenco en vez de un plano con
+// las aristas suavizadas.
+// Con ROUND_SUBDIVISIONS=6 el paso de la rejilla (1/6≈0.167) ya es mayor
+// que ROUND_MARGIN (0.13): NINGÚN punto de la rejilla cae en ese rango
+// intermedio, así que en la práctica esto no es un degradado sino un
+// escalón — solo la fila exacta sobre el borde real (edgeDist=0) se hunde;
+// el resto de la cara queda intacta (comprobado imprimiendo edgeDist por
+// vértice). Por eso este valor tiene que ser pequeño: con 0.09 ese escalón
+// era tan pronunciado, y las normales soldadas lo suavizaban tanto al
+// iluminarlo, que las caras pequeñas (d8/d12/d20, con más aristas por
+// área) dejaban de leerse como planas y el dado entero parecía una bola
+// —justo el bug reportado—. Verificado a ojo en /dev/dice: por debajo de
+// ~0.03 el escalón se lee como un bisel sutil sin comerse la cara.
+const ROUND_BULGE = 0.025;
 // A partir de qué "distancia al borde" (en baricéntricas, 0=borde,
-// 1/3=centro) empieza a abombarse. Bajo a propósito: dado que el número se
+// 1/3=centro) empieza a hundirse. Bajo a propósito: dado que el número se
 // dibuja centrado y grande, el redondeo NO debe invadir esa zona o
-// encogería visualmente el número — el abombado vive en el marco exterior.
+// encogería visualmente el número — el hundido vive en el marco exterior.
 const ROUND_MARGIN = 0.13;
 
-/** Un triángulo original → sus sub-triángulos con las esquinas abombadas hacia fuera cerca de los bordes reales. */
+/** Un triángulo original → sus sub-triángulos con las esquinas recogidas hacia el centro del dado cerca de los bordes reales. */
 function roundedTriangle(
   corners: [THREE.Vector3, THREE.Vector3, THREE.Vector3],
   cornerUVs: [[number, number], [number, number], [number, number]],
@@ -248,8 +268,8 @@ function roundedTriangle(
         if (edgeIsBoundary[i]) edgeDist = Math.min(edgeDist, bs[i]);
       }
       const roundAmount = 1 - smoothstep(0, ROUND_MARGIN, edgeDist);
-      const bulged = flat.clone().multiplyScalar(1 + roundAmount * ROUND_BULGE);
-      positions.push(bulged.x, bulged.y, bulged.z);
+      const rounded = flat.clone().multiplyScalar(1 - roundAmount * ROUND_BULGE);
+      positions.push(rounded.x, rounded.y, rounded.z);
       uvs.push(
         cornerUVs[0][0] * b0 + cornerUVs[1][0] * b1 + cornerUVs[2][0] * b2,
         cornerUVs[0][1] * b0 + cornerUVs[1][1] * b1 + cornerUVs[2][1] * b2,
