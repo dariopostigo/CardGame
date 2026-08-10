@@ -30,10 +30,17 @@ import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
 // El d6 (RoundedBoxGeometry, boxSize 2.5) llega con las esquinas a ~2.17 del
 // centro. Las geometrías de Platón nativas de Three.js parten de radio 1 —
 // la mitad de eso—, así que sin escalar se veían notablemente más pequeñas
-// que el d6 de al lado. Un solo factor compartido para los 6 no-d6: más
-// grandes y en la misma liga de tamaño que el d6, sin tener que ajustar cada
-// uno a mano.
+// que el d6 de al lado. Un solo factor compartido de partida: más grandes y
+// en la misma liga de tamaño que el d6, sin tener que ajustar cada uno a
+// mano.
 const POLYHEDRON_SCALE = 1.6;
+// d4/d8/d12/d20 leen "un poco pequeños" de más incluso con POLYHEDRON_SCALE:
+// se ven a propósito más grandes que el resto (salvo d6, d10 y d100, que ya
+// estaban a buen tamaño y se quedan tal cual).
+const PLATONIC_SCALE = POLYHEDRON_SCALE * 1.2;
+// El d20 pide un empujón propio por encima del resto de sólidos de Platón:
+// con 20 caras pequeñas se lee más chico que un d12/d8 a la misma escala.
+const D20_SCALE = PLATONIC_SCALE * 1.15;
 
 export const DICE_KINDS = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"] as const;
 export type DiceKind = (typeof DICE_KINDS)[number];
@@ -186,7 +193,7 @@ function assignAntipodalValues(faceNormals: THREE.Vector3[], startValue: number)
 // -------------------------------------------------------------------------
 
 function buildD4(): DiceModel {
-  const geometry = new THREE.TetrahedronGeometry(POLYHEDRON_SCALE, 0);
+  const geometry = new THREE.TetrahedronGeometry(PLATONIC_SCALE, 0);
   const grouped = groupPolyhedronFaces(geometry, 0.9999);
   // 4 vértices, 4 caras: cada cara usa 3 de los 4 vértices. El "opuesto" es
   // el único índice de vértice que no aparece en ninguno de sus triángulos.
@@ -207,7 +214,7 @@ function buildD4(): DiceModel {
     kind: "d4",
     shape: "polyhedron",
     resultRule: "bottomFaceOppositeVertex",
-    boundingRadius: Math.sqrt(3) * 0.6 * POLYHEDRON_SCALE,
+    boundingRadius: Math.sqrt(3) * 0.6 * PLATONIC_SCALE,
     vertices: grouped.vertices,
     triangles: grouped.triangles,
     triangleFace: grouped.triangleFace,
@@ -309,9 +316,19 @@ function buildPlatonic(kind: DiceKind, geometry: THREE.BufferGeometry, radius: n
 // una propiedad de proporciones, no de tamaño).
 // -------------------------------------------------------------------------
 
+// El polo a polo (2×APEX) salía muy largo frente al diámetro del anillo
+// (2×RING_RADIUS) — proporción 1.75:1, un dado con pinta de peonza/bala en
+// vez de gema compacta. D10_POLE_SQUASH encoge APEX y RING_Z EN LA MISMA
+// PROPORCIÓN (RING_RADIUS no se toca): es justo la "escala tras construir la
+// malla" de la que habla el comentario de arriba — un escalado afín de un
+// sólido ya convexo (y de caras ya convexas) sigue siendo convexo, así que
+// no reabre el barrido de condición 1/condición 2. Deja la proporción en
+// ~1.4:1, más parecida a un d10 de mesa de verdad.
+const D10_POLE_SQUASH = 0.8;
+
 function buildD10Base(): GroupedPolyhedron {
-  const APEX = 1.75 * POLYHEDRON_SCALE;
-  const RING_Z = 0.02 * POLYHEDRON_SCALE;
+  const APEX = 1.75 * POLYHEDRON_SCALE * D10_POLE_SQUASH;
+  const RING_Z = 0.02 * POLYHEDRON_SCALE * D10_POLE_SQUASH;
   const RING_RADIUS = 1 * POLYHEDRON_SCALE;
   const RING_START = 2;
 
@@ -383,7 +400,7 @@ function buildD10(): DiceModel {
     kind: "d10",
     shape: "polyhedron",
     resultRule: "topFace",
-    boundingRadius: 1.75 * POLYHEDRON_SCALE,
+    boundingRadius: 1.75 * POLYHEDRON_SCALE * D10_POLE_SQUASH,
     vertices: base.vertices,
     triangles: base.triangles,
     triangleFace: base.triangleFace,
@@ -412,13 +429,13 @@ export function buildDiceModel(kind: DiceKind): DiceModel {
     case "d6":
       return buildD6();
     case "d8":
-      return buildPlatonic("d8", new THREE.OctahedronGeometry(POLYHEDRON_SCALE, 0), POLYHEDRON_SCALE);
+      return buildPlatonic("d8", new THREE.OctahedronGeometry(PLATONIC_SCALE, 0), PLATONIC_SCALE);
     case "d10":
       return buildD10();
     case "d12":
-      return buildPlatonic("d12", new THREE.DodecahedronGeometry(POLYHEDRON_SCALE, 0), POLYHEDRON_SCALE);
+      return buildPlatonic("d12", new THREE.DodecahedronGeometry(PLATONIC_SCALE, 0), PLATONIC_SCALE);
     case "d20":
-      return buildPlatonic("d20", new THREE.IcosahedronGeometry(POLYHEDRON_SCALE, 0), POLYHEDRON_SCALE);
+      return buildPlatonic("d20", new THREE.IcosahedronGeometry(D20_SCALE, 0), D20_SCALE);
     case "d100":
       return buildD100();
   }

@@ -107,7 +107,11 @@ export function createPipTexture(value: number, colorHex: string): THREE.CanvasT
  * viene formateado (p. ej. "00" para la decena 0 del d100), esta función
  * solo lo dibuja.
  */
-export function createNumeralTexture(label: string, colorHex: string): THREE.CanvasTexture {
+export function createNumeralTexture(
+  label: string,
+  colorHex: string,
+  fontScale: number = 1,
+): THREE.CanvasTexture {
   const size = 256;
   const { canvas, ctx } = makeCanvas(size);
 
@@ -117,9 +121,17 @@ export function createNumeralTexture(label: string, colorHex: string): THREE.Can
   ctx.fillStyle = isLightColor(colorHex) ? INK_DARK : INK_LIGHT;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  // Tamaño de fuente en función de cuantos caracteres hay que meter: "00" y
-  // "90" (d100) son más anchos que un "7" suelto.
-  const fontSize = label.length > 1 ? size * 0.34 : size * 0.46;
+  // Un único tamaño base para TODAS las etiquetas, sin importar cuántos
+  // caracteres tengan: en un d20, por ejemplo, "1" y "20" viven en caras
+  // distintas del mismo dado y tienen que leerse con el mismo peso visual.
+  // Escalar el "1" para que ocupe más porque tiene menos caracteres se ve
+  // como si cada cara tuviera su propia fuente. El tamaño fijo es el que ya
+  // cabía de sobra para dos caracteres ("00".."90" del d100); un solo
+  // carácter simplemente deja más margen alrededor, no crece para llenarlo.
+  // `fontScale` es lo único que puede variar, y por dado entero (todas sus
+  // caras a la vez) según lo pequeñas/estrechas que sean sus caras — nunca
+  // por cuántos caracteres tenga cada etiqueta.
+  const fontSize = size * 0.34 * fontScale;
   ctx.font = `800 ${fontSize}px system-ui, sans-serif`;
   ctx.fillText(label, size / 2, size / 2 + fontSize * 0.04);
 

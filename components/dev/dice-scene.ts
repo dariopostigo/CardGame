@@ -313,6 +313,11 @@ export function buildPolyhedronVisual(model: DiceModel, color: string) {
   const materials: THREE.MeshStandardMaterial[] = [];
   const geometry = new THREE.BufferGeometry();
 
+  // d20 (muchas caras pequeñas) y d10 (caras "cometa" estrechas) necesitan
+  // el número más pequeño que el resto para no comerse el bisel del borde;
+  // el resto de dados se queda con el tamaño base.
+  const fontScale = model.kind === "d20" || model.kind === "d10" ? 0.8 : 1;
+
   model.faces.forEach((face, faceIndex) => {
     const triIndices = model.triangles!.filter((_, t) => model.triangleFace![t] === faceIndex);
     const flat = flattenFace(triIndices, model.vertices!);
@@ -344,7 +349,11 @@ export function buildPolyhedronVisual(model: DiceModel, color: string) {
 
     const label = formatDiceValueLabel(model.kind, face.value);
     materials.push(
-      new THREE.MeshStandardMaterial({ map: createNumeralTexture(label, color), roughness: 0.55, metalness: 0.04 }),
+      new THREE.MeshStandardMaterial({
+        map: createNumeralTexture(label, color, fontScale),
+        roughness: 0.55,
+        metalness: 0.04,
+      }),
     );
   });
 
