@@ -1,7 +1,7 @@
 "use client";
 
 // =========================================================================
-// Laboratorio de generación de TABLERO — /dev/tablero
+// Laboratorio de generación de TABLERO — /dev/board
 //
 // Banco de pruebas de lib/rules/board-gen.ts: cambia la semilla y los
 // parámetros y mira qué tablero sale. No es la pantalla de juego —todavía no
@@ -10,7 +10,7 @@
 //
 // Lo que se prueba aquí es el ENCAJE, no la loseta: cuántas se colocan, por
 // dónde crece el tablero y dónde caen las fichas, el boss y el Pueblo. Cómo es
-// cada loseta por dentro se maqueta en el otro laboratorio (/dev/losetas).
+// cada loseta por dentro se maqueta en el otro laboratorio (/dev/tiles).
 //
 // Vive en components/dev/ y no en components/game/ porque es instrumental: el
 // tablero que pinta (components/game/board/HexBoard) sí es del juego, este
@@ -179,7 +179,7 @@ export default function BoardLab() {
       <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">Generación de tablero</h1>
       <p className="mb-5 max-w-3xl text-sm text-[var(--wiki-muted)]">
         El tablero de una <b>Partida rápida</b> (o de un capítulo de campaña) se monta encajando{" "}
-        <Link href="/dev/losetas" className="text-[var(--wiki-accent)] hover:underline">
+        <Link href="/dev/tiles" className="text-[var(--wiki-accent)] hover:underline">
           losetas
         </Link>{" "}
         borde con borde, como en un tablero modular (
@@ -347,7 +347,7 @@ export default function BoardLab() {
             ? "ninguno"
             : `${board.voids.length} ${board.voids.length === 1 ? "hexágono" : "hexágonos"}`}
         </span>
-        <span title="Terreno transitable al que no se llega desde la entrada sin cruzar Montaña. La generación ya no abre la roca para arreglarlo: si aquí sale algo, la culpa es de una loseta cuya montaña parte su propio terreno, y se arregla en /dev/losetas.">
+        <span title="Terreno transitable al que no se llega desde la entrada sin cruzar Montaña. La generación ya no abre la roca para arreglarlo: si aquí sale algo, la culpa es de una loseta cuya montaña parte su propio terreno, y se arregla en /dev/tiles.">
           <b>Incomunicado:</b>{" "}
           {stranded.length === 0
             ? "nada"

@@ -1,7 +1,7 @@
 // =========================================================================
 // Guardar la biblioteca de losetas — solo en desarrollo
 //
-// El laboratorio de /dev/losetas edita data/tile-library.json y esta ruta es la
+// El laboratorio de /dev/tiles edita data/tile-library.json y esta ruta es la
 // que lo escribe. Existe porque la alternativa era copiar y pegar literales a
 // mano: dibujar veinte hexágonos y luego trasladarlos al código es donde se
 // colaban los errores.

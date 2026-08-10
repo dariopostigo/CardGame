@@ -4,5 +4,5 @@ import { redirect } from "next/navigation";
 // /dev. Se mantiene como redirección para no romper enlaces ni marcadores.
 
 export default function PlayPage() {
-  redirect("/dev/tablero");
+  redirect("/dev/board");
 }

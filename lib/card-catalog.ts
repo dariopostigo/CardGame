@@ -3,7 +3,7 @@
 //
 // Lee docs/cards/*.md y devuelve todas las cartas marcadas con la directiva
 // `<!-- cards: … -->`. Es lo que come el lab de diseño
-// (app/docs/cards/diseno/page.tsx), para que el lab y la wiki pinten
+// (app/docs/cards/design/page.tsx), para que el lab y la wiki pinten
 // exactamente el mismo catálogo: si una carta cambia en su tabla, cambia en
 // los dos sitios a la vez.
 //

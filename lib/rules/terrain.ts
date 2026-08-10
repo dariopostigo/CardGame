@@ -56,7 +56,7 @@ export type TerrainDef = {
    * Cuota de la tabla A (§2c), en porcentaje; los cinco que tienen cuota suman
    * 100. Ya no se sortea nada con ella —las losetas llegan pintadas—, así que es
    * el reparto de terreno al que APUNTA la biblioteca, y contra el que se compara
-   * el que sale medido (`/dev/losetas`).
+   * el que sale medido (`/dev/tiles`).
    */
   readonly genWeight: number;
   /**

@@ -1,7 +1,7 @@
 // =========================================================================
 // Editar la biblioteca: mutaciones y guardado
 //
-// Lo que el laboratorio de /dev/losetas hace con la biblioteca, separado de la
+// Lo que el laboratorio de /dev/tiles hace con la biblioteca, separado de la
 // pantalla. Todas las mutaciones trabajan sobre la forma GUARDADA (`StoredLibrary`,
 // lo que hay en data/tile-library.json) y no sobre los tipos ya dibujados: la
 // forma guardada es la fuente de verdad y los tipos se derivan de ella con

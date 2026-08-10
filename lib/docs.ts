@@ -131,7 +131,7 @@ export const getNavTree = cache((): NavGroup[] => {
       .map(({ _order, ...item }) => item as NavItem);
     // Página especial (no-markdown): laboratorio de diseño de carta.
     if (g.key === "cards") {
-      items.push({ label: "Diseño", icon: "pi pi-palette", href: "/docs/cards/diseno" });
+      items.push({ label: "Diseño", icon: "pi pi-palette", href: "/docs/cards/design" });
     }
     return { key: g.key, label: g.label, icon: g.icon, items };
   }).filter((g) => g.items.length > 0);

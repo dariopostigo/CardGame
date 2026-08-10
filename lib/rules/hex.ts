@@ -90,7 +90,7 @@ export function withinRadius(center: HexCoord, radius: number): HexCoord[] {
 
 // --- Rejilla escalonada (offset odd-r) -------------------------------------
 // El motor no la usa para nada más que maquetar: es la rejilla de papel
-// cuadriculado sobre la que se dibuja una loseta a mano en /dev/losetas y en
+// cuadriculado sobre la que se dibuja una loseta a mano en /dev/tiles y en
 // la que `drawn()`/`toDrawing()` (lib/rules/tiles.ts) leen y escriben el
 // dibujo ASCII de cada variante.
 
@@ -176,7 +176,7 @@ export function hasLineOfSight(
 // no hay que tocar nada del motor, solo proyectar más bajo.
 //
 // Por defecto vale 1 —tablero plano— porque el catálogo de losetas
-// (/dev/losetas) enseña la PIEZA, no la mesa, y ahí la inclinación estorba:
+// (/dev/tiles) enseña la PIEZA, no la mesa, y ahí la inclinación estorba:
 // sólo el tablero de partida pide la suya.
 
 const SQRT3 = Math.sqrt(3);

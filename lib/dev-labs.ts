@@ -37,7 +37,7 @@ export const LAB_STATUS_LABEL = BUILD_STATUS_LABEL;
 // más se usan; el resto mantiene su orden anterior a continuación.
 export const DEV_LABS: readonly DevLab[] = [
   {
-    slug: "losetas",
+    slug: "tiles",
     label: "Losetas",
     summary:
       "La pieza: su forma en uno de los cinco tamaños, el terreno de cada hexágono y las anclas por las que se une a otra. Biblioteca de tipos y variantes, editable: se guarda en disco.",
@@ -55,7 +55,7 @@ export const DEV_LABS: readonly DevLab[] = [
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §4c" },
   },
   {
-    slug: "baraja",
+    slug: "deck",
     label: "Baraja y Oteo",
     summary:
       "Mazo, zona «en juego» con tope fijo de 5 y el Oteo de 2 cartas por turno. Es donde se prueba la regla madre: jugar una carta la devuelve al Mazo.",
@@ -80,7 +80,7 @@ export const DEV_LABS: readonly DevLab[] = [
   // misma PARTIDA" (robo de cartas, loot, IA, reloj): eso lo prueba el simulador,
   // porque son partidas y no tableros.
   {
-    slug: "tablero",
+    slug: "board",
     label: "Generación de tablero",
     summary:
       "El encaje: cuántas losetas, cómo se unen por sus anclas, hacia dónde crece la silueta, la Guarida del boss y la siembra de fichas. Nada se repinta: el tablero es el catálogo, así que si no sale Pueblo es que el encaje no lo ha traído. Aquí entra también el lote de semillas —cientos de tableros de golpe para ver el reparto y no el ejemplar—, que es lo que queda por construir.",
@@ -89,7 +89,7 @@ export const DEV_LABS: readonly DevLab[] = [
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §2c" },
   },
   {
-    slug: "fichas",
+    slug: "tokens",
     label: "Fichas del tablero",
     summary:
       "Qué pasa al interactuar con cada ficha, no solo cuál sale: la prueba de Terreno, la tabla de loot de Tesoro, el mazo de encuentro para Amenaza/Exploración/Enemigo y el oficio de Personaje. Cada ficha resuelta se retira y queda su huella.",
@@ -98,7 +98,7 @@ export const DEV_LABS: readonly DevLab[] = [
     doc: { href: "/docs/board/board-map", label: "Tablero y mapa §4" },
   },
   {
-    slug: "movimiento",
+    slug: "movement",
     label: "Movimiento y visión",
     summary:
       "Los 2 puntos de movimiento contra el coste de cada terreno, y los dos radios de visión que abren las dos capas de niebla.",

@@ -10,6 +10,6 @@ export const metadata: Metadata = {
     "Laboratorio del generador de tablero: encaje de losetas, semilla, silueta y densidad de fichas.",
 };
 
-export default function TableroLabPage() {
+export default function BoardLabPage() {
   return <BoardLab />;
 }

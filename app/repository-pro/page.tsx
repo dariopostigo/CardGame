@@ -36,7 +36,7 @@ export default function RepositoryProIndexPage() {
             hierro sin que la página se lo maquille. Los componentes vivirán en{" "}
             <code>components/game/ui/</code>, junto a{" "}
             <Link
-              href="/dev/tablero"
+              href="/dev/board"
               className="text-[var(--wiki-accent)] underline decoration-dotted"
             >
               los que ya prueban los laboratorios

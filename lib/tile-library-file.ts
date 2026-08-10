@@ -3,7 +3,7 @@
 //
 // Solo servidor: es el único sitio del proyecto que ESCRIBE en el repositorio.
 // Vive fuera de lib/rules/ a propósito —el motor es puro y no toca el disco— y
-// lo usa la ruta de guardado de /dev/losetas.
+// lo usa la ruta de guardado de /dev/tiles.
 //
 // El formato no está aquí, está en tile-library-format.ts, que es puro: el
 // laboratorio lo necesita para enseñar en pantalla lo mismo que se va a escribir.

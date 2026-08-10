@@ -3,7 +3,7 @@
 //
 // El catálogo no está en código: está en data/tile-library.json, y este módulo
 // lo lee y lo convierte en tipos con sus variantes ya dibujadas. Se hizo así
-// porque el editor de /dev/losetas ESCRIBE ese fichero: añadir un peñasco nuevo
+// porque el editor de /dev/tiles ESCRIBE ese fichero: añadir un peñasco nuevo
 // es guardar desde el laboratorio, no editar un literal de TypeScript. El JSON
 // sigue siendo texto revisable —el dibujo ASCII se lee en el diff igual que se
 // leía aquí—, y lo que no cabe en un JSON, el "por qué está dibujada así", va en
@@ -50,7 +50,7 @@
 // terreno de la bolsa dé en la tabla A (§2c). Con la biblioteca de hoy la bolsa
 // sale a Llanura 38,4 · Bosque 18,7 · Camino 18,9 · Pantano 9,4 · Montaña 9,7.
 // Tocar un dibujo mueve esas cifras, así que después de maquetar hay que volver a
-// mirarlas en /dev/losetas.
+// mirarlas en /dev/tiles.
 //
 // Y el objetivo NO es 40/20/20/10/10 a secas, aunque eso sea lo que dice la tabla:
 // el Pueblo se lleva un 2,9 % y la Mazmorra un 1,9 %, y ninguno de los dos tiene

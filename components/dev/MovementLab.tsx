@@ -1,17 +1,17 @@
 "use client";
 
 // =========================================================================
-// Laboratorio de MOVIMIENTO Y VISIÓN — /dev/movimiento
+// Laboratorio de MOVIMIENTO Y VISIÓN — /dev/movement
 //
 // Banco de pruebas de lib/rules/movement.ts y lib/rules/vision.ts: 1-4
 // héroes co-op (characters/heroes.md §4) empiezan en la entrada del tablero
-// de /dev/tablero y se mueven a golpe de clic, cada uno con su propio turno
+// de /dev/board y se mueven a golpe de clic, cada uno con su propio turno
 // dentro de una RONDA de mesa (game-design.md §6c.1: la ronda —todos han
 // jugado— es lo que hace avanzar el reloj de Amenaza en la partida real, no
 // el turno suelto de un héroe). Lo que se prueba aquí es si el alcance con
 // coste de terreno y los dos radios de visión (docs/game-design.md §2.2,
 // §2.3) se sienten bien, no si el tablero se genera bien —eso ya lo prueba
-// /dev/tablero— ni el combate ni la activación de enemigos (§4b.5,
+// /dev/board— ni el combate ni la activación de enemigos (§4b.5,
 // /dev/combate, todavía sin motor). Tampoco modela Oteo/Acción: no lo hacía
 // para un solo héroe y este paso no amplía ese alcance, solo multiplica el
 // que ya había.

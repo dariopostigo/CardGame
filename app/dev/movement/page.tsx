@@ -10,6 +10,6 @@ export const metadata: Metadata = {
     "Laboratorio de alcance de movimiento y los dos radios de visión: coste de terreno, bonus de Camino y niebla acumulativa.",
 };
 
-export default function MovimientoLabPage() {
+export default function MovementLabPage() {
   return <MovementLab />;
 }

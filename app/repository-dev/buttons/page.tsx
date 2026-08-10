@@ -70,7 +70,7 @@ export default function ButtonsPage() {
           <>
             <code>active</code> no es una variante, es un <b>estado</b>: un botón de «Giro 60°»
             sigue siendo neutro cuando está apagado. Es lo que pinta las conmutaciones de{" "}
-            <code>/dev/losetas</code> y <code>/dev/tablero</code>, y por eso pisa a la variante.
+            <code>/dev/tiles</code> y <code>/dev/board</code>, y por eso pisa a la variante.
           </>
         }
       >

@@ -24,7 +24,7 @@
 //
 // Y como el maquetado es lo que manda, este archivo NO REPINTA NADA. Ni un
 // hexágono: el tablero de la partida son las losetas del catálogo tal y como se
-// dibujaron, y lo que se ve en /dev/losetas es exactamente lo que sale al jugar.
+// dibujaron, y lo que se ve en /dev/tiles es exactamente lo que sale al jugar.
 // Se llegó aquí quitando las tres excepciones que quedaban, y las tres por el
 // mismo motivo —un tablero que se corrige a sí mismo esconde el problema en vez
 // de enseñarlo—:
@@ -176,7 +176,7 @@ export type GeneratedBoard = {
    * borde con borde—, así que una bolsa incomunicada solo puede venir de una
    * loseta cuya propia roca parte su terreno en dos, y de eso avisa `typeNotes`
    * al maquetarla. Con la biblioteca de hoy sale vacío, y vacío es lo normal:
-   * si /dev/tablero empieza a contar hexágonos aquí, lo que hay que arreglar es
+   * si /dev/board empieza a contar hexágonos aquí, lo que hay que arreglar es
    * una loseta, no la generación.
    */
   readonly stranded: readonly HexCoord[];
@@ -215,7 +215,7 @@ export function generateBoard(config: Partial<BoardConfig> & { seed: string }): 
   // el último. Con la biblioteca de hoy no llegaba a pasar en 300 semillas hasta
   // 12 losetas —el mínimo de hoy—, y con 15 y 18 está sin medir: cuantas más
   // piezas se piden, más se agotan las anclas libres. Si el encaje se queda corto,
-  // el tablero sale con menos losetas de las pedidas y /dev/tablero lo canta
+  // el tablero sale con menos losetas de las pedidas y /dev/board lo canta
   // («12 de 15 pedidas»); lo que hay que mirar entonces es el reparto de anclas de
   // la bolsa, no subir este número.
   let layout = layoutTiles(cfg, rng);

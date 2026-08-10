@@ -1,9 +1,9 @@
 "use client";
 
 // =========================================================================
-// Laboratorio de LOSETAS — /dev/losetas
+// Laboratorio de LOSETAS — /dev/tiles
 //
-// Aquí se maqueta la pieza; en /dev/tablero se prueba cómo encajan. Son dos
+// Aquí se maqueta la pieza; en /dev/board se prueba cómo encajan. Son dos
 // problemas distintos y por eso son dos laboratorios: cambiar la forma de una
 // loseta no es lo mismo que cambiar cuántas se colocan.
 //
@@ -371,7 +371,7 @@ export default function TileLab() {
         el que una loseta se une a otra. Solo existen en el contorno —un hexágono rodeado por los
         suyos no tiene lado que ofrecer—, y el encaje es ancla contra ancla: el resto del borde es
         pared y no se pega a nada. Se ve funcionando en{" "}
-        <Link href="/dev/tablero" className="text-[var(--wiki-accent)] hover:underline">
+        <Link href="/dev/board" className="text-[var(--wiki-accent)] hover:underline">
           generación de tablero
         </Link>
         .

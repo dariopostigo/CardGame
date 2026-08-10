@@ -47,7 +47,7 @@ PlacedTile {              // una loseta ya colocada en el tablero (lib/rules/sta
 }
 
 Board {                   // el tablero de una partida: hexágonos + losetas que los trajeron
-                          // (lib/rules/state.ts, se genera en board-gen.ts, se prueba en /dev/tablero)
+                          // (lib/rules/state.ts, se genera en board-gen.ts, se prueba en /dev/board)
   hexes: Map<HexKey, Hex>  // indexado por hex.key() para acceso O(1)
   tiles: PlacedTile[]      // en orden de colocación
   voids: HexCoord[]        // huecos cerrados: el negativo del mapa, no son hexágonos (§2, `findVoids`)

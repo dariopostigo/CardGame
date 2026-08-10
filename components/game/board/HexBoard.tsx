@@ -75,7 +75,7 @@
 // que hace que aquí no haga falta ordenar por profundidad.
 //
 // El sendero no tiene capa: el Camino es un terreno como los demás y se ve por
-// su color, igual que en el catálogo de /dev/losetas. Antes se le dibujaba
+// su color, igual que en el catálogo de /dev/tiles. Antes se le dibujaba
 // encima un trazo de centro a centro, de cuando el terreno se sorteaba hexágono
 // a hexágono y el camino había que "seguirlo"; hoy la loseta lo trae pintado y
 // el trazo solo tapaba el terreno de debajo, se cruzaba consigo mismo en las

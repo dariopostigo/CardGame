@@ -1,7 +1,7 @@
 "use client";
 
 // =========================================================================
-// Laboratorio de Mazo y Oteo — /dev/baraja
+// Laboratorio de Mazo y Oteo — /dev/deck
 //
 // Banco de pruebas de lib/rules/deck.ts: elige un héroe y comprueba el Mazo
 // (20 cartas fijas), el tope fijo de "en juego" (5) y el Oteo turno a turno

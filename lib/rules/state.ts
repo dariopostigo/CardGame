@@ -16,14 +16,14 @@
 //   · loseta   (`TileDef` / `PlacedTile`) — pieza predefinida de hexágonos con
 //     su forma, el terreno de cada uno y sus anclas. Cinco tamaños, de 4 a 64
 //     hexágonos. Se maqueta a mano en la biblioteca (lib/rules/tile-library.ts)
-//     y se edita en /dev/losetas. Las variantes de un mismo TIPO son el mismo
+//     y se edita en /dev/tiles. Las variantes de un mismo TIPO son el mismo
 //     sitio dibujado de otra manera (`TileType` en lib/rules/tiles.ts).
 //   · ancla    (`TileEdge` en `TileDef.anchors`) — borde exterior por el que una
 //     loseta se une a otra. Solo existen en el contorno, y una loseta solo se
 //     une ancla contra ancla: el resto de su borde es pared.
 //   · tablero  (`Board`)    — el mapa completo de UNA partida rápida o
 //     capítulo, resultado de unir losetas por sus anclas. Se genera en
-//     board-gen.ts y se prueba en /dev/tablero.
+//     board-gen.ts y se prueba en /dev/board.
 // =========================================================================
 
 import type { RarityLevel } from "@/lib/rarity";

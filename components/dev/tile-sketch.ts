@@ -1,7 +1,7 @@
 // =========================================================================
 // El boceto de loseta: estado y transiciones
 //
-// Lo que el editor de /dev/losetas va tocando con el ratón, sin nada de React.
+// Lo que el editor de /dev/tiles va tocando con el ratón, sin nada de React.
 // Está separado del componente por dos razones: las cascadas tienen reglas que
 // se olvidan fácil (quitar un hexágono tiene que llevarse sus anclas, y AÑADIR
 // uno también, porque tapa las anclas que ahora dan a un vecino propio) y así

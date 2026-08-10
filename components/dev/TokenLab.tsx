@@ -1,11 +1,11 @@
 "use client";
 
 // =========================================================================
-// Laboratorio de FICHAS DEL TABLERO — /dev/fichas
+// Laboratorio de FICHAS DEL TABLERO — /dev/tokens
 //
 // Banco de pruebas de lib/rules/tokens.ts: qué pasa al interactuar con cada
-// ficha, no solo cuál sale (eso ya lo prueba /dev/tablero). Deliberadamente
-// más simple que /dev/movimiento —tablero siempre revelado, un solo héroe—
+// ficha, no solo cuál sale (eso ya lo prueba /dev/board). Deliberadamente
+// más simple que /dev/movement —tablero siempre revelado, un solo héroe—
 // porque aquí no se prueba niebla ni co-op, se prueba resolución.
 //
 // Terreno y Tesoro tienen fórmula cerrada (prueba de habilidad / tabla de

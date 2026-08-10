@@ -10,6 +10,6 @@ export const metadata: Metadata = {
     "Laboratorio de losetas: forma, terreno y anclas de cada pieza del tablero, en cinco tamaños, con catálogo y editor de bocetos.",
 };
 
-export default function LosetasLabPage() {
+export default function TilesLabPage() {
   return <TileLab />;
 }

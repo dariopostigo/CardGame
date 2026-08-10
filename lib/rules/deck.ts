@@ -9,7 +9,7 @@
 //
 // Lo que NO modela: de dónde salen cartas nuevas (botín, tienda, §6b) ni el
 // recurso de acción del turno (§4b.3) — son otros subsistemas. Aquí solo
-// vive el Mazo/Oteo en sí, para probarlo en /dev/baraja.
+// vive el Mazo/Oteo en sí, para probarlo en /dev/deck.
 // =========================================================================
 
 import type { CatalogCard } from "@/lib/card-catalog";

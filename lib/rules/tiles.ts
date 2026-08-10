@@ -5,7 +5,7 @@
 // sus anclas. Es la unidad con la que se construye el tablero, y se maqueta a
 // mano. Este archivo dice qué es una loseta y qué se puede hacer con ella;
 // CUÁLES hay está en tile-library.ts, que lee data/tile-library.json. Quien las
-// encaja es board-gen.ts; quien las enseña y las edita es /dev/losetas.
+// encaja es board-gen.ts; quien las enseña y las edita es /dev/tiles.
 //
 // El tablero no es una rejilla: se construye encajando losetas, como en los
 // juegos de tablero modular. Es el sistema de docs/board/board-map.md §2.
@@ -376,7 +376,7 @@ export type StoredLibrary = { readonly types: readonly StoredType[] };
  * Leer la biblioteca guardada.
  *
  * Comprueba el JSON a mano, campo a campo, porque este mismo parser recibe lo
- * que manda el editor de /dev/losetas por la ruta de guardado: los datos vienen
+ * que manda el editor de /dev/tiles por la ruta de guardado: los datos vienen
  * de fuera del compilador, así que un fichero a medias tiene que dar un error
  * que se entienda y no un `undefined` tres capas más abajo.
  *
@@ -456,7 +456,7 @@ function asNote(value: unknown): string {
 
 /**
  * La vuelta: de tipos a lo que se escribe en el fichero. Es la inversa de
- * `parseLibrary`, y se usa para dos cosas —guardar lo que edita /dev/losetas y
+ * `parseLibrary`, y se usa para dos cosas —guardar lo que edita /dev/tiles y
  * tener la forma guardada sin castear el JSON importado—, así que el ida y vuelta
  * tiene que ser exacto: lo que se lee y se vuelve a escribir sin tocar nada no
  * puede salir distinto, o cada guardado ensuciaría el diff.
@@ -656,7 +656,7 @@ export function opposite(dir: number): number {
 
 /**
  * Comprobar que los TIPOS de la biblioteca son coherentes. Es la puerta por la
- * que pasa todo lo que se guarda: la llama la ruta de /dev/losetas antes de
+ * que pasa todo lo que se guarda: la llama la ruta de /dev/tiles antes de
  * escribir el fichero y el script de verificación sobre lo que hay en disco.
  *
  * Valida lo que es del tipo —identidad, peso y variantes— y delega en
@@ -762,7 +762,7 @@ const ANCHOR_FORBIDDEN_TERRAINS: ReadonlySet<TerrainId> = new Set(["montana", "p
 
 /**
  * Comprobar que unas losetas son coherentes, una a una. La usa
- * `validateTileTypes` y también el editor de /dev/losetas, que la llama sobre el
+ * `validateTileTypes` y también el editor de /dev/tiles, que la llama sobre el
  * boceto en curso para avisar en caliente.
  *
  * @returns {string[]} Lista de problemas; vacía si todo está bien.
