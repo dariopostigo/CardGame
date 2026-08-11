@@ -64,9 +64,13 @@ El mercenario es una **ficha propia** con bloque de combate por Rareza — ver [
 - Cuenta +1 al presupuesto de composición enemiga (§4).
 - Tope: 1 unidad de mercenario por jugador en el campo a la vez.
 
-## 6. Iniciativa, turno y Desengancharse
+## 6. Fases de combate y Desengancharse
 
-**Iniciativa:** `1d20 + mod DES` por unidad, **una sola vez** al abrir la batalla; el orden queda fijo toda la pelea (no se retira cada ronda — 10+ tiradas por ronda son injugables en mesa, y la IA determinista está pensada para ser anticipable). Empates → mayor DES bruta, héroe gana. Mercenarios sin DES propia: `1d20 + Nivel de su carta`.
+**Fases de bando** *(decidido 2026-08-11)*: el combate no entrelaza turnos ficha a ficha entre bandos — se juega en fases. Cada ronda: fase de **Aliados** (héroe(s) + mercenarios invocados, cada uno con su turno completo antes de pasar al siguiente) y fase de **Enemigos** (todos los enemigos vivos, uno tras otro, sin devolver el turno al jugador entre medias). Se repite ronda tras ronda hasta el fin del combate (§7).
+
+**Quién abre la ronda 1:** `1d20 + mod DES` del héroe contra la del enemigo con más DES del bando enemigo, tirada **una sola vez** al abrir la batalla. Abre el bando con la tirada más alta (empate → mayor DES bruta, héroe gana). Ese orden de fases queda fijo toda la pelea (no se retira cada ronda).
+
+**Orden dentro de una fase:** si hay más de una ficha en el mismo bando (varios héroes/mercenarios, o varios enemigos), cada una tira `1d20 + mod DES` una sola vez al abrir el combate — mercenarios sin DES propia: `1d20 + Nivel de su carta` —; ese valor fija el orden en que actúan dentro de su propia fase, ronda tras ronda. Los refuerzos que entran a mitad de combate (`../characters/enemies.md` §5b.6) tiran al aparecer y se insertan en ese orden desde la fase enemiga siguiente.
 
 **Turno de una unidad:** idéntico a `../game-design.md` §4b.3 — 2 Movimiento + 1 Acción + 1 Acción rápida + hasta 1 carta modificadora por tirada. Cero reglas nuevas.
 

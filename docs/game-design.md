@@ -188,11 +188,12 @@ Las **armas** ([`cards/weapons.md`](cards/weapons.md)) y **armaduras** ([`cards/
 >
 > **Desengancharse** (antiguo §4b.11) también se trasladó a [`board/battle.md`](board/battle.md) §6, sin cambiar de fondo: como el combate ya solo ocurre en esa pantalla, es ahí donde se aplica.
 
-### 4b.2 Iniciativa / orden de turno *(decidido)*
+### 4b.2 Iniciativa / orden de turno *(decidido — pasa a fases de bando, 2026-08-11)*
 
-- Al empezar el combate: **1d20 + mod Destreza** para el héroe y para cada enemigo. Actúa primero el más alto. Empates → mayor Destreza bruta → héroe gana.
-- **Se tira, no se compara** *(decidido)*: se descarta la alternativa de comparar modificadores a secas. Con tirada, la Destreza pesa pero no decide sola, y encaja con las otras dos tiradas enfrentadas del sistema (Desengancharse `board/battle.md` §6, huida enemiga `characters/enemies.md` §5b.6).
-- Una **emboscada** (atacar sin haber sido detectado, `characters/enemies.md` §2b) **se salta la iniciativa** el primer turno: actúas tú primero.
+- El combate se juega en **fases de bando**, no turno a turno entrelazado entre bandos: en cada ronda actúan primero **todos** los aliados (héroe(s) + mercenarios invocados, cada uno con su turno completo) y después **todos** los enemigos vivos, uno tras otro. Se repite ronda tras ronda hasta que el combate termina. *(Antes de esta fecha el orden entrelazaba héroe y enemigos ficha a ficha por iniciativa individual; con 2+ enemigos, eso hacía que solo actuara uno antes de devolver el turno al héroe, sensación de "el otro enemigo no se mueve" — superado.)*
+- **Qué bando abre la ronda 1:** **1d20 + mod Destreza** para el héroe y para el enemigo con más Destreza del bando enemigo. Abre la partida el bando con la tirada más alta. Empates → mayor Destreza bruta → héroe gana. **Se tira, no se compara** *(decidido)*: con tirada, la Destreza pesa pero no decide sola, y encaja con las otras dos tiradas enfrentadas del sistema (Desengancharse `board/battle.md` §6, huida enemiga `characters/enemies.md` §5b.6). Ese orden de fases **queda fijo toda la pelea** (no se retira cada ronda).
+- **Orden dentro de una fase** (con más de una ficha en el mismo bando: varios héroes/mercenarios, o varios enemigos): cada ficha tira `1d20 + mod Destreza` una sola vez al abrir el combate; ese valor fija en qué orden actúan dentro de su propia fase, ronda tras ronda. Empates → mayor Destreza bruta.
+- Una **emboscada** (atacar sin haber sido detectado, `characters/enemies.md` §2b) **se salta la tirada de apertura**: la fase de aliados va primero en la ronda 1, sin excepción.
 
 ### 4b.3 Recurso de acción por turno *(el que faltaba en §4)*
 

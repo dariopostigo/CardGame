@@ -155,30 +155,39 @@ export default function BoardPiece({
   const r = hexSize * LAID_RADIUS;
   const depth = r * TOKEN_DEPTH;
 
+  // El grupo entero se posiciona con `transform`, no con cx/cy absolutos en
+  // cada elipse: así CSS puede transicionar UN solo valor (styles/components/
+  // _piece.scss) cuando `x`/`y` cambian de hexágono, y la ficha se desliza en
+  // vez de saltar. Todo lo de dentro queda en coordenadas locales a (0,0).
   return (
-    <g className="piece" data-piece={piece.id} data-family={piece.family}>
+    <g
+      className="piece"
+      data-piece={piece.id}
+      data-family={piece.family}
+      transform={`translate(${x} ${y})`}
+    >
       {title}
       {/* Canto: la misma elipse desplazada hacia abajo. Va detrás de la cara, así
           que solo se ve la media luna de abajo, que es exactamente lo que se ve
           del grosor de un cartón apoyado en la mesa. */}
-      <ellipse className="piece__edge" cx={x} cy={y + depth} rx={r} ry={r * tilt} />
+      <ellipse className="piece__edge" cx={0} cy={depth} rx={r} ry={r * tilt} />
 
       {/* Dos filetes y no uno: el oscuro de fuera separa el disco del Bosque y
           de la Mazmorra, y el claro de la propia cara lo separa del Camino. Con
           uno solo, la ficha desaparecía sobre la mitad del tablero. */}
-      <ellipse className="piece__rim" cx={x} cy={y} rx={r + RIM} ry={(r + RIM) * tilt} />
-      <ellipse className="piece__face" cx={x} cy={y} rx={r} ry={r * tilt} />
+      <ellipse className="piece__rim" cx={0} cy={0} rx={r + RIM} ry={(r + RIM) * tilt} />
+      <ellipse className="piece__face" cx={0} cy={0} rx={r} ry={r * tilt} />
 
       {/* Brillo. Debajo del glifo para que no le lave el color. */}
       <ellipse
         className="piece__gloss"
-        cx={x}
-        cy={y - r * tilt * GLOSS_RISE}
+        cx={0}
+        cy={-r * tilt * GLOSS_RISE}
         rx={r * GLOSS_SIZE}
         ry={r * tilt * GLOSS_SIZE * 0.6}
       />
 
-      <g className="piece__glyph" transform={glyphTransform(x, y, r * GLYPH_BOX, tilt)}>
+      <g className="piece__glyph" transform={glyphTransform(0, 0, r * GLYPH_BOX, tilt)}>
         {artOf(piece).art}
       </g>
     </g>

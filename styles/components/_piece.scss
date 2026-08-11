@@ -25,6 +25,17 @@
   // Las fichas no reciben el clic: quien lo recibe es el hexágono de debajo,
   // que es el que el jugador quiere seleccionar.
   pointer-events: none;
+  // Solo la ficha "placed" lleva `transform` (BoardPiece.tsx la posiciona con
+  // un translate propio, no con cx/cy absolutos): cuando su hexágono cambia,
+  // el atributo cambia y esto la desliza en vez de saltar de golpe. La "spent"
+  // no se mueve nunca, así que aquí no hace nada — no hace falta separarlas.
+  transition: transform $piece-move-duration $piece-move-ease;
+}
+
+@include reduced-motion {
+  .piece {
+    transition: none;
+  }
 }
 
 // --- La cara de la ficha ---------------------------------------------------

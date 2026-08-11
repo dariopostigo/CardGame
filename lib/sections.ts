@@ -1,13 +1,14 @@
 // =========================================================================
-// Los cuatro apartados del proyecto
+// Los apartados del proyecto
 //
 // Fuente única de la navegación de primer nivel: de aquí comen la portada
-// (app/page.tsx) y la cabecera de los cuatro marcos (SectionLinks.tsx). Antes
-// los enlaces cruzados estaban escritos a mano en cada Shell, y con dos
-// apartados se aguantaba; con cuatro, cada uno enlazando a los otros tres,
-// son doce enlaces que se desincronizan solos.
+// (app/page.tsx) y la cabecera de los marcos (SectionLinks.tsx). Antes los
+// enlaces cruzados estaban escritos a mano en cada Shell, y con dos
+// apartados se aguantaba; con varios, cada uno enlazando a los demás, son
+// enlaces que se desincronizan solos.
 //
-// Los cuatro se distinguen por DOS preguntas, y conviene no mezclarlas:
+// Cuatro documentan el proyecto y se distinguen por DOS preguntas, y
+// conviene no mezclarlas:
 //
 //   · qué documentan  → el juego sobre papel | el motor | una interfaz
 //   · a quién visten  → a nosotros (herramientas) | al jugador (producto)
@@ -16,6 +17,10 @@
 // repositorio de componentes es SIEMPRE una herramienta —el jugador nunca ve
 // una galería—, así que repository-pro es un apartado de desarrollo que
 // documenta producción. Por eso están los cuatro al mismo nivel.
+//
+// Play es el quinto y no encaja en ese esquema: no documenta nada, es el
+// juego jugable. Está aquí para compartir la misma cabecera de acceso
+// directo que los otros cuatro, no porque comparta su lógica.
 // =========================================================================
 
 /** Estado de construcción, común a labs y a familias de componentes. */
@@ -27,7 +32,7 @@ export const BUILD_STATUS_LABEL: Record<BuildStatus, string> = {
   planificado: "Planificado",
 };
 
-export type SectionId = "wiki" | "dev" | "repository-dev" | "repository-pro";
+export type SectionId = "wiki" | "dev" | "repository-dev" | "repository-pro" | "play";
 
 export type Section = {
   readonly id: SectionId;
@@ -80,13 +85,22 @@ export const SECTIONS: readonly Section[] = [
       "Los componentes que verá el jugador, con tema medieval: pergamino, hierro y madera. Por construir: hoy es el índice de lo que hará falta.",
     icon: "pi pi-shield",
   },
+  {
+    id: "play",
+    href: "/play",
+    label: "Play",
+    short: "Play",
+    summary:
+      "El juego jugable: hub, partidas y tablero en marcha sobre el motor. Aquí se junta lo que ya maduró en los laboratorios.",
+    icon: "pi pi-play",
+  },
 ];
 
 export const SECTIONS_BY_ID: Readonly<Record<SectionId, Section>> = Object.fromEntries(
   SECTIONS.map((s) => [s.id, s]),
 ) as Record<SectionId, Section>;
 
-/** Los otros tres apartados: lo que va en la cabecera de cada marco. */
+/** Los otros cuatro apartados: lo que va en la cabecera de cada marco. */
 export function otherSections(current: SectionId): readonly Section[] {
   return SECTIONS.filter((s) => s.id !== current);
 }

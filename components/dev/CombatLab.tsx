@@ -6,11 +6,14 @@
 // Banco de pruebas del motor mínimo jugable de PLAN-COMBATE.md: 1 héroe
 // (cualquiera de las 4 clases de HERO_ROSTER) contra 1-2 enemigos Normales
 // (ENEMY_ROSTER), en la rejilla de batalla vacía de board/battle.md §2.
-// Iniciativa una sola vez al abrir la batalla (game-design.md §4b.2), luego
-// el héroe mueve/ataca a golpe de clic y el enemigo sigue el árbol de
-// prioridades determinista de characters/enemies.md §5b.6
-// (lib/rules/enemy-ai.ts). Sin co-op, sin obstáculos, sin mercenario ni
-// Retirada — eso es la siguiente ronda.
+// Combate por fases de bando (board/battle.md §6): la iniciativa se tira una
+// sola vez al abrir la batalla y decide quién abre la ronda 1 y el orden
+// dentro de cada fase, pero nunca entrelaza turnos entre bandos. El héroe
+// mueve/ataca a golpe de clic; al terminar su turno, la fase Enemiga resuelve
+// SOLA a todos los enemigos vivos, uno tras otro (cada uno con el árbol de
+// prioridades determinista de characters/enemies.md §5b.6,
+// lib/rules/enemy-ai.ts), antes de devolver el turno al héroe. Sin co-op, sin
+// obstáculos, sin mercenario ni Retirada — eso es la siguiente ronda.
 //
 // El kit inicial del héroe (arma + armadura) no viene de ningún catálogo de
 // cartas todavía (eso es cards/weapons.md + un motor de equipo que no
@@ -19,7 +22,7 @@
 // que atacar y una CA con la que defenderse.
 // =========================================================================
 
-import { useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import { SelectButton } from "primereact/selectbutton";
 import type { DamageType } from "@/lib/card-table";
 import * as Hex from "@/lib/rules/hex";
@@ -94,6 +97,15 @@ const HERO_COL = 0;
 const ENEMY_COL = 13;
 const CENTER_ROW = 4;
 
+/**
+ * Pausa entre un enemigo y el siguiente dentro de la fase Enemiga (ver el
+ * `useEffect` de encadenado en `CombatSession`). Mismo patrón que
+ * `$deck-fall-hold` en styles/settings/_motion.scss: el número real vive
+ * aquí, en TS, y tiene que sobrar tiempo sobre `$piece-move-duration` (0,48s)
+ * para que el movimiento se vea entero antes de leer el siguiente golpe.
+ */
+const ENEMY_STEP_DELAY_MS = 800;
+
 // --- Kit inicial del héroe (heroes.md §2d, espejo mínimo para este lab) ----
 
 type HeroWeapon = {
@@ -147,8 +159,12 @@ type EnemySession = {
 type CombatState = {
   readonly hero: HeroSession;
   readonly enemies: readonly EnemySession[];
-  readonly turnOrder: readonly string[];
-  readonly activeIndex: number;
+  /** Orden fijo de los enemigos dentro de SU fase, decidido una sola vez en "roll-initiative" (board/battle.md §6). */
+  readonly enemiesOrder: readonly string[];
+  /** Qué fase de bando está en curso — nunca se entrelazan (board/battle.md §6). */
+  readonly side: "hero" | "enemies";
+  /** A quién le toca dentro de `enemiesOrder`, mientras `side === "enemies"`. */
+  readonly activeEnemySlot: number;
   readonly phase: Phase;
   readonly outcome: BattleOutcome;
   readonly rng: Rng.Rng;
@@ -187,8 +203,9 @@ function buildInitialState(heroClassId: HeroClassId, enemyClassIds: readonly Ene
         effects: [],
       };
     }),
-    turnOrder: [],
-    activeIndex: 0,
+    enemiesOrder: [],
+    side: "hero",
+    activeEnemySlot: 0,
     phase: "setup",
     outcome: "en-curso",
     rng: Rng.rngFromSeed(`combate:${heroClassId}:${enemyClassIds.join(",")}`),
@@ -198,19 +215,71 @@ function buildInitialState(heroClassId: HeroClassId, enemyClassIds: readonly Ene
 
 // --- Helpers puros de la sesión ---------------------------------------------
 
-function nextAliveIndex(
-  turnOrder: readonly string[],
-  from: number,
+/** Primer enemigo vivo de `enemiesOrder`, para abrir la fase enemiga. -1 si no queda ninguno. */
+function firstAliveEnemySlot(enemiesOrder: readonly string[], enemies: readonly EnemySession[]): number {
+  return enemiesOrder.findIndex((id) => enemies.find((e) => e.id === id)!.pv.current > 0);
+}
+
+/** Siguiente enemigo vivo tras `from` dentro de la MISMA fase. -1 si ya no queda ninguno (la fase termina). */
+function nextAliveEnemySlot(enemiesOrder: readonly string[], from: number, enemies: readonly EnemySession[]): number {
+  for (let i = from + 1; i < enemiesOrder.length; i++) {
+    if (enemies.find((e) => e.id === enemiesOrder[i])!.pv.current > 0) return i;
+  }
+  return -1;
+}
+
+function checkOutcomeAndLog(
   hero: HeroSession,
   enemies: readonly EnemySession[],
-): number {
-  const isAlive = (id: string) => (id === "hero" ? hero.pv.current > 0 : enemies.find((e) => e.id === id)!.pv.current > 0);
-  let i = from;
-  for (let step = 0; step < turnOrder.length; step++) {
-    i = (i + 1) % turnOrder.length;
-    if (isAlive(turnOrder[i])) return i;
-  }
-  return from;
+  log: readonly string[],
+): { outcome: BattleOutcome; phase: Phase; log: readonly string[] } {
+  const outcome = checkBattleOutcome([hero], enemies);
+  const phase: Phase = outcome === "en-curso" ? "battle" : "ended";
+  if (outcome === "victoria") return { outcome, phase, log: [...log, "¡Victoria!"] };
+  if (outcome === "derrota") return { outcome, phase, log: [...log, "El héroe cae. Derrota."] };
+  return { outcome, phase, log };
+}
+
+/** Abre la fase de Aliados: recarga el turno del héroe (board/battle.md §6). */
+function enterHeroTurn(state: CombatState): CombatState {
+  // Daño de Envenenado al EMPEZAR el turno; los estados en sí no cambian aquí
+  // (effects.md §1) — Inmovilizado sigue activo, por eso gatea el movimiento
+  // de ESTE turno. La salvación que puede retirarlos es de fin de turno (ver
+  // "end-hero-turn"), no de aquí.
+  const [poisonDamage, rng] = applyStartOfTurnDamage(state.rng, state.hero.effects);
+  const log = poisonDamage > 0 ? [...state.log, `Héroe sufre ${poisonDamage} de daño por Envenenado.`] : state.log;
+  const hero: HeroSession = {
+    ...state.hero,
+    pv: { ...state.hero.pv, current: Math.max(0, state.hero.pv.current - poisonDamage) },
+    movePointsLeft: hasEffect(state.hero.effects, "inmovilizado") ? 0 : MOVE_BASE,
+    hasActed: false,
+  };
+  const checked = checkOutcomeAndLog(hero, state.enemies, log);
+  return { ...state, hero, rng, log: checked.log, side: "hero", phase: checked.phase, outcome: checked.outcome };
+}
+
+/** Entra al turno de un enemigo concreto dentro de la fase Enemiga en curso. */
+function enterEnemyTurn(state: CombatState, slot: number): CombatState {
+  const activeId = state.enemiesOrder[slot];
+  const i = state.enemies.findIndex((e) => e.id === activeId);
+  const enemy = state.enemies[i];
+  const def = ENEMY_ROSTER[enemy.defId];
+  const [poisonDamage, rng] = applyStartOfTurnDamage(state.rng, enemy.effects);
+  const log = poisonDamage > 0 ? [...state.log, `${def.label} sufre ${poisonDamage} de daño por Envenenado.`] : state.log;
+  const enemies = state.enemies.map((e, idx) =>
+    idx === i ? { ...e, pv: { ...e.pv, current: Math.max(0, e.pv.current - poisonDamage) } } : e,
+  );
+  const checked = checkOutcomeAndLog(state.hero, enemies, log);
+  return {
+    ...state,
+    enemies,
+    rng,
+    log: checked.log,
+    side: "enemies",
+    activeEnemySlot: slot,
+    phase: checked.phase,
+    outcome: checked.outcome,
+  };
 }
 
 function farthestReachableHex(
@@ -266,47 +335,6 @@ function makeReducer(heroClassId: HeroClassId, board: Board) {
   const heroAbilityScores = HERO_ROSTER[heroClassId].abilityScores;
   const heroWeapon = HERO_WEAPON[heroClassId];
   const heroCombatCA = heroCA(heroClassId);
-
-  function enterTurn(state: CombatState, index: number): CombatState {
-    const activeId = state.turnOrder[index];
-    let hero = state.hero;
-    let enemies = state.enemies;
-    let rng = state.rng;
-    let log = state.log;
-
-    if (activeId === "hero") {
-      // Daño de Envenenado al EMPEZAR el turno; los estados en sí no cambian
-      // aquí (effects.md §1) — Inmovilizado sigue activo, por eso gatea el
-      // movimiento de ESTE turno. La salvación que puede retirarlos es de fin
-      // de turno (ver "end-hero-turn" más abajo), no de aquí.
-      const [poisonDamage, nextRng] = applyStartOfTurnDamage(rng, hero.effects);
-      rng = nextRng;
-      if (poisonDamage > 0) log = [...log, `Héroe sufre ${poisonDamage} de daño por Envenenado.`];
-      hero = {
-        ...hero,
-        pv: { ...hero.pv, current: Math.max(0, hero.pv.current - poisonDamage) },
-        movePointsLeft: hasEffect(hero.effects, "inmovilizado") ? 0 : MOVE_BASE,
-        hasActed: false,
-      };
-    } else {
-      const i = enemies.findIndex((e) => e.id === activeId);
-      const enemy = enemies[i];
-      const def = ENEMY_ROSTER[enemy.defId];
-      const [poisonDamage, nextRng] = applyStartOfTurnDamage(rng, enemy.effects);
-      rng = nextRng;
-      if (poisonDamage > 0) log = [...log, `${def.label} sufre ${poisonDamage} de daño por Envenenado.`];
-      enemies = enemies.map((e, idx) =>
-        idx === i ? { ...e, pv: { ...e.pv, current: Math.max(0, e.pv.current - poisonDamage) } } : e,
-      );
-    }
-
-    const outcome = checkBattleOutcome([hero], enemies);
-    const phase: Phase = outcome === "en-curso" ? "battle" : "ended";
-    if (outcome === "victoria") log = [...log, "¡Victoria!"];
-    if (outcome === "derrota") log = [...log, "El héroe cae. Derrota."];
-
-    return { ...state, hero, enemies, rng, log, activeIndex: index, phase, outcome };
-  }
 
   function applyEnemyAction(
     action: EnemyAction,
@@ -392,22 +420,29 @@ function makeReducer(heroClassId: HeroClassId, board: Board) {
           ...state.enemies.map((e) => ({ id: e.id, abilityScores: ENEMY_ROSTER[e.defId].abilityScores, isHero: false })),
         ];
         const [order, nextRng] = rollInitiative(state.rng, combatants);
+        const enemiesOrder = order.filter((id) => id !== "hero");
         const labelled = order.map((id) =>
           id === "hero" ? HERO_ROSTER[heroClassId].label : ENEMY_ROSTER[state.enemies.find((e) => e.id === id)!.defId].label,
         );
-        return enterTurn(
-          { ...state, turnOrder: order, rng: nextRng, log: [...state.log, `Iniciativa: ${labelled.join(" → ")}`] },
-          0,
-        );
+        const withOrder: CombatState = {
+          ...state,
+          enemiesOrder,
+          rng: nextRng,
+          log: [...state.log, `Iniciativa: ${labelled.join(" → ")}`],
+        };
+        // Quién abre la ronda 1 (board/battle.md §6): el bando de la tirada más
+        // alta — la fase enemiga, si le toca, resuelve TODOS sus enemigos de
+        // corrido, no uno solo.
+        return order[0] === "hero" ? enterHeroTurn(withOrder) : enterEnemyTurn(withOrder, 0);
       }
 
       case "hero-move": {
-        if (state.phase !== "battle" || state.turnOrder[state.activeIndex] !== "hero") return state;
+        if (state.phase !== "battle" || state.side !== "hero") return state;
         return { ...state, hero: { ...state.hero, position: action.to, movePointsLeft: action.pointsLeft } };
       }
 
       case "hero-attack": {
-        if (state.phase !== "battle" || state.turnOrder[state.activeIndex] !== "hero" || state.hero.hasActed) return state;
+        if (state.phase !== "battle" || state.side !== "hero" || state.hero.hasActed) return state;
         const targetIndex = state.enemies.findIndex((e) => e.id === action.targetId);
         if (targetIndex === -1) return state;
         const target = state.enemies[targetIndex];
@@ -424,35 +459,37 @@ function makeReducer(heroClassId: HeroClassId, board: Board) {
         const enemies = state.enemies.map((e, i) =>
           i === targetIndex ? { ...e, pv: { ...e.pv, current: Math.max(0, e.pv.current - outcome.damage) } } : e,
         );
-        let log = [...state.log, describeAttack("Héroe", def.label, heroWeapon.label, outcome, heroWeapon.damageType)];
-        const battleOutcome = checkBattleOutcome([state.hero], enemies);
-        if (battleOutcome === "victoria") log = [...log, "¡Victoria!"];
+        const log = [...state.log, describeAttack("Héroe", def.label, heroWeapon.label, outcome, heroWeapon.damageType)];
+        const checked = checkOutcomeAndLog(state.hero, enemies, log);
         return {
           ...state,
           enemies,
           rng: nextRng,
           hero: { ...state.hero, hasActed: true },
-          log,
-          phase: battleOutcome === "en-curso" ? "battle" : "ended",
-          outcome: battleOutcome,
+          log: checked.log,
+          phase: checked.phase,
+          outcome: checked.outcome,
         };
       }
 
       case "end-hero-turn": {
-        if (state.phase !== "battle" || state.turnOrder[state.activeIndex] !== "hero") return state;
+        if (state.phase !== "battle" || state.side !== "hero") return state;
         // Salvación de FIN de turno (effects.md §1): el estado ya estuvo activo
         // todo el turno (gateando movimiento arriba); ahora se decide si sigue
         // para el turno siguiente.
         const [effects, nextRng] = attemptEndOfTurnSaves(state.rng, state.hero.effects, heroAbilityScores);
         const hero = { ...state.hero, effects };
         const advanced = { ...state, hero, rng: nextRng };
-        return enterTurn(advanced, nextAliveIndex(advanced.turnOrder, advanced.activeIndex, hero, advanced.enemies));
+        // Fin de la fase de Aliados → abre la fase Enemiga entera (board/battle.md
+        // §6); si por lo que sea ya no queda ningún enemigo vivo, se reabre la
+        // fase de Aliados (la victoria ya se habría detectado antes de llegar aquí).
+        const slot = firstAliveEnemySlot(advanced.enemiesOrder, advanced.enemies);
+        return slot === -1 ? enterHeroTurn(advanced) : enterEnemyTurn(advanced, slot);
       }
 
       case "enemy-turn": {
-        if (state.phase !== "battle") return state;
-        const activeId = state.turnOrder[state.activeIndex];
-        if (activeId === "hero") return state;
+        if (state.phase !== "battle" || state.side !== "enemies") return state;
+        const activeId = state.enemiesOrder[state.activeEnemySlot];
 
         const index = state.enemies.findIndex((e) => e.id === activeId);
         const self = state.enemies[index];
@@ -477,20 +514,23 @@ function makeReducer(heroClassId: HeroClassId, board: Board) {
         const resolvedEnemy = { ...result.enemy, effects: selfEffects };
 
         const enemies = state.enemies.map((e, i) => (i === index ? resolvedEnemy : e));
-        const battleOutcome = checkBattleOutcome([result.hero], enemies);
-        const log = battleOutcome === "derrota" ? [...result.log, "El héroe cae. Derrota."] : result.log;
+        const checked = checkOutcomeAndLog(result.hero, enemies, result.log);
 
         const next: CombatState = {
           ...state,
           hero: result.hero,
           enemies,
           rng: afterSaves,
-          log,
-          phase: battleOutcome === "en-curso" ? "battle" : "ended",
-          outcome: battleOutcome,
+          log: checked.log,
+          phase: checked.phase,
+          outcome: checked.outcome,
         };
-        if (battleOutcome !== "en-curso") return next;
-        return enterTurn(next, nextAliveIndex(next.turnOrder, next.activeIndex, next.hero, next.enemies));
+        if (checked.outcome !== "en-curso") return next;
+        // Siguiente enemigo vivo dentro de la MISMA fase — la fase enemiga
+        // resuelve a todos de corrido; solo cuando ya no queda ninguno se
+        // devuelve el turno al héroe (board/battle.md §6).
+        const slot = nextAliveEnemySlot(next.enemiesOrder, next.activeEnemySlot, next.enemies);
+        return slot === -1 ? enterHeroTurn(next) : enterEnemyTurn(next, slot);
       }
 
       default:
@@ -595,9 +635,23 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
   );
   const [selected, setSelected] = useState<HexCoord | null>(null);
 
-  const isHeroTurn = state.phase === "battle" && state.turnOrder[state.activeIndex] === "hero";
+  const isHeroTurn = state.phase === "battle" && state.side === "hero";
   const activeEnemy =
-    state.phase === "battle" && !isHeroTurn ? state.enemies.find((e) => e.id === state.turnOrder[state.activeIndex]) : undefined;
+    state.phase === "battle" && state.side === "enemies"
+      ? state.enemies.find((e) => e.id === state.enemiesOrder[state.activeEnemySlot])
+      : undefined;
+
+  // La fase Enemiga resuelve a TODOS sus enemigos de corrido, sin que el
+  // jugador tenga que pulsar nada por cada uno (board/battle.md §6): en
+  // cuanto le toca a un enemigo, se encadena solo tras una pausa breve — el
+  // tiempo justo para que se vea su movimiento (transition de
+  // styles/settings/_motion.scss `$piece-move-duration`) y se lea el log
+  // antes de pasar al siguiente.
+  useEffect(() => {
+    if (state.phase !== "battle" || state.side !== "enemies") return;
+    const timer = setTimeout(() => dispatch({ type: "enemy-turn" }), ENEMY_STEP_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [state.phase, state.side, state.activeEnemySlot, dispatch]);
 
   const heroWeapon = HERO_WEAPON[heroClassId];
 
@@ -711,8 +765,12 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
       {state.phase !== "setup" && (
         <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-[var(--wiki-text)]">
           <span>
-            <b>Turno de:</b>{" "}
-            {isHeroTurn ? `Héroe (${HERO_ROSTER[heroClassId].label})` : activeEnemy ? ENEMY_ROSTER[activeEnemy.defId].label : "—"}
+            <b>Fase:</b>{" "}
+            {isHeroTurn
+              ? `Aliados — Héroe (${HERO_ROSTER[heroClassId].label})`
+              : activeEnemy
+                ? `Enemigos — ${ENEMY_ROSTER[activeEnemy.defId].label}`
+                : "—"}
           </span>
           {isHeroTurn && (
             <>
@@ -728,9 +786,7 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
             </>
           )}
           {!isHeroTurn && state.phase === "battle" && (
-            <button className={buttonClass({ variant: "primary" })} onClick={() => dispatch({ type: "enemy-turn" })}>
-              Jugar turno enemigo
-            </button>
+            <span className="text-[var(--wiki-muted)]">La IA está actuando…</span>
           )}
         </div>
       )}
@@ -745,8 +801,8 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
         En tu turno: clica una casilla resaltada para moverte, o a un enemigo dentro del alcance de tu{" "}
         <b>{heroWeapon.label}</b> ({heroWeapon.range === 1 ? "cuerpo a cuerpo" : `alcance ${heroWeapon.range}`}) para
         atacarlo — una vez por turno. Un enemigo marcado en rojo ya es alcanzable este turno: hay alguna casilla a tu
-        alcance (en azul, o la tuya si no te mueves) desde la que tu arma llega hasta él. En el turno enemigo, pulsa
-        el botón para que la IA decida y actúe.
+        alcance (en azul, o la tuya si no te mueves) desde la que tu arma llega hasta él. Cuando termines tu turno, la
+        fase enemiga resuelve sola a todos los enemigos vivos, uno tras otro.
       </p>
 
       <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--wiki-muted)]">

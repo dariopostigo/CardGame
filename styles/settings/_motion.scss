@@ -47,3 +47,15 @@ $loading-dot-stagger: 0.15s;
 // nada, solo entra y sale.
 $drawer-duration: 0.22s;
 $drawer-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+// --- Ficha en movimiento (BoardPiece) --------------------------------------
+// Cuando `x`/`y` cambian (héroe o enemigo se mueve de hexágono), la ficha
+// se desliza en vez de saltar de golpe. Sin rebote —un peón no "choca" al
+// llegar, se detiene— y bastante lenta para leerse como movimiento aunque
+// el salto sea de varios hexágonos a la vez (bajada de 0,32s a 0,48s a
+// petición de Dario, 2026-08-11: se veía demasiado rápido). El emparejado con
+// la pausa entre enemigos de la fase Enemiga (ENEMY_STEP_DELAY_MS en
+// CombatLab.tsx) tiene que dejarle tiempo de más para acabar antes del
+// siguiente paso.
+$piece-move-duration: 0.48s;
+$piece-move-ease: cubic-bezier(0.16, 1, 0.3, 1);

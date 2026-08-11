@@ -52,12 +52,13 @@ function sameBox(a: ViewBox, b: ViewBox): boolean {
 }
 
 /**
- * Cuánto se puede alejar y acercar. El mínimo baja de 1 —del tablero encajado—
- * porque el marco tiene alto fijo: un tablero alargado deja bandas a los lados
- * y alejarlo un poco más es lo que lo separa del borde. El máximo son 6 veces:
- * a partir de ahí el hexágono ocupa la pantalla y ya no se ve de qué loseta es.
+ * Cuánto se puede alejar y acercar. El mínimo es 1 —el tablero encajado— y no
+ * menos: el campo de batalla es fijo, así que nunca se ve más pequeño que
+ * encajado, solo igual o más cerca *(decidido 2026-08-11)*. El máximo son 6
+ * veces: a partir de ahí el hexágono ocupa la pantalla y ya no se ve de qué
+ * loseta es.
  */
-const MIN_ZOOM = 0.6;
+const MIN_ZOOM = 1;
 const MAX_ZOOM = 6;
 
 /** Paso por muesca de rueda y por clic en los botones. */
@@ -115,8 +116,17 @@ function toBoard(rect: DOMRect, vis: VisibleRect, clientX: number, clientY: numb
  * más pequeño —alejado del todo—, el tablero tiene que quedar dentro del marco.
  * Las dos son el mismo intervalo con los extremos cambiados de orden, así que
  * sale un `min`/`max` y no un `if`.
+ *
+ * A escala ≤1 el tablero entero ya cabe en el marco —es la propia definición
+ * de "encajado" o "alejado más de eso"—, así que no hay nada oculto que un
+ * arrastre pueda revelar: se fuerza centrado (tx = ty = 0) sin más, en vez de
+ * dejar el margen de las bandas de `preserveAspectRatio` como recorrido de
+ * arrastre. El campo de batalla queda así fijo y centrado a 100 %; solo se
+ * puede mover al acercar más allá de encajado, cuando algo se sale del marco
+ * de verdad.
  */
 function clampView(view: View, box: ViewBox, vis: VisibleRect): View {
+  if (view.k <= 1) return { k: view.k, tx: 0, ty: 0 };
   const axis = (t: number, min: number, span: number, visMin: number, visSpan: number) => {
     const flush = visMin - view.k * min; // borde inicial del tablero contra el del marco
     const end = visMin + visSpan - view.k * (min + span); // y los bordes finales
@@ -269,7 +279,11 @@ export function useBoardView(viewBox: ViewBox): BoardView {
 
     const onMove = (e: globalThis.PointerEvent) => {
       const from = drag.current;
-      if (!from) return;
+      // A escala ≤1 el arrastre no movería nada (clampView lo fuerza a
+      // centrado): ni se cuenta como arrastre ni se enciende el cursor de
+      // mano, para no sugerir un movimiento que no va a pasar. El clic que
+      // venga detrás sigue siendo un clic normal.
+      if (!from || from.from.k <= 1) return;
       const dx = e.clientX - from.x;
       const dy = e.clientY - from.y;
       if (!dragged.current) {
