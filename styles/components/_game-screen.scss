@@ -1,0 +1,53 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Fondo compartido de las pantallas de arranque (login, elegir modalidad…):
+// el mismo cuero oscuro que el resto de $game, en degradado radial en vez de
+// plano para que no se vea como un panel más. Sin imagen todavía —Dario
+// pondrá el fondo ilustrado más adelante—: el día que llegue, sustituye este
+// degradado por background-image en .game-screen y el resto no cambia.
+// -------------------------------------------------------------------------
+
+.game-screen {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: radial-gradient(ellipse at center, game("surface") 0%, game("bg") 75%);
+
+  &__panel {
+    display: flex;
+    width: min(26rem, 100%);
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    border: 1px solid game("border");
+    border-radius: radius("lg");
+    background: game("surface-2");
+    box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.8);
+  }
+
+  &__title {
+    font-family: $font-game-display;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    @include game-engraved-text;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  &__label {
+    font-family: $font-sans;
+    font-size: 0.8rem;
+    color: game("muted");
+  }
+}

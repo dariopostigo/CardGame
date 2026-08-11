@@ -1,0 +1,74 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Pantalla de carga (components/game/ui/GameLoadingScreen.tsx).
+//
+// El logo en reposo, los 4 puntos rebotando en cascada debajo: el mismo
+// vocabulario "cuero oscuro + oro" que el resto de $game, sin pedir un
+// token nuevo. Pensada para ocupar la pantalla entera durante la
+// transición entre rutas, así que no lleva panel ni borde propio: es el
+// fondo del juego, no un componente sobre él.
+// -------------------------------------------------------------------------
+
+.game-loading {
+  position: fixed;
+  inset: 0;
+  z-index: z("screen");
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background: game("bg");
+
+  &__logo {
+    font-family: $font-game-display;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: game("text");
+
+    &-accent {
+      color: game("gold");
+    }
+  }
+
+  &__dots {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  &__dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: radius("pill");
+    background: game("gold");
+    animation: game-loading-bounce $loading-dot-cycle ease-in-out infinite;
+
+    @include reduced-motion {
+      animation: none;
+      opacity: 0.6;
+    }
+
+    @for $i from 1 through 4 {
+      &:nth-child(#{$i}) {
+        animation-delay: $loading-dot-stagger * ($i - 1);
+      }
+    }
+  }
+}
+
+@keyframes game-loading-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  40% {
+    transform: translateY(-0.5rem);
+    opacity: 1;
+  }
+}

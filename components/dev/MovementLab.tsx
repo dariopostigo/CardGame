@@ -37,6 +37,7 @@ import { TERRAINS, TERRAIN_IDS } from "@/lib/rules/terrain";
 import { MOVE_BASE, movePointsForTurn, reachableHexes, type ReachableInfo } from "@/lib/rules/movement";
 import { revealFromPosition, visionRadii } from "@/lib/rules/vision";
 import HexBoard, { type HeroMarker } from "@/components/game/board/HexBoard";
+import CombatantDrawer, { type CombatantDrawerSubject } from "@/components/game/board/CombatantDrawer";
 import { TOKEN_ART } from "@/components/game/board/piece-art";
 import type { PawnId } from "@/components/game/board/piece-art";
 import { buttonClass } from "@/components/ui/Button";
@@ -284,6 +285,23 @@ function MovementSession({ board, players, modifiers }: SessionProps) {
         .filter(({ session }) => Hex.equals(session.hero.position, selected))
     : [];
 
+  // Ficha a enseñar en el panel lateral: el primer héroe en la casilla
+  // seleccionada, si hay alguno (co-op: varios pueden compartir hexágono al
+  // arrancar en la entrada — SelectionPanel de abajo sigue listándolos a
+  // todos cuando son más de uno). Sin equipo en este lab, así que no hay
+  // CA ni ataque que mostrar — el panel los omite si no vienen informados.
+  const firstHeroAtSelected = heroesAtSelected[0];
+  const drawerSubject: CombatantDrawerSubject | null = firstHeroAtSelected
+    ? {
+        piece: { family: "pawn", id: HERO_PIECE_IDS[firstHeroAtSelected.index] },
+        title: `Héroe ${firstHeroAtSelected.index + 1}`,
+        subtitle: HERO_ROSTER[firstHeroAtSelected.session.hero.classId].label,
+        abilityScores: HERO_ROSTER[firstHeroAtSelected.session.hero.classId].abilityScores,
+        pv: firstHeroAtSelected.session.hero.pv,
+        effects: [],
+      }
+    : null;
+
   const heroMarkers: HeroMarker[] = heroes.map((session, i) => ({
     id: session.hero.id,
     position: session.hero.position,
@@ -401,6 +419,8 @@ function MovementSession({ board, players, modifiers }: SessionProps) {
       {selectedCell && (
         <SelectionPanel cell={selectedCell} heroesHere={heroesAtSelected} activeIndex={activeIndex} />
       )}
+
+      <CombatantDrawer subject={drawerSubject} onClose={() => setSelected(null)} />
     </>
   );
 }
@@ -427,7 +447,10 @@ function SelectionPanel({
         {cell.isEntrance && terrainKnown && " · Entrada"}
       </div>
 
-      {heroesHere.length > 0 && (
+      {/* Con un solo héroe en la casilla, su ficha completa ya sale en el
+          panel lateral (CombatantDrawer); esta lista solo hace falta cuando
+          comparten hexágono varios héroes (co-op) y hay más de uno que ver. */}
+      {heroesHere.length > 1 && (
         <ul className="mb-1 grid gap-0.5 text-[var(--wiki-text)]">
           {heroesHere.map(({ session, index }) => (
             <li key={session.hero.id}>

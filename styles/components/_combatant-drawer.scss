@@ -1,0 +1,236 @@
+@use "sass:map";
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Ficha de héroe/enemigo en panel lateral — ver
+// components/game/board/CombatantDrawer.tsx
+//
+// Fijo al borde derecho de la VENTANA, no del tablero: por eso `position:
+// fixed` contra el viewport y no relativo a `.board`/`.board__viewport`. Así
+// el componente no depende de dónde lo monte cada laboratorio.
+//
+// Entra/sale deslizando en horizontal (`transform`, nunca `right`, para que
+// vaya a la GPU); el componente TSX decide cuándo desmontarlo del todo, así
+// que aquí solo hay que animar entre los dos estados de `data-open`.
+// -------------------------------------------------------------------------
+
+.combatant-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: z("modal");
+  width: min(21rem, 100vw);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  border-left: 1px solid skin("border");
+  background: skin("surface");
+  box-shadow: $shadow-tooltip;
+  color: skin("text");
+  transform: translateX(100%);
+  transition: transform $drawer-duration $drawer-ease;
+  will-change: transform;
+
+  &[data-open="true"] {
+    transform: translateX(0);
+  }
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+// --- Cabecera --------------------------------------------------------------
+// Toma el color de la propia ficha clicada ($piece de settings, la misma
+// fuente que pinta el disco en el tablero): así el panel no inventa una
+// paleta —el héroe 1 abre en su azul pálido, el enemigo activo en su negro
+// con tinta al rojo— y la identidad viaja del tablero al panel sin más.
+.combatant-drawer__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: skin("surface-2");
+  border-bottom: 1px solid skin("border");
+}
+
+@each $name, $colors in $piece {
+  .combatant-drawer[data-piece="#{$name}"] .combatant-drawer__header {
+    background: map.get($colors, "field");
+    color: map.get($colors, "ink");
+    border-bottom-color: transparent;
+  }
+}
+
+.combatant-drawer__icon {
+  flex: none;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+.combatant-drawer__heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.combatant-drawer__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.combatant-drawer__subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
+
+// El botón de cerrar hereda la tinta de la cabecera (currentColor) en vez de
+// su gris neutro de siempre: sobre un fondo casi negro (enemigo activo) el
+// gris apenas se leía.
+.combatant-drawer__close {
+  flex: none;
+  color: currentColor;
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, currentColor 18%, transparent);
+    color: currentColor;
+  }
+}
+
+// --- Cuerpo ------------------------------------------------------------
+.combatant-drawer__body {
+  padding: 1rem;
+  animation: combatant-drawer-content-in $duration-base $ease;
+
+  @include reduced-motion {
+    animation: none;
+  }
+}
+
+@keyframes combatant-drawer-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// --- PV: barra + número ----------------------------------------------------
+.combatant-drawer__pv {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.combatant-drawer__pv-bar {
+  flex: 1;
+  height: 0.5rem;
+  border-radius: radius("pill");
+  background: skin("surface-2");
+  overflow: hidden;
+}
+
+.combatant-drawer__pv-fill {
+  height: 100%;
+  border-radius: radius("pill");
+  background: skin("accent");
+  transition: width $duration-base $ease;
+
+  // Por debajo de un tercio de PV pasa a leerse como alarma, mismo tono que
+  // los estados activos (.combatant-drawer__effects) de más abajo.
+  &[data-low="true"] {
+    background: skin("danger");
+  }
+}
+
+.combatant-drawer__pv-label {
+  flex: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+// --- Características: seis fichas, no una lista ----------------------------
+.combatant-drawer__abilities {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.combatant-drawer__ability {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.5rem 0.25rem;
+  border: 1px solid skin("border");
+  border-radius: radius("md");
+  background: skin("surface-2");
+}
+
+.combatant-drawer__ability-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: skin("muted");
+}
+
+.combatant-drawer__ability-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.combatant-drawer__ability-mod {
+  font-size: 0.75rem;
+  color: skin("accent");
+}
+
+// --- CA / velocidad, ataque: bloques, no párrafos sueltos -------------------
+.combatant-drawer__stats,
+.combatant-drawer__attack,
+.combatant-drawer__notes {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: radius("md");
+  background: skin("surface-2");
+  font-size: 0.85rem;
+}
+
+.combatant-drawer__stats {
+  display: flex;
+  gap: 1.25rem;
+  list-style: none;
+}
+
+.combatant-drawer__notes {
+  padding-left: 1.5rem;
+  list-style: disc;
+}
+
+// --- Estados activos: chips de alarma, no una lista ------------------------
+.combatant-drawer__effects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.25rem 0.6rem;
+    border-radius: radius("pill");
+    background: skin("danger-soft");
+    color: skin("danger");
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}

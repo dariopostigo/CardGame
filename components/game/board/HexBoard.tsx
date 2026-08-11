@@ -135,6 +135,16 @@ type Props = {
   /** Hexágonos dentro del alcance de movimiento actual (capa 4b, resalte de relleno). */
   reachable?: ReadonlySet<HexKey>;
   /**
+   * Hexágonos ya alcanzables por un ataque este turno (capa 4b, resalte en
+   * rojo): normalmente la casilla de un enemigo para el que existe algún
+   * hexágono, dentro del movimiento que le queda a quien va a actuar, desde
+   * el que su arma llega hasta él (`lib/rules/movement.ts`
+   * `attackableTargets`). No es un hexágono de destino —dos fichas nunca
+   * comparten hexágono, board/battle.md §2—, es un aviso sobre la ficha
+   * misma. Independiente de `reachable`: no tienen por qué coincidir.
+   */
+  threatened?: ReadonlySet<HexKey>;
+  /**
    * Los héroes en el tablero. Se pintan siempre, no dependen de
    * `contentRevealed` (se ven a sí mismos). Si varios comparten hexágono —los
    * 1-4 pueden arrancar juntos en la entrada— se reparten en abanico para no
@@ -183,6 +193,7 @@ export default function HexBoard({
   showTiles = true,
   selected = null,
   reachable,
+  threatened,
   heroes = [],
   onHexClick,
 }: Props) {
@@ -440,6 +451,7 @@ export default function HexBoard({
                   }
                   data-selected={selected && Hex.equals(selected, cell.coord) ? "true" : undefined}
                   data-reachable={reachable?.has(Hex.key(cell.coord)) ? "true" : undefined}
+                  data-threatened={threatened?.has(Hex.key(cell.coord)) ? "true" : undefined}
                 />
               );
             })}

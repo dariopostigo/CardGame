@@ -1,8 +1,15 @@
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import Hub from "@/components/game/hub/Hub";
 
-// /play fue la primera ruta del prototipo, antes de que existiera la sección
-// /dev. Se mantiene como redirección para no romper enlaces ni marcadores.
+// Antes esta ruta redirigía a /dev/board (resto del prototipo, previo a que
+// existiera /dev). Ahora que hay hub real, ese acceso rápido al tablero
+// sigue disponible tal cual desde /dev — no se ha escondido, solo ha dejado
+// de vivir aquí.
 
-export default function PlayPage() {
-  redirect("/dev/board");
+export const metadata: Metadata = {
+  title: "CardGame",
+};
+
+export default function HubPage() {
+  return <Hub />;
 }

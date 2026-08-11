@@ -54,7 +54,10 @@
     outline-offset: 2px;
   }
 
-  &:disabled {
+  // Un <span>/<a> no puede llevar :disabled — es la versión "apagada" para
+  // esos casos (entradas de menú y modalidades todavía sin construir).
+  &:disabled,
+  &[aria-disabled="true"] {
     cursor: not-allowed;
     filter: grayscale(0.5) brightness(0.65);
   }

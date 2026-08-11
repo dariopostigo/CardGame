@@ -35,3 +35,15 @@ $deck-fall-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
 $deck-fall-hold: 160ms;
 $deck-expand-duration: 0.24s;
 $deck-deal-stagger: 90ms;
+
+// --- Pantalla de carga (GameLoadingScreen) --------------------------------
+// Los 4 puntos rebotan en cascada, uno tras otro: el desfase entre puntos es
+// una fracción del ciclo completo, no un valor aparte.
+$loading-dot-cycle: 1.2s;
+$loading-dot-stagger: 0.15s;
+
+// --- Panel lateral de ficha (CombatantDrawer) ------------------------------
+// Curva de salida, sin rebote: un panel de información no "choca" contra
+// nada, solo entra y sale.
+$drawer-duration: 0.22s;
+$drawer-ease: cubic-bezier(0.16, 1, 0.3, 1);

@@ -204,6 +204,19 @@
     stroke-width: 1.5;
   }
 
+  // Ya alcanzable este turno (lib/rules/movement.ts `attackableTargets`):
+  // la casilla de un enemigo al que tu arma ya llega desde algún hexágono a
+  // tu alcance. Pisa el tinte de "aquí puedes llegar" si coinciden en el
+  // mismo hexágono —a propósito, y por eso esta regla va DESPUÉS de
+  // data-reachable en la cascada—, porque saber que puedes golpear importa
+  // más que saber que puedes pisar.
+  &[data-threatened="true"] {
+    fill: $board-threatened;
+    fill-opacity: 0.3;
+    stroke: $board-threatened;
+    stroke-width: 2;
+  }
+
   &[data-hover="true"] {
     stroke: skin("text");
     stroke-width: 2.5;

@@ -214,7 +214,7 @@ export function classifyFaceEdges(triIndices: [number, number, number][]): [bool
   ]);
 }
 
-const ROUND_SUBDIVISIONS = 6;
+const ROUND_SUBDIVISIONS = 14;
 // Cuánto se HUNDE una cara hacia el centro del dado cerca de su borde real,
 // en fracción de su propio radio — no hacia una esfera común (el d10 no la
 // tiene: el polo y el anillo están a distancias distintas del centro), sino
@@ -229,23 +229,22 @@ const ROUND_SUBDIVISIONS = 6;
 // reborde hinchado y, en contraste, el centro de la cara —que no se toca—
 // se ve hundido: la cara entera parece un cuenco en vez de un plano con
 // las aristas suavizadas.
-// Con ROUND_SUBDIVISIONS=6 el paso de la rejilla (1/6≈0.167) ya es mayor
-// que ROUND_MARGIN (0.13): NINGÚN punto de la rejilla cae en ese rango
-// intermedio, así que en la práctica esto no es un degradado sino un
-// escalón — solo la fila exacta sobre el borde real (edgeDist=0) se hunde;
-// el resto de la cara queda intacta (comprobado imprimiendo edgeDist por
-// vértice). Por eso este valor tiene que ser pequeño: con 0.09 ese escalón
-// era tan pronunciado, y las normales soldadas lo suavizaban tanto al
-// iluminarlo, que las caras pequeñas (d8/d12/d20, con más aristas por
-// área) dejaban de leerse como planas y el dado entero parecía una bola
-// —justo el bug reportado—. Verificado a ojo en /dev/dice: por debajo de
-// ~0.03 el escalón se lee como un bisel sutil sin comerse la cara.
-const ROUND_BULGE = 0.025;
+// Con ROUND_SUBDIVISIONS=14 el paso de la rejilla (1/14≈0.071) cae POR
+// DEBAJO de ROUND_MARGIN (0.16): ahora sí hay varias filas de rejilla
+// dentro de esa banda, así que el hundido es un degradado real (varios
+// pasos de smoothstep) en vez de un escalón de una sola fila —lo que hace
+// que la arista/pico se lea como redondeado de verdad y no como un bisel
+// de una sola línea—. Verificado a ojo en /dev/dice: con el signo correcto
+// (hacia dentro, ver más abajo) y la rejilla fina, subir el bulge no
+// vuelve bola la cara porque smoothstep sigue llegando exactamente a 0 en
+// ROUND_MARGIN — el centro de la cara se queda intacto sea lo que sea el
+// bulge; solo cambia cuánto se hunde el borde, no cuánta cara toca.
+const ROUND_BULGE = 0.05;
 // A partir de qué "distancia al borde" (en baricéntricas, 0=borde,
 // 1/3=centro) empieza a hundirse. Bajo a propósito: dado que el número se
 // dibuja centrado y grande, el redondeo NO debe invadir esa zona o
 // encogería visualmente el número — el hundido vive en el marco exterior.
-const ROUND_MARGIN = 0.13;
+const ROUND_MARGIN = 0.16;
 
 /** Un triángulo original → sus sub-triángulos con las esquinas recogidas hacia el centro del dado cerca de los bordes reales. */
 function roundedTriangle(
@@ -266,6 +265,16 @@ function roundedTriangle(
       let edgeDist = 1;
       for (let i = 0; i < 3; i++) {
         if (edgeIsBoundary[i]) edgeDist = Math.min(edgeDist, bs[i]);
+        // Toda esquina de un triángulo aquí es SIEMPRE un vértice real de la
+        // cara (nunca un punto sintético/centroide) — así que aunque en ESTE
+        // triángulo sus dos aristas locales sean ambas costuras internas (el
+        // vértice "bisagra" del abanico de un pentágono, flanqueado por 2
+        // diagonales en su triángulo del medio: ver el d12), sigue estando
+        // sobre el contorno real de la cara. Sin este término esa esquina se
+        // leía como borde en dos de sus triángulos y como interior en el
+        // tercero — la misma posición 3D hundida a profundidades distintas
+        // según qué triángulo la dibujara, la grieta que se veía en el d12.
+        edgeDist = Math.min(edgeDist, 1 - bs[i]);
       }
       const roundAmount = 1 - smoothstep(0, ROUND_MARGIN, edgeDist);
       const rounded = flat.clone().multiplyScalar(1 - roundAmount * ROUND_BULGE);
@@ -315,13 +324,99 @@ export function buildPolyhedronVisual(model: DiceModel, color: string) {
 
   // d20 (muchas caras pequeñas) y d10 (caras "cometa" estrechas) necesitan
   // el número más pequeño que el resto para no comerse el bisel del borde;
-  // el resto de dados se queda con el tamaño base.
-  const fontScale = model.kind === "d20" || model.kind === "d10" ? 0.8 : 1;
+  // d100 comparte la cara del d10 pero con etiqueta de 2 cifras ("00".."90"),
+  // así que necesita un empujón más de encogido todavía. d12 es el único que
+  // se queda con el tamaño de referencia (0.42 de fontSize en dice-textures)
+  // sin encoger más: a ojo en /dev/dice pedía solo números más finos, no más
+  // pequeños; d4/d8 sí pedían encogerse un poco pese a tener caras enteras.
+  const FONT_SCALE: Record<string, number> = {
+    d4: 0.8,
+    d8: 0.8,
+    d10: 0.65,
+    d12: 1,
+    d20: 0.65,
+    d100: 0.5,
+  };
+  const fontScale = FONT_SCALE[model.kind] ?? 1;
+  // Un poco más fino en todos los dados numéricos (antes 800 en todos).
+  const fontWeight = 700;
+
+  // d4/d8 (una sola cara = un solo triángulo) y d10/d100 (cara "cometa" de 2
+  // triángulos) no tienen abanico propio que fije un eje local consistente
+  // cara a cara: qué vértice cae primero en `model.triangles` depende del
+  // orden interno con el que Three.js/buildD10Base listó ESA cara en
+  // concreto, sin ninguna regla de rotación compartida entre caras del
+  // mismo dado. El resultado es que el número sale girado a un ángulo
+  // distinto (y feo) en cada cara. d12/d20 no sufren esto: sus caras se
+  // trianguan en abanico desde un vértice que SÍ resulta consistente cara a
+  // cara (ver dice-geometry.ts), así que no se toca.
+  const NEEDS_ANGLE_FIX = new Set(["d4", "d8", "d10", "d100"]);
+  // Vector de referencia SIN alinear a ningún eje: los vértices por defecto
+  // de Three.js para el tetraedro/octaedro están puestos justo en esquinas
+  // de cubo/ejes (p. ej. el tetraedro tiene 2 vértices con Y=+1 exactos y
+  // otros 2 con Y=-1 exactos) — usar la Y global sola deja EMPATADO el
+  // "vértice más alto" en varias caras, y el desempate cae otra vez en el
+  // orden de índices de Three.js, el mismo problema que se quiere evitar.
+  // Con pesos "raros" en los 3 ejes el empate exacto no ocurre en ninguno
+  // de los sólidos de este módulo.
+  const ANCHOR_REF = new THREE.Vector3(0.37, 1, 0.19);
 
   model.faces.forEach((face, faceIndex) => {
     const triIndices = model.triangles!.filter((_, t) => model.triangleFace![t] === faceIndex);
-    const flat = flattenFace(triIndices, model.vertices!);
+    let flat = flattenFace(triIndices, model.vertices!);
     const edgeFlags = classifyFaceEdges(triIndices);
+
+    if (NEEDS_ANGLE_FIX.has(model.kind)) {
+      const [pivotX, pivotY] = faceCentroid2D(triIndices, flat);
+
+      // En una cara de UN triángulo (d4/d8) cualquiera de sus 3 vértices
+      // sirve de ancla: el centroide siempre cae en la mediana vértice↔punto
+      // medio del lado opuesto, así que forzar ese vértice arriba deja esa
+      // mediana vertical sin más. Pero en una cara "cometa" (d10/d100, 2
+      // triángulos) NO vale elegir entre sus 4 vértices por igual: la
+      // cometa tiene un eje de simetría real —la diagonal INTERNA que
+      // comparten los 2 triángulos (pole↔near en buildD10Base, ver
+      // dice-geometry.ts)—, y los otros 2 vértices ("far1"/"far2") son la
+      // pareja simétrica a los lados. Si el ancla cae en uno de esos dos
+      // laterales, ese eje largo queda tumbado de lado en vez de vertical
+      // —justo el bug reportado ("si el dado es un rombo, el número tiene
+      // que salir vertical, no horizontal")—. classifyFaceEdges ya marca
+      // qué arista de cada triángulo es esa costura interna
+      // (edgeIsBoundary === false); sus 2 vértices son ese eje, y el
+      // centroide de área cae exactamente sobre él (la cometa es simétrica
+      // por reflexión respecto a esa diagonal, y el centroide de una forma
+      // simétrica siempre cae en su eje) — así que anclar cualquiera de los
+      // dos ahí arriba deja el eje entero vertical.
+      let axisEndpoints: [number, number] | null = null;
+      for (let t = 0; t < triIndices.length && !axisEndpoints; t++) {
+        const tri = triIndices[t];
+        const internalIdx = edgeFlags[t].findIndex((isBoundary) => !isBoundary);
+        if (internalIdx === -1) continue;
+        axisEndpoints =
+          internalIdx === 0 ? [tri[1], tri[2]] : internalIdx === 1 ? [tri[2], tri[0]] : [tri[0], tri[1]];
+      }
+      const faceVertexIndices = axisEndpoints ?? [...new Set(triIndices.flat())];
+      let anchorIdx = faceVertexIndices[0];
+      let anchorScore = model.vertices![anchorIdx].dot(ANCHOR_REF);
+      for (const vi of faceVertexIndices) {
+        const score = model.vertices![vi].dot(ANCHOR_REF);
+        if (score > anchorScore) {
+          anchorScore = score;
+          anchorIdx = vi;
+        }
+      }
+      const [ax, ay] = flat.get(anchorIdx)!;
+      const rot = Math.PI / 2 - Math.atan2(ay - pivotY, ax - pivotX);
+      const cosA = Math.cos(rot);
+      const sinA = Math.sin(rot);
+      const rotated = new Map<number, [number, number]>();
+      for (const [idx, [x, y]] of flat) {
+        const dx = x - pivotX;
+        const dy = y - pivotY;
+        rotated.set(idx, [pivotX + dx * cosA - dy * sinA, pivotY + dx * sinA + dy * cosA]);
+      }
+      flat = rotated;
+    }
 
     const [cx, cy] = faceCentroid2D(triIndices, flat);
     const coords = [...flat.values()];
@@ -350,7 +445,7 @@ export function buildPolyhedronVisual(model: DiceModel, color: string) {
     const label = formatDiceValueLabel(model.kind, face.value);
     materials.push(
       new THREE.MeshStandardMaterial({
-        map: createNumeralTexture(label, color, fontScale),
+        map: createNumeralTexture(label, color, fontScale, fontWeight),
         roughness: 0.55,
         metalness: 0.04,
       }),

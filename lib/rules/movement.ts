@@ -44,6 +44,14 @@ export type ReachableInfo = {
  * si ya se gastó en un movimiento anterior, se pasa `false` para que no
  * vuelva a concederse aquí).
  *
+ * `occupied` son los hexágonos con otra ficha encima ahora mismo: en el
+ * tablero de batalla dos fichas nunca comparten hexágono (board/battle.md
+ * §2), así que se tratan como intransitables tanto para terminar el
+ * movimiento ahí como para atravesarlos de paso hacia otro más lejano. Vacío
+ * por defecto porque el mapa de exploración sí permite compartir casilla
+ * (los héroes co-op pueden arrancar juntos en la entrada) y no debe verse
+ * afectado por este parámetro.
+ *
  * @returns Info por hexágono alcanzable (incluido `from`, con `points`
  *   intactos). No filtra por terreno "abierto": la Montaña es transitable
  *   de verdad (coste 3), solo los huecos cerrados quedan fuera por no estar
@@ -54,6 +62,7 @@ export function reachableHexes(
   from: HexCoord,
   points: number,
   roadBonusAvailable: boolean = true,
+  occupied: ReadonlySet<HexKey> = new Set(),
 ): ReadonlyMap<HexKey, ReachableInfo> {
   // Coste mínimo para llegar a cada hexágono en cada estado del bonus de
   // Camino: [0] = todavía disponible, [1] = ya gastado.
@@ -70,6 +79,7 @@ export function reachableHexes(
     for (const neighbor of Hex.neighbors(coord)) {
       const cell = board.hexes.get(Hex.key(neighbor));
       if (!cell) continue; // hueco cerrado o fuera del tablero
+      if (occupied.has(Hex.key(neighbor))) continue; // otra ficha ya está ahí
 
       const grantsBonus = !roadUsed && cell.terrain === "camino";
       const nextRoadUsed = roadUsed || cell.terrain === "camino";
@@ -96,4 +106,30 @@ export function reachableHexes(
     if (spent <= points) best.set(key, { pointsLeft: points - spent, roadBonusUsed });
   }
   return best;
+}
+
+/**
+ * De `targets`, cuáles quedan a `range` hexágonos o menos de algún
+ * hexágono de `reachable` — es decir, atacables ESTE turno una vez elegido
+ * dónde moverse, no en el turno siguiente. `reachable` ya incluye el propio
+ * hexágono de partida (sin gastar movimiento), así que un objetivo ya en
+ * rango sin moverse también cuenta.
+ *
+ * Sirve para pintar, antes de mover, qué fichas rivales (o qué héroe, si
+ * quien pregunta es un enemigo a distancia) se podrían golpear este turno:
+ * es simétrica, no asume quién ataca a quién.
+ */
+export function attackableTargets(
+  reachable: ReadonlyMap<HexKey, ReachableInfo>,
+  range: number,
+  targets: readonly HexCoord[],
+): ReadonlySet<HexKey> {
+  const from = [...reachable.keys()].map(Hex.fromKey);
+  const result = new Set<HexKey>();
+  for (const target of targets) {
+    if (from.some((origin) => Hex.distance(origin, target) <= range)) {
+      result.add(Hex.key(target));
+    }
+  }
+  return result;
 }

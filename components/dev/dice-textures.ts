@@ -111,6 +111,7 @@ export function createNumeralTexture(
   label: string,
   colorHex: string,
   fontScale: number = 1,
+  fontWeight: number = 800,
 ): THREE.CanvasTexture {
   const size = 256;
   const { canvas, ctx } = makeCanvas(size);
@@ -131,8 +132,8 @@ export function createNumeralTexture(
   // `fontScale` es lo único que puede variar, y por dado entero (todas sus
   // caras a la vez) según lo pequeñas/estrechas que sean sus caras — nunca
   // por cuántos caracteres tenga cada etiqueta.
-  const fontSize = size * 0.34 * fontScale;
-  ctx.font = `800 ${fontSize}px system-ui, sans-serif`;
+  const fontSize = size * 0.42 * fontScale;
+  ctx.font = `${fontWeight} ${fontSize}px system-ui, sans-serif`;
   ctx.fillText(label, size / 2, size / 2 + fontSize * 0.04);
 
   return new THREE.CanvasTexture(canvas);

@@ -112,7 +112,7 @@ export const DEV_LABS: readonly DevLab[] = [
     summary:
       "Pantalla de batalla propia: iniciativa, adyacencia, ataque y estados, con el árbol de prioridades de la IA enemiga y el presupuesto de composición del bando enemigo.",
     icon: "pi pi-bolt",
-    status: "planificado",
+    status: "en-curso",
     doc: { href: "/docs/board/battle", label: "Pantalla de batalla" },
   },
   {

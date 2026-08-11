@@ -220,6 +220,14 @@ $board-shadow: rgba(12, 9, 7, 0.45);
 // constante en los dos temas.
 $board-reachable: #38bdf8;
 
+// Ya alcanzable este turno (board__hex-highlight[data-threatened],
+// HexBoard.tsx §4b / lib/rules/movement.ts `attackableTargets`): la casilla
+// de un enemigo al que ya llega tu arma. Rojo fijo por el mismo motivo que
+// $board-reachable es celeste fijo: es aviso del propio tablero, no del
+// skin de la wiki, y tiene que leerse igual sobre Mazmorra que sobre
+// Llanura.
+$board-threatened: #ef4444;
+
 // LA MESA: el fondo sobre el que está el tablero, y es el fondo del JUEGO —el
 // mismo en el laboratorio y en la partida—. Marrón casi negro, la referencia es
 // `public/assets/viajesTierraMedia/map1.webp`.
