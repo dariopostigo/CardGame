@@ -10,6 +10,9 @@ Nuevo cambio de rumbo en el juego
 7. Los enemigos van a ser las propias razas, es decir, en una partida rapida podrian salir por zonas enemigos de X raza y una raza como Boss final
 8. Las campañas seguiran sin definirse ya que necesitarian historia
 9. El sistema de subida de nivel y rareza de momento sera la misma
+10. El heroe tambien tendra su sistema de subida de nivel igual que las unidades
+11. El sistema de armas y armaduras quedan obsoletas de momento
+12. Las cartas de items y de maldiciones tendriamos que repasarlas con el nuevo sistema en busca de incoherencias o modificaciones. Lo mismo para los mazos de encuentro
 -----------------
 🧙‍♂️ Razas y clases
 -----------------
