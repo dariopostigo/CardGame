@@ -107,6 +107,14 @@ export const DEV_LABS: readonly DevLab[] = [
     doc: { href: "/docs/game-design", label: "Movimiento y visión" },
   },
   {
+    slug: "sprite",
+    label: "Animación de personaje",
+    summary:
+      "Preview aislado de un sprite animado (reposo, andar, ataque) a partir de una lámina de referencia, con velocidad ajustable y una vista de calibración de los recortes. No toca el tablero: la ficha del hexágono sigue siendo el disco cenital de siempre.",
+    icon: "pi pi-images",
+    status: "en-curso",
+  },
+  {
     slug: "combate",
     label: "Combate",
     summary:

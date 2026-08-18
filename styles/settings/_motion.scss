@@ -59,3 +59,12 @@ $drawer-ease: cubic-bezier(0.16, 1, 0.3, 1);
 // siguiente paso.
 $piece-move-duration: 0.48s;
 $piece-move-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+// --- Animación de personaje (AnimatedSprite, /dev/sprite) ------------------
+// Sin token aquí a propósito: el avance de fotograma es un índice de React
+// más `setInterval` (components/game/board/AnimatedSprite.tsx), no una
+// `transition`/`@keyframes` — no hay nada en CSS que deba compartir esta
+// cifra. La cadencia por defecto (`DEFAULT_FPS`) vive en TS, en
+// components/dev/SpriteLab.tsx, junto al slider que la hace ajustable en
+// vivo; se documenta aquí solo para que quien busque "toda duración vive en
+// _motion.scss" no se quede con la duda de por qué esta falta.

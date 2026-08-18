@@ -1,0 +1,50 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// Animación de personaje — ver components/game/board/AnimatedSprite.tsx y
+// components/dev/SpriteLab.tsx (/dev/sprite)
+//
+// El recorte de cada fotograma (tamaño, posición en la lámina) lo calcula
+// AnimatedSprite.tsx a partir de sprite-frames.ts y lo aplica como
+// background-position/-size en línea (son valores por fotograma, no hay
+// token que pedirles); lo que vive aquí es solo lo constante: que el fondo
+// no se repita y cómo se planta el escenario del lab.
+// -------------------------------------------------------------------------
+
+.sprite-frame {
+  display: block;
+  background-repeat: no-repeat;
+}
+
+// El escenario: centra el sprite y le da una altura mínima estable para que
+// cambiar entre Reposo/Andar/Ataque —fotogramas de tamaño distinto entre
+// sí— no haga saltar el resto de la página hacia arriba o abajo.
+.sprite-lab__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22rem;
+  padding: 1.5rem;
+}
+
+// --- Vista de calibración ---------------------------------------------------
+// Lámina completa + el recorte del fotograma actual resaltado encima, para
+// afinar sprite-frames.ts a ojo (ver el comentario de cabecera de ese
+// archivo: los recortes son un primer cálculo, no un resultado cerrado).
+
+.sprite-lab__calibration {
+  position: relative;
+}
+
+.sprite-lab__calibration-sheet {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.sprite-lab__calibration-box {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid skin("danger");
+  pointer-events: none;
+}

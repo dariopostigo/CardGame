@@ -1,519 +1,484 @@
-# Biblia Visual — Juego de Cartas de Fantasía
+# Biblia Visual --- Estilo Definitivo del Juego
 
-## 1. Identidad visual principal
+## 1. Identidad visual
 
-**Género:** Fantasía épica de aventuras de mesa.
+**Nombre interno:** 2D Stylized Fantasy Comic
 
-**Objetivo visual:** Crear una identidad artística propia que combine la fantasía clásica de los juegos de rol, la sensación de exploración y aventura de la fantasía medieval tradicional y el carácter heroico y espectacular de los videojuegos de fantasía.
+**Definición:** Ilustración 2D de fantasía cartoon estilizada con
+estética de cómic de videojuego.
 
-### Influencias principales
+La sensación objetivo es la de un personaje de videojuego de fantasía
+diseñado mediante dibujo y tinta, coloreado digitalmente con formas
+gráficas y sombreado estilizado.
 
-- **D&D** → variedad de personajes, clases, criaturas, equipamiento, magia y atmósfera de aventura.
-- **Viajes por la Tierra Media** → fantasía medieval más natural y creíble, exploración, caminos, bosques, ruinas, pueblos y sensación de mundo antiguo.
-- **Might & Magic: Olden Era** → siluetas heroicas, colores ricos, criaturas espectaculares y una identidad visual clara para cada unidad.
+No debe parecer un render 3D convertido en ilustración, ni concept art
+realista.
 
-> **Importante:** Estas obras son referencias de dirección artística. El juego debe mantener una identidad visual propia y no reproducir directamente personajes, ilustraciones, diseños o elementos protegidos de estas obras.
+------------------------------------------------------------------------
 
----
+## 2. Principio fundamental
 
-# 2. Estilo de ilustración
+La imagen se construye siguiendo esta jerarquía:
 
-Las ilustraciones deben parecer **pinturas de fantasía tradicionales realizadas para un RPG**, combinadas con el nivel de detalle y acabado de una ilustración moderna de cartas coleccionables.
+**Silueta → línea → forma → color → sombra → detalle**
 
-### Características obligatorias
+La línea y la silueta son elementos estructurales del diseño.
 
-- Ilustración de fantasía detallada y pintada a mano.
-- Acabado pictórico.
-- Estética de RPG de fantasía tradicional.
-- Fantasía medieval creíble y relativamente realista.
-- Anatomía realista con proporciones ligeramente heroicas.
-- Siluetas claras y reconocibles.
-- Armaduras, armas, ropajes y criaturas con mucho detalle.
-- Materiales físicamente creíbles.
-- Fondos atmosféricos y narrativos.
-- Iluminación natural y cinematográfica.
-- Profundidad mediante diferentes planos.
-- Texturas de pincel sutilmente visibles.
-- Paleta rica y natural.
-- Sensación de aventura, misterio, peligro y descubrimiento.
+------------------------------------------------------------------------
+
+## 3. Contornos y lineart
+
+Los contornos negros son una característica fundamental.
+
+-   Contorno exterior negro o casi negro.
+-   Líneas claramente visibles.
+-   Grosor medio/grueso.
+-   Variación de grosor.
+-   Contornos exteriores más fuertes que las líneas interiores.
+-   Líneas interiores para rostro, barba, ropa, armadura y equipo.
+-   Aspecto de tinta dibujada a mano.
+-   Pequeñas irregularidades naturales.
+
+Usar líneas para definir arrugas, cicatrices, mechones, costuras,
+correas, dedos, pliegues y detalles de armas.
+
+**Evitar:** ausencia de contorno, líneas excesivamente finas, lineart
+gris, vectorial demasiado perfecto.
+
+------------------------------------------------------------------------
+
+## 4. Anatomía
+
+Anatomía estilizada y ligeramente exagerada:
+
+-   Proporciones heroicas.
+-   Cabeza algo mayor que en anatomía realista.
+-   Manos y pies ligeramente grandes.
+-   Torso y hombros reforzados cuando corresponda.
+-   Extremidades simplificadas.
+-   Silueta muy clara.
+-   Posturas expresivas.
+
+La exageración sirve al diseño, pero no debe convertir a todos los
+personajes en caricaturas infantiles.
+
+------------------------------------------------------------------------
+
+## 5. Rostros
+
+Los rostros deben ser expresivos, estilizados y reconocibles.
+
+Se permiten narices grandes, mandíbulas marcadas, cejas fuertes,
+arrugas, cicatrices, dientes imperfectos y asimetrías.
+
+La personalidad es más importante que la perfección.
+
+Evitar rostros genéricos, belleza perfecta y realismo fotográfico.
+
+------------------------------------------------------------------------
+
+## 6. Pelo y barba
+
+No representar miles de pelos individuales.
+
+Construir el cabello y la barba mediante:
+
+-   grandes masas;
+-   mechones definidos;
+-   formas gráficas;
+-   líneas de tinta;
+-   grupos de detalle.
+
+El pelo debe contribuir a la silueta del personaje.
+
+------------------------------------------------------------------------
+
+## 7. Cartoon adulto
+
+El estilo es cartoon, pero **no infantil**.
+
+La caricaturización debe aparecer principalmente en proporciones,
+silueta, rostro, manos, equipo, expresiones y poses.
+
+Los personajes pueden ser serios, oscuros, cansados o amenazantes.
+
+**Cartoon no significa humorístico.**
+
+------------------------------------------------------------------------
+
+## 8. Sombreado
+
+Sombreado gráfico y estilizado.
+
+Estructura recomendada:
+
+**Color base → sombra principal → sombra profunda → luz → pequeños
+brillos**
+
+Las sombras deben tener bordes relativamente definidos.
+
+Prioridad:
+
+**bloques de sombra \> degradados suaves**
+
+Evitar el modelado fotorealista.
+
+------------------------------------------------------------------------
+
+## 9. Color
+
+Paleta rica, profunda, saturada de forma controlada y contrastada.
+
+Usar cuando corresponda:
+
+-   luces cálidas + sombras frías;
+-   personaje cálido + fondo frío;
+-   tonos tierra + acentos saturados;
+-   colores complementarios.
+
+Cada personaje puede tener identidad cromática propia.
+
+------------------------------------------------------------------------
+
+## 10. Materiales
+
+Los materiales deben reconocerse rápidamente mediante formas gráficas.
+
+### Cuero
+
+Grandes superficies, costuras seleccionadas, desgaste localizado y
+sombras gráficas.
+
+### Metal
+
+Zonas claras/oscuras, brillos definidos, arañazos selectivos y reflejos
+estilizados.
+
+### Tela
+
+Pliegues grandes y sombras gráficas.
+
+### Madera
+
+Textura limitada y líneas simples.
+
+### Piedra
+
+Grandes planos y grietas seleccionadas.
+
+Evitar microtexturas fotográficas.
+
+------------------------------------------------------------------------
+
+## 11. Detalle
+
+Regla:
+
+> **Mucho detalle donde importa, poco donde no importa.**
+
+Máximo detalle: - rostro; - ojos; - barba/pelo; - arma; - escudo; -
+elemento distintivo.
+
+Detalle medio: - armadura; - ropa; - cinturón; - accesorios.
+
+Detalle bajo: - fondo lejano; - cielo; - montañas; - vegetación
+distante; - arquitectura secundaria.
+
+------------------------------------------------------------------------
+
+## 12. Silueta
+
+Si rellenásemos al personaje completamente de negro, debería seguir
+siendo reconocible.
+
+La identidad debe depender de:
+
+-   altura;
+-   cuerpo;
+-   cabeza;
+-   pelo/barba;
+-   arma;
+-   escudo;
+-   ropa;
+-   accesorio característico.
+
+Esto es especialmente importante porque los personajes deberán poder
+convertirse posteriormente en sprites y animaciones RPG.
+
+------------------------------------------------------------------------
+
+## 13. Diseño de equipo
+
+Las armas y armaduras deben estar diseñadas, no ser genéricas.
+
+Cada héroe debería tener arma característica, silueta de arma propia y
+elementos visuales distintivos.
+
+Prioridad:
+
+**legibilidad + personalidad + fantasía + funcionalidad**
+
+No abusar del realismo histórico.
+
+------------------------------------------------------------------------
+
+## 14. Enano Guerrero --- concepto de referencia
+
+Superviviente único de una guarnición masacrada. Busca redención o, al
+menos, una pelea que pueda ganar. Es el personaje más resistente del
+grupo.
+
+### Aspecto
+
+-   Enano adulto.
+-   Bajo.
+-   Robusto.
+-   Ancho.
+-   Fuerte, pero no culturista.
+-   Curtido.
+-   Cansado.
+-   Cicatrizado.
+-   Expresión severa.
+-   Barba grande.
+-   Rasgos faciales marcados.
+
+### Equipo
+
+-   Espada en una mano.
+-   Escudo en la otra.
+-   Armadura ligera de cuero tachonado.
+-   Nada de armadura pesada.
+-   Equipo gastado y funcional.
+-   Algunas marcas de batalla.
 
 ### Evitar
 
-- Anime.
-- Manga.
-- Chibi.
-- Cartoon.
-- Cel shading.
-- Aspecto de render 3D.
-- Fotografía hiperrealista.
-- Estética genérica de MMORPG.
-- Armaduras con apariencia plástica.
-- Exceso de brillo digital.
-- HDR artificial.
-- Efectos de luz excesivamente exagerados.
-- Colores de neón sin justificación.
-- Anatomía deformada o poco creíble.
-- Ropa moderna.
-- Ciencia ficción o tecnología futurista.
-
----
-
-# 3. Diseño de personajes
-
-Cada personaje debe comunicar inmediatamente su:
-
-- Clase.
-- Facción.
-- Personalidad.
-- Función dentro del juego.
-- Nivel de poder aproximado.
+-   Caballero de armadura completa.
+-   Paladín brillante.
+-   Armadura pesada.
+-   Personaje limpio.
+-   Guerrero humano musculoso con barba.
+-   Diseño excesivamente elegante.
 
-La silueta debe permitir reconocer el personaje incluso cuando la ilustración se reduzca considerablemente.
+------------------------------------------------------------------------
 
-### Anatomía
+## 15. Poses
 
-- Proporciones humanas realistas.
-- Físico ligeramente heroico.
-- Evitar musculaturas exageradas salvo que el concepto lo requiera.
-- Rostros expresivos pero naturales.
-- Manos y armas correctamente proporcionadas.
-- Posturas dinámicas y creíbles.
+Preferir poses con personalidad:
 
-### Equipamiento
+-   tres cuartos;
+-   cuerpo ligeramente girado;
+-   peso natural;
+-   arma preparada;
+-   escudo protegiendo;
+-   torso ligeramente inclinado;
+-   sensación de movimiento contenido.
 
-Todo el equipamiento debe parecer **fabricado, utilizado y físicamente real**.
+Evitar postura de maniquí, brazos pegados al cuerpo y frontalidad
+rígida.
 
-#### Metal
-- Arañazos.
-- Abolladuras.
-- Desgaste.
-- Oxidación cuando corresponda.
-- Diferentes acabados metálicos.
-- Reflejos coherentes con la iluminación.
+------------------------------------------------------------------------
 
-#### Cuero
-- Costuras.
-- Pliegues.
-- Bordes desgastados.
-- Hebillas.
-- Textura visible.
+## 16. Fondos
 
-#### Tela
-- Peso creíble.
-- Arrugas.
-- Costuras.
-- Capas.
-- Diferentes tipos de tejido.
+El fondo debe ser fantástico, pero secundario.
 
-#### Armas
-Las armas deben parecer herramientas de combate reales, utilizadas por sus portadores, y no simples objetos ornamentales.
+Puede incluir bosques, montañas, castillos, ruinas, fortalezas, aldeas,
+caminos, mazmorras, campos de batalla, templos, torres, puentes, niebla
+y magia.
 
----
+Jerarquía:
 
-# 4. Regla de silueta
+**Primer plano:** detalle medio\
+**Personaje:** máximo detalle\
+**Fondo medio:** detalle moderado\
+**Fondo lejano:** simplificado y atmosférico
 
-Cada personaje principal debe tener una silueta inmediatamente reconocible.
+El escenario nunca debe robar protagonismo.
 
-### Ejemplos
+------------------------------------------------------------------------
 
-**Caballero**
-- Hombros anchos.
-- Escudo.
-- Espada.
-- Armadura claramente identificable.
+## 17. Iluminación
 
-**Explorador**
-- Capa.
-- Arco.
-- Silueta asimétrica.
-- Equipo de viaje.
+Dramática pero estilizada.
 
-**Mago**
-- Bastón.
-- Túnicas.
-- Accesorios distintivos.
-- Efectos mágicos asociados a su identidad.
+Puede utilizar:
 
-**Orco**
-- Gran volumen corporal.
-- Arma pesada.
-- Postura agresiva.
-- Elementos culturales propios.
+-   luz principal cálida;
+-   sombras frías;
+-   rim light;
+-   luz ambiental;
+-   pequeños brillos;
+-   contraste fuerte.
 
-La silueta debe seguir siendo reconocible cuando la carta se vea a tamaño reducido.
+Evitar fotografía, iluminación físicamente perfecta, HDR hiperrealista y
+reflejos complejos.
 
----
+La luz debe parecer diseñada para una ilustración.
 
-# 5. Composición
+------------------------------------------------------------------------
 
-Las imágenes deben estar diseñadas **pensando desde el principio en que formarán parte de una carta**.
+## 18. Formato para cartas
 
-No deben parecer ilustraciones genéricas recortadas posteriormente para encajarlas.
+**1536 × 1050 px**\
+**Ratio aproximado 1,46:1**\
+**Apaisado**\
+**A sangre**\
+**Sin transparencia**
 
-### Composición estándar
+El personaje debe estar centrado dejando **al menos 10% de aire en los
+cuatro bordes**, especialmente en las esquinas.
 
-- El personaje o elemento principal debe concentrar aproximadamente el 50–70 % de la atención visual.
-- Los elementos secundarios deben reforzar la historia.
-- El fondo debe establecer el lugar y la atmósfera sin competir con el protagonista.
-- Utilizar profundidad y diferentes planos.
-- Utilizar elementos del entorno para enmarcar al personaje.
-- Usar diagonales y líneas de movimiento cuando sean apropiadas.
-- Mantener un punto focal claro.
+El fondo puede llegar hasta los bordes.
 
-Los personajes no deben aparecer planos contra el fondo.
+No colocar rostro, armas, manos, escudo o elementos importantes pegados
+a los bordes.
 
----
+------------------------------------------------------------------------
 
-# 6. Iluminación
+## 19. Compatibilidad con sprites
 
-La iluminación debe contribuir a la identidad y al estado emocional de cada ilustración.
+Los diseños deben funcionar en ilustración grande y en representación
+pequeña.
 
-### Iluminación por defecto
+Por ello:
 
-Luz natural o cinematográfica con una fuente direccional clara.
+-   silueta clara;
+-   pocos elementos microscópicos;
+-   colores identificables;
+-   armas separadas visualmente del cuerpo;
+-   accesorios grandes;
+-   ropa diferenciable;
+-   rostro reconocible;
+-   proporciones consistentes.
 
-### Ejemplos
+------------------------------------------------------------------------
 
-**Bosque**
-- Rayos de sol atravesando los árboles.
-
-**Mazmorra**
-- Luz cálida de antorchas contrastando con zonas frías y oscuras.
-
-**Nigromante**
-- Luz de luna y energía sobrenatural fría.
-
-**Mago de fuego**
-- Fuego iluminando el rostro, las manos y el equipo.
-
-**Caballero sagrado**
-- Luz solar cálida o resplandor divino.
-
-No utilizar exactamente el mismo efecto de iluminación en todas las cartas.
-
----
-
-# 7. Lenguaje de color
-
-La identidad cromática general debe utilizar colores ricos, naturales y ligeramente terrosos.
-
-### Paleta base
-
-- Verde bosque.
-- Musgo.
-- Azul apagado.
-- Marrón cálido.
-- Gris piedra.
-- Beige pergamino.
-- Hierro.
-- Bronce.
-- Oro envejecido.
-- Rojo oscuro.
-
-Los elementos mágicos pueden utilizar colores más intensos.
-
-### El color como lenguaje jugable
-
-El color puede ayudar a identificar tipos de magia, facciones o elementos:
-
-- 🟢 Naturaleza / veneno.
-- 🔵 Arcano / hielo / agua.
-- 🔴 Fuego / furia / destrucción.
-- 🟡 Divino / sagrado.
-- 🟣 Sombra / nigromancia.
-- ⚪ Espíritu / celestial.
-
-Estos colores deben integrarse dentro del estilo pictórico y no parecer efectos de neón superpuestos.
-
----
-
-# 8. Entornos
-
-Los escenarios deben parecer **antiguos, habitados y explorables**.
-
-### Entornos recomendados
-
-- Bosques ancestrales.
-- Pasos montañosos.
-- Castillos en ruinas.
-- Templos olvidados.
-- Criptas subterráneas.
-- Aldeas medievales.
-- Minas abandonadas.
-- Valles cubiertos de niebla.
-- Campos de batalla antiguos.
-- Ruinas mágicas.
-- Caminos antiguos.
-- Asentamientos fortificados.
-
-### Narrativa ambiental
-
-El entorno debe contar algo.
-
-Una pared en ruinas debería sugerir quién la construyó, para qué servía y qué pudo haber ocurrido allí.
-
-El escenario nunca debe sentirse como un simple fondo decorativo.
-
----
-
-# 9. Nivel de fantasía
-
-El mundo debe sentirse **creíble antes de sentirse fantástico**.
-
-Una aldea medieval normal debe parecer físicamente posible.
-
-Después aparecen los elementos fantásticos:
-
-- Criaturas gigantes.
-- Armas mágicas.
-- Ruinas ancestrales.
-- Hechizos elementales.
-- Seres sobrenaturales.
-- Paisajes imposibles.
-
-El contraste entre lo cotidiano y lo fantástico hace que la magia resulte más impresionante.
-
----
-
-# 10. Criaturas
-
-Las criaturas deben tener una identidad visual fuerte.
-
-Evitar diseños genéricos como "monstruo con garras".
-
-Cada criatura debería tener:
-
-1. Silueta distintiva.
-2. Anatomía reconocible.
-3. Lógica biológica o material.
-4. Comportamiento característico.
-5. Equipamiento propio si es inteligente.
-6. Relación con su entorno.
-
-Por ejemplo, una criatura ancestral del bosque puede integrar musgo, corteza, raíces y hongos en su anatomía en lugar de limitarse a tener la piel verde.
-
----
-
-# 11. Magia
-
-La magia debe sentirse **poderosa, física e integrada en el mundo**.
-
-Evitar partículas genéricas o simples capas de brillo.
-
-Los hechizos deben interactuar con el entorno.
-
-### Fuego
-
-- Distorsión del calor.
-- Brasas.
-- Humo.
-- Luz reflejada sobre objetos cercanos.
-
-### Hielo
-
-- Escarcha.
-- Cristales.
-- Condensación.
-- Niebla fría.
-
-### Rayo
-
-- Iluminación intensa.
-- Chispas.
-- Humo.
-- Electricidad alrededor de superficies.
-
-### Nigromancia
-
-- Polvo.
-- Energía espectral.
-- Decadencia.
-- Atmósfera fría y sobrenatural.
-
-### Naturaleza
-
-- Hojas.
-- Raíces.
-- Polen.
-- Enredaderas.
-- Esporas.
-- Crecimiento vegetal.
-
-La magia debe iluminar los objetos cercanos de forma coherente.
-
----
-
-# 12. Materiales
-
-Los materiales son una parte fundamental de la identidad visual.
-
-### Metal
-Envejecido, arañado y físicamente creíble.
-
-### Madera
-Vetas visibles, nudos, desgaste y marcas de uso.
-
-### Piedra
-Grietas, musgo, erosión y bordes dañados.
-
-### Cuero
-Arrugas, costuras, desgaste y textura.
-
-### Tela
-Tejidos medievales pesados, capas y pliegues naturales.
-
-### Magia
-Nunca debe parecer una capa transparente añadida digitalmente sobre la imagen.
-
----
-
-# 13. Cámara y perspectiva
-
-### Perspectiva predeterminada
-
-- Altura de los ojos.
-- O ligeramente desde abajo para escenas heroicas.
-
-### Variaciones permitidas
-
-**Ángulo bajo**
-→ personaje poderoso o dominante.
-
-**Ángulo alto**
-→ personaje vulnerable o pequeño.
-
-**Gran angular**
-→ entorno épico.
-
-**Primer plano**
-→ momento emocional o expresión importante.
-
-Evitar perspectivas extremas o efectos de ojo de pez salvo que sean imprescindibles para una carta concreta.
-
----
-
-# 14. Tono y atmósfera
-
-El mundo es **aventurero, no permanentemente grimdark**.
-
-Puede haber escenas oscuras, violentas o siniestras, pero la sensación general debe ser:
-
-> **"Hay un mundo desconocido más allá de la siguiente montaña."**
-
-La identidad emocional del juego debe transmitir:
-
-**Aventura → Misterio → Peligro → Descubrimiento → Heroísmo**
-
----
-
-# 15. Reglas de consistencia para las cartas
-
-## SIEMPRE
-
-- Fantasía medieval.
-- Ilustración pictórica.
-- Anatomía realista.
-- Siluetas claras.
-- Entornos narrativos.
-- Materiales creíbles.
-- Profundidad atmosférica.
-- Iluminación cinematográfica natural.
-- Perspectiva coherente.
-- Punto focal claro.
-- Estética artesanal de fantasía.
-- Sensación de pertenecer al mismo universo.
-
-## NUNCA
-
-- Objetos modernos.
-- Arquitectura moderna.
-- Ciencia ficción.
-- Tecnología futurista.
-- Anime.
-- Cartoon.
-- Chibi.
-- Render 3D genérico.
-- Armaduras de plástico.
-- Fotografía hiperrealista.
-- Estética de MMORPG genérico.
-- Exceso de neón.
-- Efectos mágicos excesivamente brillantes.
-- HDR artificial.
-- Anatomía deformada.
-- Elementos decorativos sin función narrativa.
-
----
-
-# 16. Prompt maestro de estilo
-
-Este bloque debe utilizarse como **base constante para todas las ilustraciones futuras**.
-
-> Ilustración original de fantasía épica para un juego de cartas de aventuras de mesa, detallada y pintada a mano, con estética de libro clásico de RPG de fantasía combinada con arte conceptual moderno y pulido para un juego de cartas coleccionables. Mundo de fantasía medieval creíble, anatomía realista con proporciones ligeramente heroicas, siluetas fuertes y fácilmente reconocibles, armaduras, armas, cuero, tela, madera y piedra elaborados artesanalmente y con gran detalle, materiales físicamente creíbles, paleta rica de colores terrosos, entornos atmosféricos, profundidad mediante múltiples planos, iluminación natural cinematográfica, texturas táctiles, pinceladas pictóricas sutilmente visibles, personajes expresivos, narrativa ambiental, efectos mágicos controlados e integrados físicamente en la escena. Sensación de exploración, misterio, peligro, descubrimiento y aventura heroica. Alto nivel de detalle sin llegar al fotorealismo. Identidad visual completamente coherente y adecuada para formar parte de un único universo de juego de cartas de fantasía.
-
----
-
-# 17. Restricciones negativas del estilo
-
-> Sin anime, manga, chibi, cartoon, cel shading, ropa moderna, ciencia ficción, tecnología futurista, fotografía hiperrealista, render 3D genérico, materiales plásticos, estética MMORPG genérica, exceso de brillo, exceso de neón, colores artificialmente saturados, HDR artificial, bloom excesivo, anatomía deformada, rasgos faciales exagerados ni efectos mágicos que parezcan superpuestos digitalmente.
-
----
-
-# 18. STYLE LOCK — Bloque permanente
-
-A partir de ahora, esta Biblia Visual constituye el **STYLE LOCK** del juego.
-
-Cuando se genere una nueva ilustración, el estilo visual base NO debe reinventarse.
-
-Solo deben cambiar los elementos propios de la carta:
-
-- Personaje.
-- Criatura.
-- Clase.
-- Facción.
-- Raza.
-- Equipo.
-- Arma.
-- Habilidad.
-- Hechizo.
-- Entorno.
-- Acción.
-- Rareza.
-- Nivel de poder.
-- Atmósfera específica.
-
-El lenguaje visual general debe permanecer constante.
-
----
-
-# 19. Test de consistencia
-
-Antes de aprobar cualquier ilustración, debe responder afirmativamente a estas cinco preguntas:
-
-### 1. ¿Parece pertenecer al mismo mundo?
-La ilustración debe poder colocarse junto a otras cartas sin parecer de otro juego.
-
-### 2. ¿Tiene una silueta reconocible?
-El personaje o criatura debe identificarse rápidamente.
-
-### 3. ¿El entorno cuenta una historia?
-El escenario debe aportar contexto y no ser un fondo genérico.
-
-### 4. ¿Los materiales parecen reales?
-Metal, madera, cuero, tela, piedra y magia deben reaccionar de forma coherente a la luz.
-
-### 5. ¿Funciona a tamaño de carta?
-La composición y el protagonista deben seguir siendo legibles cuando la imagen se reduzca.
-
-Si las cinco respuestas son **SÍ**, la ilustración cumple el STYLE LOCK.
-
----
-
-# 20. Filosofía artística definitiva
-
-El objetivo no es crear imágenes que simplemente sean "bonitas".
-
-El objetivo es crear un mundo que parezca **real, antiguo, explorable y coherente**.
-
-Cada carta debe dar la sensación de que representa un fragmento de una aventura mucho mayor.
-
-> **Un mundo que parece existir más allá del borde de la carta.**
+## 20. Negative prompt maestro
+
+Cuando la IA permita instrucciones negativas:
+
+> photorealistic, hyperrealistic, realistic concept art, photographic
+> skin, skin pores, realistic hair strands, realistic metal reflections,
+> realistic leather texture, cinematic photorealism, 3D render,
+> realistic 3D character, glossy 3D materials, realistic anatomy, overly
+> detailed armor, excessive microdetails, smooth airbrushed painting,
+> oil painting, watercolor, soft photographic gradients, no outlines,
+> thin outlines, generic fantasy character, pristine heroic armor, heavy
+> plate armor, anime, manga, pixel art, low-poly, text, logo, watermark,
+> UI, frame
+
+------------------------------------------------------------------------
+
+## 21. Prompt base universal
+
+> **Ilustración 2D de fantasía cartoon estilizada con estética de cómic
+> de videojuego. Personaje diseñado mediante dibujo y tinta, con
+> contornos exteriores negros gruesos y expresivos y líneas interiores
+> visibles que definen rostro, ropa, equipo y materiales. Anatomía
+> heroica estilizada y ligeramente exagerada, silueta extremadamente
+> clara y reconocible, rostro expresivo y lleno de personalidad. Colores
+> ricos y saturados de forma controlada, grandes formas de color y
+> sombreado gráfico mediante bloques de sombra claramente definidos, con
+> pocos degradados suaves. Detalle selectivo: máximo detalle en rostro,
+> cabello/barba y elementos distintivos; menor detalle en ropa y fondo.
+> Materiales reconocibles mediante formas gráficas y pequeñas marcas
+> dibujadas, evitando microtexturas fotorealistas. Fondo de fantasía
+> medieval estilizado y atmosférico, subordinado al personaje. Aspecto
+> de personaje diseñado para un videojuego de fantasía 2D moderno,
+> expresivo, jugable y preparado visualmente para futuras animaciones y
+> sprites.**
+
+Añadir después:
+
+> **PERSONAJE:** \[descripción\]\
+> **EQUIPO:** [equipo](#equipo)\
+> **PERSONALIDAD:** \[personalidad\]\
+> **POSE:** \[pose\]\
+> **ESCENARIO:** \[escenario\]\
+> **PALETA:** \[colores\]
+
+------------------------------------------------------------------------
+
+## 22. Regla de consistencia
+
+### NO cambiar entre personajes
+
+-   lenguaje de línea;
+-   grosor aproximado del contorno;
+-   tratamiento del sombreado;
+-   nivel general de estilización;
+-   anatomía base;
+-   tratamiento de materiales;
+-   nivel de detalle;
+-   relación personaje/fondo;
+-   composición de carta;
+-   tratamiento general del color.
+
+### SÍ cambiar
+
+-   raza;
+-   clase;
+-   rostro;
+-   cuerpo;
+-   ropa;
+-   armadura;
+-   armas;
+-   colores propios;
+-   personalidad;
+-   pose;
+-   escenario;
+-   accesorios.
+
+La colección debe parecer creada por el mismo equipo artístico.
+
+------------------------------------------------------------------------
+
+## 23. Regla de oro
+
+La imagen debe poder describirse como:
+
+> **"Un personaje de fantasía de videojuego dibujado como un cartoon de
+> cómic, con contornos negros fuertes, formas exageradas, colores ricos
+> y sombras gráficas."**
+
+Si una generación empieza a parecer fotografía, pintura realista,
+concept art hiperrealista, render 3D, anime, manga, pixel art, low-poly
+o cartoon infantil, está fuera del estilo.
+
+------------------------------------------------------------------------
+
+## 24. Checklist de aprobación
+
+-   [ ] Contorno negro claramente visible.
+-   [ ] Se percibe como dibujo 2D.
+-   [ ] Anatomía estilizada.
+-   [ ] Silueta reconocible.
+-   [ ] Rostro con personalidad.
+-   [ ] Colores ricos y gráficos.
+-   [ ] Sombras principalmente gráficas.
+-   [ ] Pocos degradados fotográficos.
+-   [ ] Detalle concentrado en zonas importantes.
+-   [ ] Equipo reconocible.
+-   [ ] Fondo subordinado.
+-   [ ] Puede convertirse posteriormente en sprite.
+-   [ ] Pertenece visualmente al mismo videojuego.
+-   [ ] No hay fotorealismo.
+-   [ ] No parece un render 3D.
+-   [ ] No hay exceso de microdetalle.
+-   [ ] Respeta el 10% de espacio de seguridad.
+-   [ ] No contiene texto, logos, marcas de agua ni interfaz.
+
+------------------------------------------------------------------------
+
+## 25. Instrucción para otra IA
+
+> **Este documento es la Biblia Visual definitiva del juego. Todas las
+> imágenes futuras deben seguir sus reglas. No reinterpretar el estilo
+> como realismo, concept art cinematográfico, anime, pintura realista,
+> render 3D o cartoon infantil. El elemento visual más importante es el
+> lenguaje de dibujo 2D: contornos negros fuertes y visibles, formas
+> estilizadas, anatomía ligeramente exagerada, colores ricos y sombreado
+> gráfico por bloques. Mantener la misma identidad visual entre todos
+> los personajes aunque cambien sus razas, clases, armas, colores y
+> escenarios.**
