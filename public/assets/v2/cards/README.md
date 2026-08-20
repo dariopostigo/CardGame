@@ -6,7 +6,7 @@
 
 Aquí van las imágenes ya generadas para sustituir el emoji de cada carta (`../../../../lib/card-art.ts`), una a una según se vayan haciendo. Distinto de las carpetas de [`../../../concepts/`](../../../concepts/) (`UI`, `cardsExamples`, `affinityDesign`...), que son solo referencias de moodboard citadas en comentarios — nada de esto se sirve todavía en producción.
 
-Qué generar y con qué especificación (lienzo, formato, tono, brief por carta): [`../../../../md/v2/art-direction/cards.md`](../../../../md/v2/art-direction/cards.md).
+Qué generar y con qué especificación (lienzo, formato, tono, brief por carta): [`../../../../knowledge/v2/art-direction/cards.md`](../../../../knowledge/v2/art-direction/cards.md).
 
 ## Carpetas
 

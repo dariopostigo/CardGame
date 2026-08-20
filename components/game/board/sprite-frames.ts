@@ -2,7 +2,7 @@
 // Recortes del sprite de referencia (preview aislado, /lab/sprite)
 //
 // La lámina fuente (public/assets/v2/sprites/dwarf-warrior-reference.png, copia
-// de md/v2/art-direction/exampleSprite.png) es una lámina de REFERENCIA, no un
+// de knowledge/v2/art-direction/exampleSprite.png) es una lámina de REFERENCIA, no un
 // spritesheet exportado con rejilla exacta: cada personaje se generó por
 // separado y se compuso en tres bloques (Reposo/Andar/Ataque), así que el
 // espaciado entre fotogramas no es perfectamente uniforme. Los rects de abajo

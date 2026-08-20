@@ -13,10 +13,12 @@
 > [`../../v2/art-direction/`](../../v2/art-direction/cards.md) siguen
 > apuntando aquí: describen un catálogo muerto con un estilo que sigue vivo.
 >
-> Dos avisos al leerla: la §14 usa como concepto de referencia al **Enano
-> Guerrero de v2** —se conserva como calibración de estilo, no es un personaje
-> de V3— y el formato de carta de la §18 (1536×1050) está por confirmar contra
-> el marco de carta que decida V3.
+> **Aquí solo va el «cómo».** Las **medidas del archivo**, que estuvieron en la
+> §18, dependen del componente que lo pinta y viven en
+> [`public/assets/v3/README.md`](../../../public/assets/v3/README.md#lienzo-y-formato).
+> Y el **concepto de calibración** (§14) está **pendiente**: V3 no tiene imagen
+> de referencia, y la tendrá cuando se apruebe el primer héroe de Humanos.
+> El mapa completo de la carpeta está en [`README.md`](README.md).
 
 ## 1. Identidad visual
 
@@ -256,50 +258,19 @@ No abusar del realismo histórico.
 
 ------------------------------------------------------------------------
 
-## 14. Enano Guerrero --- concepto de referencia
+## 14. Concepto de calibración — **pendiente**
 
-> **Es el héroe de v2, y se queda aquí como calibración**: sirve para juzgar
-> si una generación acierta el estilo (línea, anatomía, materiales, desgaste),
-> no para dibujar a nadie de V3. En V3 la raza y la clase van separadas
-> ([`../../../docs/v3/razas.md`](../../../docs/v3/razas.md)), así que "enano
-> guerrero" no es un personaje del juego nuevo. Sustitúyelo por un concepto de
-> V3 en cuanto haya uno dibujado y aprobado.
+Un concepto de calibración es la imagen contra la que se juzga si una generación
+acierta el estilo. **V3 no tiene ninguna.**
 
-Superviviente único de una guarnición masacrada. Busca redención o, al
-menos, una pelea que pueda ganar. Es el personaje más resistente del
-grupo.
+La ocupará el **primer héroe de Humanos aprobado**
+([`../races-concept/prompts/humanos.md`](../races-concept/prompts/humanos.md)):
+es la raza piloto y lo primero que se ilustra, así que es lo primero que puede
+calibrar. Hasta entonce, esta biblia se aplica sin imagen de referencia — las
+§23 y §24 son lo que hace ese trabajo mientras tanto.
 
-### Aspecto
-
--   Enano adulto.
--   Bajo.
--   Robusto.
--   Ancho.
--   Fuerte, pero no culturista.
--   Curtido.
--   Cansado.
--   Cicatrizado.
--   Expresión severa.
--   Barba grande.
--   Rasgos faciales marcados.
-
-### Equipo
-
--   Espada en una mano.
--   Escudo en la otra.
--   Armadura ligera de cuero tachonado.
--   Nada de armadura pesada.
--   Equipo gastado y funcional.
--   Algunas marcas de batalla.
-
-### Evitar
-
--   Caballero de armadura completa.
--   Paladín brillante.
--   Armadura pesada.
--   Personaje limpio.
--   Guerrero humano musculoso con barba.
--   Diseño excesivamente elegante.
+Cuando exista, no se escribe aquí: es un **sujeto**, y en este documento no van
+sujetos.
 
 ------------------------------------------------------------------------
 
@@ -359,21 +330,18 @@ La luz debe parecer diseñada para una ilustración.
 
 ------------------------------------------------------------------------
 
-## 18. Formato para cartas
+## 18. Encuadre
 
-**1536 × 1050 px**\
-**Ratio aproximado 1,46:1**\
-**Apaisado**\
-**A sangre**\
-**Sin transparencia**
+Lo que es estilo: **el personaje va centrado, con aire en los cuatro bordes**, y
+el fondo puede llegar hasta el filo aunque el personaje no. Nada importante
+—rostro, armas, manos, escudo— pegado al borde, y menos en las esquinas: encima
+va un marco que los tapa.
 
-El personaje debe estar centrado dejando **al menos 10% de aire en los
-cuatro bordes**, especialmente en las esquinas.
-
-El fondo puede llegar hasta los bordes.
-
-No colocar rostro, armas, manos, escudo o elementos importantes pegados
-a los bordes.
+**Las medidas no son estilo y no viven aquí**: tamaño, ratio, sangrado,
+transparencia, aire exacto y extensión están en
+[`public/assets/v3/README.md`](../../../public/assets/v3/README.md#lienzo-y-formato),
+porque dependen del componente que va a pintar la imagen. Están pendientes de
+que V3 cierre su marco de carta.
 
 ------------------------------------------------------------------------
 
@@ -405,9 +373,19 @@ Cuando la IA permita instrucciones negativas:
 > realistic 3D character, glossy 3D materials, realistic anatomy, overly
 > detailed armor, excessive microdetails, smooth airbrushed painting,
 > oil painting, watercolor, soft photographic gradients, no outlines,
-> thin outlines, generic fantasy character, pristine heroic armor, heavy
-> plate armor, anime, manga, pixel art, low-poly, text, logo, watermark,
-> UI, frame
+> thin outlines, generic fantasy character, anime, manga, pixel art,
+> low-poly, text, logo, watermark, UI, frame
+
+> **Retiradas `pristine heroic armor` y `heavy plate armor`** (20 de agosto de
+> 2026). Venían de calibrar el estilo contra un personaje de cuero gastado, y V3
+> sí tiene sujetos de placa completa y reluciente: el Paladín de tier 7 de
+> Humanos, el Caballero, los Constructos enteros. Con ellas puestas había que
+> acordarse de retirarlas a mano en cada uno, y eso se olvida.
+>
+> Lo que protegían —que un tier 1 no salga heroico ni impecable— **se dice ahora
+> en positivo**, sujeto a sujeto: el bloque del Miliciano pide gambesón remendado
+> y «nada de oro, ni un remache». Es más fiable pedir la pobreza que prohibir la
+> riqueza.
 
 ------------------------------------------------------------------------
 
@@ -453,7 +431,6 @@ Añadir después:
 -   tratamiento de materiales;
 -   nivel de detalle;
 -   relación personaje/fondo;
--   composición de carta;
 -   tratamiento general del color.
 
 ### SÍ cambiar
@@ -507,8 +484,12 @@ o cartoon infantil, está fuera del estilo.
 -   [ ] No hay fotorealismo.
 -   [ ] No parece un render 3D.
 -   [ ] No hay exceso de microdetalle.
--   [ ] Respeta el 10% de espacio de seguridad.
+-   [ ] Nada importante pegado al borde (§18).
 -   [ ] No contiene texto, logos, marcas de agua ni interfaz.
+
+Esto comprueba el **estilo**. Que el archivo entregado tenga la medida, el
+formato y el nombre correctos se comprueba aparte:
+[`illustrations.md`](illustrations.md#6-checklist-de-entrega) §6.
 
 ------------------------------------------------------------------------
 

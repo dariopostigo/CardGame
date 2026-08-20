@@ -3,7 +3,7 @@
 //
 // Mismo patrón que lib/v2/rules/hero-roster.ts: los datos ya derivados (PV/CA
 // salen de §5b.1, no se recalculan aquí) como un Record por id. Solo los 5
-// bloques Normales de esta ronda (md/v2/PLAN-COMBATE.md (archivado)) — Élite y Jefes llegan con
+// bloques Normales de esta ronda (knowledge/v2/PLAN-COMBATE.md (archivado)) — Élite y Jefes llegan con
 // su propia fase.
 //
 // El "gancho de habilidad" de cada bloque (§5b.2, columna Habilidad) es una

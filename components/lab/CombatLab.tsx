@@ -3,7 +3,7 @@
 // =========================================================================
 // Laboratorio de COMBATE — /lab/combate
 //
-// Banco de pruebas del motor mínimo jugable de md/v2/PLAN-COMBATE.md (archivado): 1 héroe
+// Banco de pruebas del motor mínimo jugable de knowledge/v2/PLAN-COMBATE.md (archivado): 1 héroe
 // (cualquiera de las 4 clases de HERO_ROSTER) contra 1-2 enemigos Normales
 // (ENEMY_ROSTER), en la rejilla de batalla vacía de board/battle.md §2.
 // Combate por fases de bando (board/battle.md §6): la iniciativa se tira una

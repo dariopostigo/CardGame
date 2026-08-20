@@ -3,7 +3,7 @@
 //
 // Arrancó con lo mínimo que ya tenía fórmula cerrada: el presupuesto de
 // composición del bando enemigo. Esta ronda añade el resto del combate 1v1-2
-// contra Normales (md/v2/PLAN-COMBATE.md (archivado)): iniciativa, la rejilla de batalla vacía,
+// contra Normales (knowledge/v2/PLAN-COMBATE.md (archivado)): iniciativa, la rejilla de batalla vacía,
 // resolución de un ataque y el fin de combate. La IA enemiga (árbol de
 // prioridades §5b.6) vive aparte, en enemy-ai.ts (ARCHITECTURE.md §4) — este
 // archivo solo sabe tirar dados y aplicar sus resultados, no decidir qué

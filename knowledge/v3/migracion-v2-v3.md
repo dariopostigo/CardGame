@@ -1,6 +1,8 @@
 # Plan de migración v2 → v3
 
-> Plan de trabajo, no documento de diseño — vive en `md/` y no en `docs/` porque `docs/` se indexa solo en la wiki (`lib/docs.ts`).
+> Plan de trabajo, no documento de diseño — vive en `knowledge/` y no en `docs/` porque `docs/` se indexa solo en la wiki (`lib/docs.ts`).
+>
+> **Nota de lectura:** el mismo 20 de agosto de 2026, después de ejecutar este plan, la carpeta `md/` se renombró a **`knowledge/`** (base de conocimiento de los conceptos del proyecto). Los pasos de más abajo citan las rutas **tal y como eran cuando se ejecutaron**: donde diga `md/`, hoy es `knowledge/`. No se reescriben porque son el registro de lo que pasó.
 >
 > ## ✅ EJECUTADO el 20 de agosto de 2026
 >
@@ -9,7 +11,7 @@
 > **Desviaciones respecto a lo planeado:**
 >
 > - **El paso 3.3 se hizo a medias, a propósito.** El residuo de sigilo sí se limpió (Asesino y Asesino élfico). El solape triple de Resistencia mágica **no se fundió**: hay unidades con 🔮 Resistencia mágica ya asignada en sus tablas de Características, así que borrarla las dejaría huérfanas, y decidir qué añade el rasgo sobre la Habilidad es diseño, no migración. Queda anotado en `docs/v3/razas.md` y en `docs/v3/status.md` §3.
-> - **`PLAN-COMBATE.md` se archivó**, no se borró: está en `md/v2/` con un aviso de que sus reglas están muertas pero su estructura sigue siendo buena referencia.
+> - **`PLAN-COMBATE.md` se archivó**, no se borró: está en `knowledge/v2/` con un aviso de que sus reglas están muertas pero su estructura sigue siendo buena referencia.
 > - **Aparecieron 15 enlaces más de los 28 contados**: `lib/dev-labs.ts` (9) y los labs de `components/dev/` (6) tenían rutas `/docs/...` cableadas que ahora apuntan a `/docs/v2/...`.
 > - **Extra no planeado:** se documentó el corte en `ARCHITECTURE.md` (sección nueva "El corte v2 / v3") y en `AGENTS.md`, para que no se escriba diseño nuevo dentro de `docs/v2/` por inercia.
 > - **Extra no planeado:** `docs/v2/ideas.md` apuntaba a `plan-accion.md`, que este plan borra. Redirigido a los documentos de V3.

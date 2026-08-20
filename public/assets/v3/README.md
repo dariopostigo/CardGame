@@ -5,9 +5,9 @@ al arte. Esta carpeta existe para que lo primero que se genere tenga sitio sin
 tener que decidir nada.
 
 Qué generar y con qué especificación (sujetos, encuadre, plantilla de prompt):
-[`../../../md/v3/art-direction/illustrations.md`](../../../md/v3/art-direction/illustrations.md),
+[`../../../knowledge/v3/art-direction/illustrations.md`](../../../knowledge/v3/art-direction/illustrations.md),
 y la biblia visual que gobierna todo el arte del juego,
-[`../../../md/v3/art-direction/style-guide.md`](../../../md/v3/art-direction/style-guide.md).
+[`../../../knowledge/v3/art-direction/style-guide.md`](../../../knowledge/v3/art-direction/style-guide.md).
 
 ## Qué va aquí
 
@@ -40,6 +40,36 @@ El mismo criterio de v2 (slug del nombre español, sin acentos ni paréntesis;
 la norma completa, con ejemplos, en
 [`../v2/cards/README.md`](../v2/cards/README.md#nombre-de-archivo)) —
 salvo que V3 decida otra cosa. Extensión `.webp`.
+
+## Lienzo y formato
+
+**Esta sección es la fuente única.** La dirección de arte
+([`knowledge/v3/art-direction/`](../../../knowledge/v3/art-direction/README.md))
+dice cómo se dibuja y qué se dibuja; la medida del archivo que acaba aquí se
+decide aquí, porque depende del componente que lo va a pintar y no del estilo.
+
+| | Ilustración de carta | Retrato de héroe o unidad |
+|---|---|---|
+| Tamaño | **1536 × 1050 px** *(heredado, ver aviso)* | Sin decidir |
+| Ratio | ~1,46:1, apaisado | Sin decidir |
+| Sangrado | A sangre | A sangre |
+| Transparencia | Ninguna | Ninguna |
+| Aire de seguridad | **≥10% en los cuatro bordes** | El que pida su pantalla |
+| Extensión | `.webp` | `.webp` |
+
+El aire no es estética: **la ilustración va debajo de un marco que tapa los
+bordes**. Nada importante —rostro, manos, arma, escudo, el elemento distintivo—
+puede quedar pegado al filo, y menos en las esquinas.
+
+> **Las dos medidas están pendientes de lo mismo: una pantalla construida.** El
+> 1536×1050 viene de v2; V3 no ha decidido su marco de carta, así que es medida
+> heredada, no tomada del componente que la va a pintar — y el análisis de
+> [`knowledge/v3/card-concept/`](../../../knowledge/v3/card-concept/README.md)
+> apunta a que el marco de V3 será **vertical y a sangre**, lo que la invalida.
+> Del retrato no hay medida en absoluto: no existe pantalla de selección de
+> héroe ni ficha de unidad. Mientras tanto, usa el mismo ratio por consistencia
+> y **deja margen de sobra**: recortar es barato, inventar el borde que faltaba
+> no.
 
 > **Antes de generar nada**, mira si el documento de `docs/v3/` que le
 > corresponde ya tiene su tabla. Sin tabla no hay a qué pegar el arte.
