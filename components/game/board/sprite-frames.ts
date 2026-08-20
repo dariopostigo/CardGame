@@ -1,8 +1,8 @@
 // =========================================================================
-// Recortes del sprite de referencia (preview aislado, /dev/sprite)
+// Recortes del sprite de referencia (preview aislado, /lab/sprite)
 //
-// La lámina fuente (public/assets/sprites/dwarf-warrior-reference.png, copia
-// de md/art-direction/exampleSprite.png) es una lámina de REFERENCIA, no un
+// La lámina fuente (public/assets/v2/sprites/dwarf-warrior-reference.png, copia
+// de md/v2/art-direction/exampleSprite.png) es una lámina de REFERENCIA, no un
 // spritesheet exportado con rejilla exacta: cada personaje se generó por
 // separado y se compuso en tres bloques (Reposo/Andar/Ataque), así que el
 // espaciado entre fotogramas no es perfectamente uniforme. Los rects de abajo
@@ -21,7 +21,7 @@
 export const SHEET_WIDTH = 1693;
 export const SHEET_HEIGHT = 929;
 
-export const SPRITE_SHEET_SRC = "/assets/sprites/dwarf-warrior-reference.png";
+export const SPRITE_SHEET_SRC = "/assets/v2/sprites/dwarf-warrior-reference.png";
 
 /** Un recorte rectangular de la lámina, en píxeles de la imagen original. */
 export type FrameRect = {
@@ -39,7 +39,7 @@ export type FrameRect = {
 // personajes reales caen en x:58-275/347-564/627-821/892-1081/1147-1342,
 // dejando además ~350px de margen vacío tras el quinto), una rejilla de 5
 // columnas iguales deja el fotograma 5 cayendo entero en ese margen —se
-// veía en blanco en /dev/sprite—. Los rects de abajo están partidos por el
+// veía en blanco en /lab/sprite—. Los rects de abajo están partidos por el
 // punto medio de cada hueco entre personajes, no a partes iguales.
 export const IDLE_FRAMES: readonly FrameRect[] = [
   { x: 0, y: 42, w: 311, h: 243 },

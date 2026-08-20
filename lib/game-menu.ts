@@ -1,7 +1,7 @@
 // =========================================================================
 // Registro del menú del hub (app/play/)
 //
-// Mismo patrón que lib/dev-labs.ts y lib/repository.ts: una entrada aquí +
+// Mismo patrón que lib/lab-registry.ts y lib/repository.ts: una entrada aquí +
 // su página en app/play/<slug>/. Las entradas "planificado" salen listadas
 // y apagadas en el hub en vez de desaparecer, para no esconder lo que falta.
 // =========================================================================

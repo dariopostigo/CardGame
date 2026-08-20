@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { DEV_LABS, LAB_STATUS_LABEL, isAvailable } from "@/lib/dev-labs";
+import { DEV_MODULES, DEV_STATUS_LABEL, isAvailable } from "@/lib/dev-registry";
 
-// Menú de laboratorios. Los planificados se listan apagados y sin enlace: son
-// el mapa de ruta, no páginas que existan todavía.
+// Menú de /dev. Mismo criterio que el de /lab (components/lab/LabSidebar.tsx):
+// lo planificado se lista apagado y sin enlace. Hoy lo está todo — el menú es
+// la hoja de ruta de V3, no un índice de páginas que existan.
 
 export default function DevSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
@@ -22,26 +23,26 @@ export default function DevSidebar({ onNavigate }: { onNavigate?: () => void }) 
         }`}
       >
         <i className="pi pi-th-large text-[0.85em] opacity-80" />
-        <span>Todos los laboratorios</span>
+        <span>Todo el proyecto</span>
       </Link>
 
       <p className="px-2 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]">
-        Laboratorios
+        Construcción de V3
       </p>
       <ul className="mt-1 space-y-0.5">
-        {DEV_LABS.map((lab) => {
-          const href = `/dev/${lab.slug}`;
+        {DEV_MODULES.map((m) => {
+          const href = `/dev/${m.slug}`;
           const active = pathname === href;
 
-          if (!isAvailable(lab)) {
+          if (!isAvailable(m)) {
             return (
-              <li key={lab.slug}>
+              <li key={m.slug}>
                 <span
                   className="flex cursor-not-allowed items-center gap-2 rounded-md px-3 py-1.5 text-[var(--wiki-muted)] opacity-70"
-                  title={`${LAB_STATUS_LABEL[lab.status]} — todavía sin construir`}
+                  title={`${DEV_STATUS_LABEL[m.status]} — todavía sin construir`}
                 >
-                  <i className={`${lab.icon} text-[0.85em] opacity-60`} />
-                  <span>{lab.label}</span>
+                  <i className={`${m.icon} text-[0.85em] opacity-60`} />
+                  <span>{m.label}</span>
                   <i className="pi pi-clock ml-auto text-[0.7rem]" />
                 </span>
               </li>
@@ -49,7 +50,7 @@ export default function DevSidebar({ onNavigate }: { onNavigate?: () => void }) 
           }
 
           return (
-            <li key={lab.slug}>
+            <li key={m.slug}>
               <Link
                 href={href}
                 onClick={onNavigate}
@@ -59,8 +60,8 @@ export default function DevSidebar({ onNavigate }: { onNavigate?: () => void }) 
                     : "text-[var(--wiki-text)] hover:bg-[var(--wiki-surface-2)]"
                 }`}
               >
-                <i className={`${lab.icon} text-[0.85em] opacity-80`} />
-                <span>{lab.label}</span>
+                <i className={`${m.icon} text-[0.85em] opacity-80`} />
+                <span>{m.label}</span>
               </Link>
             </li>
           );

@@ -32,7 +32,7 @@
 // siendo cenital.
 // =========================================================================
 
-import type { BoardToken } from "@/lib/rules/state";
+import type { BoardToken } from "@/lib/v2/rules/state";
 import { PAWN_ART, TOKEN_ART, type PawnId } from "./piece-art";
 
 /**

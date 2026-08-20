@@ -4,7 +4,7 @@ import { Cluster, Family, GroupHeader, Specimen, SpecimenGrid } from "@/componen
 import { groupBySlug } from "@/lib/repository";
 
 // El botón de producción (components/game/ui/GameButton.tsx), calcado del
-// remache con bisel de example1.jpg (public/assets/UI/). Dos pesos nada más,
+// remache con bisel de example1.jpg (public/concepts/UI/). Dos pesos nada más,
 // los dos que aparecen en la referencia: no hay variante "fantasma" ni
 // "destructiva" porque ahí no existen —inventarlas sería documentar un
 // componente que la fuente no respalda.

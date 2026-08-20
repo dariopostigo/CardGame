@@ -3,7 +3,7 @@ import { gameFontVars } from "@/components/game/ui/game-fonts";
 import { Cluster, Family, GroupHeader, Specimen, SpecimenGrid } from "@/components/repository/Showcase";
 import { groupBySlug } from "@/lib/repository";
 
-// Cuatro papeles de texto sacados de example1.jpg (public/assets/UI/), no
+// Cuatro papeles de texto sacados de example1.jpg (public/concepts/UI/), no
 // una escala de tamaños: el tamaño lo pone quien use la clase. Ver la nota
 // de styles/components/_game-typography.scss para el porqué de cada uno.
 
@@ -22,7 +22,7 @@ export default function TypographyPage() {
       <div className="mb-8 rounded-lg border-l-4 border-[var(--wiki-callout-border)] bg-[var(--wiki-callout-bg)] p-4 text-sm text-[var(--wiki-text)]">
         <b>Sin capitulares, de momento.</b> El registro de esta familia hablaba también de
         capitulares —la inicial grande de un párrafo—, pero ni <code>example1.jpg</code> ni el resto
-        de referencias en <code>public/assets/UI/</code> tienen una sola superficie de lectura larga
+        de referencias en <code>public/concepts/UI/</code> tienen una sola superficie de lectura larga
         (diario, pergamino de misión, biografía) donde una inicial grande tenga sitio. Se aparca hasta
         que exista esa pantalla, en vez de inventar un párrafo de relleno para lucirla.
       </div>

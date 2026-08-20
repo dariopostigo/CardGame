@@ -4,6 +4,27 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+# El proyecto está partido en v2 y v3
+
+Desde el 20 de agosto de 2026 conviven dos versiones del juego. **Antes de escribir diseño o reglas, comprueba en cuál estás.**
+
+- **`docs/v3/` es el diseño vigente** (razas, 8 Habilidades, Características, combate sin dados). Todo el diseño nuevo se escribe aquí.
+- **`docs/v2/` está congelado**: es la versión anterior, de raíz D&D, y se conserva solo como base de conocimiento. **No se edita.** Si algo de allí sirve para V3, se reescribe en el documento V3 que toque — no se copia ni se enlaza como si siguiera vigente.
+- **`lib/v2/rules/` es el motor de v2** y sigue siendo lo que ejecutan `/lab` y `/play`. No se amplía. **`lib/v3/` está vacío** a propósito hasta que V3 defina su motor.
+- **El arte también está partido**: `public/assets/v2/` (congelado) y `public/assets/v3/` (vacío, para lo nuevo), servidos en `/assets/v2/…` y `/assets/v3/…`. Fuera del corte, porque no se sirven al jugador: `public/assets/models/` (modelos prestados de laboratorio) y `public/concepts/` (moodboards y referencias, que se citan por ruta completa en los comentarios).
+- **La dirección de arte vigente es `md/v3/art-direction/`**: `style-guide.md` (la biblia visual: cómo se dibuja todo) e `illustrations.md` (qué se dibuja: razas, héroes, unidades, criaturas y cartas, con su encuadre y su plantilla de prompt). El **diseño de la carta** como objeto —marco, tipografía, disposición, Rareza— **no está definido** y no vive en ninguno de los dos. Los prompts de v2 (`md/v2/art-direction/`) están congelados y **no se traducen**: son catálogo muerto. El estilo, en cambio, no cambió al cambiar las reglas — por eso hay una sola biblia y vive con V3.
+- El corte completo, con sus reglas y sus pendientes, está en [`ARCHITECTURE.md`](ARCHITECTURE.md) §"El corte v2 / v3".
+
+La aplicación sigue el mismo corte, y **`/dev` ya no es lo que era**:
+
+| Ruta | Qué es |
+|---|---|
+| `/docs` | La wiki. Redirige a `/docs/v3`; se salta a `/docs/v2` con el conmutador de la cabecera. **Un solo apartado**, no dos |
+| `/dev` | Construcción de V3 (`lib/dev-registry.ts`, `components/dev/`). Hoy solo el hub: todo planificado |
+| `/lab` | Los laboratorios del motor v2 (`lib/lab-registry.ts`, `components/lab/`). Antes vivían en `/dev` |
+
+Al escribir código nuevo de V3 va en `/dev` y `lib/v3/`, nunca en `/lab` ni en `lib/v2/`.
+
 # Estilos: SCSS + ITCSS
 
 Todo el CSS vive en `styles/`, en un único punto de entrada (`styles/main.scss`) que importa `app/layout.tsx`. No hay archivos `.css` propios ni estilos co-ubicados con los componentes.

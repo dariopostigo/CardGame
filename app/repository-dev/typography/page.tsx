@@ -96,7 +96,7 @@ export default function TipografiaPage() {
           </Specimen>
           <Specimen label="Enlace" hint="Acento del skin; subrayado punteado si va dentro de prosa">
             <Link
-              href="/docs/board/board-map"
+              href="/docs/v2/board/board-map"
               className="text-sm text-[var(--wiki-accent)] underline decoration-dotted"
             >
               Tablero y mapa §2c

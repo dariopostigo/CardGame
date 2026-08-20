@@ -1,6 +1,6 @@
 // Hub de un repositorio: la rejilla de familias, en marcha arriba y por
 // construir abajo. Sale entero de lib/repository.ts, igual que el hub de /dev
-// sale de lib/dev-labs.ts, así que una familia nueva aparece aquí sola.
+// sale de lib/lab-registry.ts, así que una familia nueva aparece aquí sola.
 //
 // La intro la pone cada lado: lo que hay que explicar en el repositorio de
 // herramientas (qué skin, qué kit) no tiene nada que ver con lo que hay que

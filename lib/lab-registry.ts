@@ -1,0 +1,163 @@
+// =========================================================================
+// Registro de laboratorios de /dev
+//
+// Fuente única de la sección de desarrollo: de aquí comen el hub (app/lab)
+// y el menú lateral. Añadir un laboratorio nuevo son dos pasos: una entrada
+// en esta lista y su página en app/lab/<slug>/.
+//
+// Los laboratorios en estado "planificado" salen listados y apagados: el hub
+// es también el mapa de ruta de lo que falta por construir, y así no hay que
+// mantener la lista de pendientes en otro sitio.
+// =========================================================================
+
+import { BUILD_STATUS_LABEL, type BuildStatus } from "./sections";
+
+// El estado de construcción es el mismo concepto aquí y en los repositorios de
+// componentes (lib/repository.ts), así que vive una sola vez, en el registro de
+// apartados. El alias se queda para no reescribir a los consumidores de /dev.
+export type LabStatus = BuildStatus;
+
+export type Lab = {
+  /** Segmento de URL: /lab/<slug>. */
+  readonly slug: string;
+  readonly label: string;
+  /** Qué se prueba aquí, en una frase. */
+  readonly summary: string;
+  /** Icono de PrimeIcons. */
+  readonly icon: string;
+  readonly status: LabStatus;
+  /** Documento de diseño de referencia, si lo tiene. */
+  readonly doc?: { href: string; label: string };
+};
+
+export const LAB_STATUS_LABEL = BUILD_STATUS_LABEL;
+
+// El orden es el del menú de /dev, fijado a mano: Losetas, Diseño de fichas,
+// Baraja y Oteo y Tirada de dados van primero porque son los laboratorios que
+// más se usan; el resto mantiene su orden anterior a continuación.
+export const LABS: readonly Lab[] = [
+  {
+    slug: "tiles",
+    label: "Losetas",
+    summary:
+      "La pieza: su forma en uno de los cinco tamaños, el terreno de cada hexágono y las anclas por las que se une a otra. Biblioteca de tipos y variantes, editable: se guarda en disco.",
+    icon: "pi pi-box",
+    status: "en-curso",
+    doc: { href: "/docs/v2/board/board-map", label: "Tablero y mapa §2" },
+  },
+  {
+    slug: "pieces",
+    label: "Diseño de fichas",
+    summary:
+      "La pieza que se pone encima: las 6 fichas de contenido y las 3 de personaje, todas en el mismo disco tumbado. Dibujo vectorial, legibilidad a tamaño de partida sobre los siete terrenos, y los estados de la niebla más la ficha ya resuelta.",
+    icon: "pi pi-circle-fill",
+    status: "en-curso",
+    doc: { href: "/docs/v2/board/board-map", label: "Tablero y mapa §4c" },
+  },
+  {
+    slug: "deck",
+    label: "Baraja y Oteo",
+    summary:
+      "Mazo, zona «en juego» con tope fijo de 5 y el Oteo de 2 cartas por turno. Es donde se prueba la regla madre: jugar una carta la devuelve al Mazo.",
+    icon: "pi pi-clone",
+    status: "en-curso",
+    doc: { href: "/docs/v2/game-design", label: "Mazo y Oteo" },
+  },
+  {
+    slug: "dice",
+    label: "Tirada de dados",
+    summary:
+      "Dados físicos de verdad (Three.js + cannon-es) para los 7 tipos de D&D, en vez de un botón que hace random(): arrastra y suelta o pulsa «Tirar», y el resultado sale de qué cara mira hacia arriba una vez parado el dado.",
+    icon: "pi pi-th-large",
+    status: "en-curso",
+    doc: { href: "/docs/v2/game-design", label: "Resolución de pruebas §4b" },
+  },
+  // El LOTE de semillas no es un laboratorio aparte: es este mismo generador con
+  // estos mismos mandos, mirando el reparto de cientos de tableros en vez del
+  // ejemplar que tienes delante. Duplicarlo en su propia pantalla sería duplicar
+  // el panel de mandos. Y "misma semilla → mismo tablero" no es una pantalla, es
+  // una comprobación de una línea. Lo que sí es de otro sitio es "misma semilla →
+  // misma PARTIDA" (robo de cartas, loot, IA, reloj): eso lo prueba el simulador,
+  // porque son partidas y no tableros.
+  {
+    slug: "board",
+    label: "Generación de tablero",
+    summary:
+      "El encaje: cuántas losetas, cómo se unen por sus anclas, hacia dónde crece la silueta, la Guarida del boss y la siembra de fichas. Nada se repinta: el tablero es el catálogo, así que si no sale Pueblo es que el encaje no lo ha traído. Aquí entra también el lote de semillas —cientos de tableros de golpe para ver el reparto y no el ejemplar—, que es lo que queda por construir.",
+    icon: "pi pi-map",
+    status: "en-curso",
+    doc: { href: "/docs/v2/board/board-map", label: "Tablero y mapa §2c" },
+  },
+  {
+    slug: "tokens",
+    label: "Fichas del tablero",
+    summary:
+      "Qué pasa al interactuar con cada ficha, no solo cuál sale: la prueba de Terreno, la tabla de loot de Tesoro, el mazo de encuentro para Amenaza/Exploración/Enemigo y el oficio de Personaje. Cada ficha resuelta se retira y queda su huella.",
+    icon: "pi pi-question-circle",
+    status: "en-curso",
+    doc: { href: "/docs/v2/board/board-map", label: "Tablero y mapa §4" },
+  },
+  {
+    slug: "movement",
+    label: "Movimiento y visión",
+    summary:
+      "Los 2 puntos de movimiento contra el coste de cada terreno, y los dos radios de visión que abren las dos capas de niebla.",
+    icon: "pi pi-directions",
+    status: "en-curso",
+    doc: { href: "/docs/v2/game-design", label: "Movimiento y visión" },
+  },
+  {
+    slug: "sprite",
+    label: "Animación de personaje",
+    summary:
+      "Preview aislado de un sprite animado (reposo, andar, ataque) a partir de una lámina de referencia, con velocidad ajustable y una vista de calibración de los recortes. No toca el tablero: la ficha del hexágono sigue siendo el disco cenital de siempre.",
+    icon: "pi pi-images",
+    status: "en-curso",
+  },
+  // Va justo detrás de «Animación de personaje» porque es la otra respuesta a
+  // la misma pregunta: aquella hornea fotogramas de una lámina, esta reproduce
+  // los clips que ya vienen dentro del .glb. Se comparan, no se sustituyen.
+  {
+    slug: "character",
+    label: "Personaje 3D",
+    summary:
+      "Un .glb con malla, esqueleto y animaciones dentro, reproducido en el navegador: sin láminas que recortar, con fundido entre clips y mirable desde cualquier ángulo. Sirve para decidir si compensa el pipeline de generar personajes en 3D —animar no escala con cuántos haya, porque los clips van sobre el esqueleto— midiendo lo que cuesta: peso del archivo, triángulos y FPS.",
+    icon: "pi pi-user",
+    status: "en-curso",
+  },
+  {
+    slug: "combate",
+    label: "Combate",
+    summary:
+      "Pantalla de batalla propia: iniciativa, adyacencia, ataque y estados, con el árbol de prioridades de la IA enemiga y el presupuesto de composición del bando enemigo.",
+    icon: "pi pi-bolt",
+    status: "en-curso",
+    doc: { href: "/docs/v2/board/battle", label: "Pantalla de batalla" },
+  },
+  {
+    slug: "animaciones",
+    label: "Animaciones",
+    summary:
+      "Cómo se ven las transiciones: revelar un hexágono, robar y preparar carta, impacto en combate, subida del Nivel de Amenaza.",
+    icon: "pi pi-sparkles",
+    status: "planificado",
+  },
+  {
+    slug: "simulador",
+    label: "Simulador de balance",
+    summary:
+      "Miles de partidas sin pantalla para cerrar las cifras: tasa de muerte por héroe, turnos hasta el boss y si el reloj llega antes que el jugador. Es también donde se comprueba el determinismo de verdad: que una semilla reproduce la partida exacta, robo de cartas y loot incluidos.",
+    icon: "pi pi-chart-bar",
+    status: "planificado",
+    doc: { href: "/docs/v2/status", label: "Estado del diseño" },
+  },
+];
+
+export const LABS_BY_SLUG: Readonly<Record<string, Lab>> = Object.fromEntries(
+  LABS.map((l) => [l.slug, l]),
+);
+
+/** Los que ya tienen página: el resto se listan apagados. */
+export function isAvailable(lab: Lab): boolean {
+  return lab.status !== "planificado";
+}

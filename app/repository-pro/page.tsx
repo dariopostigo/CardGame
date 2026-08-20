@@ -17,7 +17,7 @@ export default function RepositoryProIndexPage() {
         <>
           <p>
             Los componentes que verá el <b>jugador</b>, con tema medieval: cuero, hierro y sangre,
-            con remaches de oro —inspirado en <code>public/assets/UI/example1.jpg</code>—. Ya tiene
+            con remaches de oro —inspirado en <code>public/concepts/UI/example1.jpg</code>—. Ya tiene
             sus dos primeras familias en marcha; el resto sigue siendo la lista de lo que falta por
             construir, que es el mapa del trabajo.
           </p>
@@ -36,7 +36,7 @@ export default function RepositoryProIndexPage() {
             hierro sin que la página se lo maquille. Los componentes vivirán en{" "}
             <code>components/game/ui/</code>, junto a{" "}
             <Link
-              href="/dev/board"
+              href="/lab/board"
               className="text-[var(--wiki-accent)] underline decoration-dotted"
             >
               los que ya prueban los laboratorios

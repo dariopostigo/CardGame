@@ -11,7 +11,7 @@
 //     sin modo claro: es diegética, no es "chrome". Está por construir.
 //
 // Lo que sí comparten es el marco (RepoShell) y esta lista, igual que los
-// laboratorios comparten DevShell y lib/dev-labs.ts. Añadir una familia son
+// laboratorios comparten LabShell y lib/lab-registry.ts. Añadir una familia son
 // dos pasos: una entrada aquí y su página en app/repository-<side>/<slug>/.
 //
 // Regla que sostiene todo esto: una galería ENSEÑA los componentes de verdad,
@@ -112,7 +112,7 @@ export const REPO_PRO_GROUPS: readonly ComponentGroup[] = [
     slug: "foundations",
     label: "Fundamentos del tema",
     summary:
-      "El mapa $game: cuero y hierro casi negros, sangre como acento y oro para el texto grabado —inspirado en public/assets/UI/example1.jpg, no en el pergamino del primer boceto—, más la tipografía de rótulo (Oswald) y de cuerpo. Sin esto no hay tema, solo componentes sueltos.",
+      "El mapa $game: cuero y hierro casi negros, sangre como acento y oro para el texto grabado —inspirado en public/concepts/UI/example1.jpg, no en el pergamino del primer boceto—, más la tipografía de rótulo (Oswald) y de cuerpo. Sin esto no hay tema, solo componentes sueltos.",
     icon: "pi pi-palette",
     status: "en-curso",
     source: "styles/settings/_game.scss",

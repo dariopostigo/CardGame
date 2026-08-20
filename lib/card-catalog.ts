@@ -3,7 +3,7 @@
 //
 // Lee docs/cards/*.md y devuelve todas las cartas marcadas con la directiva
 // `<!-- cards: … -->`. Es lo que come el lab de diseño
-// (app/docs/cards/design/page.tsx), para que el lab y la wiki pinten
+// (app/docs/v2/cards/design/page.tsx), para que el lab y la wiki pinten
 // exactamente el mismo catálogo: si una carta cambia en su tabla, cambia en
 // los dos sitios a la vez.
 //
@@ -17,7 +17,10 @@ import path from "node:path";
 import { cache } from "react";
 import { cardTablesInDoc, type CardRecord } from "./card-table";
 
-const CARDS_ROOT = path.join(process.cwd(), "docs", "cards");
+// Sigue apuntando a v2 mientras docs/v3/cards/ no tenga su primera tabla de
+// cartas: así el laboratorio de diseño no se queda vacío durante la migración.
+// Mover a "v3" a la vez que DESIGN_LAB_GROUP en lib/docs.ts.
+const CARDS_ROOT = path.join(process.cwd(), "docs", "v2", "cards");
 
 // Orden de los documentos en el catálogo. El resto de .md de docs/cards/ se
 // añade detrás por orden alfabético, así que un documento nuevo con cartas

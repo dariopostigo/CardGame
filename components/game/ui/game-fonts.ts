@@ -1,6 +1,6 @@
 // Tipografía de rótulo del tema de producción: Oswald, la condensada y
 // pesada que hace de "PLAY NOW" / "PARTY INTERFACE" en example1.jpg
-// (public/assets/UI/). Geist, la de las herramientas, no tiene ese peso.
+// (public/concepts/UI/). Geist, la de las herramientas, no tiene ese peso.
 //
 // Vive en su propio módulo por lo mismo que card-fonts.ts con Cormorant:
 // next/font se resuelve en tiempo de build por llamada, así que si cada

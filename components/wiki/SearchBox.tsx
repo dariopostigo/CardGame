@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import type { SearchDoc } from "@/lib/docs";
+import { versionOfRoute } from "@/lib/docs-version";
 
 type Result = { href: string; title: string; group: string; sub?: string };
 
@@ -14,6 +15,10 @@ function norm(s: string) {
 
 export default function SearchBox() {
   const router = useRouter();
+  const pathname = usePathname();
+  // El buscador es de esta wiki, no de las dos: buscar "Guerrero" desde V3 no
+  // debe devolver el Guerrero D&D de v2. En /docs (el selector) busca en todo.
+  const version = versionOfRoute(pathname);
   const { control, watch, reset } = useForm<{ q: string }>({ defaultValues: { q: "" } });
   const q = watch("q");
   const [index, setIndex] = useState<SearchDoc[] | null>(null);
@@ -39,7 +44,9 @@ export default function SearchBox() {
       return;
     }
     const scored: (Result & { score: number })[] = [];
+    const scope = version ? `/docs/${version}/` : "/docs/";
     for (const d of index) {
+      if (!d.href.startsWith(scope)) continue;
       let score = 0;
       let sub: string | undefined;
       if (norm(d.title).includes(query)) score += 100;
@@ -62,7 +69,7 @@ export default function SearchBox() {
     scored.sort((a, b) => b.score - a.score);
     setResults(scored.slice(0, 8));
     setActive(0);
-  }, [q, index]);
+  }, [q, index, version]);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {

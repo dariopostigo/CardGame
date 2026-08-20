@@ -20,9 +20,9 @@
 
 import { useEffect, useState } from "react";
 import type { DamageType } from "@/lib/card-table";
-import type { EffectId, Effects } from "@/lib/rules/effects";
-import { abilityMod } from "@/lib/rules/hero-roster";
-import type { Ability, AbilityScores } from "@/lib/rules/state";
+import type { EffectId, Effects } from "@/lib/v2/rules/effects";
+import { abilityMod } from "@/lib/v2/rules/hero-roster";
+import type { Ability, AbilityScores } from "@/lib/v2/rules/state";
 import Button from "@/components/ui/Button";
 import { PieceIcon, type PieceSpec } from "./BoardPiece";
 
@@ -68,7 +68,7 @@ export type CombatantDrawerSubject = {
    */
   readonly abilityScores?: AbilityScores;
   readonly pv: { readonly current: number; readonly max: number };
-  /** Sin equipo en /dev/movement todavía: campo opcional a propósito. */
+  /** Sin equipo en /lab/movement todavía: campo opcional a propósito. */
   readonly ca?: number;
   readonly speed?: number;
   readonly attack?: {

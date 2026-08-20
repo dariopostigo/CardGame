@@ -9,7 +9,7 @@
 // VOCABULARIO (dos cosas distintas, dos familias distintas):
 //   · ficha de contenido (`BoardToken`) — las 7 de board-map.md §4. Es lo que
 //     hay EN el hexágono, y se retira al resolverlo (salvo Pueblo, que es un
-//     edificio persistente: no se retira nunca, ver lib/rules/tokens.ts).
+//     edificio persistente: no se retira nunca, ver lib/v2/rules/tokens.ts).
 //   · ficha de personaje (`PawnId`)     — el héroe y el enemigo ya activo. Es
 //     quien SE MUEVE por el tablero, y eso es lo único que la separa de la otra
 //     familia: una ficha de contenido espera donde está, un personaje anda.
@@ -39,7 +39,7 @@
 // =========================================================================
 
 import type { ReactNode } from "react";
-import type { BoardToken } from "@/lib/rules/state";
+import type { BoardToken } from "@/lib/v2/rules/state";
 
 /**
  * Las fichas de personaje: quien se mueve por el tablero, más el marcador de
@@ -143,7 +143,7 @@ export const TOKEN_ART: Readonly<Record<BoardToken, PieceArt>> = {
     label: "Pueblo: entra a la Taberna (tienda, sin resolver aún)",
     art: (
       // Casa: U+1F3E0. No se retira nunca al interactuar —es un edificio
-      // persistente, no contenido que se consuma (lib/rules/tokens.ts)—.
+      // persistente, no contenido que se consuma (lib/v2/rules/tokens.ts)—.
       <text x="12" y="12" fontSize="19" textAnchor="middle" dominantBaseline="central">
         {"\u{1F3E0}"}
       </text>
@@ -222,7 +222,7 @@ function MageGlyph() {
 export const PAWN_ART: Readonly<Record<PawnId, PieceArt>> = {
   // Los cuatro puestos de la mesa (co-op, characters/heroes.md §4): mismo
   // glifo, y lo único que los separa es la cara ($piece "heroe-1".."heroe-4").
-  // "heroe-1" es el azul PÁLIDO validado a tamaño de partida en /dev/pieces
+  // "heroe-1" es el azul PÁLIDO validado a tamaño de partida en /lab/pieces
   // (board-map.md §4c) contra el azul medio de la ficha de Personaje.
   "heroe-1": { label: "Héroe 1: tu ficha en el tablero", art: <MageGlyph /> },
   "heroe-2": { label: "Héroe 2: tu ficha en el tablero", art: <MageGlyph /> },

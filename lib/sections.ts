@@ -7,20 +7,27 @@
 // apartados se aguantaba; con varios, cada uno enlazando a los demás, son
 // enlaces que se desincronizan solos.
 //
-// Cuatro documentan el proyecto y se distinguen por DOS preguntas, y
-// conviene no mezclarlas:
+// Cinco documentan el proyecto y se distinguen por DOS preguntas, y conviene
+// no mezclarlas:
 //
 //   · qué documentan  → el juego sobre papel | el motor | una interfaz
 //   · a quién visten  → a nosotros (herramientas) | al jugador (producto)
 //
-// Wiki y Dev responden a la primera; los dos repositorios a la segunda. Un
-// repositorio de componentes es SIEMPRE una herramienta —el jugador nunca ve
-// una galería—, así que repository-pro es un apartado de desarrollo que
-// documenta producción. Por eso están los cuatro al mismo nivel.
+// Wiki, Dev y Lab responden a la primera; los dos repositorios a la segunda.
+// Un repositorio de componentes es SIEMPRE una herramienta —el jugador nunca
+// ve una galería—, así que repository-pro es un apartado de desarrollo que
+// documenta producción. Por eso están al mismo nivel.
 //
-// Play es el quinto y no encaja en ese esquema: no documenta nada, es el
-// juego jugable. Está aquí para compartir la misma cabecera de acceso
-// directo que los otros cuatro, no porque comparta su lógica.
+// Play es el sexto y no encaja en ese esquema: no documenta nada, es el juego
+// jugable. Está aquí para compartir la misma cabecera de acceso directo que
+// los demás, no porque comparta su lógica.
+//
+// LA WIKI ES UNA SOLA, aunque el diseño esté partido en dos versiones
+// (ARCHITECTURE.md, "El corte v2 / v3"). Se entra siempre por V3, la vigente,
+// y a v2 se llega con el conmutador de la cabecera. Llegó a haber dos
+// apartados —Wiki V3 y Wiki v2— y se descartó: v2 es archivo de consulta, no
+// un destino que merezca una puerta propia en la portada, y dos entradas casi
+// idénticas ensucian la cabecera sin ganar nada.
 // =========================================================================
 
 /** Estado de construcción, común a labs y a familias de componentes. */
@@ -32,7 +39,13 @@ export const BUILD_STATUS_LABEL: Record<BuildStatus, string> = {
   planificado: "Planificado",
 };
 
-export type SectionId = "wiki" | "dev" | "repository-dev" | "repository-pro" | "play";
+export type SectionId =
+  | "wiki"
+  | "dev"
+  | "lab"
+  | "repository-dev"
+  | "repository-pro"
+  | "play";
 
 export type Section = {
   readonly id: SectionId;
@@ -51,11 +64,14 @@ export type Section = {
 export const SECTIONS: readonly Section[] = [
   {
     id: "wiki",
-    href: "/docs",
+    // Entra directo en V3, la versión vigente. A v2 se llega con el
+    // conmutador de la cabecera (components/wiki/VersionSwitch.tsx), no desde
+    // aquí: es archivo, no un segundo destino de primer nivel.
+    href: "/docs/v3",
     label: "Wiki",
     short: "Wiki",
     summary:
-      "El juego sobre papel: reglas, héroes, enemigos, catálogo de cartas y tablero. Es la fuente de verdad del diseño.",
+      "El juego sobre papel: razas, Habilidades, Características, unidades y cartas. Es la fuente de verdad del diseño. Abre en V3; la v2 congelada queda a un clic.",
     icon: "pi pi-book",
   },
   {
@@ -64,8 +80,17 @@ export const SECTIONS: readonly Section[] = [
     label: "Dev",
     short: "Dev",
     summary:
-      "Los laboratorios del motor: losetas, generación de tablero, fichas, baraja, combate y animaciones. Cada pieza aislada del resto.",
+      "La construcción de V3: ficha de personaje, motor de combate, razas y tableros. Todavía sin nada implementado — hoy es el mapa de lo que falta.",
     icon: "pi pi-code",
+  },
+  {
+    id: "lab",
+    href: "/lab",
+    label: "Lab",
+    short: "Lab",
+    summary:
+      "Los laboratorios del motor v2: losetas, generación de tablero, fichas, baraja, combate y animaciones. Cada pieza aislada del resto.",
+    icon: "pi pi-slack",
   },
   {
     id: "repository-dev",
@@ -100,7 +125,7 @@ export const SECTIONS_BY_ID: Readonly<Record<SectionId, Section>> = Object.fromE
   SECTIONS.map((s) => [s.id, s]),
 ) as Record<SectionId, Section>;
 
-/** Los otros cuatro apartados: lo que va en la cabecera de cada marco. */
+/** Los demás apartados: lo que va en la cabecera de cada marco. */
 export function otherSections(current: SectionId): readonly Section[] {
   return SECTIONS.filter((s) => s.id !== current);
 }

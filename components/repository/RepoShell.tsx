@@ -1,6 +1,6 @@
 "use client";
 
-// Marco de los dos repositorios de componentes. Mismo esqueleto que DevShell y
+// Marco de los dos repositorios de componentes. Mismo esqueleto que LabShell y
 // que el de la wiki —cabecera fija, lateral pegajoso, cajón en móvil— y un solo
 // componente para los dos lados: lo único que cambia es el rótulo, el icono y
 // de qué lista come el menú.

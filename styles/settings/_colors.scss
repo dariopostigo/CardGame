@@ -187,7 +187,7 @@ $piece-gloss: rgba(255, 255, 255, 0.22);
 // Contorno de cada loseta. Es lo que hace que el tablero se lea como piezas
 // encajadas y no como una rejilla continua — y es el ÚNICO trazo visible del
 // tablero: el hexágono ya no dibuja borde propio (`.board__hex`), igual que en
-// la foto de referencia (`public/assets/viajesTierraMedia/map1.webp`), donde
+// la foto de referencia (`public/concepts/viajesTierraMedia/map1.webp`), donde
 // el terreno fluye sin cortes dentro de una pieza y solo se marca su silueta
 // exterior.
 // Claro y cálido a propósito, como el canto de cartón de la referencia: un
@@ -230,7 +230,7 @@ $board-threatened: #ef4444;
 
 // LA MESA: el fondo sobre el que está el tablero, y es el fondo del JUEGO —el
 // mismo en el laboratorio y en la partida—. Marrón casi negro, la referencia es
-// `public/assets/viajesTierraMedia/map1.webp`.
+// `public/concepts/viajesTierraMedia/map1.webp`.
 //
 // No depende del skin, igual que el resto del mapa: la mesa de una partida no se
 // aclara porque la wiki esté en claro. Y son dos tonos porque el fondo lleva

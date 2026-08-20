@@ -4,7 +4,7 @@
 // Tablero hexagonal (presentacional)
 //
 // Recibe el tablero ya generado y lo pinta. No genera nada, no decide nada y
-// no conoce las reglas: la geometría la pide a lib/rules/hex.ts y el color lo
+// no conoce las reglas: la geometría la pide a lib/v2/rules/hex.ts y el color lo
 // pone styles/components/_board.scss vía data-terrain. Las interacciones
 // suben como callback (onHexClick), nunca como setter.
 //
@@ -31,7 +31,7 @@
 //      todos los hexágonos, no solo del suyo
 //   4b. resalte de hover/selección, por ENCIMA del contorno de loseta (ver
 //      más abajo por qué necesita su propia capa). También el alcance de
-//      movimiento (`reachable`, lib/rules/movement.ts), como un relleno
+//      movimiento (`reachable`, lib/v2/rules/movement.ts), como un relleno
 //      translúcido en la misma capa: no es un estado nuevo, es la misma idea
 //      de "trazo que decide si se pinta" pero con fill en vez de stroke.
 //   5. marcas pintadas en el suelo: la entrada y las coordenadas
@@ -75,7 +75,7 @@
 // que hace que aquí no haga falta ordenar por profundidad.
 //
 // El sendero no tiene capa: el Camino es un terreno como los demás y se ve por
-// su color, igual que en el catálogo de /dev/tiles. Antes se le dibujaba
+// su color, igual que en el catálogo de /lab/tiles. Antes se le dibujaba
 // encima un trazo de centro a centro, de cuando el terreno se sorteaba hexágono
 // a hexágono y el camino había que "seguirlo"; hoy la loseta lo trae pintado y
 // el trazo solo tapaba el terreno de debajo, se cruzaba consigo mismo en las
@@ -97,11 +97,11 @@
 // =========================================================================
 
 import { useMemo, useState } from "react";
-import * as Hex from "@/lib/rules/hex";
-import type { HexCoord, HexKey } from "@/lib/rules/hex";
-import type { Board, Hex as HexCell } from "@/lib/rules/state";
-import { TERRAINS } from "@/lib/rules/terrain";
-import { direction } from "@/lib/rules/tiles";
+import * as Hex from "@/lib/v2/rules/hex";
+import type { HexCoord, HexKey } from "@/lib/v2/rules/hex";
+import type { Board, Hex as HexCell } from "@/lib/v2/rules/state";
+import { TERRAINS } from "@/lib/v2/rules/terrain";
+import { direction } from "@/lib/v2/rules/tiles";
 import Button from "@/components/ui/Button";
 import BoardFog from "./BoardFog";
 import BoardPiece from "./BoardPiece";
@@ -112,7 +112,7 @@ import { useBoardView, type BoardCamera, type ViewBox } from "./use-board-view";
  * Todo lo que hace falta para colocar algo sobre el tablero desde FUERA del
  * SVG, en las mismas coordenadas que usa el propio tablero.
  *
- * Existe por el lienzo 3D de /dev/combate: una figura animada no cabe en un
+ * Existe por el lienzo 3D de /lab/combate: una figura animada no cabe en un
  * `<polygon>`, así que vive en un WebGL aparte encima del marco. Como no es
  * SVG, el `transform` del grupo no le sirve de nada y tiene que reproducir la
  * proyección con su propia cámara — para eso necesita estos cuatro números y
@@ -162,7 +162,7 @@ type Props = {
    * Hexágonos ya alcanzables por un ataque este turno (capa 4b, resalte en
    * rojo): normalmente la casilla de un enemigo para el que existe algún
    * hexágono, dentro del movimiento que le queda a quien va a actuar, desde
-   * el que su arma llega hasta él (`lib/rules/movement.ts`
+   * el que su arma llega hasta él (`lib/v2/rules/movement.ts`
    * `attackableTargets`). No es un hexágono de destino —dos fichas nunca
    * comparten hexágono, board/battle.md §2—, es un aviso sobre la ficha
    * misma. Independiente de `reachable`: no tienen por qué coincidir.

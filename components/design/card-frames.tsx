@@ -379,7 +379,7 @@ function ArmoredFrame() {
 // --- Dorso de carta: pieza única para todo el mazo ------------------------
 // Vive fuera de CardTheme/CARD_FRAMES a propósito: no es un tema del frente
 // (no hay pestaña, no varía con data-rarity) — es la única cara que se ve en
-// el Mazo boca abajo y en el Oteo antes de revelarse (components/dev/DeckLab.tsx),
+// el Mazo boca abajo y en el Oteo antes de revelarse (components/lab/DeckLab.tsx),
 // así que tiene que ser IDÉNTICA carta a carta o delataría lo que oculta.
 //
 // Reutiliza el filete y las cantoneras de ArmoredFrame con su mismo trazado

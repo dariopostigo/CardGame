@@ -1,8 +1,13 @@
 # Modelos 3D (.glb)
 
+> **Sin versión a propósito.** Esto es material de laboratorio, no arte del
+> juego, y por eso no está ni en [`../v2/`](../v2/cards/README.md) ni en
+> [`../v3/`](../v3/README.md). Cuando haya modelos propios de V3, van a
+> `v3/`; ver [`../README.md`](../README.md).
+
 Personajes en glTF binario con **esqueleto y animaciones dentro del propio
-archivo**. Los consume el laboratorio `/dev/character`
-(`components/dev/character-scene.ts`).
+archivo**. Los consume el laboratorio `/lab/character`
+(`components/lab/character-scene.ts`).
 
 Estos dos son **modelos prestados de prueba**, no arte del juego: están aquí
 para validar el pipeline (generar en una IA 3D → auto-rig → animaciones de
@@ -16,7 +21,7 @@ los personajes de verdad. Cuando haya modelos propios, estos se van.
 
 El reparto de clips del robot es casi exactamente el set que pide una ficha en
 batalla (reposo / mover / atacar / morir), y el zorro cubre el caso cuadrúpedo
-de `docs/characters/enemies.md`. Por eso estos dos y no otros.
+de `docs/v2/characters/enemies.md`. Por eso estos dos y no otros.
 
 ## Procedencia y licencias
 
@@ -32,5 +37,5 @@ three.js (`examples/models/gltf/RobotExpressive/`).
 - Conversión a glTF: © 2017 @AsoboStudio y @scurest — **CC-BY 4.0** *(exige atribución)*.
 
 > Si algo de esto acabara en una build pública, el zorro necesita crédito
-> visible. Es material de laboratorio: no lo muevas a `assets/` de juego sin
+> visible. Es material de laboratorio: no lo muevas a `assets/v3/` sin
 > resolver antes la atribución.

@@ -5,7 +5,7 @@ import { GAME_COLOR_GROUPS, GAME_COLORS } from "@/lib/game-theme";
 import { groupBySlug } from "@/lib/repository";
 
 // Primera familia real del repositorio de producción: la paleta y el rótulo
-// de example1.jpg (public/assets/UI/), no el pergamino que proponía el primer
+// de example1.jpg (public/concepts/UI/), no el pergamino que proponía el primer
 // boceto de este apartado (ver la nota de styles/settings/_game.scss). Lo que
 // documenta esta página es $game y $font-game-display —los dos SIN los
 // cuales un botón o un panel serían una pieza suelta sin tema.

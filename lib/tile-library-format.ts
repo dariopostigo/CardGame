@@ -12,7 +12,7 @@
 // una coma, o el diff dejaría de servir para revisar.
 // =========================================================================
 
-import type { StoredLibrary } from "@/lib/rules/tiles";
+import type { StoredLibrary } from "@/lib/v2/rules/tiles";
 
 /**
  * JSON indentado a dos espacios, pero con las listas simples —las filas de un

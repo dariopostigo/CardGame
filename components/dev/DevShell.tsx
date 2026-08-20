@@ -1,10 +1,15 @@
 "use client";
 
-// Marco de la sección /dev. Mismo esqueleto que el de la wiki
-// (components/wiki/Shell.tsx) —cabecera fija, lateral pegajoso, cajón en
-// móvil— pero con el menú de laboratorios y sin buscador: aquí no hay
-// documentos que buscar. El ancho es holgado a propósito: los labs pintan
-// tableros y tablas, no prosa.
+// Marco de la sección /dev: la construcción de V3. Mismo esqueleto que el de
+// /lab (components/lab/LabShell.tsx) —cabecera fija, lateral pegajoso, cajón
+// en móvil— y por el mismo motivo que aquél: aquí tampoco hay documentos que
+// buscar, y el ancho es holgado porque lo que se pinte serán tableros y
+// tablas, no prosa.
+//
+// Se mantiene aparte del de /lab en vez de compartir uno genérico: los dos
+// marcos coinciden hoy, pero cada sección va a divergir según crezca, y
+// unificarlos ahora obligaría a parametrizar un componente que aún no sabemos
+// cómo se va a diferenciar.
 
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
@@ -49,7 +54,7 @@ export default function DevShell({ children }: { children: ReactNode }) {
           <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
           <div className="absolute left-0 top-0 h-full w-72 overflow-y-auto bg-[var(--wiki-surface)] shadow-xl">
             <div className="flex h-14 items-center justify-between border-b border-[var(--wiki-border)] px-4">
-              <span className="font-semibold">Laboratorios</span>
+              <span className="font-semibold">Construcción de V3</span>
               <button
                 className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-[var(--wiki-surface-2)]"
                 onClick={() => setOpen(false)}

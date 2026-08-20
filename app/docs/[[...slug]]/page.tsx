@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Markdown from "@/components/Markdown";
-import DocsIndex from "@/components/wiki/DocsIndex";
 import { CardFrameDefs } from "@/components/design/card-frames";
 import { getAllParams, getDocBySlug } from "@/lib/docs";
+import { DEFAULT_DOCS_VERSION } from "@/lib/docs-version";
 
 // Los docs viven en docs/*.md y se leen del disco con fs.readFileSync (lib/docs.ts).
 // Next no rastrea esas lecturas como dependencia de caché, así que sin esto la
@@ -31,7 +31,9 @@ export default async function DocPage({
   params: Promise<{ slug?: string[] }>;
 }) {
   const { slug } = await params;
-  if (!slug || slug.length === 0) return <DocsIndex />;
+  // La wiki es una sola con dos versiones dentro, y se entra siempre por la
+  // vigente: /docs a pelo no enseña un selector, lleva a V3.
+  if (!slug || slug.length === 0) redirect(`/docs/${DEFAULT_DOCS_VERSION}`);
 
   const doc = getDocBySlug(slug);
   if (!doc) notFound();

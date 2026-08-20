@@ -2,8 +2,8 @@
 
 // Hub del juego: menú lateral con logo, versión y las opciones de
 // app/play/. Sale entero de lib/game-menu.ts, así que una opción nueva
-// aparece aquí solo con añadir su entrada — mismo patrón que DevSidebar
-// con lib/dev-labs.ts.
+// aparece aquí solo con añadir su entrada — mismo patrón que LabSidebar
+// con lib/lab-registry.ts.
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";

@@ -39,7 +39,7 @@ export type ViewBox = { minX: number; minY: number; width: number; height: numbe
  *
  * Se exporta porque hay quien necesita el desvío en crudo y no la cadena de
  * `transform` ya montada: una capa que no sea SVG y quiera quedar clavada
- * sobre el tablero (el lienzo 3D de /dev/combate) tiene que reproducir la
+ * sobre el tablero (el lienzo 3D de /lab/combate) tiene que reproducir la
  * misma proyección con su propia cámara, y para eso necesita los números.
  */
 export type BoardCamera = { k: number; tx: number; ty: number };

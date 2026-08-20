@@ -1,5 +1,5 @@
 // Botón de producción: el remache de hierro con bisel de example1.jpg
-// (public/assets/UI/), no el botón plano de las herramientas
+// (public/concepts/UI/), no el botón plano de las herramientas
 // (components/ui/Button.tsx). Es el jugador quien lo ve, así que vive en
 // components/game/ui/ y no en components/ui/ — mismo trato que
 // components/game/board/ con las piezas del tablero.
