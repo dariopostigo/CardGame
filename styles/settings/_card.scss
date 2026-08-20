@@ -22,3 +22,34 @@ $chip-sub-size: 26px;
 $chip-inset: 10px;                 // separación al borde de la carta
 $chip-gap: 4px;                    // aire entre fichas apiladas
 $chip-border: 2px;
+
+// -------------------------------------------------------------------------
+// Geometría de los BOCETOS de marco de V3
+//
+// Aparte de la de arriba a propósito: aquella es la carta de v2, que está
+// congelada y no se toca; esta es la que se está decidiendo
+// (knowledge/v3/card-concept/), y mientras se decide las dos conviven.
+//
+// Misma proporción 5:7 que la de v2 —es la de una carta de juego real y eso
+// no está en discusión—, pero más grande: los bocetos tienen que enseñar OCHO
+// Habilidades y hasta cinco Características, y a 260px de ancho no se puede
+// juzgar si la tira de ocho se lee o solo cabe.
+// -------------------------------------------------------------------------
+
+$sketch-width: 300px;
+$sketch-height: 420px;
+$sketch-radius: 14px;
+$sketch-rim: 3px;                  // filete de rareza, el único borde común
+
+$sketch-medal: 30px;               // medallón de Característica (raíl, boceto A)
+$sketch-gem: 46px;                 // gema de esquina desbordada (boceto B)
+$sketch-glyph: 21px;               // glifo de la cenefa (bocetos B y C)
+$sketch-inset: 9px;                // aire de cualquier pieza al borde
+
+// Boceto D (Blindada): el marco deja de ser un filete y pasa a ser una BANDA
+// de metal, así que hay dos medidas más que no tenían sentido en los otros
+// tres. $sketch-band es espejo del último anillo de BAND en
+// components/design/v3/sketch-frames.tsx: si allí crece el filete y aquí no,
+// el marco se come la fila de ocho.
+$sketch-band: 15px;                // grosor del filete metálico (boceto D)
+$sketch-boss: 42px;                // medallón de Tier montado en la placa (D)

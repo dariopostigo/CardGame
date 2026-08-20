@@ -1,0 +1,135 @@
+@use "../../abstracts" as *;
+
+// =========================================================================
+// Boceto B · Gema — herencia de la mano de Steam (app 3918850)
+//
+// Su apuesta es la contraria a la del boceto A: SÍ hay jerarquía, y de tres
+// niveles. Vida y Ataque —lo que se mira en cada intercambio de golpes— salen
+// a gemas que desbordan las esquinas de arriba; Defensa y Resistencia mágica
+// cuelgan debajo en fichas pequeñas, que es el patrón de la gema con su `+2`
+// de la referencia; y las cuatro que solo se consultan de vez en cuando se van
+// a una tira fina bajo el nombre.
+//
+// Lo que hay que mirar aquí: si la jerarquía ayuda o si obliga a buscar cada
+// número en un sitio distinto. Y su coste, que ya está anotado en el concepto:
+// una carta con gemas desbordadas no se puede recortar sin cortar números.
+// =========================================================================
+
+.sketch--gema {
+  // El contenedor no pinta ni ocupa: cada gema y cada ficha se posiciona
+  // contra la carta, no contra la lista.
+  .sketch__gems {
+    position: static;
+  }
+
+  .sketch__gem {
+    position: absolute;
+    top: -6px;
+    z-index: z("chip");
+    display: grid;
+    place-items: center;
+    gap: 0;
+    width: $sketch-gem;
+    height: $sketch-gem;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 34% 26%,
+      game("stone-hi"),
+      card-sketch("glass") 68%
+    );
+    border: 2px solid game("gold");
+    box-shadow: 0 4px 11px card-sketch("shadow");
+
+    &--l {
+      left: -6px;
+    }
+
+    &--r {
+      right: -6px;
+    }
+  }
+
+  .sketch__gem-icon {
+    font-size: sketch-font("gem-icon");
+    line-height: 1;
+  }
+
+  .sketch__gem-value {
+    font-family: $font-game-display;
+    font-size: sketch-font("gem");
+    line-height: 1;
+    color: game("gold-hi");
+  }
+
+  // Cuelgan de su gema: metidas hacia dentro y solapadas por debajo, para que
+  // se lean como el valor secundario de la de arriba y no como una quinta
+  // pieza suelta.
+  .sketch__hang {
+    position: absolute;
+    top: $sketch-gem - 12px;
+    z-index: z("chip");
+    display: grid;
+    place-items: center;
+    gap: 0;
+    width: $sketch-glyph + 7px;
+    height: $sketch-glyph + 7px;
+    border-radius: 50%;
+    background: card-sketch("glass");
+    border: 1px solid var(--rarity);
+    box-shadow: 0 2px 6px card-sketch("shadow");
+
+    &--l {
+      left: 4px;
+    }
+
+    &--r {
+      right: 4px;
+    }
+  }
+
+  .sketch__hang-icon {
+    font-size: sketch-font("gem-icon");
+    line-height: 1;
+  }
+
+  .sketch__hang-value {
+    font-family: $font-game-display;
+    font-size: sketch-font("hang");
+    line-height: 1;
+    color: game("text");
+  }
+
+  // El pie funde desde el arte, más largo que en el boceto A porque aquí no
+  // hay panel: hay penumbra.
+  .sketch__foot {
+    background: linear-gradient(
+      to bottom,
+      card-sketch("veil-none") 0,
+      card-sketch("veil") 46px,
+      card-sketch("veil") 100%
+    );
+    padding-top: 34px;
+  }
+
+  .sketch__plate {
+    padding: 0 $sketch-inset 6px;
+    text-align: center;
+  }
+
+  // Tira fina: aquí la cápsula va en horizontal (icono y número al lado) y no
+  // apilada, que es lo que la separa de la fila de ocho del boceto C.
+  .sketch__strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    padding: 0 $sketch-inset 6px;
+
+    .sketch__pod {
+      grid-auto-flow: column;
+      justify-items: center;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 2px;
+    }
+  }
+}

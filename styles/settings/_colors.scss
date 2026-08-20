@@ -291,6 +291,31 @@ $back-metal: #5b6572;
 $back-metal-hi: #c3ccd6;
 $back-metal-edge: #121316;
 
+// --- Bocetos de marco de V3 -----------------------------------------------
+// Los tonos que NO están ya en $game. El cuerpo de la carta —fondo, oro,
+// crema, filete— sale de game() a propósito: la carta es una pieza más de la
+// interfaz de producción, y si su oro no fuera el mismo oro del botón se
+// notaría en cuanto las dos cosas aparecieran en la misma pantalla.
+//
+// Lo que sí es propio de la carta son los VELOS: los tres conceptos de
+// knowledge/v3/card-concept/ llevan el arte a sangre y apoyan el texto encima,
+// así que todo lo que se lee necesita un velo debajo o se pierde contra la
+// ilustración. Van en negro cálido translúcido, no en un gris opaco: tienen
+// que apagar el arte sin taparlo.
+$card-sketch: (
+  "void": #0b0806,                        // fondo del hueco de arte sin imagen
+  "veil": rgba(9, 6, 4, 0.78),            // velo opaco: bandas de nombre
+  "veil-soft": rgba(9, 6, 4, 0.42),       // velo suave: cenefas y tiras
+  "veil-none": rgba(9, 6, 4, 0),          // el mismo negro a cero, para fundidos
+  "glass": rgba(16, 11, 8, 0.86),         // cara de gemas, medallones y cápsulas
+  "glass-hi": rgba(255, 244, 214, 0.18),  // filo de luz de esas piezas
+  "slab": #3b332b,                        // losa de piedra (boceto C)
+  "slab-hi": #5b5045,
+  "slab-lo": #201b17,
+  "glint": rgba(255, 248, 230, 0.7),      // destello sobre el metal (boceto D)
+  "shadow": rgba(0, 0, 0, 0.55),
+);
+
 // --- Selección "en juego" (Baraja y Oteo) ---------------------------------
 // Celeste, no el "accent" de la wiki (índigo): es la marca de "esta carta
 // responde al puntero" del lab de Baraja, constante del juego como el dorado

@@ -28,3 +28,14 @@
 @use "dice-lab";
 @use "character-lab";
 @use "card-themes/armored";
+
+// Bocetos de marco V3 (knowledge/v3/card-concept/). Mismo patrón que la carta
+// de v2 justo encima: primero el esqueleto común y después un parcial por
+// boceto, que es la capa que puede pisarlo.
+@use "card-sketch";
+@use "card-sketch/rejilla";
+@use "card-sketch/gema";
+@use "card-sketch/losa";
+// El D es una mezcla del C con card-themes/armored, así que va después de los
+// dos: hereda del esqueleto como los otros, pero pisa piezas que el C ya tocó.
+@use "card-sketch/blindada";

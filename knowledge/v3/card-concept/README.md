@@ -31,7 +31,14 @@ prosa — a diferencia de las de v2, que eran casi todo texto de efecto:
 | Identidad | Nombre · Raza · Tier (1–8) · Rareza |
 | Arte | Ilustración |
 | Habilidades | Vida · Ataque · Defensa · Resistencia mágica · Precisión · Suerte · Velocidad · Movimiento |
-| Características | De 0 a 4 chips (icono + nombre) |
+| Características | De 0 a **5** chips (icono + nombre) |
+
+> **Son cinco, no cuatro.** Este documento decía "de 0 a 4" y estaba mal: en la
+> tabla de unidades de [`docs/v3/razas.md`](../../../docs/v3/razas.md) hay
+> **seis** unidades de tier 8 con cinco Características —🐉 Dragón esquelético,
+> 👹 Balor, 🐲 Dragón ancestral, 🐙 Kraken ancestral, ⚙️ Coloso mecánico y
+> 🧪 Abominación de plaga—. El marco tiene que aguantar cinco, y un chip de más
+> es justo lo que rompe un raíl o una cenefa que iba justa.
 
 Y tiene que aguantar los dos extremos de
 [`docs/v3/razas.md`](../../../docs/v3/razas.md) sin romperse:
@@ -40,6 +47,25 @@ Y tiene que aguantar los dos extremos de
   corto. Es el que descubre los huecos que se ven vacíos.
 - **🐉 Dragón dorado (tier 8)** — cuatro Características, Vida de tres cifras,
   nombre de catorce caracteres. Es el que descubre los huecos que rebosan.
+- **🐉 Dragón esquelético (tier 8, No-muertos)** — cinco Características y
+  dieciocho caracteres de nombre. No es de Humanos, así que no toca a la raza
+  piloto, pero es el peor caso real del catálogo y por eso entra.
+
+## Dónde se ven dibujados
+
+Los tres conceptos de abajo están montados como bocetos funcionando en la wiki,
+en **Cartas › Diseño de cartas** (`/docs/v3/cards/design`): un boceto por
+concepto, con los tres sujetos de arriba y los otros tres de en medio. El
+código está en `components/design/v3/` (los sujetos de muestra, en
+`sample.ts`) y sus estilos en `styles/components/card-sketch/`.
+
+Es donde se contesta lo que este documento deja abierto, porque hay cosas —si
+la fila de ocho se lee, si el cero molesta, cuánto arte se come un panel— que
+no se deciden mirando referencias sino mirando la carta.
+
+A partir del cuarto, los bocetos ya **no salen de una referencia nueva sino de
+cruzar los que hay** (ver §"Mezclas"). Se siguen numerando con letra y viven en
+la misma página.
 
 ---
 
@@ -163,6 +189,54 @@ mismo deja de ser gusto y pasa a ser oficio:
    desnudo. Es lo único que garantiza que se lea con cualquier ilustración
    detrás.
 
+## Mezclas
+
+Los conceptos de arriba son referencias externas. Esta sección es otra cosa:
+**cruces entre lo que ya está sobre la mesa**, que es como se avanza una vez
+hay bocetos que mirar. Cada mezcla dice de dónde saca el esqueleto, de dónde la
+piel, y qué se descubre al juntarlos que no se veía por separado.
+
+### Mezcla D — Blindada (boceto C × tema `armored` de v2)
+
+Boceto **D · Blindada** en `/docs/v3/cards/design`. Código en
+`components/design/v3/sketch-frames.tsx` (el marco vectorial) y
+`styles/components/card-sketch/_blindada.scss`.
+
+**El esqueleto es entero del concepto C**: arte a carta entera, placa solapada
+sobre el tercio inferior, las ocho Habilidades en una sola fila de cápsulas,
+glifos de Característica al pie. Eso no se toca, porque es lo que se está
+juzgando.
+
+**La piel es la del tema `armored` de v2**
+([`components/design/card-frames.tsx`](../../../components/design/card-frames.tsx)
+y `styles/components/card-themes/_armored.scss`), que es la única pieza de v2
+con un marco de verdad y no un filete. Trae tres cosas:
+
+| Qué trae de Armored | Qué resuelve |
+|---|---|
+| Banda de metal de 15px con **cantoneras remachadas** en las cuatro esquinas | El marco pasa a ser un objeto, no un borde |
+| El metal **es** el color de la Rareza (`--m`/`--m-hi`/`--m-lo`/`--m-edge`) | La pregunta abierta de dónde vive la Rareza |
+| El **medallón** montado sobre el canto de la placa, con sus dos roblones | La pregunta abierta de cómo se dice el Tier |
+
+**Lo que la mezcla deja fuera a propósito: la ventana de arte.** Es lo que este
+documento ya señalaba en §"En qué coinciden los tres" como el motivo de que
+`armored` "se note de otra familia". Sin ventana, el herraje aguanta: sigue
+leyéndose como blindaje aunque el arte vaya a sangre por debajo.
+
+**Lo que se descubre al juntarlos**, y es lo que había que ver:
+
+- **El medallón vale para el Tier, pero se come el alto de la placa.** El
+  rótulo tiene que arrancar por debajo de él —21px de aire— o se lo traga. A
+  cambio el subtítulo se queda solo con la raza, así que la placa no crece
+  tanto como parece.
+- **La banda cuesta 30px de fila.** Con 15px de marco a cada lado, cada cápsula
+  de la fila de ocho baja de ~34px (boceto C) a ~30px. La Vida de tres cifras
+  del 🐉 Dragón dorado sigue entrando, pero ya sin holgura: es el techo.
+- **Un marco de Rareza es mucho más fuerte que un filete de Rareza.** Con la
+  legendaria dorada la carta se lee antes por el marco que por la ilustración.
+  Eso puede ser exactamente lo que se quiere o justo lo que no; es la decisión
+  que este boceto pone encima de la mesa.
+
 ## Lo que esto cambia de lo ya escrito
 
 **El lienzo heredado de v2 es el equivocado.** La especificación vigente
@@ -178,12 +252,20 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 
 ## Qué falta decidir
 
-- **Cuál de los tres esqueletos se toma de base**, o qué híbrido: el candidato
+> Los puntos de abajo son los que se contestan en `/docs/v3/cards/design`, con
+> los bocetos delante.
+
+- **Cuál de los esqueletos se toma de base**, o qué híbrido: el candidato
   obvio es *proporción y paleta de B + tira de ocho de A + subtítulo y ausencia
-  de texto de C*.
-- **Dónde vive la Rareza.** Ninguno de los tres la trata: A y C no la tienen y
-  B la insinúa con el color del arte. En v2 se resolvió en el borde
-  (halo + filete tintados) y esa decisión sigue siendo buena.
+  de texto de C*. La mezcla D va por otro lado —deja C intacto y le cambia la
+  piel—, así que las dos vías siguen abiertas.
+- **Dónde vive la Rareza.** Ninguno de los tres conceptos la trata: A y C no la
+  tienen y B la insinúa con el color del arte. En v2 se resolvió en el borde
+  (halo + filete tintados) y esa decisión sigue siendo buena. La mezcla D
+  propone la contraria y más fuerte: el marco entero es de la aleación de la
+  rareza.
 - **Si los ceros se imprimen o se ocultan.** A los imprime; con Suerte 0 en
   media plantilla, ocultarlos deja huecos irregulares en la tira.
-- **Si el Tier se dice con un número, con el subtítulo o con el marco.**
+- **Si el Tier se dice con un número, con el subtítulo o con el marco.** A, B y
+  C lo dicen en el subtítulo; la mezcla D lo sube al medallón del marco y le
+  quita el subtítulo. Ya se pueden comparar las dos.

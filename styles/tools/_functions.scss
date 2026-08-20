@@ -82,6 +82,22 @@
   @return map.get($game, $name);
 }
 
+// Tono propio de los bocetos de marco V3 (velos, cristal, losa). El resto de
+// la piel de la carta se pide a game(): ver la nota de $card-sketch.
+@function card-sketch($name) {
+  @if not map.has-key($card-sketch, $name) {
+    @error "card-sketch(): no existe el tono '#{$name}'. Disponibles: #{map.keys($card-sketch)}.";
+  }
+  @return map.get($card-sketch, $name);
+}
+
+@function sketch-font($name) {
+  @if not map.has-key($sketch-font, $name) {
+    @error "sketch-font(): no existe el tamaño '#{$name}'. Disponibles: #{map.keys($sketch-font)}.";
+  }
+  @return map.get($sketch-font, $name);
+}
+
 @function card-font($name) {
   @if not map.has-key($card-font, $name) {
     @error "card-font(): no existe el tamaño '#{$name}'. Disponibles: #{map.keys($card-font)}.";

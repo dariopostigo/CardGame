@@ -73,6 +73,17 @@ const GROUPS = DOCS_VERSIONS.flatMap((version) =>
 const DESIGN_LAB_VERSION: DocsVersion = "v2";
 const DESIGN_LAB_GROUP = `${DESIGN_LAB_VERSION}-cards`;
 
+// Bocetos de marco de V3 (app/docs/v3/cards/design/). Página propia y no la
+// misma de arriba: aquella pinta el catálogo real de v2 con un marco YA
+// decidido, y esta pinta sujetos de muestra escritos a mano
+// (components/design/v3/sample.ts) con tres marcos POR decidir.
+//
+// Cuando uno de los tres gane, las dos se funden en una: esta se queda con el
+// marco elegido y hereda el catálogo, y entonces la constante de arriba pasa a
+// "v3" con sus tres mudanzas. Hasta ese día conviven, así que el push de abajo
+// se guarda de que no se dupliquen si las dos versiones coincidieran.
+const SKETCH_LAB_GROUP = "v3-cards";
+
 // Metadatos por documento (etiqueta corta + icono + orden dentro del grupo).
 const META: Record<string, { label: string; icon: string; order: number }> = {
   // --- V3 (diseño vigente) ---
@@ -193,12 +204,19 @@ export const getNavTree = cache((version?: DocsVersion): NavGroup[] => {
       })
       .sort((a, b) => a._order - b._order || a.label.localeCompare(b.label))
       .map(({ _order, ...item }) => item as NavItem);
-    // Página especial (no-markdown): laboratorio de diseño de carta.
+    // Páginas especiales (no-markdown): los dos laboratorios de diseño.
     if (g.key === DESIGN_LAB_GROUP) {
       items.push({
         label: "Diseño",
         icon: "pi pi-palette",
         href: `/docs/${DESIGN_LAB_VERSION}/cards/design`,
+      });
+    }
+    if (g.key === SKETCH_LAB_GROUP && SKETCH_LAB_GROUP !== DESIGN_LAB_GROUP) {
+      items.push({
+        label: "Diseño de cartas",
+        icon: "pi pi-palette",
+        href: "/docs/v3/cards/design",
       });
     }
     return { key: g.key, label: g.label, icon: g.icon, items };

@@ -1,0 +1,232 @@
+@use "sass:math";
+@use "../abstracts" as *;
+
+// =========================================================================
+// Bocetos de marco V3 — esqueleto común
+//
+// Espejo de _card.scss para la carta de v2, y separado de ella a propósito:
+// aquella está congelada y esta se está decidiendo
+// (knowledge/v3/card-concept/). Aquí va SOLO lo que los tres bocetos
+// comparten, que es lo que ya no está en discusión porque las tres
+// referencias del concepto coinciden en ello:
+//
+//   · arte a sangre, sin ventana enmarcada;
+//   · el nombre sobre banda opaca, nunca sobre el arte desnudo;
+//   · Características en glifo, nunca en texto;
+//   · Rareza en el filete, la única decisión que se hereda tal cual de v2.
+//
+// Lo que cambia de un boceto a otro —dónde caen las ocho Habilidades y las
+// Características— vive en card-sketch/, un parcial por boceto, que van
+// después en la cascada.
+//
+// La piel sale de game() y no de skin(): la carta es una pieza de la interfaz
+// de producción, y su oro tiene que ser el mismo oro del botón. Por eso el
+// escenario va oscuro también con la wiki en claro — una carta negra sobre
+// blanco no se puede juzgar.
+// =========================================================================
+
+.sketch-lab {
+  // Raíl de color por defecto; cada carta lo redefine con su data-rarity,
+  // igual que en .card-lab.
+  @include rarity-vars("comun");
+
+  @each $name, $tokens in $rarity {
+    [data-rarity="#{$name}"] {
+      @include rarity-vars($name);
+    }
+  }
+
+  .card-lab__stage {
+    background: radial-gradient(
+      circle at 50% 0%,
+      game("surface"),
+      game("bg") 70%
+    );
+    border-color: game("border");
+
+    // La wiki encierra su contenido en una columna de 768px (Shell.tsx) y ahí
+    // caben DOS cartas de 300px. Con la tabla completa son seis sujetos del
+    // mismo boceto, y de dos en dos no se comparan: el escenario se sale de la
+    // columna hacia los dos lados para que quepan tres por fila.
+    //
+    // El ancho es el que piden esas tres cartas con las medidas de los objetos
+    // que ya existen: 3 × $sketch-width + 2 huecos de 28px
+    // (objects/_grid.scss) + el acolchado de 20px del escenario
+    // (objects/_stage.scss).
+    //
+    // Y solo a partir de 1440px, que es donde hay sitio de sobra: con la barra
+    // lateral de 288px y el acolchado de 40px del <main>, a esa anchura sobran
+    // 152px a cada lado de la columna y este desbordamiento pide 114. Por
+    // debajo no se desborda nada y las cartas envuelven de dos en dos, que es
+    // preferible a una barra de scroll horizontal en toda la wiki.
+    @media (min-width: 1440px) {
+      $stage: $sketch-width * 3 + 96px;
+
+      width: $stage;
+      margin-inline: math.div(768px - $stage, 2);
+    }
+  }
+}
+
+// --------------------------------------------------------------- La carta
+.sketch {
+  position: relative;
+  width: $sketch-width;
+  height: $sketch-height;
+  border-radius: $sketch-radius;
+  // Columna anclada abajo: el arte va detrás a sangre y todo lo que se lee se
+  // apila desde el pie hacia arriba. Ningún boceto reserva altura de arte —eso
+  // sería volver a la ventana enmarcada de v2.
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  // Visible, no hidden: el boceto B saca las gemas fuera del marco. Cada pieza
+  // que deba recortarse (el arte, el pie) se recorta por su cuenta.
+  overflow: visible;
+  background: card-sketch("void");
+  color: game("text");
+  font-family: $font-sans;
+  box-shadow:
+    0 18px 34px -18px card-sketch("shadow"),
+    0 0 22px -8px var(--rarity-soft);
+  user-select: none;
+
+  // Filete de rareza, por encima de todo y sin capturar el puntero.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: $sketch-rim solid var(--rarity);
+    border-radius: inherit;
+    z-index: z("frame");
+    pointer-events: none;
+  }
+
+  // Las listas de la carta son estructura, no viñetas.
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  h3,
+  p {
+    margin: 0;
+  }
+}
+
+// --- El arte --------------------------------------------------------------
+// A sangre en los tres. Se recorta él solo al radio de la carta para que las
+// gemas del boceto B puedan seguir desbordando.
+.sketch__art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  overflow: hidden;
+  background: card-sketch("void");
+}
+
+// Las ilustraciones de relleno son las apaisadas de v2 (ver sample.ts): en
+// vertical hay que recortarlas por los lados, y el encuadre se sube porque lo
+// que interesa de una figura es la cabeza — que es justo la restricción que el
+// boceto C acaba imponiendo a la dirección de arte.
+.sketch__art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;
+}
+
+// Sin ilustración, el emoji del sujeto hace de arte. Pasa en cuanto se sale de
+// las cuatro clases dibujadas de v2.
+.sketch__art-glyph {
+  font-size: card-font("art");
+  line-height: 1;
+  filter: drop-shadow(0 6px 14px card-sketch("shadow"));
+}
+
+// --- El pie: todo lo que se lee ------------------------------------------
+.sketch__foot {
+  position: relative;
+  z-index: z("content");
+  border-radius: 0 0 $sketch-radius $sketch-radius;
+  overflow: hidden;
+}
+
+// --- Nombre y subtítulo ---------------------------------------------------
+.sketch__name {
+  font-family: $font-serif-display;
+  font-size: sketch-font("name");
+  font-weight: 600;
+  line-height: 1.08;
+  color: game("gold-hi");
+  text-shadow: 0 1px 0 game("border");
+
+  // Un escalón abajo para los nombres largos (🐉 Dragón esquelético son 18
+  // caracteres). Sin esto el rótulo parte en dos líneas y desplaza el pie
+  // entero, que es el fallo que hay que ver en los bocetos, no esconder.
+  &[data-long="true"] {
+    font-size: sketch-font("name-long");
+  }
+}
+
+.sketch__sub {
+  font-size: sketch-font("sub");
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: game("muted");
+}
+
+// --- Cápsula de Habilidad -------------------------------------------------
+// Compartida por los bocetos B (los cuatro secundarios) y C (los ocho), con
+// distinta disposición en cada uno pero la misma pieza: si en uno se lee y en
+// el otro no, es la fila lo que falla y no la cápsula.
+.sketch__pod {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 3px 1px;
+  border-radius: radius("sm");
+  background: card-sketch("glass");
+  border: 1px solid card-sketch("glass-hi");
+}
+
+.sketch__pod-icon {
+  font-size: sketch-font("stat-icon");
+  line-height: 1;
+}
+
+.sketch__pod-value {
+  font-family: $font-game-display;
+  font-size: sketch-font("pod");
+  line-height: 1;
+  color: game("text");
+}
+
+// --- Cenefa de Características -------------------------------------------
+// La segunda respuesta al rango 0–5 (bocetos B y C): en horizontal al pie, en
+// vez del raíl vertical del boceto A. No se pinta con cero Características —el
+// TSX no la emite—, así que el Miliciano no deja una banda vacía.
+.sketch__frieze {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px $sketch-inset;
+  background: card-sketch("veil-soft");
+}
+
+.sketch__glyph {
+  display: grid;
+  place-items: center;
+  width: $sketch-glyph;
+  height: $sketch-glyph;
+  border-radius: radius("pill");
+  background: card-sketch("glass");
+  border: 1px solid card-sketch("glass-hi");
+  font-size: sketch-font("glyph");
+  line-height: 1;
+}

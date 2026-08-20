@@ -29,6 +29,26 @@ $card-font: (
   "stars": 0.72rem,
 );
 
+// --- Escala de los bocetos de marco V3 ------------------------------------
+// Aparte de $card-font por lo mismo que $sketch-width está aparte de
+// $card-width (settings/_card.scss): la carta de v2 está congelada y esta se
+// está decidiendo. Aquí no hay párrafo que ajustar —V3 no tiene prosa en la
+// carta— así que no hay escalones "fit": solo números y rótulos.
+$sketch-font: (
+  "name": 1.3rem,
+  "name-long": 1.06rem,   // nombres de 14+ caracteres (🐉 Dragón esquelético)
+  "sub": 0.68rem,         // "👤 Humanos · Tier 8"
+  "stat": 0.95rem,        // el número de una Habilidad
+  "stat-icon": 0.8rem,    // su icono (hoy emoji de marcador)
+  "gem": 1.2rem,          // número dentro de una gema de esquina
+  "gem-icon": 0.58rem,    // su icono, que ahí va de apoyo y no de rótulo
+  "hang": 0.82rem,        // número de la ficha que cuelga bajo una gema
+  "pod": 0.74rem,         // número dentro de una cápsula de la fila de ocho
+  "glyph": 0.78rem,       // glifo de Característica en cenefa
+  "medal": 0.92rem,       // glifo de Característica en medallón
+  "boss": 1.15rem,        // el Tier dentro del medallón del marco (boceto D)
+);
+
 // Escalones de ajuste: tamaño de cuerpo, interlineado y nº de líneas.
 $card-fit: (
   1: ("size": 0.82rem, "leading": 1.32, "lines": 5),

@@ -1,0 +1,70 @@
+@use "../../abstracts" as *;
+
+// =========================================================================
+// Boceto C · Losa — herencia de Warhammer Combat Cards
+//
+// Su apuesta: la carta ES la ilustración. No hay panel de lectura en ningún
+// sitio —el pie va sin fondo, a diferencia de los otros dos— y todo flota
+// encima del arte: una losa de piedra solapada con el nombre, las ocho
+// Habilidades en UNA sola fila de cápsulas y los glifos de Característica
+// pegados al borde inferior.
+//
+// La fila de ocho es la prueba de fuego del boceto: a 300px de ancho cada
+// cápsula se queda en ~34px, así que si un número de tres cifras la revienta
+// se ve aquí y no en producción.
+//
+// Su coste no se paga en la carta, se paga en la dirección de arte: la losa se
+// come el centro de la composición, así que la ilustración hay que encuadrarla
+// para ella —la cabeza de la figura alta— y eso es una restricción que vuelve
+// a knowledge/v3/art-direction/illustrations.md.
+// =========================================================================
+
+.sketch--losa {
+  // Sin fondo: aquí el pie no es un panel, es contenido flotando sobre el arte.
+  // El único velo es la penumbra que sube desde el borde para que los glifos de
+  // la cenefa no caigan sobre un cielo claro.
+  .sketch__foot {
+    background: linear-gradient(
+      to bottom,
+      card-sketch("veil-none") 0,
+      card-sketch("veil-soft") 100%
+    );
+    padding-top: 26px;
+  }
+
+  // La losa: piedra iluminada desde arriba, con las esquinas superiores
+  // achaflanadas para que se lea como una pieza puesta encima y no como una
+  // barra del layout.
+  .sketch__slab {
+    position: relative;
+    padding: 8px $sketch-inset 7px;
+    text-align: center;
+    background: linear-gradient(
+      to bottom,
+      card-sketch("slab-hi") 0,
+      card-sketch("slab") 26%,
+      card-sketch("slab-lo") 100%
+    );
+    border-top: 1px solid var(--rarity);
+    box-shadow: 0 -8px 16px card-sketch("shadow");
+    clip-path: polygon(0 12px, 12px 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  }
+
+  // Las ocho de una tacada. Columnas iguales a propósito: si la Vida necesita
+  // más sitio que la Suerte, la fila deja de ser una fila y hay que rehacer el
+  // boceto — que es exactamente lo que se quiere descubrir aquí.
+  .sketch__pods {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 2px;
+    padding: 5px 4px;
+    background: card-sketch("veil");
+  }
+
+  // La cenefa se pega al borde, sin banda propia: es la diferencia con el
+  // boceto B, donde la misma cenefa sí va sobre un velo.
+  .sketch__frieze--edge {
+    padding: 6px $sketch-inset 7px;
+    background: transparent;
+  }
+}
