@@ -1,0 +1,76 @@
+@use "../abstracts" as *;
+
+// =========================================================================
+// Lab de Personaje 3D — ver components/dev/CharacterLab.tsx
+//
+// El <canvas> lo crea character-scene.ts a pelo, igual que en el lab de
+// dados: esta hoja solo viste el marco donde vive y la tira de cifras de
+// debajo. Misma mesa que el tablero y que la bandeja de dados
+// (board-table): el personaje se mira SOBRE la mesa de la partida, no
+// sobre un panel de herramienta.
+// =========================================================================
+
+.character-lab {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__stage {
+    position: relative;
+    height: 30rem;
+    min-height: 20rem;
+    border-radius: radius("md");
+    overflow: hidden;
+    background:
+      radial-gradient(125% 95% at 50% 40%, rgba($board-table-edge, 0) 30%, $board-table-edge 100%),
+      $board-table;
+    // El orbitado lo llevan los OrbitControls (Pointer Events): sin esto, en
+    // pantalla táctil el gesto lo capturaría el scroll de la página, igual
+    // que en .dice-lab__stage.
+    touch-action: none;
+    user-select: none;
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    // Tamaño de ficha sobre el hexágono. No es una miniatura decorativa: es
+    // la prueba que decide si hace falta calidad de malla, porque a esta
+    // escala el detalle fino no llega a leerse. El ResizeObserver del motor
+    // reajusta cámara y renderer solo.
+    &--token {
+      width: 9rem;
+      height: 9rem;
+      min-height: 0;
+      border-radius: radius("pill");
+    }
+  }
+
+  &__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    padding: 12px 14px;
+    border-radius: radius("md");
+    background: skin("surface-2");
+
+    dt {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: skin("muted");
+    }
+
+    dd {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: skin("text");
+      // Las cifras cambian en vivo (FPS, llamadas de dibujo): sin cifras de
+      // ancho fijo, el panel entero bailaría en cada actualización.
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}

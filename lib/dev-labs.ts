@@ -114,6 +114,17 @@ export const DEV_LABS: readonly DevLab[] = [
     icon: "pi pi-images",
     status: "en-curso",
   },
+  // Va justo detrás de «Animación de personaje» porque es la otra respuesta a
+  // la misma pregunta: aquella hornea fotogramas de una lámina, esta reproduce
+  // los clips que ya vienen dentro del .glb. Se comparan, no se sustituyen.
+  {
+    slug: "character",
+    label: "Personaje 3D",
+    summary:
+      "Un .glb con malla, esqueleto y animaciones dentro, reproducido en el navegador: sin láminas que recortar, con fundido entre clips y mirable desde cualquier ángulo. Sirve para decidir si compensa el pipeline de generar personajes en 3D —animar no escala con cuántos haya, porque los clips van sobre el esqueleto— midiendo lo que cuesta: peso del archivo, triángulos y FPS.",
+    icon: "pi pi-user",
+    status: "en-curso",
+  },
   {
     slug: "combate",
     label: "Combate",

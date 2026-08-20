@@ -59,7 +59,14 @@ export type CombatantDrawerSubject = {
   readonly title: string;
   /** Naturaleza de la criatura ("Bestia"…), solo para enemigos. */
   readonly subtitle?: string;
-  readonly abilityScores: AbilityScores;
+  /**
+   * Opcional porque hay fichas que no tienen: un mercenario lleva un bloque
+   * plano derivado de su Rareza (`cards/mercenaries.md` §1b) y ni siquiera
+   * tiene Destreza —por eso su iniciativa no se tira con el mod de DES—, así
+   * que enseñarle una fila de seis dieces sería inventarle unas
+   * características que el documento no le da.
+   */
+  readonly abilityScores?: AbilityScores;
   readonly pv: { readonly current: number; readonly max: number };
   /** Sin equipo en /dev/movement todavía: campo opcional a propósito. */
   readonly ca?: number;
@@ -165,17 +172,21 @@ export default function CombatantDrawer({ subject, onClose }: Props) {
               </span>
             </div>
 
-            <div className="combatant-drawer__abilities">
-              {ABILITY_ORDER.map((ability) => (
-                <div key={ability} className="combatant-drawer__ability">
-                  <span className="combatant-drawer__ability-label">{ABILITY_ABBR[ability]}</span>
-                  <span className="combatant-drawer__ability-value">{shown.abilityScores[ability]}</span>
-                  <span className="combatant-drawer__ability-mod">
-                    {signed(abilityMod(shown.abilityScores[ability]))}
-                  </span>
-                </div>
-              ))}
-            </div>
+            {shown.abilityScores && (
+              <div className="combatant-drawer__abilities">
+                {ABILITY_ORDER.map((ability) => (
+                  <div key={ability} className="combatant-drawer__ability">
+                    <span className="combatant-drawer__ability-label">{ABILITY_ABBR[ability]}</span>
+                    <span className="combatant-drawer__ability-value">
+                      {shown.abilityScores![ability]}
+                    </span>
+                    <span className="combatant-drawer__ability-mod">
+                      {signed(abilityMod(shown.abilityScores![ability]))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {(shown.ca !== undefined || shown.speed !== undefined) && (
               <ul className="combatant-drawer__stats">

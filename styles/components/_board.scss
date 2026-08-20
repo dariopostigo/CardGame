@@ -111,6 +111,39 @@
   opacity: 0.55;
 }
 
+// --- Capa libre sobre el tablero -------------------------------------------
+
+// El hueco de la prop `overlay` de HexBoard (ver BoardProjection): lo usa hoy
+// la figura 3D de /dev/combate. Simétrico a .board__fog pero al otro lado del
+// SVG —la niebla va debajo del mapa, esto encima— y por el mismo motivo no
+// necesita z-index: es hermano posterior en el mismo contexto de apilamiento.
+//
+// El puntero lo deja pasar entero: lo que hay dentro es decorado sobre el
+// tablero, y quien decide sigue siendo el <polygon> del hexágono de debajo.
+// Ojo si algún día se mete algo clicable aquí — habrá que devolvérselo pieza
+// a pieza, no quitando esta línea.
+.board__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  // Mismo motivo que en .board__fog: dentro va un <canvas>, que es un elemento
+  // reemplazado y no se estira solo con `inset`.
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// El div que un motor de escena usa como contenedor. Tiene que medir lo mismo
+// que el marco: el motor lee su tamaño para calcular el frustum, y con alto 0
+// la figura no se dibujaría en ningún sitio.
+.board__overlay-host {
+  width: 100%;
+  height: 100%;
+}
+
 // Mando de la cámara, sobre el tablero y en la esquina de siempre de un mapa.
 // No necesita z-index: va después del SVG dentro del mismo contexto.
 .board__nav {

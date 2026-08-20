@@ -34,8 +34,17 @@ import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type Poin
 /** El rectángulo del `viewBox` del SVG: la vista encajada, en sus unidades. */
 export type ViewBox = { minX: number; minY: number; width: number; height: number };
 
-/** La cámara: escala y desplazamiento del contenido, en unidades del viewBox. */
-type View = { k: number; tx: number; ty: number };
+/**
+ * La cámara: escala y desplazamiento del contenido, en unidades del viewBox.
+ *
+ * Se exporta porque hay quien necesita el desvío en crudo y no la cadena de
+ * `transform` ya montada: una capa que no sea SVG y quiera quedar clavada
+ * sobre el tablero (el lienzo 3D de /dev/combate) tiene que reproducir la
+ * misma proyección con su propia cámara, y para eso necesita los números.
+ */
+export type BoardCamera = { k: number; tx: number; ty: number };
+
+type View = BoardCamera;
 
 /** Tablero encajado en el marco, sin desvío: el estado al que vuelve «Encajar». */
 const FIT: View = { k: 1, tx: 0, ty: 0 };
@@ -153,6 +162,8 @@ function zoomAt(view: View, factor: number, anchor: { x: number; y: number }): V
 export type BoardView = {
   /** `transform` del grupo que envuelve al tablero; `undefined` si está encajado. */
   transform: string | undefined;
+  /** El mismo desvío en crudo, para quien no pueda usar un `transform` de SVG. */
+  camera: BoardCamera;
   /** Escala actual. 1 es el tablero encajado en el marco. */
   zoom: number;
   /** Ya no se puede acercar / alejar más. */
@@ -354,6 +365,7 @@ export function useBoardView(viewBox: ViewBox): BoardView {
     transform: isFit
       ? undefined
       : `translate(${view.tx.toFixed(2)} ${view.ty.toFixed(2)}) scale(${view.k.toFixed(4)})`,
+    camera: view,
     zoom: view.k,
     atMax: view.k >= MAX_ZOOM,
     atMin: view.k <= MIN_ZOOM,

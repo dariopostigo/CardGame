@@ -106,7 +106,31 @@ import Button from "@/components/ui/Button";
 import BoardFog from "./BoardFog";
 import BoardPiece from "./BoardPiece";
 import { TOKEN_ART, type PawnId } from "./piece-art";
-import { useBoardView } from "./use-board-view";
+import { useBoardView, type BoardCamera, type ViewBox } from "./use-board-view";
+
+/**
+ * Todo lo que hace falta para colocar algo sobre el tablero desde FUERA del
+ * SVG, en las mismas coordenadas que usa el propio tablero.
+ *
+ * Existe por el lienzo 3D de /dev/combate: una figura animada no cabe en un
+ * `<polygon>`, así que vive en un WebGL aparte encima del marco. Como no es
+ * SVG, el `transform` del grupo no le sirve de nada y tiene que reproducir la
+ * proyección con su propia cámara — para eso necesita estos cuatro números y
+ * `Hex.toPixel`, que es la única fórmula que traduce hexágono a pantalla.
+ *
+ * La capa se pinta ENCIMA del SVG y sin recibir el puntero: sigue clicándose
+ * el hexágono de debajo, así que el tablero no cambia de comportamiento por
+ * llevar una figura encima.
+ */
+export type BoardProjection = {
+  /** La vista encajada, en sus unidades: el origen contra el que se mide la cámara. */
+  readonly viewBox: ViewBox;
+  /** Zoom y arrastre actuales. */
+  readonly camera: BoardCamera;
+  readonly hexSize: number;
+  /** La compresión vertical de la casa (BOARD_TILT): 1 sería a plomo desde arriba. */
+  readonly tilt: number;
+};
 
 /**
  * Una ficha de héroe a pintar (co-op, characters/heroes.md §4): quién es,
@@ -152,6 +176,12 @@ type Props = {
    */
   heroes?: readonly HeroMarker[];
   onHexClick?: (hex: HexCell) => void;
+  /**
+   * Capa libre por encima del SVG, dentro del marco y sin recibir el puntero.
+   * Recibe la proyección ya resuelta (ver `BoardProjection`) para poder
+   * colocarse en las mismas coordenadas que el tablero.
+   */
+  overlay?: (projection: BoardProjection) => React.ReactNode;
 };
 
 const PADDING = 8;
@@ -196,6 +226,7 @@ export default function HexBoard({
   threatened,
   heroes = [],
   onHexClick,
+  overlay,
 }: Props) {
   // Alias local: la inclinación entra en cada fórmula de geometría de abajo y no
   // es un dato de este tablero, es la cámara del juego (ver BOARD_TILT).
@@ -549,6 +580,16 @@ export default function HexBoard({
             })()}
         </g>
       </svg>
+
+      {/* Capa libre encima del SVG (ver BoardProjection). Va aquí y no dentro
+          del SVG porque lo que se pone es un <canvas>: no cabe en el árbol
+          SVG sin un <foreignObject>, que además se rasterizaría a la escala
+          del momento y saldría borroso al acercar. Como hermano del SVG,
+          dibuja a resolución nativa y solo tiene que reproducir la
+          proyección. Sin puntero: el clic sigue llegando al hexágono. */}
+      {overlay && (
+        <div className="board__overlay">{overlay({ viewBox, camera: view.camera, hexSize, tilt })}</div>
+      )}
 
       {/* Mando de la cámara. Va dentro del marco y encima del recorte —es la
           única cosa de esta pantalla que no es tablero— y no propaga el

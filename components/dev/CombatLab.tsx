@@ -8,34 +8,59 @@
 // (ENEMY_ROSTER), en la rejilla de batalla vacía de board/battle.md §2.
 // Combate por fases de bando (board/battle.md §6): la iniciativa se tira una
 // sola vez al abrir la batalla y decide quién abre la ronda 1 y el orden
-// dentro de cada fase, pero nunca entrelaza turnos entre bandos. El héroe
-// mueve/ataca a golpe de clic; al terminar su turno, la fase Enemiga resuelve
-// SOLA a todos los enemigos vivos, uno tras otro (cada uno con el árbol de
-// prioridades determinista de characters/enemies.md §5b.6,
-// lib/rules/enemy-ai.ts), antes de devolver el turno al héroe. Sin co-op, sin
-// obstáculos, sin mercenario ni Retirada — eso es la siguiente ronda.
+// dentro de cada fase, pero nunca entrelaza turnos entre bandos. La fase de
+// Aliados resuelve una unidad tras otra —hoy el héroe y, si se ha invocado,
+// su mercenario—; al terminar, la fase Enemiga resuelve SOLA a todos los
+// enemigos vivos (cada uno con el árbol de prioridades determinista de
+// characters/enemies.md §5b.6, lib/rules/enemy-ai.ts) antes de devolver el
+// turno. Sin co-op, sin obstáculos y sin Retirada — eso sigue siendo la
+// siguiente ronda.
 //
 // El kit inicial del héroe (arma + armadura) no viene de ningún catálogo de
 // cartas todavía (eso es cards/weapons.md + un motor de equipo que no
 // existe): HERO_WEAPON/HERO_ARMOR_BONUS son un espejo mínimo, a mano, de
 // characters/heroes.md §2d, solo para que este laboratorio tenga algo con lo
 // que atacar y una CA con la que defenderse.
+//
+// -------------------------------------------------------------------------
+// LAS DOS COSAS QUE SE PRUEBAN AQUÍ, Y QUE SON INDEPENDIENTES
+// -------------------------------------------------------------------------
+// 1. **El mercenario como ficha** (cards/mercenaries.md §1b, board/battle.md
+//    §5): una unidad aliada más, con su bloque por Rareza, su hueco en la
+//    iniciativa y su turno propio. Es motor de reglas.
+//
+// 2. **La figura 3D sobre el tablero** (components/dev/battle-figure-scene.ts):
+//    el mercenario se pinta como un personaje animado de pie sobre su
+//    hexágono mientras el héroe y los enemigos siguen siendo el disco cenital
+//    de board-map.md §4c. Es la comparación que decide una pregunta abierta —
+//    si un personaje animado puede SER la ficha del tablero o tiene que vivir
+//    en una pantalla aparte—, y por eso las dos cosas se ven a la vez en la
+//    misma pantalla en vez de en dos laboratorios distintos.
+//
+// Que la figura sea justo el mercenario no es casual: es la única unidad que
+// aparece a mitad de partida, así que su llegada es también la prueba de que
+// una figura puede entrar, andar, pegar y caerse sin que el tablero se entere.
 // =========================================================================
 
-import { useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { Dropdown } from "primereact/dropdown";
+import { InputSwitch } from "primereact/inputswitch";
 import { SelectButton } from "primereact/selectbutton";
+import { Slider, type SliderChangeEvent } from "primereact/slider";
 import type { DamageType } from "@/lib/card-table";
 import * as Hex from "@/lib/rules/hex";
 import type { HexCoord, HexKey } from "@/lib/rules/hex";
 import {
   buildBattlefield,
   checkBattleOutcome,
+  compositionBudget,
   resolveAttack,
   resolveDisengage,
   rollInitiative,
   type AttackOutcome,
   type BattleOutcome,
   type InitiativeCombatant,
+  type Weapon,
 } from "@/lib/rules/combat";
 import {
   computeAttackAdvantage,
@@ -51,6 +76,14 @@ import {
   type EnemyClassDef,
   type EnemyClassId,
 } from "@/lib/rules/enemy-roster";
+import {
+  blockFor,
+  describeAttack as describeMercenaryAttack,
+  MERCENARY_CARD_IDS,
+  MERCENARY_CATALOG,
+  MERCENARY_SAVES,
+  type MercenaryCardId,
+} from "@/lib/rules/mercenary-roster";
 import { applyEffect, applyStartOfTurnDamage, attemptEndOfTurnSaves, hasEffect, type Effects } from "@/lib/rules/effects";
 import { abilityMod, HERO_CLASS_IDS, HERO_ROSTER } from "@/lib/rules/hero-roster";
 import { attackableTargets, MOVE_BASE, reachableHexes } from "@/lib/rules/movement";
@@ -60,6 +93,9 @@ import type { Ability, AbilityScores, Board, CreatureNature, HeroClassId, Hex as
 import HexBoard, { type HeroMarker } from "@/components/game/board/HexBoard";
 import CombatantDrawer, { type CombatantDrawerSubject } from "@/components/game/board/CombatantDrawer";
 import { buttonClass } from "@/components/ui/Button";
+import BattleFigure, { type FigureEvent } from "./BattleFigure";
+import { CHARACTER_MODELS } from "./character-models";
+import { DEFAULT_FIGURE_HEIGHT, FIGURE_POSES, type FigureInfo, type FigurePose } from "./battle-figure-scene";
 
 const ABILITY_LABEL: Readonly<Record<Ability, string>> = {
   fuerza: "Fuerza",
@@ -140,12 +176,26 @@ function heroCA(classId: HeroClassId): number {
 
 type Phase = "setup" | "battle" | "ended";
 
+/** Las dos unidades del bando aliado que este lab sabe manejar. */
+type AllyId = "hero" | "mercenary";
+
 type HeroSession = {
   readonly position: HexCoord;
   readonly pv: { readonly current: number; readonly max: number };
   readonly effects: Effects;
   readonly movePointsLeft: number;
-  readonly hasActed: boolean;
+  /** Acciones de ataque que le quedan este turno. El héroe tiene 1; un
+   *  mercenario Épico o Legendario tiene 2 o 3 (columna Figuras de §1b). */
+  readonly attacksLeft: number;
+};
+
+type MercenarySession = {
+  readonly cardId: MercenaryCardId;
+  readonly position: HexCoord;
+  readonly pv: { readonly current: number; readonly max: number };
+  readonly effects: Effects;
+  readonly movePointsLeft: number;
+  readonly attacksLeft: number;
 };
 
 type EnemySession = {
@@ -156,26 +206,69 @@ type EnemySession = {
   readonly effects: Effects;
 };
 
+/**
+ * Héroe y mercenario vistos con la misma forma. Se deriva, no se guarda: el
+ * estado sigue teniendo los dos por separado (tienen campos distintos y una
+ * procedencia distinta), pero todo lo que el motor hace con una unidad aliada
+ * —moverse, atacar, ser el objetivo de la IA— es idéntico, y duplicarlo sería
+ * la vía rápida a que el mercenario y el héroe divergieran en alguna regla.
+ */
+type AllyUnit = {
+  readonly id: AllyId;
+  readonly label: string;
+  readonly position: HexCoord;
+  readonly pv: { readonly current: number; readonly max: number };
+  readonly effects: Effects;
+  readonly ca: number;
+  /** `null` en el mercenario: su bloque es plano (mercenary-roster.ts). */
+  readonly abilityScores: AbilityScores | null;
+  /** Para las tiradas que el motor pide por característica y el bloque plano no cubre. */
+  readonly saveScores: AbilityScores;
+  readonly weapon: Weapon & { readonly label: string; readonly range: number };
+  readonly speed: number;
+  readonly movePointsLeft: number;
+  readonly attacksLeft: number;
+};
+
+/** Pose que la figura 3D tiene que reproducir, con el sitio al que mirar. */
+type FigureCue = { readonly pose: FigurePose; readonly facing: HexCoord | null };
+
 type CombatState = {
   readonly hero: HeroSession;
+  /** `null` hasta que se juega la carta que lo invoca (§1). */
+  readonly mercenary: MercenarySession | null;
   readonly enemies: readonly EnemySession[];
   /** Orden fijo de los enemigos dentro de SU fase, decidido una sola vez en "roll-initiative" (board/battle.md §6). */
   readonly enemiesOrder: readonly string[];
+  /** Lo mismo para el bando aliado. El mercenario se inserta al invocarse. */
+  readonly allyOrder: readonly AllyId[];
+  /** Lo que sacó el héroe: hace falta para colocar al mercenario en `allyOrder`. */
+  readonly heroInitiative: number;
   /** Qué fase de bando está en curso — nunca se entrelazan (board/battle.md §6). */
-  readonly side: "hero" | "enemies";
-  /** A quién le toca dentro de `enemiesOrder`, mientras `side === "enemies"`. */
+  readonly side: "allies" | "enemies";
+  /** Quién actúa dentro de su fase. */
+  readonly activeAlly: AllyId;
   readonly activeEnemySlot: number;
   readonly phase: Phase;
   readonly outcome: BattleOutcome;
   readonly rng: Rng.Rng;
   readonly log: readonly string[];
+  /**
+   * Última pose pedida a la figura 3D, con un contador que sube en cada
+   * evento. El contador no es decorativo: dos ataques seguidos son dos veces
+   * la misma pose, y sin él React no vería ningún cambio y la segunda
+   * animación no se reproduciría.
+   */
+  readonly figureCue: FigureCue | null;
+  readonly figureCueCount: number;
 };
 
 type CombatAction =
   | { readonly type: "roll-initiative" }
-  | { readonly type: "hero-move"; readonly to: HexCoord; readonly pointsLeft: number }
-  | { readonly type: "hero-attack"; readonly targetId: string }
-  | { readonly type: "end-hero-turn" }
+  | { readonly type: "ally-move"; readonly to: HexCoord; readonly pointsLeft: number }
+  | { readonly type: "ally-attack"; readonly targetId: string }
+  | { readonly type: "summon-mercenary"; readonly cardId: MercenaryCardId }
+  | { readonly type: "end-ally-turn" }
   | { readonly type: "enemy-turn" };
 
 function enemyRow(index: number, total: number): number {
@@ -191,8 +284,9 @@ function buildInitialState(heroClassId: HeroClassId, enemyClassIds: readonly Ene
       pv: { current: heroDef.pvMax, max: heroDef.pvMax },
       effects: [],
       movePointsLeft: MOVE_BASE,
-      hasActed: false,
+      attacksLeft: 1,
     },
+    mercenary: null,
     enemies: enemyClassIds.map((defId, i) => {
       const def = ENEMY_ROSTER[defId];
       return {
@@ -204,13 +298,123 @@ function buildInitialState(heroClassId: HeroClassId, enemyClassIds: readonly Ene
       };
     }),
     enemiesOrder: [],
-    side: "hero",
+    allyOrder: ["hero"],
+    heroInitiative: 0,
+    side: "allies",
+    activeAlly: "hero",
     activeEnemySlot: 0,
     phase: "setup",
     outcome: "en-curso",
     rng: Rng.rngFromSeed(`combate:${heroClassId}:${enemyClassIds.join(",")}`),
     log: [],
+    figureCue: null,
+    figureCueCount: 0,
   };
+}
+
+// --- Vista uniforme del bando aliado ----------------------------------------
+
+/** El mercenario tal como lo ve el motor: bloque plano por Rareza (§1b). */
+function mercenaryUnit(mercenary: MercenarySession): AllyUnit {
+  const card = MERCENARY_CATALOG[mercenary.cardId];
+  const block = blockFor(mercenary.cardId);
+  return {
+    id: "mercenary",
+    label: card.label,
+    position: mercenary.position,
+    pv: mercenary.pv,
+    effects: mercenary.effects,
+    ca: block.ca,
+    abilityScores: null,
+    saveScores: MERCENARY_SAVES,
+    weapon: {
+      // El catálogo de §3 no le pone nombre al arma —la fila es la compañía,
+      // no la espada—, así que se nombra por familia: usar el nombre de la
+      // carta dejaba en el registro "golpea con Mercenarios de las Llanuras".
+      label: card.family === "distancia" ? "disparo" : "ataque cuerpo a cuerpo",
+      dice: block.damageDice,
+      damageType: card.damageType,
+      range: card.range,
+      flat: { attack: block.attackBonus, damage: block.damageBonus },
+    },
+    speed: block.speed,
+    movePointsLeft: mercenary.movePointsLeft,
+    attacksLeft: mercenary.attacksLeft,
+  };
+}
+
+function heroUnit(hero: HeroSession, heroClassId: HeroClassId): AllyUnit {
+  const def = HERO_ROSTER[heroClassId];
+  return {
+    id: "hero",
+    label: def.label,
+    position: hero.position,
+    pv: hero.pv,
+    effects: hero.effects,
+    ca: heroCA(heroClassId),
+    abilityScores: def.abilityScores,
+    saveScores: def.abilityScores,
+    weapon: HERO_WEAPON[heroClassId],
+    speed: MOVE_BASE,
+    movePointsLeft: hero.movePointsLeft,
+    attacksLeft: hero.attacksLeft,
+  };
+}
+
+function allyUnit(state: CombatState, id: AllyId, heroClassId: HeroClassId): AllyUnit | null {
+  if (id === "hero") return heroUnit(state.hero, heroClassId);
+  return state.mercenary ? mercenaryUnit(state.mercenary) : null;
+}
+
+/** Los aliados en pie, en el orden de la fase. */
+function livingAllies(state: CombatState, heroClassId: HeroClassId): AllyUnit[] {
+  return state.allyOrder
+    .map((id) => allyUnit(state, id, heroClassId))
+    .filter((unit): unit is AllyUnit => unit !== null && unit.pv.current > 0);
+}
+
+/** Lo que puede cambiar de una unidad aliada durante un turno. */
+type AllyPatch = {
+  readonly position?: HexCoord;
+  readonly pvCurrent?: number;
+  readonly effects?: Effects;
+  readonly movePointsLeft?: number;
+  readonly attacksLeft?: number;
+};
+
+function patchAlly(state: CombatState, id: AllyId, patch: AllyPatch): CombatState {
+  if (id === "hero") {
+    const hero = state.hero;
+    return {
+      ...state,
+      hero: {
+        ...hero,
+        position: patch.position ?? hero.position,
+        pv: patch.pvCurrent !== undefined ? { ...hero.pv, current: patch.pvCurrent } : hero.pv,
+        effects: patch.effects ?? hero.effects,
+        movePointsLeft: patch.movePointsLeft ?? hero.movePointsLeft,
+        attacksLeft: patch.attacksLeft ?? hero.attacksLeft,
+      },
+    };
+  }
+  if (!state.mercenary) return state;
+  const merc = state.mercenary;
+  return {
+    ...state,
+    mercenary: {
+      ...merc,
+      position: patch.position ?? merc.position,
+      pv: patch.pvCurrent !== undefined ? { ...merc.pv, current: patch.pvCurrent } : merc.pv,
+      effects: patch.effects ?? merc.effects,
+      movePointsLeft: patch.movePointsLeft ?? merc.movePointsLeft,
+      attacksLeft: patch.attacksLeft ?? merc.attacksLeft,
+    },
+  };
+}
+
+/** Apunta una pose para la figura 3D. Solo el mercenario tiene figura hoy. */
+function cueFigure(state: CombatState, pose: FigurePose, facing: HexCoord | null = null): CombatState {
+  return { ...state, figureCue: { pose, facing }, figureCueCount: state.figureCueCount + 1 };
 }
 
 // --- Helpers puros de la sesión ---------------------------------------------
@@ -228,11 +432,32 @@ function nextAliveEnemySlot(enemiesOrder: readonly string[], from: number, enemi
   return -1;
 }
 
+/** Siguiente aliado vivo tras `from` dentro de la fase de Aliados; `null` si la fase termina. */
+function nextAliveAlly(state: CombatState, from: AllyId, heroClassId: HeroClassId): AllyId | null {
+  const start = state.allyOrder.indexOf(from);
+  for (let i = start + 1; i < state.allyOrder.length; i++) {
+    const unit = allyUnit(state, state.allyOrder[i], heroClassId);
+    if (unit && unit.pv.current > 0) return unit.id;
+  }
+  return null;
+}
+
+function firstAliveAlly(state: CombatState, heroClassId: HeroClassId): AllyId | null {
+  for (const id of state.allyOrder) {
+    const unit = allyUnit(state, id, heroClassId);
+    if (unit && unit.pv.current > 0) return unit.id;
+  }
+  return null;
+}
+
 function checkOutcomeAndLog(
   hero: HeroSession,
   enemies: readonly EnemySession[],
   log: readonly string[],
 ): { outcome: BattleOutcome; phase: Phase; log: readonly string[] } {
+  // Derrota sigue siendo "el HÉROE cae" (board/battle.md §9): un mercenario a
+  // 0 PV es una ficha que se retira y nada más — la carta ya volvió al Mazo al
+  // invocar (mercenaries.md §1b, "Muerte").
   const outcome = checkBattleOutcome([hero], enemies);
   const phase: Phase = outcome === "en-curso" ? "battle" : "ended";
   if (outcome === "victoria") return { outcome, phase, log: [...log, "¡Victoria!"] };
@@ -240,22 +465,37 @@ function checkOutcomeAndLog(
   return { outcome, phase, log };
 }
 
-/** Abre la fase de Aliados: recarga el turno del héroe (board/battle.md §6). */
-function enterHeroTurn(state: CombatState): CombatState {
-  // Daño de Envenenado al EMPEZAR el turno; los estados en sí no cambian aquí
-  // (effects.md §1) — Inmovilizado sigue activo, por eso gatea el movimiento
-  // de ESTE turno. La salvación que puede retirarlos es de fin de turno (ver
-  // "end-hero-turn"), no de aquí.
-  const [poisonDamage, rng] = applyStartOfTurnDamage(state.rng, state.hero.effects);
-  const log = poisonDamage > 0 ? [...state.log, `Héroe sufre ${poisonDamage} de daño por Envenenado.`] : state.log;
-  const hero: HeroSession = {
-    ...state.hero,
-    pv: { ...state.hero.pv, current: Math.max(0, state.hero.pv.current - poisonDamage) },
-    movePointsLeft: hasEffect(state.hero.effects, "inmovilizado") ? 0 : MOVE_BASE,
-    hasActed: false,
+/**
+ * Abre el turno de una unidad aliada: daño de Envenenado al EMPEZAR y recarga
+ * de movimiento y ataques (board/battle.md §6). Los estados en sí no cambian
+ * aquí (effects.md §1) — Inmovilizado sigue activo, por eso gatea el
+ * movimiento de ESTE turno; la salvación que puede retirarlo es de fin de
+ * turno.
+ */
+function enterAllyTurn(state: CombatState, id: AllyId, heroClassId: HeroClassId): CombatState {
+  const unit = allyUnit(state, id, heroClassId);
+  if (!unit) return state;
+
+  const [poisonDamage, rng] = applyStartOfTurnDamage(state.rng, unit.effects);
+  const log =
+    poisonDamage > 0 ? [...state.log, `${unit.label} sufre ${poisonDamage} de daño por Envenenado.`] : state.log;
+
+  const attacksLeft = id === "mercenary" && state.mercenary ? blockFor(state.mercenary.cardId).figures : 1;
+  const patched = patchAlly({ ...state, rng, log }, id, {
+    pvCurrent: Math.max(0, unit.pv.current - poisonDamage),
+    movePointsLeft: hasEffect(unit.effects, "inmovilizado") ? 0 : unit.speed,
+    attacksLeft,
+  });
+
+  const checked = checkOutcomeAndLog(patched.hero, patched.enemies, patched.log);
+  return {
+    ...patched,
+    log: checked.log,
+    side: "allies",
+    activeAlly: id,
+    phase: checked.phase,
+    outcome: checked.outcome,
   };
-  const checked = checkOutcomeAndLog(hero, state.enemies, log);
-  return { ...state, hero, rng, log: checked.log, side: "hero", phase: checked.phase, outcome: checked.outcome };
 }
 
 /** Entra al turno de un enemigo concreto dentro de la fase Enemiga en curso. */
@@ -303,6 +543,25 @@ function farthestReachableHex(
   return best;
 }
 
+/**
+ * Dónde aparece el mercenario al invocarse. board/battle.md §5 dice "en la
+ * columna/fila del jugador que lo invocó"; sin fase de colocación manual, el
+ * hexágono libre más cercano al héroe es la lectura literal de eso. Se busca
+ * por anillos crecientes para que salga pegado a quien lo paga y no detrás de
+ * las líneas enemigas.
+ */
+function deployHex(board: Board, from: HexCoord, blocked: ReadonlySet<HexKey>): HexCoord | null {
+  for (let radius = 1; radius <= 4; radius++) {
+    for (const coord of Hex.withinRadius(from, radius)) {
+      if (Hex.distance(coord, from) !== radius) continue;
+      const key = Hex.key(coord);
+      if (!board.hexes.has(key) || blocked.has(key)) continue;
+      return coord;
+    }
+  }
+  return null;
+}
+
 function targetFailsSave(
   rng: Rng.Rng,
   targetAbilityScores: AbilityScores,
@@ -332,83 +591,132 @@ function describeAttack(
 // --- El reductor: cierra sobre la clase de héroe y el tablero (estables durante la sesión) ---
 
 function makeReducer(heroClassId: HeroClassId, board: Board) {
-  const heroAbilityScores = HERO_ROSTER[heroClassId].abilityScores;
-  const heroWeapon = HERO_WEAPON[heroClassId];
-  const heroCombatCA = heroCA(heroClassId);
+  /**
+   * A quién ataca un enemigo. `enemy-ai.ts` decide con UN objetivo, y su
+   * propio comentario ya dice cuál sería en co-op: "la más cercana" (§5b.6).
+   * Empate → el héroe, que es la amenaza que de verdad cierra la batalla.
+   */
+  function pickEnemyTarget(state: CombatState, from: HexCoord): AllyUnit | null {
+    const candidates = livingAllies(state, heroClassId);
+    if (candidates.length === 0) return null;
+    return candidates.reduce((best, unit) => {
+      const d = Hex.distance(from, unit.position);
+      const bestD = Hex.distance(from, best.position);
+      if (d !== bestD) return d < bestD ? unit : best;
+      return best.id === "hero" ? best : unit;
+    });
+  }
+
+  /** El resultado de la acción de un enemigo sobre su objetivo aliado. */
+  type EnemyActionResult = {
+    readonly targetPv: number;
+    readonly targetEffects: Effects;
+    readonly enemy: EnemySession;
+    readonly rng: Rng.Rng;
+    readonly log: readonly string[];
+    /** El objetivo ha encajado un golpe: la figura 3D tiene que acusarlo. */
+    readonly struck: boolean;
+  };
 
   function applyEnemyAction(
     action: EnemyAction,
     def: EnemyClassDef,
-    hero: HeroSession,
+    target: AllyUnit,
     enemy: EnemySession,
     allies: EnemyDecisionContext["allies"],
+    blocked: ReadonlySet<HexKey>,
     rng: Rng.Rng,
     log: readonly string[],
-  ): { hero: HeroSession; enemy: EnemySession; rng: Rng.Rng; log: readonly string[] } {
+  ): EnemyActionResult {
+    const unchanged = {
+      targetPv: target.pv.current,
+      targetEffects: target.effects,
+      enemy,
+      struck: false,
+    };
+
     switch (action.kind) {
       case "flee": {
-        const [result, nextRng] = resolveDisengage(rng, def.abilityScores, heroAbilityScores, heroWeapon.dice);
-        const occupied = new Set<HexKey>([Hex.key(hero.position), ...allies.map((a) => Hex.key(a.position))]);
-        const to = farthestReachableHex(board, enemy.position, def.speed, hero.position, occupied);
+        const [result, nextRng] = resolveDisengage(rng, def.abilityScores, target.saveScores, target.weapon.dice);
+        const to = farthestReachableHex(board, enemy.position, def.speed, target.position, blocked);
         const movedEnemy = { ...enemy, position: to };
         if (result.leaverWins) {
-          return { hero, enemy: movedEnemy, rng: nextRng, log: [...log, `${def.label} se desengancha y se aleja.`] };
+          return { ...unchanged, enemy: movedEnemy, rng: nextRng, log: [...log, `${def.label} se desengancha y se aleja.`] };
         }
-        const hurtHero = { ...hero, pv: { ...hero.pv, current: Math.max(0, hero.pv.current - result.damageToLeaver) } };
         return {
-          hero: hurtHero,
+          ...unchanged,
+          targetPv: Math.max(0, target.pv.current - result.damageToLeaver),
           enemy: movedEnemy,
           rng: nextRng,
-          log: [...log, `${def.label} intenta huir: recibe ${result.damageToLeaver} de daño al escapar, pero se aleja igualmente.`],
+          struck: result.damageToLeaver > 0,
+          log: [
+            ...log,
+            `${def.label} intenta huir: ${target.label} recibe ${result.damageToLeaver} de daño al escapar, pero se aleja igualmente.`,
+          ],
         };
       }
 
       case "ability": {
-        if (action.hook.kind !== "telarana") return { hero, enemy, rng, log };
-        const [failed, nextRng] = targetFailsSave(rng, heroAbilityScores, action.hook.save);
+        if (action.hook.kind !== "telarana") return { ...unchanged, rng, log };
+        const [failed, nextRng] = targetFailsSave(rng, target.saveScores, action.hook.save);
         if (failed) {
           return {
-            hero: { ...hero, effects: applyEffect(hero.effects, "inmovilizado") },
-            enemy,
+            ...unchanged,
+            targetEffects: applyEffect(target.effects, "inmovilizado"),
             rng: nextRng,
-            log: [...log, `${def.label} atrapa al héroe en su Telaraña: queda Inmovilizado.`],
+            log: [...log, `${def.label} atrapa a ${target.label} en su Telaraña: queda Inmovilizado.`],
           };
         }
-        return { hero, enemy, rng: nextRng, log: [...log, `${def.label} lanza Telaraña, pero el héroe la esquiva.`] };
+        return { ...unchanged, rng: nextRng, log: [...log, `${def.label} lanza Telaraña, pero ${target.label} la esquiva.`] };
       }
 
       case "attack": {
-        const [outcome, afterAttack] = resolveAttack(rng, def.abilityScores, { ca: heroCombatCA }, def.attack, action.advantageState);
-        let nextHero = hero;
+        const [outcome, afterAttack] = resolveAttack(rng, def.abilityScores, { ca: target.ca }, def.attack, action.advantageState);
+        let pv = target.pv.current;
+        let effects = target.effects;
         let rng2 = afterAttack;
-        let log2 = [...log, describeAttack(def.label, "Héroe", def.attack.label, outcome, def.attack.damageType)];
+        let log2 = [...log, describeAttack(def.label, target.label, def.attack.label, outcome, def.attack.damageType)];
         if (outcome.hit) {
-          nextHero = { ...nextHero, pv: { ...nextHero.pv, current: Math.max(0, nextHero.pv.current - outcome.damage) } };
+          pv = Math.max(0, pv - outcome.damage);
           const veneno = def.abilities.find((a): a is EnemyAbilityHook & { kind: "veneno" } => a.kind === "veneno");
           if (veneno) {
-            const [failed, afterSave] = targetFailsSave(rng2, heroAbilityScores, veneno.save);
+            const [failed, afterSave] = targetFailsSave(rng2, target.saveScores, veneno.save);
             rng2 = afterSave;
             if (failed) {
-              nextHero = { ...nextHero, effects: applyEffect(nextHero.effects, "envenenado") };
-              log2 = [...log2, "El héroe queda Envenenado."];
+              effects = applyEffect(effects, "envenenado");
+              log2 = [...log2, `${target.label} queda Envenenado.`];
             }
           }
         }
-        return { hero: nextHero, enemy, rng: rng2, log: log2 };
+        return { targetPv: pv, targetEffects: effects, enemy, rng: rng2, log: log2, struck: outcome.hit };
       }
 
       case "move": {
         const movedEnemy = { ...enemy, position: action.to };
-        const distance = Hex.distance(action.to, hero.position);
+        const distance = Hex.distance(action.to, target.position);
         if (distance <= def.attack.range) {
-          const advantageState = computeAttackAdvantage(def, { defId: movedEnemy.defId, position: movedEnemy.position }, hero.position, allies);
-          return applyEnemyAction({ kind: "attack", targetId: "hero", advantageState }, def, hero, movedEnemy, allies, rng, log);
+          const advantageState = computeAttackAdvantage(
+            def,
+            { defId: movedEnemy.defId, position: movedEnemy.position },
+            target.position,
+            allies,
+          );
+          return applyEnemyAction(
+            { kind: "attack", targetId: target.id, advantageState },
+            def,
+            target,
+            movedEnemy,
+            allies,
+            blocked,
+            rng,
+            log,
+          );
         }
-        return { hero, enemy: movedEnemy, rng, log: [...log, `${def.label} se acerca.`] };
+        return { ...unchanged, enemy: movedEnemy, rng, log: [...log, `${def.label} se acerca.`] };
       }
 
       case "wait":
-        return { hero, enemy, rng, log: [...log, `${def.label} no encuentra nada útil que hacer.`] };
+        return { ...unchanged, rng, log: [...log, `${def.label} no encuentra nada útil que hacer.`] };
     }
   }
 
@@ -416,75 +724,148 @@ function makeReducer(heroClassId: HeroClassId, board: Board) {
     switch (action.type) {
       case "roll-initiative": {
         const combatants: InitiativeCombatant[] = [
-          { id: "hero", abilityScores: heroAbilityScores, isHero: true },
+          { id: "hero", abilityScores: HERO_ROSTER[heroClassId].abilityScores, isHero: true },
           ...state.enemies.map((e) => ({ id: e.id, abilityScores: ENEMY_ROSTER[e.defId].abilityScores, isHero: false })),
         ];
         const [order, nextRng] = rollInitiative(state.rng, combatants);
-        const enemiesOrder = order.filter((id) => id !== "hero");
-        const labelled = order.map((id) =>
-          id === "hero" ? HERO_ROSTER[heroClassId].label : ENEMY_ROSTER[state.enemies.find((e) => e.id === id)!.defId].label,
+        const enemiesOrder = order.map((e) => e.id).filter((id) => id !== "hero");
+        const labelled = order.map((entry) =>
+          entry.id === "hero"
+            ? HERO_ROSTER[heroClassId].label
+            : ENEMY_ROSTER[state.enemies.find((e) => e.id === entry.id)!.defId].label,
         );
         const withOrder: CombatState = {
           ...state,
           enemiesOrder,
+          allyOrder: ["hero"],
+          heroInitiative: order.find((e) => e.id === "hero")!.total,
           rng: nextRng,
           log: [...state.log, `Iniciativa: ${labelled.join(" → ")}`],
         };
         // Quién abre la ronda 1 (board/battle.md §6): el bando de la tirada más
         // alta — la fase enemiga, si le toca, resuelve TODOS sus enemigos de
         // corrido, no uno solo.
-        return order[0] === "hero" ? enterHeroTurn(withOrder) : enterEnemyTurn(withOrder, 0);
+        return order[0].id === "hero"
+          ? enterAllyTurn(withOrder, "hero", heroClassId)
+          : enterEnemyTurn(withOrder, 0);
       }
 
-      case "hero-move": {
-        if (state.phase !== "battle" || state.side !== "hero") return state;
-        return { ...state, hero: { ...state.hero, position: action.to, movePointsLeft: action.pointsLeft } };
+      case "ally-move": {
+        if (state.phase !== "battle" || state.side !== "allies") return state;
+        return patchAlly(state, state.activeAlly, { position: action.to, movePointsLeft: action.pointsLeft });
       }
 
-      case "hero-attack": {
-        if (state.phase !== "battle" || state.side !== "hero" || state.hero.hasActed) return state;
+      case "ally-attack": {
+        if (state.phase !== "battle" || state.side !== "allies") return state;
+        const attacker = allyUnit(state, state.activeAlly, heroClassId);
+        if (!attacker || attacker.attacksLeft <= 0) return state;
+
         const targetIndex = state.enemies.findIndex((e) => e.id === action.targetId);
         if (targetIndex === -1) return state;
         const target = state.enemies[targetIndex];
         const def = ENEMY_ROSTER[target.defId];
-        const distance = Hex.distance(state.hero.position, target.position);
-        const advantageState = distance === 1 && heroWeapon.range > 1 ? "desventaja" : "normal";
+        const distance = Hex.distance(attacker.position, target.position);
+        // A bocajarro: un arma a distancia contra un adyacente tira con
+        // Desventaja (board/battle.md §2). Vale igual para el mercenario
+        // Arquero que para el Bastón del Mago.
+        const advantageState = distance === 1 && attacker.weapon.range > 1 ? "desventaja" : "normal";
         const [outcome, nextRng] = resolveAttack(
           state.rng,
-          heroAbilityScores,
+          attacker.abilityScores,
           { ca: def.ca, ...resistancesFor(def.nature) },
-          heroWeapon,
+          attacker.weapon,
           advantageState,
         );
         const enemies = state.enemies.map((e, i) =>
           i === targetIndex ? { ...e, pv: { ...e.pv, current: Math.max(0, e.pv.current - outcome.damage) } } : e,
         );
-        const log = [...state.log, describeAttack("Héroe", def.label, heroWeapon.label, outcome, heroWeapon.damageType)];
+        const log = [
+          ...state.log,
+          describeAttack(attacker.label, def.label, attacker.weapon.label, outcome, attacker.weapon.damageType),
+        ];
         const checked = checkOutcomeAndLog(state.hero, enemies, log);
-        return {
-          ...state,
-          enemies,
-          rng: nextRng,
-          hero: { ...state.hero, hasActed: true },
-          log: checked.log,
-          phase: checked.phase,
-          outcome: checked.outcome,
-        };
+        const attacked = patchAlly(
+          { ...state, enemies, rng: nextRng, log: checked.log, phase: checked.phase, outcome: checked.outcome },
+          attacker.id,
+          { attacksLeft: attacker.attacksLeft - 1 },
+        );
+        return attacker.id === "mercenary" ? cueFigure(attacked, "attack", target.position) : attacked;
       }
 
-      case "end-hero-turn": {
-        if (state.phase !== "battle" || state.side !== "hero") return state;
+      case "summon-mercenary": {
+        if (state.phase !== "battle" || state.side !== "allies" || state.activeAlly !== "hero") return state;
+        // Jugar la carta gasta la ACCIÓN principal del turno (mercenaries.md
+        // §1), la misma que se gastaría atacando: por eso mira `attacksLeft`.
+        if (state.mercenary || state.hero.attacksLeft <= 0) return state;
+
+        const blocked = new Set<HexKey>([
+          Hex.key(state.hero.position),
+          ...state.enemies.filter((e) => e.pv.current > 0).map((e) => Hex.key(e.position)),
+        ]);
+        const position = deployHex(board, state.hero.position, blocked);
+        if (!position) return state;
+
+        const card = MERCENARY_CATALOG[action.cardId];
+        const block = blockFor(action.cardId);
+
+        // Tira iniciativa al aparecer, como los refuerzos (§6). El bono sale
+        // de la columna "Ini" de §1b y no del "Nivel de su carta" que cita
+        // §6: no hay sistema de Niveles de carta en el código, y la columna
+        // Ini es lo que la propia tabla del bloque da para esto.
+        const [roll, nextRng] = Rng.d20(state.rng);
+        const initiative = roll + block.initiativeBonus;
+        // Entra a mitad de la fase de Aliados, así que en ESTA ronda actúa
+        // detrás del héroe (que ya está actuando) pase lo que pase; su tirada
+        // decide el orden de las rondas siguientes. Es la misma regla que §6
+        // da a los refuerzos: "se insertan en ese orden desde la fase
+        // siguiente".
+        const allyOrder: readonly AllyId[] =
+          initiative > state.heroInitiative ? ["mercenary", "hero"] : ["hero", "mercenary"];
+
+        const mercenary: MercenarySession = {
+          cardId: action.cardId,
+          position,
+          pv: { current: block.pvMax, max: block.pvMax },
+          effects: [],
+          movePointsLeft: 0, // este turno ya no le toca: entra detrás del héroe
+          attacksLeft: 0,
+        };
+
+        const summoned: CombatState = {
+          ...state,
+          mercenary,
+          allyOrder,
+          rng: nextRng,
+          hero: { ...state.hero, attacksLeft: state.hero.attacksLeft - 1 },
+          log: [
+            ...state.log,
+            `Se invoca a ${card.label} (${card.rarity.replace("-", " ")}): ${block.pvMax} PV, CA ${block.ca}, ${describeMercenaryAttack(block)}${block.figures > 1 ? `, ${block.figures} ataques/turno` : ""}.`,
+            `Iniciativa del mercenario: ${initiative} (1d20 ${roll} + ${block.initiativeBonus}) — actúa ${initiative > state.heroInitiative ? "antes" : "después"} que el héroe a partir de la ronda siguiente.`,
+            `El bando enemigo sube a presupuesto ${compositionBudget(1, 1)} (enemies.md §5b.6): en una partida de verdad esto traería refuerzos, que este laboratorio todavía no genera.`,
+          ],
+        };
+        return cueFigure(summoned, "idle");
+      }
+
+      case "end-ally-turn": {
+        if (state.phase !== "battle" || state.side !== "allies") return state;
+        const unit = allyUnit(state, state.activeAlly, heroClassId);
+        if (!unit) return state;
         // Salvación de FIN de turno (effects.md §1): el estado ya estuvo activo
         // todo el turno (gateando movimiento arriba); ahora se decide si sigue
         // para el turno siguiente.
-        const [effects, nextRng] = attemptEndOfTurnSaves(state.rng, state.hero.effects, heroAbilityScores);
-        const hero = { ...state.hero, effects };
-        const advanced = { ...state, hero, rng: nextRng };
-        // Fin de la fase de Aliados → abre la fase Enemiga entera (board/battle.md
-        // §6); si por lo que sea ya no queda ningún enemigo vivo, se reabre la
-        // fase de Aliados (la victoria ya se habría detectado antes de llegar aquí).
+        const [effects, nextRng] = attemptEndOfTurnSaves(state.rng, unit.effects, unit.saveScores);
+        const advanced = patchAlly({ ...state, rng: nextRng }, unit.id, { effects });
+
+        // ¿Queda algún aliado por actuar en esta fase? Si no, se abre la fase
+        // Enemiga entera (board/battle.md §6).
+        const nextAlly = nextAliveAlly(advanced, unit.id, heroClassId);
+        if (nextAlly) return enterAllyTurn(advanced, nextAlly, heroClassId);
+
         const slot = firstAliveEnemySlot(advanced.enemiesOrder, advanced.enemies);
-        return slot === -1 ? enterHeroTurn(advanced) : enterEnemyTurn(advanced, slot);
+        if (slot !== -1) return enterEnemyTurn(advanced, slot);
+        const reopened = firstAliveAlly(advanced, heroClassId);
+        return reopened ? enterAllyTurn(advanced, reopened, heroClassId) : advanced;
       }
 
       case "enemy-turn": {
@@ -494,33 +875,53 @@ function makeReducer(heroClassId: HeroClassId, board: Board) {
         const index = state.enemies.findIndex((e) => e.id === activeId);
         const self = state.enemies[index];
         const def = ENEMY_ROSTER[self.defId];
-        const allies = state.enemies
+        const enemyAllies = state.enemies
           .filter((e) => e.id !== activeId && e.pv.current > 0)
           .map((e) => ({ defId: e.defId, position: e.position }));
+
+        const target = pickEnemyTarget(state, self.position);
+        if (!target) return state;
+
+        // Nadie comparte hexágono (board/battle.md §2): para el enemigo son
+        // intransitables tanto sus compañeros como las DOS fichas aliadas.
+        const blocked = new Set<HexKey>([
+          ...livingAllies(state, heroClassId).map((a) => Hex.key(a.position)),
+          ...enemyAllies.map((a) => Hex.key(a.position)),
+        ]);
 
         const ctx: EnemyDecisionContext = {
           board,
           def,
           self: { id: self.id, defId: self.defId, position: self.position, pv: self.pv },
-          target: { id: "hero", position: state.hero.position, effects: state.hero.effects },
-          allies,
+          target: { id: target.id, position: target.position, effects: target.effects },
+          allies: enemyAllies,
         };
         const decision = decideEnemyAction(ctx);
-        const result = applyEnemyAction(decision, def, state.hero, self, allies, state.rng, state.log);
+        const result = applyEnemyAction(decision, def, target, self, enemyAllies, blocked, state.rng, state.log);
 
         // Salvación de fin de turno del propio enemigo (sin uso hoy —ningún
         // Normal recibe estados—, pero misma matemática en los dos bandos).
         const [selfEffects, afterSaves] = attemptEndOfTurnSaves(result.rng, result.enemy.effects, def.abilityScores);
         const resolvedEnemy = { ...result.enemy, effects: selfEffects };
-
         const enemies = state.enemies.map((e, i) => (i === index ? resolvedEnemy : e));
-        const checked = checkOutcomeAndLog(result.hero, enemies, result.log);
 
+        const withTarget = patchAlly(
+          { ...state, enemies, rng: afterSaves, log: result.log },
+          target.id,
+          { pvCurrent: result.targetPv, effects: result.targetEffects },
+        );
+
+        const mercenaryFell =
+          target.id === "mercenary" && target.pv.current > 0 && result.targetPv === 0;
+        const withCue = mercenaryFell
+          ? cueFigure({ ...withTarget, log: [...withTarget.log, `${target.label} cae.`] }, "die")
+          : target.id === "mercenary" && result.struck
+            ? cueFigure(withTarget, "hit")
+            : withTarget;
+
+        const checked = checkOutcomeAndLog(withCue.hero, withCue.enemies, withCue.log);
         const next: CombatState = {
-          ...state,
-          hero: result.hero,
-          enemies,
-          rng: afterSaves,
+          ...withCue,
           log: checked.log,
           phase: checked.phase,
           outcome: checked.outcome,
@@ -528,9 +929,11 @@ function makeReducer(heroClassId: HeroClassId, board: Board) {
         if (checked.outcome !== "en-curso") return next;
         // Siguiente enemigo vivo dentro de la MISMA fase — la fase enemiga
         // resuelve a todos de corrido; solo cuando ya no queda ninguno se
-        // devuelve el turno al héroe (board/battle.md §6).
+        // devuelve el turno al bando aliado (board/battle.md §6).
         const slot = nextAliveEnemySlot(next.enemiesOrder, next.activeEnemySlot, next.enemies);
-        return slot === -1 ? enterHeroTurn(next) : enterEnemyTurn(next, slot);
+        if (slot !== -1) return enterEnemyTurn(next, slot);
+        const opener = firstAliveAlly(next, heroClassId);
+        return opener ? enterAllyTurn(next, opener, heroClassId) : next;
       }
 
       default:
@@ -541,10 +944,30 @@ function makeReducer(heroClassId: HeroClassId, board: Board) {
 
 // --- Componentes -------------------------------------------------------------
 
+/** Etiquetas de las poses en el informe de cobertura del .glb. */
+const POSE_LABEL: Readonly<Record<FigurePose, string>> = {
+  idle: "Reposo",
+  walk: "Andar",
+  attack: "Atacar",
+  hit: "Encajar",
+  die: "Caer",
+};
+
 export default function CombatLab() {
   const [heroClassId, setHeroClassId] = useState<HeroClassId>(HERO_CLASS_IDS[0]);
   const [enemyClassIds, setEnemyClassIds] = useState<EnemyClassId[]>([ENEMY_CLASS_IDS[0]]);
   const [battleNonce, setBattleNonce] = useState(0);
+  const [mercenaryCardId, setMercenaryCardId] = useState<MercenaryCardId>(MERCENARY_CARD_IDS[0]);
+
+  // --- Mandos de la figura 3D ---
+  const [figureOn, setFigureOn] = useState(true);
+  const [showDisc, setShowDisc] = useState(true);
+  const [figureModelId, setFigureModelId] = useState(CHARACTER_MODELS[0].id);
+  const [figureHeight, setFigureHeight] = useState(DEFAULT_FIGURE_HEIGHT * 100);
+  const [figureInfo, setFigureInfo] = useState<FigureInfo | null>(null);
+  const [figureError, setFigureError] = useState<string | null>(null);
+
+  const figureModel = CHARACTER_MODELS.find((m) => m.id === figureModelId) ?? CHARACTER_MODELS[0];
 
   function setEnemyCount(n: number) {
     setEnemyClassIds((prev) => {
@@ -568,7 +991,11 @@ export default function CombatLab() {
         1 héroe contra 1-2 enemigos Normales en una rejilla de batalla vacía (<code>docs/board/battle.md</code>{" "}
         §2). Iniciativa una sola vez al abrir la batalla (<code>game-design.md</code> §4b.2); luego el héroe
         mueve y ataca a golpe de clic, y el enemigo sigue el árbol de prioridades determinista de{" "}
-        <code>characters/enemies.md</code> §5b.6.
+        <code>characters/enemies.md</code> §5b.6. Con la Acción del héroe se puede{" "}
+        <b>invocar un mercenario</b> (<code>cards/mercenaries.md</code> §1b): una ficha aliada más, con su
+        bloque por Rareza y su turno propio, que se pinta como <b>personaje 3D animado</b> mientras el resto
+        siguen siendo discos — la comparación que decide si el personaje animado puede ser la ficha del
+        tablero.
       </p>
 
       <div className="mb-5 flex flex-wrap items-end gap-x-6 gap-y-3">
@@ -613,10 +1040,93 @@ export default function CombatLab() {
         </button>
       </div>
 
+      {/* Mandos de la figura. Separados de los del combate a propósito: no
+          deciden nada de la partida, solo cómo se ve el mercenario. */}
+      <div className="mb-5 flex flex-wrap items-end gap-x-6 gap-y-3 rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3">
+        <div className="flex flex-col gap-1">
+          <span className={label}>Mercenario</span>
+          <Dropdown
+            value={mercenaryCardId}
+            onChange={(e) => e.value != null && setMercenaryCardId(e.value)}
+            options={MERCENARY_CARD_IDS.map((id) => ({
+              label: `${MERCENARY_CATALOG[id].label} · ${MERCENARY_CATALOG[id].rarity.replace("-", " ")}`,
+              id,
+            }))}
+            optionLabel="label"
+            optionValue="id"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <span className={label}>Figura</span>
+          <SelectButton
+            value={figureModelId}
+            onChange={(e) => e.value != null && setFigureModelId(e.value)}
+            options={CHARACTER_MODELS.map((m) => ({ label: m.label, id: m.id }))}
+            optionLabel="label"
+            optionValue="id"
+            allowEmpty={false}
+          />
+        </div>
+
+        <div className="flex w-56 flex-col gap-1">
+          <span className={label}>Altura · {(figureHeight / 100).toFixed(2)} radios de hex</span>
+          <Slider
+            value={figureHeight}
+            min={80}
+            max={400}
+            onChange={(e: SliderChangeEvent) => typeof e.value === "number" && setFigureHeight(e.value)}
+          />
+        </div>
+
+        <label className="flex items-center gap-2 text-sm text-[var(--wiki-text)]">
+          <InputSwitch checked={figureOn} onChange={(e) => setFigureOn(Boolean(e.value))} />
+          Figura 3D
+        </label>
+
+        <label
+          className="flex items-center gap-2 text-sm text-[var(--wiki-text)]"
+          title="El disco cenital de board-map.md §4c debajo de la figura: sirve para comprobar que se posa en su hexágono, y para comparar los dos lenguajes."
+        >
+          <InputSwitch checked={showDisc} onChange={(e) => setShowDisc(Boolean(e.value))} />
+          Disco debajo
+        </label>
+
+        {figureInfo && (
+          <div className="flex flex-col gap-1">
+            <span className={label}>Poses que trae el .glb</span>
+            <div className="flex flex-wrap gap-2 text-xs">
+              {FIGURE_POSES.map((pose) => (
+                <span
+                  key={pose}
+                  className="rounded border border-[var(--wiki-border)] px-1.5 py-0.5"
+                  style={{ opacity: figureInfo.poses[pose] ? 1 : 0.45 }}
+                  title={figureInfo.poses[pose] ?? "No hay ningún clip para esta pose en el archivo"}
+                >
+                  {POSE_LABEL[pose]} {figureInfo.poses[pose] ? "✓" : "—"}
+                </span>
+              ))}
+              <span className="text-[var(--wiki-muted)]">
+                {figureInfo.triangles} tris · {figureInfo.bones} huesos
+              </span>
+            </div>
+          </div>
+        )}
+
+        {figureError && <p className="text-sm text-[var(--wiki-danger)]">No se pudo cargar la figura: {figureError}</p>}
+      </div>
+
       <CombatSession
         key={`${heroClassId}:${enemyClassIds.join(",")}:${battleNonce}`}
         heroClassId={heroClassId}
         enemyClassIds={enemyClassIds}
+        mercenaryCardId={mercenaryCardId}
+        figureOn={figureOn}
+        showDisc={showDisc}
+        figureUrl={figureModel.url}
+        figureHeight={figureHeight / 100}
+        onFigureInfo={setFigureInfo}
+        onFigureError={setFigureError}
       />
     </div>
   );
@@ -625,9 +1135,26 @@ export default function CombatLab() {
 type SessionProps = {
   heroClassId: HeroClassId;
   enemyClassIds: readonly EnemyClassId[];
+  mercenaryCardId: MercenaryCardId;
+  figureOn: boolean;
+  showDisc: boolean;
+  figureUrl: string;
+  figureHeight: number;
+  onFigureInfo: (info: FigureInfo) => void;
+  onFigureError: (message: string) => void;
 };
 
-function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
+function CombatSession({
+  heroClassId,
+  enemyClassIds,
+  mercenaryCardId,
+  figureOn,
+  showDisc,
+  figureUrl,
+  figureHeight,
+  onFigureInfo,
+  onFigureError,
+}: SessionProps) {
   const board = useMemo(() => buildBattlefield(), []);
   const reducer = useMemo(() => makeReducer(heroClassId, board), [heroClassId, board]);
   const [state, dispatch] = useReducer(reducer, { heroClassId, enemyClassIds }, (init) =>
@@ -635,7 +1162,11 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
   );
   const [selected, setSelected] = useState<HexCoord | null>(null);
 
-  const isHeroTurn = state.phase === "battle" && state.side === "hero";
+  const isAllyTurn = state.phase === "battle" && state.side === "allies";
+  const active = useMemo(
+    () => allyUnit(state, state.activeAlly, heroClassId),
+    [state, heroClassId],
+  );
   const activeEnemy =
     state.phase === "battle" && state.side === "enemies"
       ? state.enemies.find((e) => e.id === state.enemiesOrder[state.activeEnemySlot])
@@ -653,34 +1184,44 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
     return () => clearTimeout(timer);
   }, [state.phase, state.side, state.activeEnemySlot, dispatch]);
 
-  const heroWeapon = HERO_WEAPON[heroClassId];
-
   // Nunca comparten hexágono (board/battle.md §2): los enemigos vivos son
-  // intransitables para el movimiento del héroe, tanto como destino como de
-  // paso hacia otro más lejano.
+  // intransitables para el movimiento aliado, tanto como destino como de
+  // paso hacia otro más lejano. Y una unidad aliada tampoco puede pisar a la
+  // otra, así que la que no está actuando también bloquea.
   const livingEnemies = useMemo(() => state.enemies.filter((e) => e.pv.current > 0), [state.enemies]);
-  const enemyOccupied = useMemo(() => new Set(livingEnemies.map((e) => Hex.key(e.position))), [livingEnemies]);
+  const blockedForActive = useMemo(() => {
+    const keys = livingEnemies.map((e) => Hex.key(e.position));
+    for (const ally of livingAllies(state, heroClassId)) {
+      if (ally.id !== state.activeAlly) keys.push(Hex.key(ally.position));
+    }
+    return new Set(keys);
+  }, [livingEnemies, state, heroClassId]);
 
   const reachable = useMemo(
     () =>
-      isHeroTurn ? reachableHexes(board, state.hero.position, state.hero.movePointsLeft, true, enemyOccupied) : new Map(),
-    [isHeroTurn, board, state.hero.position, state.hero.movePointsLeft, enemyOccupied],
+      isAllyTurn && active
+        ? reachableHexes(board, active.position, active.movePointsLeft, true, blockedForActive)
+        : new Map(),
+    [isAllyTurn, active, board, blockedForActive],
   );
   const reachableHighlight = useMemo(() => {
-    const heroKey = Hex.key(state.hero.position);
-    return new Set([...reachable.keys()].filter((k) => k !== heroKey));
-  }, [reachable, state.hero.position]);
+    if (!active) return new Set<HexKey>();
+    const selfKey = Hex.key(active.position);
+    return new Set([...reachable.keys()].filter((k) => k !== selfKey));
+  }, [reachable, active]);
 
   // Qué enemigos ya podrías golpear ESTE turno (lib/rules/movement.ts
-  // `attackableTargets`): de los vivos, cuáles quedan al alcance de tu arma
-  // desde algún hexágono que todavía puedes alcanzar con el movimiento que
-  // te queda —incluido quedarte donde estás—. Se marca la casilla del
-  // ENEMIGO, no un destino: nunca comparten hexágono (board/battle.md §2),
-  // así que el aviso es "a este ya llegas", no "muévete aquí".
+  // `attackableTargets`): de los vivos, cuáles quedan al alcance del arma de
+  // quien actúa desde algún hexágono que todavía puede alcanzar —incluido
+  // quedarse donde está—. Se marca la casilla del ENEMIGO, no un destino:
+  // nunca comparten hexágono (board/battle.md §2), así que el aviso es "a
+  // este ya llegas", no "muévete aquí".
   const threatened = useMemo(() => {
-    if (!isHeroTurn) return new Set<HexKey>();
-    return attackableTargets(reachable, heroWeapon.range, livingEnemies.map((e) => e.position));
-  }, [isHeroTurn, reachable, heroWeapon.range, livingEnemies]);
+    if (!isAllyTurn || !active) return new Set<HexKey>();
+    return attackableTargets(reachable, active.weapon.range, livingEnemies.map((e) => e.position));
+  }, [isAllyTurn, active, reachable, livingEnemies]);
+
+  const mercenaryCard = state.mercenary ? MERCENARY_CATALOG[state.mercenary.cardId] : null;
 
   const heroMarkers: HeroMarker[] = [
     {
@@ -689,6 +1230,19 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
       pieceId: "heroe-1",
       label: `Héroe — ${HERO_ROSTER[heroClassId].label} (${state.hero.pv.current}/${state.hero.pv.max} PV)`,
     },
+    // El mercenario solo lleva disco si se ha pedido: cuando la figura 3D está
+    // encendida y el disco apagado, esta ficha del tablero es el personaje
+    // animado y nada más — que es justo la comparación que se viene a hacer.
+    ...(state.mercenary && state.mercenary.pv.current > 0 && (showDisc || !figureOn)
+      ? [
+          {
+            id: "mercenary",
+            position: state.mercenary.position,
+            pieceId: "heroe-2" as const,
+            label: `${mercenaryCard!.label} (${state.mercenary.pv.current}/${state.mercenary.pv.max} PV)`,
+          },
+        ]
+      : []),
     ...livingEnemies.map((e) => ({
       id: e.id,
       position: e.position,
@@ -709,8 +1263,29 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
         abilityScores: HERO_ROSTER[heroClassId].abilityScores,
         pv: state.hero.pv,
         ca: heroCA(heroClassId),
-        attack: heroWeapon,
+        attack: HERO_WEAPON[heroClassId],
         effects: state.hero.effects,
+      };
+    }
+    if (state.mercenary && state.mercenary.pv.current > 0 && Hex.equals(selected, state.mercenary.position)) {
+      const unit = mercenaryUnit(state.mercenary);
+      const block = blockFor(state.mercenary.cardId);
+      return {
+        piece: { family: "pawn", id: "heroe-2" },
+        title: unit.label,
+        subtitle: `Mercenario · ${MERCENARY_CATALOG[state.mercenary.cardId].rarity.replace("-", " ")}`,
+        pv: unit.pv,
+        ca: unit.ca,
+        speed: unit.speed,
+        attack: { label: unit.weapon.label, dice: unit.weapon.dice, damageType: unit.weapon.damageType, range: unit.weapon.range },
+        abilityNotes: [
+          `Bloque por Rareza (mercenaries.md §1b): ${describeMercenaryAttack(block)}.`,
+          block.figures > 1
+            ? `${block.figures} ataques por turno (columna Figuras).`
+            : "1 ataque por turno, sin Acción rápida.",
+          "Sin características propias: tira con el bono plano de su Rareza.",
+        ],
+        effects: unit.effects,
       };
     }
     const enemy = livingEnemies.find((e) => Hex.equals(selected, e.position));
@@ -732,25 +1307,44 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
   const drawerSubject = buildDrawerSubject();
 
   function handleHexClick(hex: HexCell) {
-    if (isHeroTurn) {
+    if (isAllyTurn && active) {
       const target = state.enemies.find((e) => e.pv.current > 0 && Hex.equals(e.position, hex.coord));
-      if (target && !state.hero.hasActed) {
-        const distance = Hex.distance(state.hero.position, hex.coord);
-        if (distance <= heroWeapon.range) {
-          dispatch({ type: "hero-attack", targetId: target.id });
+      if (target && active.attacksLeft > 0) {
+        const distance = Hex.distance(active.position, hex.coord);
+        if (distance <= active.weapon.range) {
+          dispatch({ type: "ally-attack", targetId: target.id });
           return;
         }
       }
-      if (!Hex.equals(hex.coord, state.hero.position)) {
+      if (!Hex.equals(hex.coord, active.position)) {
         const step = reachable.get(Hex.key(hex.coord));
         if (step) {
-          dispatch({ type: "hero-move", to: hex.coord, pointsLeft: step.pointsLeft });
+          dispatch({ type: "ally-move", to: hex.coord, pointsLeft: step.pointsLeft });
           return;
         }
       }
     }
     setSelected((prev) => (prev && Hex.equals(prev, hex.coord) ? null : hex.coord));
   }
+
+  const canSummon =
+    isAllyTurn && state.activeAlly === "hero" && !state.mercenary && state.hero.attacksLeft > 0;
+
+  // El evento que ve la figura 3D. Se deriva del estado y no de un `useState`
+  // aparte para que no puedan desincronizarse: si el combate no ha pedido
+  // ninguna pose, la figura simplemente sigue con la suya.
+  const figureEvent: FigureEvent | null = useMemo(
+    () =>
+      state.figureCue
+        ? { pose: state.figureCue.pose, nonce: state.figureCueCount, facing: state.figureCue.facing }
+        : null,
+    [state.figureCue, state.figureCueCount],
+  );
+
+  // Estables entre renders: BattleFigure los guarda en una ref, pero recrearlos
+  // en cada pintado obligaría igualmente a React a recorrer sus efectos.
+  const handleFigureInfo = useCallback((info: FigureInfo) => onFigureInfo(info), [onFigureInfo]);
+  const handleFigureError = useCallback((message: string) => onFigureError(message), [onFigureError]);
 
   return (
     <>
@@ -766,26 +1360,35 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
         <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-[var(--wiki-text)]">
           <span>
             <b>Fase:</b>{" "}
-            {isHeroTurn
-              ? `Aliados — Héroe (${HERO_ROSTER[heroClassId].label})`
+            {isAllyTurn && active
+              ? `Aliados — ${active.label}`
               : activeEnemy
                 ? `Enemigos — ${ENEMY_ROSTER[activeEnemy.defId].label}`
                 : "—"}
           </span>
-          {isHeroTurn && (
+          {isAllyTurn && active && (
             <>
-              <span title="Se recarga a MOVE_BASE al empezar turno; 0 si Inmovilizado.">
-                <b>Movimiento:</b> {state.hero.movePointsLeft}
+              <span title="Se recarga al empezar turno; 0 si Inmovilizado.">
+                <b>Movimiento:</b> {active.movePointsLeft}
               </span>
-              <span>
-                <b>Acción:</b> {state.hero.hasActed ? "usada" : "disponible"}
+              <span title="El héroe tiene 1 acción; un mercenario Épico o Legendario tiene 2 o 3 ataques (Figuras, §1b).">
+                <b>Acción:</b> {active.attacksLeft > 0 ? `${active.attacksLeft} disponible(s)` : "usada"}
               </span>
-              <button className={buttonClass({ variant: "primary" })} onClick={() => dispatch({ type: "end-hero-turn" })}>
+              {canSummon && (
+                <button
+                  className={buttonClass({})}
+                  title="Gasta la Acción del héroe (mercenaries.md §1). La carta volvería al Mazo al invocar."
+                  onClick={() => dispatch({ type: "summon-mercenary", cardId: mercenaryCardId })}
+                >
+                  Invocar mercenario
+                </button>
+              )}
+              <button className={buttonClass({ variant: "primary" })} onClick={() => dispatch({ type: "end-ally-turn" })}>
                 Terminar turno
               </button>
             </>
           )}
-          {!isHeroTurn && state.phase === "battle" && (
+          {!isAllyTurn && state.phase === "battle" && (
             <span className="text-[var(--wiki-muted)]">La IA está actuando…</span>
           )}
         </div>
@@ -798,19 +1401,31 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
       )}
 
       <p className="mb-3 max-w-3xl text-sm text-[var(--wiki-muted)]">
-        En tu turno: clica una casilla resaltada para moverte, o a un enemigo dentro del alcance de tu{" "}
-        <b>{heroWeapon.label}</b> ({heroWeapon.range === 1 ? "cuerpo a cuerpo" : `alcance ${heroWeapon.range}`}) para
-        atacarlo — una vez por turno. Un enemigo marcado en rojo ya es alcanzable este turno: hay alguna casilla a tu
-        alcance (en azul, o la tuya si no te mueves) desde la que tu arma llega hasta él. Cuando termines tu turno, la
-        fase enemiga resuelve sola a todos los enemigos vivos, uno tras otro.
+        En el turno de una unidad aliada: clica una casilla resaltada para moverla, o a un enemigo dentro del
+        alcance de su <b>{active?.weapon.label ?? "arma"}</b> (
+        {(active?.weapon.range ?? 1) === 1 ? "cuerpo a cuerpo" : `alcance ${active?.weapon.range}`}) para
+        atacarlo. Un enemigo marcado en rojo ya es alcanzable este turno. Cuando termine el turno de todas las
+        fichas aliadas, la fase enemiga resuelve sola a todos los enemigos vivos, uno tras otro.
       </p>
 
       <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--wiki-muted)]">
-        <span className={isHeroTurn ? "font-semibold text-[var(--wiki-text)]" : undefined}>
+        <span className={isAllyTurn && state.activeAlly === "hero" ? "font-semibold text-[var(--wiki-text)]" : undefined}>
           Héroe: {state.hero.pv.current}/{state.hero.pv.max} PV
           {hasEffect(state.hero.effects, "envenenado") && " · Envenenado"}
           {hasEffect(state.hero.effects, "inmovilizado") && " · Inmovilizado"}
         </span>
+        {state.mercenary && mercenaryCard && (
+          <span
+            className={
+              isAllyTurn && state.activeAlly === "mercenary" ? "font-semibold text-[var(--wiki-text)]" : undefined
+            }
+          >
+            {mercenaryCard.label}: {state.mercenary.pv.current}/{state.mercenary.pv.max} PV
+            {state.mercenary.pv.current === 0 && " · caído"}
+            {hasEffect(state.mercenary.effects, "envenenado") && " · Envenenado"}
+            {hasEffect(state.mercenary.effects, "inmovilizado") && " · Inmovilizado"}
+          </span>
+        )}
         {state.enemies.map((e) => (
           <span key={e.id} className={activeEnemy?.id === e.id ? "font-semibold text-[var(--wiki-text)]" : undefined}>
             {ENEMY_ROSTER[e.defId].label}: {e.pv.current}/{ENEMY_ROSTER[e.defId].pvMax} PV
@@ -828,6 +1443,21 @@ function CombatSession({ heroClassId, enemyClassIds }: SessionProps) {
           reachable={reachableHighlight}
           threatened={threatened}
           onHexClick={handleHexClick}
+          overlay={
+            figureOn
+              ? (projection) => (
+                  <BattleFigure
+                    projection={projection}
+                    url={figureUrl}
+                    coord={state.mercenary ? state.mercenary.position : null}
+                    height={figureHeight}
+                    event={figureEvent}
+                    onInfo={handleFigureInfo}
+                    onError={handleFigureError}
+                  />
+                )
+              : undefined
+          }
         />
       </div>
 

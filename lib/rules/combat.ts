@@ -53,16 +53,25 @@ export type InitiativeCombatant = {
   readonly isHero: boolean;
 };
 
+/** Lo que sacó cada unidad, ya ordenado de mayor a menor. */
+export type InitiativeEntry = { readonly id: string; readonly total: number };
+
 /**
  * `1d20 + mod Destreza` por unidad, orden descendente. Empate → mayor
  * Destreza bruta → si sigue empatado, gana el héroe (game-design.md §4b.2).
  * Se tira una sola vez al abrir la batalla; el orden no vuelve a calcularse
  * (board/battle.md §6).
+ *
+ * Devuelve el TOTAL de cada uno y no solo el orden porque hay quien entra a
+ * mitad de combate —refuerzos enemigos (`characters/enemies.md` §5b.6), un
+ * mercenario invocado (`cards/mercenaries.md` §1b)— y tira al aparecer: para
+ * insertarlo en el orden hay que poder comparar su tirada con las de los que
+ * ya estaban.
  */
 export function rollInitiative(
   rng: Rng.Rng,
   combatants: readonly InitiativeCombatant[],
-): [readonly string[], Rng.Rng] {
+): [readonly InitiativeEntry[], Rng.Rng] {
   let r = rng;
   const rolled = combatants.map((c) => {
     const [roll, next] = Rng.d20(r);
@@ -76,7 +85,7 @@ export function rollInitiative(
     }
     return Number(b.isHero) - Number(a.isHero);
   });
-  return [rolled.map((c) => c.id), r];
+  return [rolled.map((c) => ({ id: c.id, total: c.total })), r];
 }
 
 // --- Rejilla de batalla (board/battle.md §2) -------------------------------
@@ -123,12 +132,29 @@ export function buildBattlefield(): Board {
 
 export type AttackDice = { readonly count: number; readonly sides: number };
 
-/** Lo mínimo que resolveAttack necesita de un arma/ataque: tirada, stat y tipo de daño. */
+/**
+ * Lo mínimo que resolveAttack necesita de un arma/ataque: dados, tipo de daño
+ * y de dónde sale el modificador de la tirada. Ese "de dónde" son dos casos
+ * excluyentes, de ahí la unión:
+ *
+ * - **Por característica** (héroes y enemigos): el mod sale de FUE/DES/INT…
+ *   del atacante, y el mismo mod se suma al ataque y al daño (§4b.4).
+ * - **Bloque plano** (mercenarios, `cards/mercenaries.md` §1b): no tienen
+ *   características —por eso su iniciativa es `1d20 + Nivel de su carta` y no
+ *   `+ mod DES`, `board/battle.md` §6—, así que llevan un bono fijo por
+ *   Rareza. Y ataque y daño son DOS cifras distintas a partir de Poco común
+ *   (+3 al ataque pero 1d8+2 de daño), así que no basta con un solo número.
+ */
 export type Weapon = {
   readonly dice: AttackDice;
-  readonly ability: Ability;
   readonly damageType: DamageType;
-};
+} & (
+  | { readonly ability: Ability; readonly flat?: never }
+  | { readonly ability?: never; readonly flat: FlatAttack }
+);
+
+/** Bono fijo al ataque y al daño, para quien no tira por característica. */
+export type FlatAttack = { readonly attack: number; readonly damage: number };
 
 export type AttackTarget = {
   readonly ca: number;
@@ -155,12 +181,26 @@ export type AttackOutcome = {
  */
 export function resolveAttack(
   rng: Rng.Rng,
-  attackerAbilityScores: AbilityScores,
+  /** Del atacante. `null` solo vale con un arma de bloque plano (`weapon.flat`), que no las usa. */
+  attackerAbilityScores: AbilityScores | null,
   target: AttackTarget,
   weapon: Weapon,
   advantageState: "normal" | "ventaja" | "desventaja" = "normal",
 ): [AttackOutcome, Rng.Rng] {
-  const mod = abilityMod(attackerAbilityScores[weapon.ability]);
+  // Ataque y daño se separan porque un bloque plano los tiene distintos; con
+  // característica siguen siendo el mismo mod, como siempre (§4b.4).
+  let attackMod: number;
+  let damageMod: number;
+  if (weapon.flat) {
+    attackMod = weapon.flat.attack;
+    damageMod = weapon.flat.damage;
+  } else {
+    if (!attackerAbilityScores) {
+      throw new Error("resolveAttack: sin bloque plano hacen falta las características del atacante");
+    }
+    attackMod = abilityMod(attackerAbilityScores[weapon.ability]);
+    damageMod = attackMod;
+  }
 
   let r = rng;
   let natural: number;
@@ -177,7 +217,7 @@ export function resolveAttack(
 
   const critical = natural === 20;
   const fumble = natural === 1;
-  const attackRoll = natural + mod;
+  const attackRoll = natural + attackMod;
   const hit = !fumble && (critical || attackRoll >= target.ca);
 
   let damage = 0;
@@ -185,7 +225,7 @@ export function resolveAttack(
     const diceCount = critical ? weapon.dice.count * 2 : weapon.dice.count;
     const [rolled, afterDamage] = Rng.roll(r, diceCount, weapon.dice.sides);
     r = afterDamage;
-    damage = rolled + mod;
+    damage = rolled + damageMod;
     if (target.resistantTo?.includes(weapon.damageType)) damage = Math.floor(damage / 2);
     if (target.vulnerableTo?.includes(weapon.damageType)) damage *= 2;
   }
