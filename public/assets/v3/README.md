@@ -1,8 +1,42 @@
 # Arte de V3
 
-Vacío a propósito, igual que `lib/v3/`: el diseño de V3 todavía no ha llegado
-al arte. Esta carpeta existe para que lo primero que se genere tenga sitio sin
-tener que decidir nada.
+**Ya hay arte.** Los tres primeros archivos definitivos de V3 son tres héroes
+de la raza piloto:
+
+| Archivo | Sujeto |
+|---|---|
+| `races/humanos/guerrero.png` | ⚔️ Guerrero (Humanos) |
+| `races/humanos/mago.png` | 🔮 Mago (Humanos) |
+| `races/humanos/sacerdote.png` | ✝️ Sacerdote (Humanos) |
+
+Falta el cuarto héroe de Humanos, 🏹 Arquero. Los tres se pintan ya en los
+bocetos de marco de **Cartas › Diseño de cartas** (`/docs/v3/cards/design`),
+que es lo único que hay montado que los use.
+
+> **Dos cosas no cuadran con lo que dice este mismo documento**, y hay que
+> cerrarlas antes de que lleguen las unidades y se copie el criterio:
+>
+> 1. ~~**La ruta.**~~ **Cerrada** el 21 de agosto de 2026: estaban en
+>    `human/heroes/` con nombre en inglés y ya están en `races/humanos/` con el
+>    slug español que manda §"Nombre de archivo". Se cerró con tres archivos
+>    dentro porque con 132 cuesta 44 veces más.
+> 2. **El formato sigue abierto.** §"Nombre de archivo" pide `.webp` y estos son
+>    `.png` de ~2,4 MB cada uno. A ese peso importa: son la ilustración de una
+>    carta, no un fondo de pantalla. **No se convierten** porque los tres se van
+>    a regenerar (ver abajo), así que el `.webp` entra con los archivos nuevos y
+>    no con una conversión que se tira.
+> 3. **El arte hay que regenerarlo, y por tres motivos, no uno.** Salieron
+>    **apaisados y en plano medio** —cortados por el muslo, la figura fuera del
+>    eje—; salieron **jóvenes, esbeltos y guapos**, que en el Mago y el Sacerdote
+>    no tiene sentido; y salieron con **el fondo compitiendo** —castillo con
+>    sillares contados, estandartes, una bandera legible—. Las tres reglas que
+>    faltaban ya están escritas: §"Lienzo y formato" y §"Encuadre" aquí, el
+>    reparto de cuerpos en
+>    [`sujetos.md`](../../../knowledge/v3/races-concept/sujetos.md#identidad-de-raza)
+>    y la jerarquía de fondo en
+>    [`style-guide.md`](../../../knowledge/v3/art-direction/style-guide.md#16-fondos)
+>    §16. **Los tres se regeneran con las tres normas.** Mientras tanto sirven
+>    para juzgar el marco de carta, no para juzgar el arte.
 
 Qué generar y con qué especificación (sujetos, encuadre, plantilla de prompt):
 [`../../../knowledge/v3/art-direction/illustrations.md`](../../../knowledge/v3/art-direction/illustrations.md),
@@ -50,26 +84,55 @@ decide aquí, porque depende del componente que lo va a pintar y no del estilo.
 
 | | Ilustración de carta | Retrato de héroe o unidad |
 |---|---|---|
-| Tamaño | **1536 × 1050 px** *(heredado, ver aviso)* | Sin decidir |
-| Ratio | ~1,46:1, apaisado | Sin decidir |
+| Tamaño | **1080 × 1512 px** | Sin decidir |
+| Ratio | **5:7 (0,714), vertical** | Sin decidir |
 | Sangrado | A sangre | A sangre |
 | Transparencia | Ninguna | Ninguna |
-| Aire de seguridad | **≥10% en los cuatro bordes** | El que pida su pantalla |
 | Extensión | `.webp` | `.webp` |
 
-El aire no es estética: **la ilustración va debajo de un marco que tapa los
-bordes**. Nada importante —rostro, manos, arma, escudo, el elemento distintivo—
-puede quedar pegado al filo, y menos en las esquinas.
+**Vertical, no apaisado.** El 5:7 es el de la carta ya construida
+—`$sketch-width: 300px` × `$sketch-height: 420px` en
+[`styles/settings/_card.scss`](../../../styles/settings/_card.scss)— y los cinco
+bocetos de `/docs/v3/cards/design` lo comparten: gane el que gane, el arte se
+pinta **a sangre en 300×420**. El 1536×1050 apaisado que decía antes esta tabla
+venía de v2 y **queda retirado**: obligaba a tirar la mitad de la anchura para
+que la imagen entrara en un marco vertical, y ese recorte era exactamente lo que
+hacía salir al personaje enorme y descentrado.
 
-> **Las dos medidas están pendientes de lo mismo: una pantalla construida.** El
-> 1536×1050 viene de v2; V3 no ha decidido su marco de carta, así que es medida
-> heredada, no tomada del componente que la va a pintar — y el análisis de
-> [`knowledge/v3/card-concept/`](../../../knowledge/v3/card-concept/README.md)
-> apunta a que el marco de V3 será **vertical y a sangre**, lo que la invalida.
-> Del retrato no hay medida en absoluto: no existe pantalla de selección de
-> héroe ni ficha de unidad. Mientras tanto, usa el mismo ratio por consistencia
-> y **deja margen de sobra**: recortar es barato, inventar el borde que faltaba
-> no.
+Si la herramienta no ofrece 5:7, coge el ratio vertical más alto que tenga (2:3)
+y deja el aire de sobra arriba y abajo: recortar hasta 5:7 es barato, inventar el
+borde que faltaba no.
+
+### Encuadre: plano entero y figura centrada
+
+Esto no es estética, es lo que decide si la carta se lee. Los tres primeros
+héroes se generaron sin esta tabla y salieron en **plano medio**, cortados por el
+muslo y con la figura fuera del eje.
+
+| | Norma |
+|---|---|
+| Plano | **Entero.** De la coronilla a los pies, pies incluidos y apoyados en suelo visible. Nunca busto, nunca plano medio, nunca primer plano |
+| Alto de la figura | **60–70%** del alto del lienzo. Por encima de eso ya está recortando algo |
+| Eje horizontal | El cuerpo **centrado**: su eje a ±5% del centro del lienzo |
+| Banda vertical útil | La figura entera cabe entre el **8%** y el **75%** de la altura |
+| Aire lateral | **≥8%** a cada lado |
+| Cámara | A la altura del pecho, lente neutra. Sin contrapicado ni gran angular: agrandan al sujeto y le comen los pies |
+
+**El cuarto inferior no es tuyo.** Del 75% hacia abajo va la banda opaca del
+nombre, que se pinta encima. Ahí solo puede haber suelo: ni pies, ni punta de
+arma, ni nada que se quiera ver. Y arriba y a los lados manda lo mismo por otro
+motivo — **el marco tapa los bordes**, así que nada importante (rostro, manos,
+arma, escudo, el elemento distintivo) pegado al filo, y menos en las esquinas.
+
+**Los sujetos anchos o enormes se resuelven alejando la cámara, no recortando.**
+La Caballería ocupa más ancho que alto y el Dragón dorado tiene que aplastar en
+escala; en los dos, la silueta completa entra en la banda aunque quede más
+pequeña. Una silueta pequeña y entera se lee; media silueta grande, no.
+
+> **La medida del retrato sigue sin decidir**, y por el mismo motivo que antes:
+> no existe pantalla de selección de héroe ni ficha de unidad. Mientras tanto usa
+> este mismo ratio y este mismo encuadre por consistencia, y deja margen de
+> sobra.
 
 > **Antes de generar nada**, mira si el documento de `docs/v3/` que le
 > corresponde ya tiene su tabla. Sin tabla no hay a qué pegar el arte.

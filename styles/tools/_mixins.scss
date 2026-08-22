@@ -37,6 +37,45 @@
   --rarity-soft: #{severity($name, "soft")};
 }
 
+// Aleación de un marco blindado: el metal entero calculado desde un color
+// base. Lo piden los bocetos D y E (styles/components/card-sketch/), y el SVG
+// del marco las hereda por CSS porque se renderiza dentro de la carta.
+//
+// De qué color parte es LA decisión de cada boceto: el D lo saca de la rareza
+// —la carta entera se tiñe— y el E de un color de carta fijo, igual en las
+// once. Por eso el mixin recibe el color y no lo busca él.
+//
+// El tema `armored` de v2 hace esta misma cuenta a mano y se queda como está:
+// está congelado y no se toca. Aquí se recoge en un sitio porque ya son dos
+// los bocetos que la piden, y una mezcla de más o de menos se notaría entre
+// ellos.
+//
+//   --m       metal base
+//   --m-hi    luz del metal
+//   --m-lo    sombra del metal
+//   --m-edge  filo oscuro / contorno
+@mixin armor-vars($base) {
+  --m: #{$base};
+  --m-hi: color-mix(in srgb, white 52%, #{$base});
+  --m-lo: color-mix(in srgb, black 42%, #{$base});
+  --m-edge: color-mix(in srgb, black 70%, #{$base});
+}
+
+// Veta encendida del boceto E: la luz que corre por el canal entre los dos
+// raíles del filete. Va aparte de armor-vars() a propósito, porque son las dos
+// mitades de la apuesta de ese boceto — el metal no cambia nunca y la luz
+// cambia siempre.
+//
+//   --seam       el color de la luz
+//   --seam-hi    su núcleo, donde más quema
+//   --seam-soft  la misma luz translúcida: lo que la veta derrama hacia dentro
+//                de la carta, que tiene que dejar ver la ilustración por debajo
+@mixin seam-vars($base) {
+  --seam: #{$base};
+  --seam-hi: color-mix(in srgb, white 62%, #{$base});
+  --seam-soft: color-mix(in srgb, #{$base} 58%, transparent);
+}
+
 // Mini-carta de las tablas de la wiki (rareza y severidad comparten forma).
 @mixin chip-vars($base, $soft) {
   --chip-color: #{$base};

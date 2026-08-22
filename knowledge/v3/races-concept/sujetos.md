@@ -36,7 +36,17 @@ razas que no se parecen a nada ni entre sí ni dentro de sí. Es el fallo que la
 cambia; lo que cambia por raza hay que decidirlo.
 
 **Ya están definidas las once**, abajo. Se escribe una vez por raza y se repite
-literal en sus 12 prompts.
+literal en sus 12 prompts — **con una excepción**: el eje **Anatomía** es un
+*rango*, no un cuerpo, y no se copia como valor. Ver §"El reparto".
+
+> **Y son ocho ejes, no seis** (21 de agosto de 2026). Se añadieron **Edad** y
+> **Belleza** porque faltaban y su ausencia se vio en cuanto salió arte real: la
+> IA los rellenaba sola, y siempre con lo mismo —joven, esbelto y guapo—. Solo la
+> ficha de 👤 Humanos está **aprobada**; en las otras diez los dos ejes nuevos
+> están **derivados de lo que ya decía cada ficha** (una raza «sin un solo tono de
+> piel sana» no puede ser hermosa) y hay que confirmarlos raza por raza cuando le
+> toque su turno en la cola. No hay arte de ninguna todavía, así que no corre
+> prisa.
 
 ### 2. Veinticinco héroes se llaman igual que una unidad de su raza — **abierto**
 
@@ -85,18 +95,53 @@ salen indistinguibles.
 
 ## Identidad de raza
 
-Los seis ejes a fijar por raza. **Se escribe una vez y se repite literal en los
-12 prompts de esa raza** — es lo único que garantiza que se reconozcan como
+Los **ocho** ejes a fijar por raza. **Se escribe una vez y se repite literal en
+los 12 prompts de esa raza** — es lo único que garantiza que se reconozcan como
 familia.
 
 | Eje | Qué fija |
 |---|---|
 | **Paleta** | 2 dominantes + 1 acento. El acento es lo que la distingue a 100 px |
-| **Anatomía** | Proporción, masa, altura relativa, rasgos faciales de raza |
+| **Anatomía** | El **rango** de proporción, altura y rasgos faciales de raza. Un rango, no un cuerpo |
+| **Edad** | En qué década leen sus adultos, y si la raza envejece visiblemente |
+| **Belleza** | Si esta raza es guapa, fea o ajena a la escala. **Es rasgo de raza, no un ajuste por defecto** |
 | **Materiales** | Qué se elige por defecto de la §10 de la biblia (cuero, metal, tela, madera, piedra) |
 | **Motivos** | El ornamento repetido: heráldica, runas, huesos, engranajes, conchas |
 | **Fondo** | Arquitectura o paisaje del que salen |
 | **Silueta** | Qué forma tienen en común los doce |
+
+### El reparto: quién decide el cuerpo
+
+**Los ejes seis, siete y ocho son nuevos** (21 de agosto de 2026) y arreglan un
+fallo real: la primera tirada de Humanos salió con los doce sujetos jóvenes,
+esbeltos, musculosos y guapos. Y era culpa de este documento, no de la IA. La
+plantilla mandaba rellenar `CUERPO Y ROSTRO` con «la anatomía de la raza», la
+ficha de Humanos decía «proporción heroica» y eso se pegaba literal doce veces —
+así que el Mago flaco y el Sacerdote cansado que pedía su bloque llegaban
+contradichos desde arriba.
+
+La anatomía **no es un valor, es un rango**, y se reparte en tres:
+
+| Lo decide | Qué aporta |
+|---|---|
+| **La raza** | El **rango**: escala en cabezas, rasgos de especie, techo y suelo de masa. Un enano no puede ser esbelto ni un elfo macizo |
+| **El papel** (clase o tier) | La **complexión dentro de ese rango**. Un Guerrero es pesado; un Mago no tiene masa; un Miliciano es flaco de comer mal, no de entrenar |
+| **El tier o el rango del sujeto** | La **edad y el desgaste**. Un tier 1 es joven porque es carne nueva; un Paladín o un héroe llevan años encima |
+
+**Y la belleza es una decisión, nunca el defecto.** Toda IA de imagen tira a
+guapo, joven y simétrico si no se le dice lo contrario, y eso borra media
+identidad del juego: un Sacerdote humano de cuarenta y muchos con ojeras y un
+elfo deliberadamente hermoso **no pueden salir de la misma plantilla**. Por eso
+la belleza sube a eje de raza: en Elfos es un rasgo que se pide, en Humanos es
+gente corriente, en Hombres rata da asco, y en Constructos no aplica porque no
+hay cara.
+
+> **Se dice en positivo, sujeto a sujeto.** Es la misma doctrina que la §20 de la
+> biblia aprendió con `heavy plate armor`: prohibir «musculoso» en el negativo
+> rompería al Guerrero, al Paladín y a los Orkos enteros. Lo que va al negativo
+> es solo lo que **ningún** sujeto del juego quiere nunca —foto de moda,
+> maquillaje, cara de portada—; el resto se pide describiendo el cuerpo que sí
+> toca.
 
 ### El sistema, antes de las once fichas
 
@@ -140,7 +185,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Acero azulado y azul heráldico dominantes, tierras neutras de apoyo, **oro** como acento (heráldica, filos, remaches) |
-| **Anatomía** | Proporción heroica realista, ~7 cabezas |
+| **Anatomía** | **Rango: ~7 cabezas**, proporción realista. Es la escala de referencia del juego. Dentro de ella cabe **de flaco a macizo**, y lo decide el papel: el Guerrero es pesado, el Mago no tiene un gramo de masa, el Miliciano es delgado de comer mal |
+| **Edad** | Adultos de **30 a 50** como norma. El tier 1 puede ser joven (veinti-pocos, carne nueva); los tiers altos y los cuatro héroes son **veteranos**, con arrugas, canas y piel curtida |
+| **Belleza** | **Gente corriente.** Es la raza-espejo del jugador: caras comunes, narices normales o grandes, dientes imperfectos, asimetría. Ni un solo sujeto es guapo, y ninguno es monstruoso. Si una cara podría salir en un anuncio, está mal |
 | **Materiales** | Acero pulido con abolladuras y cuero marrón; lino y lana en la ropa; tabardo sobre la armadura |
 | **Motivos** | Heráldica simple y legible (sol, león), remaches visibles, filigrana escasa |
 | **Fondo** | Piedra clara de castillo, campo cultivado, estandartes |
@@ -151,7 +198,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Gris piedra y hierro oscuro dominantes, **granate** como acento (capas, penachos, tejido), con latón cálido en la herrería. El granate es lo único saturado de la imagen |
-| **Anatomía** | **~4,5 cabezas**: bajos y anchísimos, masa en hombros y antebrazos, manos grandes. La barba es estructura, no adorno — define el contorno del pecho |
+| **Anatomía** | **Rango: ~4,5 cabezas**, bajos y anchísimos, masa en hombros y antebrazos, manos grandes. La barba es estructura, no adorno — define el contorno del pecho. **Ninguno puede ser esbelto**: el rango va de macizo a enorme, y el flaco de la raza sigue siendo más ancho que un humano |
+| **Edad** | **Todos leen mayores**, 40 para arriba incluso el tier 1: arrugas profundas, canas en la barba, piel curtida de forja. Un enano joven no se distingue de uno viejo, y está bien — la edad no es el eje que separa sus tiers |
+| **Belleza** | **Ninguna, y con orgullo.** Narices grandes y rotas, cejas pesadas, cicatrices de trabajo, dientes desgastados. Su dignidad viene del oficio y del porte, nunca de la cara |
 | **Materiales** | Hierro forjado sin pulir, piedra tallada, cuero grueso, latón en lo mecánico. Nada de acero brillante: eso es de Humanos |
 | **Motivos** | Nudos geométricos angulares, remaches gruesos, runas grabadas rectas |
 | **Fondo** | Galería de mina, forja, arco de piedra tallada. Espacios bajos y cerrados |
@@ -162,7 +211,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Marfil hueso y verdín gris dominantes, **verde espectral frío** como acento — luz que no calienta: cuencas, magia, vapor. Sin un solo tono de piel sana |
-| **Anatomía** | Proporción humana pero descarnada: enjuta, hueso visible como estructura. Cuanto más alto el tier, **menos carne**, no más músculo |
+| **Anatomía** | **Rango: proporción humana pero descarnada**, enjuta, hueso visible como estructura. Cuanto más alto el tier, **menos carne**, no más músculo. Es la única raza cuyo rango va hacia el vacío en vez de hacia la masa |
+| **Edad** | **Sin edad.** No envejecen, se deterioran. Lo que marca el tier no son años, es **cuánta carne queda** — y en los tiers altos ya no queda ninguna |
+| **Belleza** | **Fuera de la escala**: no hay belleza ni fealdad, hay ausencia. Sin tono de piel sana, sin gesto facial, sin mirada. Cuidado con el error clásico de la IA aquí — un no-muerto guapo y pálido es un vampiro de novela juvenil, y esto no es eso |
 | **Materiales** | Hueso, armadura oxidada y abollada, sudario podrido, madera astillada, cadena |
 | **Motivos** | Costillares, calaveras, vendas sueltas, cadenas, tierra adherida |
 | **Fondo** | Cripta, niebla baja a la altura de la rodilla, tierra removida, lápidas |
@@ -173,7 +224,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Negro carbón y rojo sangre dominantes, **brasa naranja** como acento e **única fuente de luz** de la imagen: grietas de la piel, filos, ojos |
-| **Anatomía** | Exagerada hacia arriba: torso enorme, cadera estrecha, piernas digitígradas. Los **cuernos amplían la silueta** y son lo primero que se lee |
+| **Anatomía** | **Rango: exagerado hacia arriba** — torso enorme, cadera estrecha, piernas digitígradas. Los **cuernos amplían la silueta** y son lo primero que se lee. El rango va de retorcido y flaco (tiers bajos) a colosal (tiers altos), nunca de guapo a feo |
+| **Edad** | **Sin edad**, y no se les pone. Lo que crece con el tier es la escala y el daño acumulado —cuernos partidos, quemaduras, cicatrices—, no los años |
+| **Belleza** | **Amenaza, no belleza.** En los tiers bajos, deforme y retorcido; en los altos aparece un **porte de depredador** —simetría, aplomo, mirada fija— que impone sin ser atractivo. La tentación de la IA aquí es el demonio sensual de portada: no |
 | **Materiales** | Hierro negro al rojo, piel curtida, cadena, obsidiana. Metal que parece recién sacado de la forja |
 | **Motivos** | Cuernos, púas, sellos infernales grabados, grietas incandescentes |
 | **Fondo** | Roca volcánica, brasas al aire, cielo rojo bajo |
@@ -184,7 +237,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Verdes **fríos** (salvia, teal, musgo azulado) y plata dominantes, **ámbar pálido** como acento (gemas, luz filtrada, cuerda de arco). Frío con un punto cálido, nunca al revés |
-| **Anatomía** | **~8 cabezas**: la más esbelta. Cuello, dedos y extremidades largos, rasgos angulosos, orejas. Nada de masa muscular |
+| **Anatomía** | **Rango: ~8 cabezas**, la más esbelta. Cuello, dedos y extremidades largos, rasgos angulosos, orejas. **Ninguno tiene masa muscular**: el rango va de delgado a fibroso, y ahí se acaba. Un elfo tanque es más alto y mejor armado, nunca más ancho |
+| **Edad** | **Sin edad aparente.** Todos leen entre 25 y 40 aunque tengan siglos: sin arrugas, sin canas, sin desgaste de piel. La veteranía se lee en el **equipo y la mirada**, jamás en la cara. Es la única raza a la que la juventud le corresponde |
+| **Belleza** | **Sí, y es la única a la que se le pide** — es rasgo de raza, no capricho de la IA. Rasgos finos y simétricos, piel sin marcas, pómulos altos, expresión distante y algo severa. **Belleza fría**, la de una espada bien hecha: nada de dulzura, nada de coquetería, nada de foto de moda. Si sonríe, está mal |
 | **Materiales** | Plata trabajada fina, cuero delgado, seda, hoja y madera viva. La armadura se ajusta al cuerpo, no lo engorda |
 | **Motivos** | Hoja, enredadera, arco creciente, filigrana **curva** — es la contraria a la enana |
 | **Fondo** | Bosque de troncos como columnas, luz filtrada en haces verticales |
@@ -195,7 +250,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Verde oliva **sucio** y óxido dominantes, **bermellón mate** como acento — pintura de guerra, aplicada a mano y mal. Todo mate: nada brilla en un orko |
-| **Anatomía** | Masiva y hacia delante: hombros por encima de la línea del cuello, brazos más largos de lo humano, mandíbula y colmillos adelantados |
+| **Anatomía** | **Rango: masiva y hacia delante** — hombros por encima de la línea del cuello, brazos más largos de lo humano, mandíbula y colmillos adelantados. Va de fibroso y nervudo (tiers bajos) a montañoso; **ninguno es esbelto ni elegante** |
+| **Edad** | **Adultos imposibles de datar**, y no importa: los tiers altos son más grandes, no más viejos. Piel curtida y dañada en todos, desde el primero |
+| **Belleza** | **Fea, y le da exactamente igual** — eso es parte del personaje. Dientes rotos y desparejados, cicatrices mal curadas, orejas partidas, asimetría facial marcada, piel con costras. Es la raza en la que hay que empujar más fuerte contra el defecto de la IA |
 | **Materiales** | Hierro tosco remachado en frío, cuero crudo, hueso y trofeo, cuerda. Equipo **remendado**, nunca fabricado entero |
 | **Motivos** | Pintura de guerra, trofeos atados, remiendos, dientes, calaveras ajenas |
 | **Fondo** | Campamento con estacas, tierra pisada, humo bajo, empalizada |
@@ -206,7 +263,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Lila, menta y rosa **pálidos** dominantes, **nácar iridiscente** como acento. La única raza de valores claros: donde las demás oscurecen, esta ilumina |
-| **Anatomía** | Menuda y grácil, **~6 cabezas** pero delgada — pequeña sin ser infantil. Alas de insecto cuando el sujeto las lleva |
+| **Anatomía** | **Rango: menuda y grácil**, ~6 cabezas pero delgada — pequeña sin ser infantil. Alas de insecto cuando el sujeto las lleva. El rango es estrecho: **ninguno gana masa**, los tiers altos crecen en envergadura de alas y en aparato, no en músculo |
+| **Edad** | **Sin edad, de apariencia joven** — y aquí hay una línea que no se cruza: joven **no** es niño. Cuerpo y cara de adulto pequeño, nunca de infante. Es el error que más va a intentar la IA en esta raza |
+| **Belleza** | **Bonita e inquietante a la vez.** Rasgos limpios y grandes, ojos **demasiado** grandes para la cara, piel pálida sin marcas. Encanto raro, no sensualidad ni ternura: se mira dos veces porque algo no cuadra, no porque guste |
 | **Materiales** | Pétalo, telaraña, hoja, cristal, madera clara. **Translucidez**: se ve algo a través de casi todo |
 | **Motivos** | Alas, espirales, luciérnagas, flores, polen suspendido |
 | **Fondo** | Claro nocturno, setas, luz de luna, partículas en el aire |
@@ -217,7 +276,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Púrpura profundo y negro escama dominantes, **bronce cálido** como acento (crestas, garras, herrajes). Joya oscura, no fuego — el fuego es de Demonios |
-| **Anatomía** | Humanoide robusta **con cola y hocico**: escama en placas, cresta, garras. Hombros altos y cabeza adelantada |
+| **Anatomía** | **Rango: humanoide robusta con cola y hocico** — escama en placas, cresta, garras. Hombros altos y cabeza adelantada. Va de ágil y seco a masivo; **ninguno es delgado**, la escama ya da volumen |
+| **Edad** | **Adultos maduros**, sin marcadores humanos de edad: no hay arrugas ni canas en una cara de escama. Lo que envejece es la **escama misma** — mate, partida, con cicatrices de muda en los tiers altos |
+| **Belleza** | **Fuera de la escala humana.** Se juzgan como se juzga un animal: por porte, imponencia y simetría de la cresta, no por si la cara es agradable. Nada de hocicos amables ni ojos grandes y expresivos — eso los vuelve mascotas |
 | **Materiales** | Escama natural como armadura, bronce martillado, cuero de placa, garra y cuerno |
 | **Motivos** | Escama superpuesta, ala, cuerno, cresta dorsal |
 | **Fondo** | Acantilado, ruina alta, cielo abierto. La única raza que se dibuja **en altura** |
@@ -228,7 +289,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Marrón enfermo y gris rata dominantes, **amarillo-verde ácido** como acento — líquido, no luz: viales, filos manchados, vapor. Enfermo, nunca mágico |
-| **Anatomía** | Encorvada y enjuta, **cola larga siempre visible**, hocico, orejas grandes. Rápida y nerviosa, nunca imponente |
+| **Anatomía** | **Rango: encorvada y enjuta**, cola larga siempre visible, hocico, orejas grandes. Rápida y nerviosa, **nunca imponente**. El rango es el más estrecho del juego: todos escuálidos, y el tier alto es más grande sin dejar de estar mal alimentado |
+| **Edad** | **Sin edad, siempre adultos escuálidos.** No viven para envejecer. Ni crías ni ancianos: es un ejército de adultos consumidos |
+| **Belleza** | **Repulsiva, y es la única que busca dar asco físico.** Dientes incisivos amarillos, calvas de sarna, ojos pequeños y húmedos, pelo pegado. Nada de ratas simpáticas de dibujos: si da ternura, está mal |
 | **Materiales** | Trapo cosido, metal **robado y desparejado**, vidrio de vial, cuerda, tubo. Nada hace juego con nada |
 | **Motivos** | Viales, remiendos, tuberías, mordidas, la cola como remate |
 | **Fondo** | Alcantarilla, tubería, agua sucia, madriguera. Espacios estrechos y húmedos |
@@ -239,7 +302,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Gris hierro y piedra pálida dominantes, **azul runa encendida** como acento, y **solo dentro de líneas grabadas** — brillo geométrico, nunca difuso |
-| **Anatomía** | **Ninguna orgánica**: proporción arquitectónica, articulaciones visibles, **sin cara** (placa lisa o máscara). No hay piel, no hay músculo, no hay gesto facial |
+| **Anatomía** | **Rango: ninguna orgánica** — proporción arquitectónica, articulaciones visibles, **sin cara** (placa lisa o máscara). No hay piel, no hay músculo, no hay gesto facial. El rango va de esbelto-mecánico a colosal, y es puro volumen construido |
+| **Edad** | **Sin edad**: lo que envejece es el material. Un tier bajo va oxidado y desconchado, un tier alto pulido y con la runa entera. Antigüedad, no años |
+| **Belleza** | **No aplica: no hay cara.** La única lectura posible es proporción y acabado — burdo y remachado abajo, preciso y grabado arriba. No le pongas ojos humanos ni una máscara con expresión |
 | **Materiales** | Hierro fundido, piedra pálida, latón en el engranaje, cristal de runa |
 | **Motivos** | Runa grabada en línea recta, engranaje, junta, placa remachada |
 | **Fondo** | Taller arcano, sala geométrica, andamio. Arquitectura, no paisaje |
@@ -250,7 +315,9 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | Eje | Definición |
 |---|---|
 | **Paleta** | Azul tinta profundo y negro dominantes, **turquesa bioluminiscente** como acento en **manchas y flecos orgánicos** — nunca en líneas: eso es de Constructos |
-| **Anatomía** | Humanoide-pez: membranas entre los dedos, branquias, ojos grandes **sin párpado**. Cuello y torso alargados |
+| **Anatomía** | **Rango: humanoide-pez** — membranas entre los dedos, branquias, ojos grandes **sin párpado**, cuello y torso alargados. Va de larguirucho a masivo-inflado; el volumen viene de aletas y membranas, no de músculo |
+| **Edad** | **Sin edad.** Piel lisa y húmeda en todos, sin arrugas: lo que sube con el tier son las **incrustaciones** —percebes, coral, sal— y las cicatrices de arpón. Se envejece por encima, no por dentro |
+| **Belleza** | **Ajena e incómoda**, y es su rasgo. Proporción y simetría correctas con **los rasgos equivocados**: ojos fijos sin párpado, boca sin labio, ninguna expresión legible. Ni guapa ni fea — inquietante porque casi funciona. Nada de sirenas |
 | **Materiales** | Concha, coral, nácar, arpón de hueso, red. Metal poco y siempre corroído por sal |
 | **Motivos** | Espiral de concha, tentáculo, escama de pez, red anudada |
 | **Fondo** | Ruina sumergida, columna de agua, luz que entra desde arriba |
@@ -268,12 +335,21 @@ Tres piezas, en este orden:
 
    > **QUÉ ES:** héroe de clase *(individuo, protagonista)* · unidad de tier N *(tropa)*
    > **SUJETO:** \[nombre\]
-   > **CUERPO Y ROSTRO:** \[anatomía de la raza\]
+   > **CUERPO:** \[**la complexión de ESTE sujeto**, dentro del rango de su raza — no el rango otra vez\]
+   > **EDAD:** \[década concreta o «sin edad», según la ficha de su raza y su tier\]
+   > **ROSTRO:** \[rasgos de raza + qué NO es: la belleza de la ficha, dicha en positivo\]
    > **EQUIPO:** \[lo que pide su papel + materiales de la raza\]
    > **DEBE VERSE:** \[las Características visibles de su fila\]
-   > **POSE:** \[qué está haciendo\]
+   > **POSE:** \[qué está haciendo, de cuerpo entero y con los pies apoyados\]
    > **ESCENARIO:** \[fondo de la raza, subordinado\]
    > **PALETA:** \[la de la raza, con su acento\]
+
+   **`CUERPO Y ROSTRO` se partió en tres campos** (21 de agosto de 2026), y esa
+   es la corrección importante. Antes era un solo campo que decía «anatomía de la
+   raza», así que los doce sujetos recibían la misma frase y salían todos igual
+   de jóvenes, guapos y musculosos. Ahora el **rango** lo pone la raza una vez, y
+   **el cuerpo, la edad y la cara** los pone cada sujeto. Si al rellenar `CUERPO`
+   estás copiando la ficha de la raza, lo estás haciendo mal.
 
 4. **El negative prompt maestro** — [`style-guide.md`](../art-direction/style-guide.md#20-negative-prompt-maestro) §20, si la herramienta lo admite.
 
@@ -285,7 +361,7 @@ resistencia.
 
 | Obligan a algo visible | Qué se ve |
 |---|---|
-| 🪽 Volador | Alas, y que sostengan el peso |
+| 🦅 Volador | Alas, y que sostengan el peso |
 | 🤖 Constructo | Cuerpo mecánico, articulaciones, sin piel |
 | 💀 No-muerto | Hueso expuesto, carne ausente o seca |
 | 😈 Demonio | Cuernos, piel infernal, brasa |
@@ -323,8 +399,16 @@ No es arbitrario: es el orden de dependencia del proyecto
 | Fase | Qué | Cuántos | Estado |
 |---|---|---|---|
 | **1** | 👤 Humanos completos | 12 | **Listo para generar** |
-| **2** | Enanos, No-muertos, Demonios, Elfos | 48 | Identidad definida; entran cuando Humanos esté cerrado y sirva de vara de medir |
-| **3** | Los 6 DLC (Orkos, Feéricos, Dracónidos, Hombres rata, Constructos, Abisales) | 72 | Identidad definida, pero **fuera de alcance** hasta que las 5 base estén jugables |
+| **2** | Enanos, No-muertos, Demonios, Elfos | 48 | Identidad definida y **prompts escritos**; entran cuando Humanos esté cerrado y sirva de vara de medir |
+| **3** | Los 6 DLC (Orkos, Feéricos, Dracónidos, Hombres rata, Constructos, Abisales) | 72 | Identidad definida y **prompts escritos**, pero **fuera de alcance** hasta que las 5 base estén jugables |
+
+> **Los 132 prompts están montados** (21 de agosto de 2026) en
+> [`prompts/`](prompts/preambulo.md), las once razas. Que estén escritos **no
+> cambia el orden**: sirven para que el criterio no se pierda y para que las
+> decisiones de reparto se tomen con las once delante —así se vio, por ejemplo,
+> que el brillo de Constructos y el de Abisales había que separarlos por forma, y
+> que Elfos y Feéricos son las dos únicas razas con belleza y de dos clases
+> distintas—. Se sigue generando de una en una, y Humanos primero.
 
 Humanos primero no es capricho: son los únicos que dan **vara de medir**. Sus 12
 imágenes fijan cuánta masa es «tier 8», cuánto detalle lleva un tier 1 y cuánto
@@ -350,8 +434,14 @@ Individuos. Protagonistas. Cada uno con algo suyo.
 
 ## Unidades (8) — progresión de tier
 
-La escalada tiene que leerse **en la silueta**, no en la calidad del equipo.
-Puestas las ocho en fila, el orden debe ser evidente sin leer un número.
+La escalada tiene que leerse **en la silueta**, no en la calidad del equipo — y
+concretamente en la **proporción**: cabeza pequeña respecto al cuerpo, masa,
+cuánto ancho del cuadro ocupa. **No en el tamaño de la figura dentro de la
+carta**, que es el mismo 60–70% en los 132 por la regla de encuadre. El detalle
+está en [`../art-direction/illustrations.md`](../art-direction/illustrations.md#1-los-sujetos-y-qué-pide-cada-uno)
+§1, y allí queda anotado por qué se retiró la exigencia de que «puestas las ocho
+en fila el orden fuera evidente»: era incompatible con el encuadre, y una carta
+se mira sola.
 
 | Tier | Unidad | Papel | Debe verse | Invisible |
 |---|---|---|---|---|

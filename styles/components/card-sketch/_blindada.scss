@@ -45,21 +45,12 @@ $rivet: 7px;
   // El metal por rareza, mecanismo entero de card-themes/_armored.scss: el SVG
   // del marco se renderiza DENTRO de la carta, así que hereda estas variables
   // por CSS y no hace falta pasarle ni un color por props.
-  $b0: rarity("comun", "base");
-  --m: #{$b0};
-  --m-hi: color-mix(in srgb, white 52%, #{$b0});
-  --m-lo: color-mix(in srgb, black 42%, #{$b0});
-  --m-edge: color-mix(in srgb, black 70%, #{$b0});
+  @include armor-vars(rarity("comun", "base"));
   --m-glint: #{card-sketch("glint")};
 
   @each $name, $tokens in $rarity {
-    $b: rarity($name, "base");
-
     &[data-rarity="#{$name}"] {
-      --m: #{$b};
-      --m-hi: color-mix(in srgb, white 52%, #{$b});
-      --m-lo: color-mix(in srgb, black 42%, #{$b});
-      --m-edge: color-mix(in srgb, black 70%, #{$b});
+      @include armor-vars(rarity($name, "base"));
     }
   }
 

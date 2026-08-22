@@ -31,14 +31,15 @@
 import {
   CORNER_SKILLS,
   LONG_NAME,
+  rankOf,
   SKILLS,
   STRIP_SKILLS,
   type SkillKey,
   type Subject,
 } from "./sample";
-import { BlindadaFrame } from "./sketch-frames";
+import { BlindadaFrame, ForjaFrame } from "./sketch-frames";
 
-export type SketchId = "rejilla" | "gema" | "losa" | "blindada";
+export type SketchId = "rejilla" | "gema" | "losa" | "blindada" | "forja";
 
 /** Ficha de cada boceto: de aquí comen las pestañas y las notas del lab. */
 export const SKETCHES: readonly {
@@ -73,6 +74,12 @@ export const SKETCHES: readonly {
     source: "Armored (v2) × boceto C",
     bet: "El esqueleto de C con el herraje de v2: el filete de 3px se convierte en una banda de metal con cantoneras remachadas, la losa de piedra en una placa de hierro atornillada, y el Tier se sube a un medallón montado en su borde. La Rareza deja de ser una línea de color y pasa a ser la aleación del marco entero.",
   },
+  {
+    id: "forja",
+    label: "E · Forja",
+    source: "Boceto D, abierto por la mitad",
+    bet: "Lo contrario que el D: el metal NO lleva la rareza. Todas las cartas son del mismo peltre —material de carta, no dato— y el color vive en una veta encendida que corre por el canal entre los dos raíles del filete, derramándose hacia dentro sobre la ilustración. La carta no está teñida, está encendida. Y el pie se reduce a UNA pieza: una placa traslúcida a sangre de lado a lado con el rótulo —a mayor tamaño— y las ocho Habilidades dentro. Sin subtítulo: el medallón lleva el emblema de la raza y el color de la veta dice la clase de tier, así que no queda texto que escribir bajo el nombre. Las Características vuelven al raíl vertical del boceto A.",
+  },
 ];
 
 const skillOf = (key: SkillKey) => SKILLS.find((s) => s.key === key)!;
@@ -99,38 +106,73 @@ function Art({ subject }: { subject: Subject }) {
   );
 }
 
-/** Nombre + subtítulo «raza · tier», el bloque que todos llevan igual. */
+/**
+ * Nombre + subtítulo «raza · rango», el bloque que todos llevan igual.
+ *
+ * El rango lo resuelve rankOf(): «Tier 8» en una unidad y «Héroe» en un héroe,
+ * que no tiene tier. Los bocetos no preguntan de qué tipo de carta se trata.
+ */
 function Plate({
   subject,
   className,
   sub,
   children,
+  after,
 }: {
   subject: Subject;
   className: string;
   /**
    * Subtítulo, cuando no sirve el de por defecto. Lo usa el boceto D, que se
-   * queda solo con la raza porque su medallón ya dice el Tier — que es
+   * queda solo con la raza porque su medallón ya dice el rango — que es
    * justamente lo que ese boceto propone comprobar.
+   *
+   * `null` lo QUITA entero, y no es lo mismo que pasar cadena vacía: la línea
+   * desaparece de la placa en vez de dejar su hueco. Lo usa el boceto E, que
+   * no tiene nada que escribir ahí — la raza la dice su medallón y el rango, el
+   * color.
    */
   sub?: React.ReactNode;
-  /** Piezas ancladas a la placa: el medallón de Tier del boceto D. */
+  /** Piezas ancladas a la placa: el medallón de rango del boceto D. */
   children?: React.ReactNode;
+  /**
+   * Lo que va DENTRO de la placa, debajo del rótulo. Solo el boceto E lo usa:
+   * allí la fila de ocho no es una banda aparte apilada bajo la placa, vive
+   * dentro de ella.
+   */
+  after?: React.ReactNode;
 }) {
+  // `undefined` es "no me lo han pasado" y `null` es "no lo quiero": por eso la
+  // comparación explícita y no un ?? , que trataría los dos igual.
+  const line = sub === undefined ? `${subject.raceIcon} ${subject.race} · ${rankOf(subject)}` : sub;
   return (
     <header className={className}>
       {children}
       <h3 className="sketch__name" data-long={subject.name.length > LONG_NAME || undefined}>
         {subject.name}
       </h3>
-      <p className="sketch__sub">
-        {sub ?? (
-          <>
-            {subject.raceIcon} {subject.race} · Tier {subject.tier}
-          </>
-        )}
-      </p>
+      {line !== null && <p className="sketch__sub">{line}</p>}
+      {after}
     </header>
+  );
+}
+
+/**
+ * Raíl vertical de Características sobre el arte (bocetos A y E).
+ *
+ * Es la mejor respuesta al Miliciano que hay sobre la mesa: con cero
+ * medallones no queda un hueco vacío, queda arte. No es una fila del layout,
+ * es una capa encima — por eso no vive dentro del pie.
+ */
+function Rail({ subject }: { subject: Subject }) {
+  if (subject.traits.length === 0) return null;
+  return (
+    <ul className="sketch__rail">
+      {subject.traits.map((t) => (
+        <li className="sketch__medal" key={t.label} title={t.label}>
+          {t.icon}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -192,15 +234,7 @@ function RejillaCard({ subject }: { subject: Subject }) {
   return (
     <>
       <Art subject={subject} />
-      {subject.traits.length > 0 && (
-        <ul className="sketch__rail">
-          {subject.traits.map((t) => (
-            <li className="sketch__medal" key={t.label} title={t.label}>
-              {t.icon}
-            </li>
-          ))}
-        </ul>
-      )}
+      <Rail subject={subject} />
       <div className="sketch__foot">
         <Plate subject={subject} className="sketch__plate" />
         <ul className="sketch__grid">
@@ -289,7 +323,9 @@ function LosaCard({ subject }: { subject: Subject }) {
 //   · la losa de piedra pasa a ser una placa de hierro atornillada;
 //   · y el medallón del tipo de carta —que en v2 iba montado sobre el filete
 //     de la ventana— se recicla para el TIER, que es la otra pregunta abierta.
-//     Por eso el subtítulo aquí solo dice la raza.
+//     Por eso el subtítulo aquí solo dice la raza. En un héroe, que no tiene
+//     tier, ahí va una corona: el hueco se reservó para un número y esa
+//     costura es parte de lo que este boceto pone a prueba.
 //
 // Lo que Armored NO trae, y es la mitad del interés de la mezcla: su VENTANA
 // de arte. Los tres conceptos coinciden en el arte a sangre y el concepto ya
@@ -310,8 +346,12 @@ function BlindadaCard({ subject }: { subject: Subject }) {
           className="sketch__plate sketch__plate--metal"
           sub={`${subject.raceIcon} ${subject.race}`}
         >
-          <span className="sketch__boss" title={`Tier ${subject.tier}`}>
-            <b className="sketch__boss-value">{subject.tier}</b>
+          {/* El medallón se queda con el rango y por eso el subtítulo de
+              arriba solo dice la raza. En una unidad lleva su tier; en un
+              héroe, que no tiene, la corona — y ese hueco es lo que hay que
+              mirar: el marco había reservado sitio para un número. */}
+          <span className="sketch__boss" title={rankOf(subject)}>
+            <b className="sketch__boss-value">{subject.tier ?? "👑"}</b>
           </span>
         </Plate>
         <ul className="sketch__pods">
@@ -325,11 +365,87 @@ function BlindadaCard({ subject }: { subject: Subject }) {
   );
 }
 
+// --- E · Forja ------------------------------------------------------------
+// Sale del D y acaba diciendo lo CONTRARIO que él. Esa oposición es lo que hay
+// que juzgar, y por eso los dos conviven:
+//
+//   · el D tiñe la carta entera: el metal ES la rareza, y una legendaria es
+//     una carta dorada de arriba abajo;
+//   · el E deja el metal quieto —el mismo peltre en las once, material de
+//     carta y no dato— y mete el color en una VETA DE LUZ que corre por el
+//     canal entre los dos raíles del filete (ForjaFrame). La carta no está
+//     teñida: está encendida.
+//
+// Los otros dos cambios son de sitio y no de color, y son los que rompen del
+// todo el esqueleto heredado del C:
+//
+//   · LAS CARACTERÍSTICAS VUELVEN AL RAÍL VERTICAL del boceto A, encima del
+//     arte;
+//   · LA PLACA SE LO COME TODO. En A, B, C y D el pie es una pila: banda de
+//     nombre, luego fila de ocho, luego cenefa. Aquí hay UNA sola pieza a
+//     sangre de lado a lado, y dentro de ella van el rótulo y los ocho
+//     números. La carta deja de tener bandas apiladas: tiene ilustración y
+//     tiene una placa.
+//
+// Con el pie reducido a una pieza, el nombre puede ir más grande: es lo único
+// que compite con los números y ya no hay tres franjas repartiéndose el
+// tercio inferior.
+//
+// Y el tercer cambio, que es de CONTENIDO y no de sitio: la placa se queda sin
+// subtítulo. El medallón que el D usaba para el Tier aquí lleva el emblema de
+// la RAZA, así que «👤 Humanos» ya está dicho —en imagen y no en letra— y el
+// rango lo dice el color de la veta, que en una unidad sale del tier y en un
+// héroe es su raíl propio. Escribirlo otra vez debajo del nombre era repetirlo.
+//
+// El precio hay que verlo: la veta agrupa los ocho tiers en cinco escalones
+// (sample.ts, rarityForTier), así que dice de qué CLASE de tier es la carta,
+// no cuál. Sin el número, un Miliciano y un Arquero son la misma carta gris.
+//
+// Lo que hay que mirar: si una línea de luz basta para reconocer la rareza de
+// un vistazo, ahora que es lo único de color en toda la carta; si la fila de
+// ocho dentro de la placa se lee igual de rápido que suelta debajo de ella; y
+// si el raíl sobre el arte estorba más aquí que en el A, donde no había
+// cantoneras con las que chocar. Míralo en los tres héroes: son los únicos
+// sujetos con ilustración definitiva de V3, así que son los que dicen la
+// verdad.
+function ForjaCard({ subject }: { subject: Subject }) {
+  return (
+    <>
+      <Art subject={subject} />
+      <ForjaFrame />
+      <Rail subject={subject} />
+      <div className="sketch__foot">
+        <Plate
+          subject={subject}
+          className="sketch__plate sketch__plate--metal"
+          sub={null}
+          after={
+            <ul className="sketch__pods">
+              {SKILLS.map((s) => (
+                <Stat key={s.key} subject={subject} skill={s.key} base="pod" />
+              ))}
+            </ul>
+          }
+        >
+          {/* El medallón que el D usaba para el Tier aquí lleva la RAZA, y con
+              eso la placa se queda sin subtítulo: el emblema dice de quién es
+              la carta y el color de la veta, de qué clase de tier —o si es un
+              héroe—. El rango sigue en el title para poder comprobarlo. */}
+          <span className="sketch__boss" title={`${subject.race} · ${rankOf(subject)}`}>
+            <b className="sketch__boss-value">{subject.raceIcon}</b>
+          </span>
+        </Plate>
+      </div>
+    </>
+  );
+}
+
 const SKETCH_CARDS: Record<SketchId, (p: { subject: Subject }) => React.ReactElement> = {
   rejilla: RejillaCard,
   gema: GemaCard,
   losa: LosaCard,
   blindada: BlindadaCard,
+  forja: ForjaCard,
 };
 
 /**

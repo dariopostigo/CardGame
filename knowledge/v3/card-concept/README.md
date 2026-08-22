@@ -40,13 +40,20 @@ prosa — a diferencia de las de v2, que eran casi todo texto de efecto:
 > 🧪 Abominación de plaga—. El marco tiene que aguantar cinco, y un chip de más
 > es justo lo que rompe un raíl o una cenefa que iba justa.
 
+> **Y el Tier no lo tienen todas.** Esa fila vale para una carta de unidad. Un
+> **héroe** no tiene tier —tiene nivel, que es otra cosa y sigue sin definir—,
+> así que cualquier marco que reserve un sitio fijo para el Tier tiene que
+> decir qué pone ahí en las cartas de héroe. Es el problema que se le ve encima
+> a la mezcla D, que lo había subido a un medallón del marco.
+
 Y tiene que aguantar los dos extremos de
 [`docs/v3/razas.md`](../../../docs/v3/razas.md) sin romperse:
 
 - **🗡️ Miliciano (tier 1)** — cero Características, Vida de dos cifras, nombre
   corto. Es el que descubre los huecos que se ven vacíos.
 - **🐉 Dragón dorado (tier 8)** — cuatro Características, Vida de tres cifras,
-  nombre de catorce caracteres. Es el que descubre los huecos que rebosan.
+  trece caracteres de nombre. Es el techo de la raza piloto y el que descubre
+  los huecos que rebosan.
 - **🐉 Dragón esquelético (tier 8, No-muertos)** — cinco Características y
   dieciocho caracteres de nombre. No es de Humanos, así que no toca a la raza
   piloto, pero es el peor caso real del catálogo y por eso entra.
@@ -55,9 +62,24 @@ Y tiene que aguantar los dos extremos de
 
 Los tres conceptos de abajo están montados como bocetos funcionando en la wiki,
 en **Cartas › Diseño de cartas** (`/docs/v3/cards/design`): un boceto por
-concepto, con los tres sujetos de arriba y los otros tres de en medio. El
-código está en `components/design/v3/` (los sujetos de muestra, en
-`sample.ts`) y sus estilos en `styles/components/card-sketch/`.
+concepto. El código está en `components/design/v3/` y sus estilos en
+`styles/components/card-sketch/`.
+
+**Los sujetos son la plantilla real de la raza piloto**, no una selección: las
+**ocho unidades de 👤 Humanos** en su orden de progresión (tier 1 → 8) y **tres
+de sus cuatro héroes** (⚔️ Guerrero, 🔮 Mago y ✝️ Sacerdote), con nombres,
+emojis y Características copiados de
+[`knowledge/v3/races-concept/razas.md`](../races-concept/razas.md). Los héroes
+están por dos motivos: no tienen tier, y son los tres que **ya tienen
+ilustración de V3** (`public/assets/v3/races/humanos/`) — falta el
+🏹 Arquero, que aún no está dibujado. Aparte, etiquetado como caso límite, va
+el 🐉 Dragón esquelético, que no es de Humanos pero es el único que llega a
+cinco Características. Todo eso vive en `sample.ts`; lo único inventado ahí son
+los valores de las 8 Habilidades, y de ellos solo importa cuántas cifras tienen.
+
+> **Las tres cartas de héroe son las que dicen la verdad.** Son las únicas con
+> arte real de este juego: las demás llevan emoji o un recorte prestado de v2,
+> y un marco encima de un emoji siempre parece mejor de lo que es.
 
 Es donde se contesta lo que este documento deja abierto, porque hay cosas —si
 la fila de ocho se lee, si el cero molesta, cuánto arte se come un panel— que
@@ -229,6 +251,10 @@ leyéndose como blindaje aunque el arte vaya a sangre por debajo.
   rótulo tiene que arrancar por debajo de él —21px de aire— o se lo traga. A
   cambio el subtítulo se queda solo con la raza, así que la placa no crece
   tanto como parece.
+- **Y no vale para los héroes**, que no tienen tier. Hoy el medallón les pone
+  una corona, que funciona, pero deja claro que ese hueco no es "el Tier" sino
+  "el rango": una casilla que cada tipo de carta rellena a su manera. Si el
+  marco se queda, hay que decidir si eso es una plantilla o dos.
 - **La banda cuesta 30px de fila.** Con 15px de marco a cada lado, cada cápsula
   de la fila de ocho baja de ~34px (boceto C) a ~30px. La Vida de tres cifras
   del 🐉 Dragón dorado sigue entrando, pero ya sin holgura: es el techo.
@@ -237,16 +263,180 @@ leyéndose como blindaje aunque el arte vaya a sangre por debajo.
   Eso puede ser exactamente lo que se quiere o justo lo que no; es la decisión
   que este boceto pone encima de la mesa.
 
+### Mezcla E — Forja (el boceto D, abierto por la mitad)
+
+Boceto **E · Forja** en `/docs/v3/cards/design`. Comparte el marco vectorial
+con el D (`ForjaFrame` en `components/design/v3/sketch-frames.tsx`) y tiene su
+propio parcial en `styles/components/card-sketch/_forja.scss`.
+
+Sale del D pero **acaba diciendo lo contrario que él**, y esa oposición es el
+motivo de que los dos convivan:
+
+| | Boceto D | Boceto E |
+|---|---|---|
+| El metal | **es** la rareza: una legendaria es una carta dorada entera | es siempre el mismo peltre (`card-sketch("alloy")`), material de carta y no dato |
+| La rareza | tiñe la pieza | se reduce a una **veta de luz** entre los dos raíles del filete |
+| La lectura | la carta está pintada de su rareza | la carta está **encendida** |
+
+Las dos mitades viven en variables separadas a propósito —`armor-vars()` para
+el metal, que aquí no cambia nunca, y `seam-vars()` para la luz, que es lo
+único que cambia de una carta a otra—, porque son exactamente la apuesta del
+boceto.
+
+**1. El filete se abre.** La banda maciza de metal se parte en **dos raíles de
+2,5px** y entre ellos queda un **canal de 7px** por el que corre la veta. La
+luz no es un borde teñido: es un anillo desenfocado, otro nítido encima y un
+núcleo más claro dentro, que es lo que la hace parecer encendida y no una
+tercera línea de color. Las cantoneras siguen yendo por encima, así que la veta
+se ve como **cuatro tramos entre placas** y no como un aro — un aro continuo
+parecía un neón pegado.
+
+Ocupa lo mismo que la banda del D (los 15px de `$sketch-band`), a propósito:
+entre los dos bocetos solo cambia el aspecto, nunca el sitio, y por eso se
+pueden comparar.
+
+**2. La luz cae hacia dentro.** La veta no se queda en el filete: la carta
+lleva una sombra interior del mismo color (`--seam-soft`, la veta translúcida)
+que baña la ilustración desde los cuatro bordes. Sin eso la veta se lee como un
+tubo de neón pegado al canto —ilumina el escenario pero no la carta—; con eso
+el arte queda dentro de un farol y el color se reconoce sin mirar el borde. Va
+por debajo del pie, así que la placa la tapa: la luz viene de detrás de ella,
+que es lo que corresponde.
+
+**3. Todo el blindaje es del mismo peltre**: cantoneras, placa, medallón, el
+canal de la fila de ocho y los remaches del raíl. Los medallones de
+Característica pasan de pastilla con aro de color a **remache**, del mismo
+metal que las cantoneras.
+
+Y la **placa del nombre va traslúcida**, poco —entre 82% y 88%, subiendo hacia
+abajo, que es donde cae el rótulo—: la ilustración se intuye por debajo en vez
+de cortarse a cuchillo, y la placa deja de parecer una etiqueta pegada encima.
+La fila de ocho se queda opaca a propósito: un número no puede tener una
+ilustración por dentro.
+
+**4. Las Características vuelven al raíl vertical del boceto A**, y el
+Miliciano sigue sin dejar hueco vacío porque con cero medallones ahí queda arte.
+
+**5. El pie se reduce a UNA sola pieza, y las ocho Habilidades se meten
+dentro de ella.** En A, B, C y D el pie es una pila de bandas —nombre, fila de
+ocho, cenefa—; aquí hay una única placa **a sangre de lado a lado**, sin radios
+y sin margen contra el filete, y dentro van el rótulo y los ocho números. La
+carta deja de tener bandas apiladas: tiene ilustración y tiene una placa.
+
+Eso es lo que deja al **nombre ir más grande** (`sketch-font("name-xl")`,
+1,62rem frente a los 1,3rem del resto): ya no hay tres franjas repartiéndose el
+tercio inferior, así que el rótulo puede mandar sin empujar nada. El escalón
+para nombres largos sube con él; si el par se descompensa, «Dragón
+esquelético» vuelve a partir en dos líneas y empuja la fila de ocho contra el
+filete.
+
+Y las cápsulas de Habilidad **desaparecen como pieza**: ni recuadro, ni fondo,
+ni canal empotrado. Los ocho pares icono-número van sueltos sobre la chapa. Con
+ocho en fila, el recuadro era la mitad de la tinta del pie y cada cifra competía
+con su propia casilla. Esto **solo se lo puede permitir este boceto**, y es la
+otra cosa que le compra la placa única: en el A o en el C, sin recuadro, los
+números caerían sobre la ilustración.
+
+*Antes de esto se probó con la fila de ocho arriba, en una banda de cabecera
+propia. Se descartó: caía justo sobre las cabezas de las figuras, que es la
+franja que `illustrations.md` manda dejar visible.*
+
+**6. El medallón lleva la RAZA, y con eso la placa se queda sin subtítulo.** El
+disco que el D usaba para el Tier aquí no lleva número: lleva el **emblema de la
+raza** (💀 en el Dragón esquelético, 👤 en los humanos). Y como la raza ya está
+dicha —en imagen, no en letra—, la línea de «👤 Humanos · Tier 8» desaparece
+entera: bajo el nombre no queda nada escrito.
+
+Lo que hacía esa línea se reparte en dos piezas que ya existían: la raza la dice
+el medallón y el rango, **el color de la veta** —que en una unidad sale del tier
+y en un héroe es su raíl rojo propio—. Es el reparto que este boceto lleva
+haciendo desde el principio llevado hasta el final: la carta enseña, no escribe.
+
+El medallón cambia de cara para poder hacerlo. En el D es un disco de piedra
+casi negro, que va bien detrás de una cifra dorada y fatal detrás de un emoji: un
+emoji trae sus propios tonos y no acepta color, así que necesita **papel claro**
+detrás o se lee como una mancha —👤 sobre el disco negro era exactamente eso—. Va
+de peltre claro, misma lección que las fichas del tablero (`$piece`: oro claro
+bajo el cofre).
+
+**Lo que se descubre:**
+
+- **Sacar la rareza del metal resuelve solo el problema que el D tenía con la
+  placa.** Allí había que dejarla negra para que el oro de una legendaria no se
+  tragara el rótulo, y el precio era que marco y placa parecían dos objetos
+  distintos. Con el metal fijo, el bisel de la placa se ajusta **una vez** y
+  vale para las once cartas.
+- **Una línea de luz basta para reconocer la rareza**, incluso siendo lo único
+  de color en toda la carta — y deja la ilustración completamente en paz, que
+  es lo que el D no hacía.
+- **Pero necesita el derrame hacia dentro para que sea luz y no un borde.** Con
+  la veta sola, el color se queda en el canto y la carta parece una lámina
+  neutra con una moldura de colores; con la sombra interior, la ilustración
+  entera está bañada y el tier se reconoce mirando al centro de la carta. Es la
+  diferencia entre pintar el marco y encender la carta.
+- **Con la común la veta no se lee como luz sino como cromo**, porque el color
+  de esa rareza es casi blanco. No es un fallo del boceto: es que la escala de
+  `$rarity` arranca en un gris y una luz gris no es una luz.
+- **El raíl de Características ya no puede arrancar en la esquina**, porque
+  ahí está la cantonera. Empieza 12px más abajo que en el boceto A, y eso hay
+  que tenerlo en cuenta si el marco final lleva herrajes.
+- **Las ocho Habilidades no pueden ir arriba.** Se probó en una banda de
+  cabecera y caía justo sobre las cabezas de las tres ilustraciones definitivas
+  de héroe: el encuadre sube la figura para que la cara quede en el tercio alto
+  (`object-position: 50% 28%`) y la banda se comía exactamente esa franja. La
+  parte inferior de una carta es la única que la dirección de arte da por
+  perdida, así que ahí es donde caben los datos.
+- **Ir a sangre resuelve el aire, pero se come 15px por cada lado.** La placa va
+  de x=0 a x=300 y es el marco, que se pinta encima, quien le recorta los
+  extremos: así queda pegada al canto interior del filete sin ningún margen que
+  ajustar. El precio es que hay que descontar el filete a mano en los
+  acolchados —si las ocho columnas reparten los 300px enteros, el Dragón dorado
+  pierde el primer dígito de sus 240 de Vida.
+- **Y el bisel de la placa hay que recalibrarlo cuando la placa cambia de
+  altura.** Con la fila de ocho dentro mide el doble, y el degradado
+  proporcional que se ajustó para la placa baja dejaba el rótulo grande sobre
+  la zona clara de la chapa. Los cortes van pronto (6% / 18% / 44%) y no
+  repartidos: el filo de luz se queda en el canto de arriba y el cuerpo se
+  apaga antes de que llegue el nombre.
+- **Un emblema sustituye a una línea de texto, y se lee antes.** El 💀 del
+  Dragón esquelético frente al 👤 de cualquier humano se distingue sin leer, y
+  quitar el subtítulo es lo que más aligera el pie de los cinco bocetos. El
+  reparo no es del marco sino del catálogo: el emoji de Humanos es una silueta
+  genérica, así que un emblema de raza solo funciona si `razas.md` da iconos que
+  se distingan entre sí a 42px.
+- **Un emoji necesita papel claro debajo.** No toma color ni familia
+  tipográfica: lo único que se le puede gobernar es el tamaño, y todo lo demás
+  lo decide el fondo. Es la misma regla que ya estaba escrita para las fichas
+  del tablero (`$piece`), y ahora también vale para la carta.
+- **La veta dice el tier, no la rareza** — o al menos eso es lo que se quiere
+  que diga. Hoy lee `--rarity`, que en las unidades es función directa del tier
+  (`rarityForTier`), así que son **cinco escalones para ocho tiers**. Si el tier
+  tiene que verse en ocho, hace falta una escala propia en `styles/settings/`;
+  y en las cartas de héroe, que no tienen tier, la veta no puede decirlo.
+
+  **Y desde el punto 6 esto ya no es un matiz.** Mientras el tier estaba escrito
+  en el subtítulo, el color era un refuerzo; ahora es lo único que lo dice, y con
+  cinco escalones la carta solo puede decir de qué **clase** de tier es. El
+  Miliciano (1) y el Arquero (2) son la misma carta gris. O se acepta que la
+  carta no diga el tier exacto, o hace falta esa escala de ocho.
+
 ## Lo que esto cambia de lo ya escrito
 
-**El lienzo heredado de v2 es el equivocado.** La especificación vigente
+**El lienzo heredado de v2 era el equivocado, y ya está corregido.** La
+especificación vigente
 ([`public/assets/v3/README.md`](../../../public/assets/v3/README.md#lienzo-y-formato))
-arrastra 1536×1050 —apaisado— porque era la medida de las cartas de v2. **Los
-tres conceptos son verticales**, y en los tres la ilustración ocupa la carta
-entera.
-Si V3 va por aquí, la ilustración de carta es **vertical y a sangre**, no un
-recorte apaisado con los bordes tapados. Queda pendiente de que se cierre el
-marco, pero es el primer indicio real de medida que tenemos.
+arrastraba 1536×1050 —apaisado— porque era la medida de las cartas de v2. **Todos
+los conceptos son verticales** y en todos la ilustración ocupa la carta entera,
+así que la ilustración de carta es **vertical y a sangre**, no un recorte
+apaisado con los bordes tapados.
+
+Cerrado el 21 de agosto de 2026: **5:7 (1080×1512)**, que es el de la carta
+construida (300×420), **plano entero y figura centrada**, con el cuarto inferior
+reservado a la banda del nombre. No hacía falta esperar a que ganase un boceto:
+los cinco comparten proporción y los cinco van a sangre. Lo destapó la primera
+tirada de arte real —tres héroes apaisados, en plano medio y descentrados dentro
+del marco vertical—, que es exactamente para lo que servía tener los bocetos
+montados.
 
 Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 
@@ -261,11 +451,74 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   piel—, así que las dos vías siguen abiertas.
 - **Dónde vive la Rareza.** Ninguno de los tres conceptos la trata: A y C no la
   tienen y B la insinúa con el color del arte. En v2 se resolvió en el borde
-  (halo + filete tintados) y esa decisión sigue siendo buena. La mezcla D
-  propone la contraria y más fuerte: el marco entero es de la aleación de la
-  rareza.
+  (halo + filete tintados) y esa decisión sigue siendo buena. Hay tres
+  respuestas dibujadas, y las dos últimas son opuestas y no grados de lo mismo:
+  **filete** de 3px (A, B, C) → **el marco entero teñido** de la rareza (D) →
+  **el marco siempre igual, con la rareza reducida a una veta de luz** (E).
+  Elegir es decidir cuánto tiene que gritar la rareza antes de robarle la carta
+  a la ilustración, y si el marco es una pieza distinta por rareza o una sola
+  pieza con una luz dentro — que también es una decisión de producción.
 - **Si los ceros se imprimen o se ocultan.** A los imprime; con Suerte 0 en
   media plantilla, ocultarlos deja huecos irregulares en la tira.
 - **Si el Tier se dice con un número, con el subtítulo o con el marco.** A, B y
   C lo dicen en el subtítulo; la mezcla D lo sube al medallón del marco y le
   quita el subtítulo. Ya se pueden comparar las dos.
+- **Qué pone donde va el Tier en una carta de héroe**, que no lo tiene. Hoy
+  A, B y C escriben «Héroe» en el subtítulo y la D y la E ponen una corona en
+  el medallón. Depende de que se defina el nivel de héroe, que está pendiente
+  en [`docs/v3/status.md`](../../../docs/v3/status.md) §"Escala de unidades".
+- **Si el rojo sangre es el color de los héroes.** Ya está puesto: un héroe no
+  está en la escala de rareza —no tiene tier— y prestarle un escalón decía que
+  un Sacerdote es "más legendario" que un Guerrero, que es falso. Así que tiene
+  **raíl propio** en `$rarity`, junto a las otras categorías que tampoco son
+  niveles (`"clase"`, `"enemigo"`). Es la sangre de `game("accent-hi")`: el
+  único hueco de color que quedaba —ninguna de las cinco rarezas es roja— y de
+  paso la constante de identidad de la interfaz, así que no hay color nuevo que
+  inventar. Queda por decidir si ese rojo se comparte con algo más (en v2 lo
+  tenía la carta de Enemigo, en un tono vecino) y si todos los héroes van
+  iguales o el nivel los diferencia cuando exista.
+- **Dos Características distintas con el mismo emoji.** El héroe ⚔️ Guerrero de
+  Humanos lleva 🛡️ Resistente al daño físico y 🛡️ Último aliento, y los cuatro
+  bocetos dibujan las Características en glifo y sin texto: la carta enseña el
+  mismo icono dos veces. No es un problema del marco sino del catálogo de
+  Características de `razas.md`, pero es el marco el que lo destapa.
+- **De qué metal es la carta.** Solo se pregunta en el boceto E: es el único
+  donde el metal no lleva ningún dato —en el D *es* la rareza— y por tanto el
+  único donde el tono es una decisión libre. Está montada una **probeta** en el
+  lab (`$sketch-alloy` en `styles/settings/_colors.scss`, selector "Aleación" en
+  la página) con **catorce** candidatos ordenados de oscuro a claro, para que la
+  fila se lea como una escala: carbón, pavonado, hierro, cardenillo, óxido,
+  acero, **peltre** —el de ahora—, cobre, bronce, estaño, latón, plata, oro y
+  marfil. Dos se salen de la familia a propósito, y son los que contestan una
+  pregunta más grande que el tono: el **cardenillo** (verde de pátina, el único
+  que no es gris ni dorado) y el **marfil**, que ya no parece metal sino hueso —
+  están para ver si el marco tiene que ser metálico siquiera.
+  Cada uno es **un solo color**: `armor-vars()` le saca la
+  luz, la sombra y el filo, así que aquí no se elige una paleta, se elige un
+  material. Lo que hay que juzgar no es el marco suelto sino las tres cosas que
+  se apoyan en él —el oro del rótulo, el emblema del medallón, que necesita cara
+  clara, y la veta de rareza, que se apaga si el metal ya es de su tono—. Cuando
+  se decida, el ganador pasa a `"alloy"` y la probeta se borra entera.
+- **Qué tipografía titula la carta.** Hasta ahora el nombre iba en **Cormorant**
+  (`$font-serif-display`), la serif de libro que se heredó de las cartas de v2 sin
+  discutirla: correcta y neutra, dice "documento" antes que "objeto de juego".
+  Está puesta **Platypi** —serif de titulación de remates de pala,
+  `$font-sketch-display`, cargada en `components/design/v3/sketch-fonts.ts`— en
+  los cinco bocetos a la vez, para poder juzgarla sin que cambie nada más. Se
+  carga **variable (300–800)**, y eso no es un detalle de producción: el rótulo
+  se puede mover de peso sin descargar un archivo por escalón, que es lo que no
+  dejaban hacer las dos display que se probaron antes (Skranji, 400/700;
+  Girassol, un solo peso). Está puesta en **300**, el extremo ligero del eje, y
+  con el cuerpo un punto más bajo que al principio (1.46/1.14rem, era
+  1.62/1.24): en fino el rótulo se lee como una inscripción y deja mandar al
+  arte, mientras que grabado y macizo competía con los números. Eso mueve la
+  jerarquía del contraste al **aire**, y arrastra una medida: en el boceto E la
+  fila de ocho pasa de 10 a 16px de separación, porque a diez el nombre fino y
+  los números macizos se leían como un solo bloque. «Dragón esquelético» sigue
+  entrando en una línea en los cinco bocetos. Las cartas de v2 siguen con
+  Cormorant: el token es nuevo y no sustituye al viejo.
+- **Dónde van las Características: raíl vertical o cenefa al pie.** El raíl
+  (A y E) resuelve mejor el caso vacío —con cero medallones queda arte— y deja
+  el pie más limpio; la cenefa (B, C y D) no toca la ilustración. El E enseña
+  el coste del raíl cuando el marco lleva herrajes: hay que bajarlo para que no
+  se meta debajo de la cantonera.

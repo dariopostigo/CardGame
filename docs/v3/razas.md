@@ -145,7 +145,7 @@ Las decisiones de rumbo que enmarcan este documento —los dos tableros, qué ti
 > **Solape pendiente de resolver.** "Resistencia mágica" es a la vez una de las 8 Habilidades y esta Característica, y además ✨ *Resistente a la magia* (en Resistencias e inmunidades) dice prácticamente lo mismo. Tres entradas para un concepto. No se han fundido todavía porque hay unidades con 🔮 Resistencia mágica ya asignada en sus tablas —quitarla las dejaría huérfanas—, así que la decisión (¿qué añade el rasgo sobre la Habilidad?) queda anotada en [status.md](status.md).
 
 ### 🪽 Movimiento y terreno
-- 🪽 **Volador** — Ignora obstáculos del mapa durante el movimiento, pero no puede atravesar enemigos.
+- 🦅 **Volador** — Ignora obstáculos del mapa durante el movimiento, pero no puede atravesar enemigos.
 - 🐾 **Ágil** — Puede atravesar determinadas casillas u obstáculos que otras criaturas no pueden.
 - 🌊 **Anfibio** — Puede desplazarse por agua sin penalización.
 - 🌲 **Explorador** — No recibe penalizaciones de determinados terrenos.
@@ -189,11 +189,11 @@ Las decisiones de rumbo que enmarcan este documento —los dos tableros, qué ti
 | 🧌 Orkos | 🏹 Cazador | 🏹 Ataque a distancia · 👁️ Percepción · 🐺 Bestia |
 | 🧚 Feéricos | 🪄 Hechicero feérico | 🔮 Resistencia mágica · 🐾 Ágil · 🌀 Confusión |
 | 🧚 Feéricos | 🦋 Ilusionista | 🐾 Ágil · 🌀 Confusión · 👁️ Percepción |
-| 🧚 Feéricos | 🧚 Hada | 🪽 Volador · 🐾 Ágil · 🧪 Inmune a estados alterados |
+| 🧚 Feéricos | 🧚 Hada | 🦅 Volador · 🐾 Ágil · 🧪 Inmune a estados alterados |
 | 🧚 Feéricos | 🗡️ Danzante de hojas | 🐾 Ágil · 💥 Golpe crítico · 🩸 Hemorragia |
 | 🐉 Dracónidos | 🐲 Caballero dragón | 🛡️ Resistente al daño físico · 🔥 Resistente al fuego · 😱 Inmune al miedo |
 | 🐉 Dracónidos | 🔥 Piromante | 🔥 Resistente al fuego · 🔮 Resistencia mágica |
-| 🐉 Dracónidos | 🪽 Dracoguerrero | 🪽 Volador · 🔥 Resistente al fuego · 🛡️ Resistente al daño físico |
+| 🐉 Dracónidos | 🪽 Dracoguerrero | 🦅 Volador · 🔥 Resistente al fuego · 🛡️ Resistente al daño físico |
 | 🐉 Dracónidos | ✨ Oráculo dracónico | 🔮 Resistencia mágica · 🔥 Resistente al fuego · 😱 Inmune al miedo |
 | 🐀 Hombres rata | 🗡️ Asaltante | 🐾 Ágil · 💥 Golpe crítico · 🩸 Hemorragia |
 | 🐀 Hombres rata | ☠️ Alquimista | ☠️ Resistente al veneno · ☠️ Inmune al veneno · 🏹 Ataque a distancia |
@@ -331,9 +331,9 @@ Las decisiones de rumbo que enmarcan este documento —los dos tableros, qué ti
 | 🛡️ Caballero | 🛡️ Resistente al daño físico |
 | 🔮 Mago | 🔮 Resistencia mágica |
 | 🐎 Caballería | 🐾 Ágil · 💥 Golpe crítico |
-| 🦅 Grifo | 🪽 Volador · 💥 Golpe crítico · 🐾 Ágil |
+| 🦅 Grifo | 🦅 Volador · 💥 Golpe crítico · 🐾 Ágil |
 | ✝️ Paladín | 🛡️ Resistente al daño físico · 😱 Inmune al miedo · 🔮 Resistencia mágica |
-| 🐉 Dragón dorado | 🪽 Volador · 🔥 Inmune al fuego · 🔥 Fuego · 💣 Explosivo |
+| 🐉 Dragón dorado | 🦅 Volador · 🔥 Inmune al fuego · 🔥 Fuego · 💣 Explosivo |
 
 ### ⛏️ Enanos
 
@@ -359,7 +359,7 @@ Las decisiones de rumbo que enmarcan este documento —los dos tableros, qué ti
 | 🧙 Nigromante | 💀 No-muerto · 🔮 Resistencia mágica |
 | 🧛 Vampiro | 💀 No-muerto · 🩸 Robo de vida · 🐾 Ágil |
 | ☠️ Abominación | 💀 No-muerto · 🛡️ Resistente al daño físico · 🩸 Hemorragia · 😱 Inmune al miedo |
-| 🐉 Dragón esquelético | 💀 No-muerto · 🪽 Volador · 🧊 Congelación · 😱 Inmune al miedo · 🧪 Inmune a estados alterados |
+| 🐉 Dragón esquelético | 💀 No-muerto · 🦅 Volador · 🧊 Congelación · 😱 Inmune al miedo · 🧪 Inmune a estados alterados |
 
 ### 🔥 Demonios infernales
 
@@ -406,12 +406,12 @@ Las decisiones de rumbo que enmarcan este documento —los dos tableros, qué ti
 |---|---|
 | 🧚 Duende feérico | 🐾 Ágil |
 | 🏹 Arquero feérico | 🏹 Ataque a distancia · 🐾 Ágil |
-| 🧚 Hada | 🪽 Volador · 🐾 Ágil |
+| 🧚 Hada | 🦅 Volador · 🐾 Ágil |
 | 🗡️ Danzante de hojas | 🐾 Ágil · 💥 Golpe crítico · 🩸 Hemorragia |
 | 🦋 Ilusionista | 🐾 Ágil · 🌀 Confusión |
 | 🌙 Encantador | 🌀 Confusión · 🧪 Inmune a estados alterados |
 | 🦌 Ciervo feérico | 🐾 Ágil · 🌲 Explorador · 🧪 Inmune a estados alterados |
-| 🐲 Dragón feérico | 🪽 Volador · 🐾 Ágil · 🔮 Resistencia mágica · 🌀 Confusión |
+| 🐲 Dragón feérico | 🦅 Volador · 🐾 Ágil · 🔮 Resistencia mágica · 🌀 Confusión |
 
 ### 🐉 Dracónidos
 
@@ -421,10 +421,10 @@ Las decisiones de rumbo que enmarcan este documento —los dos tableros, qué ti
 | 🏹 Cazador dracónido | 🏹 Ataque a distancia · 🔥 Resistente al fuego |
 | 🛡️ Caballero dracónido | 🛡️ Resistente al daño físico · 🔥 Resistente al fuego |
 | 🔥 Piromante | 🔥 Fuego · 🔥 Resistente al fuego · 🔮 Resistencia mágica |
-| 🪽 Dracoguerrero | 🪽 Volador · 🔥 Resistente al fuego · 💥 Golpe crítico |
+| 🪽 Dracoguerrero | 🦅 Volador · 🔥 Resistente al fuego · 💥 Golpe crítico |
 | 🐲 Dracónido ancestral | 🔥 Resistente al fuego · 🔮 Resistencia mágica · 😱 Inmune al miedo |
-| 🐉 Joven dragón | 🪽 Volador · 🔥 Fuego · 🔥 Resistente al fuego |
-| 🐲 Dragón ancestral | 🪽 Volador · 🔥 Inmune al fuego · 🔥 Fuego · 💣 Explosivo · 😱 Inmune al miedo |
+| 🐉 Joven dragón | 🦅 Volador · 🔥 Fuego · 🔥 Resistente al fuego |
+| 🐲 Dragón ancestral | 🦅 Volador · 🔥 Inmune al fuego · 🔥 Fuego · 💣 Explosivo · 😱 Inmune al miedo |
 
 ### 🐀 Hombres rata
 

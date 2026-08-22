@@ -71,16 +71,29 @@ gris, vectorial demasiado perfecto.
 
 Anatomía estilizada y ligeramente exagerada:
 
--   Proporciones heroicas.
 -   Cabeza algo mayor que en anatomía realista.
 -   Manos y pies ligeramente grandes.
--   Torso y hombros reforzados cuando corresponda.
 -   Extremidades simplificadas.
 -   Silueta muy clara.
 -   Posturas expresivas.
 
 La exageración sirve al diseño, pero no debe convertir a todos los
 personajes en caricaturas infantiles.
+
+**«Heroico» es el nivel de estilización, no el cuerpo de todo el mundo.** Esta
+sección dice **cómo se dibuja** un cuerpo; **qué cuerpo toca** no se decide aquí
+y no es global. La proporción y la masa se reparten en tres, y la lista está en
+[`../races-concept/sujetos.md`](../races-concept/sujetos.md#el-reparto-quién-decide-el-cuerpo):
+
+-   **la raza** fija el **rango** (escala en cabezas, rasgos de especie, techo y suelo de masa);
+-   **el papel** —clase o tier— fija la complexión dentro de ese rango;
+-   **el tier o el rango del sujeto** fija la edad y el desgaste.
+
+Esta sección decía «proporciones heroicas» y «torso y hombros reforzados» como
+norma universal, y eso fue lo que hizo salir a los tres primeros héroes de
+Humanos jóvenes, esbeltos y musculosos, Mago y Sacerdote incluidos. **Un Mago no
+tiene masa muscular y un Sacerdote de cincuenta años no tiene abdominales**, y
+ninguna de las dos cosas es un fallo de estilización: es el reparto.
 
 ------------------------------------------------------------------------
 
@@ -94,6 +107,16 @@ arrugas, cicatrices, dientes imperfectos y asimetrías.
 La personalidad es más importante que la perfección.
 
 Evitar rostros genéricos, belleza perfecta y realismo fotográfico.
+
+**Y la belleza es una decisión de raza, nunca el estado por defecto.** Toda IA de
+imagen entrega caras jóvenes, simétricas y atractivas si no se le dice otra cosa,
+y eso aplana el juego: los Elfos son la única raza a la que se le **pide** ser
+hermosa —y fría, no dulce—; los Humanos son gente corriente; los Hombres rata
+dan asco; los Constructos no tienen cara. El valor de cada raza está en su ficha
+de [`../races-concept/sujetos.md`](../races-concept/sujetos.md#identidad-de-raza),
+en el eje **Belleza**, y **se pide en positivo** en el campo `ROSTRO` de cada
+sujeto. La edad va al lado, en su propio campo, con década concreta: «adulto» a
+secas se lee como veinticinco años.
 
 ------------------------------------------------------------------------
 
@@ -212,13 +235,18 @@ Regla:
 -   cinturón;
 -   accesorios.
 
-**Detalle bajo:**
+**Detalle NULO** —no «bajo», nulo: sin contorno y a un solo valor, según
+la §16—:
 
 -   fondo lejano;
 -   cielo;
 -   montañas;
 -   vegetación distante;
 -   arquitectura secundaria.
+
+Esta lista decía «detalle bajo» y era demasiado suave: «bajo» le permite a una
+IA dibujar un castillo entero con menos marcas, y eso sigue compitiendo con el
+personaje. La escala de la §16 es la que manda.
 
 ------------------------------------------------------------------------
 
@@ -289,6 +317,10 @@ Preferir poses con personalidad:
 Evitar postura de maniquí, brazos pegados al cuerpo y frontalidad
 rígida.
 
+La pose se resuelve **de cuerpo entero y con los pies apoyados en el suelo**: es
+lo que pide el encuadre de la §18, y una pose pensada de cintura para arriba
+acaba obligando a recortar.
+
 ------------------------------------------------------------------------
 
 ## 16. Fondos
@@ -299,14 +331,52 @@ Puede incluir bosques, montañas, castillos, ruinas, fortalezas, aldeas,
 caminos, mazmorras, campos de batalla, templos, torres, puentes, niebla
 y magia.
 
-Jerarquía:
+### 16.1 · Tres planos, y solo tres
 
-**Primer plano:** detalle medio\
-**Personaje:** máximo detalle\
-**Fondo medio:** detalle moderado\
-**Fondo lejano:** simplificado y atmosférico
+**«Secundario» y «no robar protagonismo» no son instrucciones, son deseos**, y
+una IA los cumple a su manera: el primer Guerrero de Humanos salió con un
+castillo de sillares contados, dos estandartes y una bandera con un león
+legible. Eso es una segunda ilustración detrás del personaje. La jerarquía se
+pide con valores, no con adjetivos:
 
-El escenario nunca debe robar protagonismo.
+| Plano | Línea | Saturación | Valor | Detalle |
+|---|---|---|---|---|
+| **Personaje** | Contorno negro grueso + líneas interiores completas | **100%** | Rango completo: su negro es el más negro y su luz la más clara de la imagen | Máximo |
+| **Plano medio** | Línea **fina**, o ninguna | ~50% | Comprimido hacia el valor del fondo | Siluetas legibles, sin textura ni marcas |
+| **Fondo lejano** | **SIN línea.** Solo manchas planas | ~20%, casi monocromo | **Un solo valor**, plano y claro | Ninguno |
+
+**Lo que se pierde con la distancia es LA LÍNEA, no el foco.** Esta es la
+traducción a nuestro idioma de lo que hace la pintura con el desenfoque: en un
+dibujo entintado un fondo borroso se lee como un error, y además el negativo
+maestro prohíbe los degradados fotográficos. Aquí la profundidad se construye
+retirando el contorno y comprimiendo el valor — perspectiva aérea, no
+profundidad de campo. **Nada de `bokeh`, nada de desenfoque de lente.**
+
+### 16.2 · Cuatro prohibiciones
+
+1. **Nada legible detrás.** Ni heráldica que se pueda identificar, ni caras, ni
+   ventanas que se puedan contar, ni juntas de sillería. Si el ojo puede leer un
+   objeto del fondo, ese objeto compite.
+2. **El acento de la raza NO aparece en el fondo lejano.** El oro de los
+   Humanos, el granate enano, el ámbar élfico, la brasa demoníaca: el acento es
+   lo que distingue a la raza a 100 px
+   ([`../races-concept/sujetos.md`](../races-concept/sujetos.md#identidad-de-raza)),
+   y si está también detrás, deja de señalar al personaje. El fondo se queda con
+   los dominantes, desaturados.
+3. **Las dos esquinas de arriba van tranquilas**: valor plano y uniforme, sin
+   silueta que las cruce. Encima se imprimen números
+   ([`../card-concept/`](../card-concept/README.md)), y un número sobre un
+   estandarte no se lee.
+4. **Como mucho dos planos de fondo.** Un escenario con cinco capas de
+   profundidad es un paisaje, y esto es una carta.
+
+### 16.3 · La excepción: los colosales
+
+Los sujetos de tier 7 y 8 usan el fondo **como vara de medir** —el castillo
+minúsculo que dice que el dragón es enorme—, así que ahí el fondo lejano **sí
+conserva una silueta reconocible**. Sigue sin línea, plano y desaturado: es una
+silueta que da escala, no un edificio dibujado. Es la única excepción, y está
+así en sus bloques de prompt.
 
 ------------------------------------------------------------------------
 
@@ -328,20 +398,54 @@ reflejos complejos.
 
 La luz debe parecer diseñada para una ilustración.
 
+### 17.1 · Dos cosas que no se eligen por imagen
+
+Lo de arriba es la paleta de recursos; estas dos son fijas, y lo son porque hay
+**132 imágenes** que tienen que parecer de la misma mano:
+
+- **La luz principal entra siempre desde ARRIBA A LA IZQUIERDA.** Da igual el
+  escenario. Con la dirección libre, cada generación elige la suya y una
+  cuadrícula de cartas queda incoherente aunque cada carta esté bien.
+- **El contraluz no es opcional: es lo que separa la figura del fondo.** Un
+  filete de luz recorriendo el contorno del personaje por el lado contrario a la
+  luz principal. Con el fondo aplanado y desaturado de la §16, el contraluz es lo
+  que evita que la silueta se pegue al escenario — y es el mismo recurso que usan
+  las cartas de referencia para despegar al personaje de la neblina.
+
 ------------------------------------------------------------------------
 
 ## 18. Encuadre
 
-Lo que es estilo: **el personaje va centrado, con aire en los cuatro bordes**, y
-el fondo puede llegar hasta el filo aunque el personaje no. Nada importante
-—rostro, armas, manos, escudo— pegado al borde, y menos en las esquinas: encima
-va un marco que los tapa.
+Lo que es estilo son tres cosas, y las tres se piden en positivo porque una IA
+por defecto no las da:
+
+**1. Plano entero.** El personaje se ve **completo, de la coronilla a los pies**,
+con los pies apoyados en suelo visible. Ni busto, ni plano medio, ni primer
+plano: si la figura se corta por el muslo, la ilustración está mal aunque el
+dibujo sea bueno. Es lo que se pinta en una carta, no un retrato.
+
+**2. Centrado y de tamaño contenido.** El eje del cuerpo va en el centro
+horizontal de la imagen, y **la figura ocupa dos tercios de la altura, no la
+altura entera**. La tentación de la IA es acercarse; hay que alejarla. Un sujeto
+ancho (una montura) o enorme (un dragón) se resuelve **retrocediendo la cámara**,
+nunca recortándolo: una silueta pequeña y entera se lee, media silueta grande no.
+
+**3. Aire en los cuatro bordes**, y el fondo sí puede llegar al filo aunque el
+personaje no. Nada importante —rostro, manos, armas, escudo— pegado al borde, y
+menos en las esquinas: encima va un marco que los tapa, y abajo una banda opaca
+con el nombre.
+
+Cámara a la altura del pecho y lente neutra. El contrapicado y el gran angular
+engordan al sujeto y le comen los pies — que es justo el fallo que hay que
+evitar.
 
 **Las medidas no son estilo y no viven aquí**: tamaño, ratio, sangrado,
-transparencia, aire exacto y extensión están en
+transparencia y los porcentajes exactos de aire, alto de figura y banda útil
+están en
 [`public/assets/v3/README.md`](../../../public/assets/v3/README.md#lienzo-y-formato),
-porque dependen del componente que va a pintar la imagen. Están pendientes de
-que V3 cierre su marco de carta.
+porque dependen del componente que va a pintar la imagen. Lo que sí está cerrado
+allí es que el lienzo es **vertical**: la carta de V3 lo es, y el arte va a
+sangre dentro de ella.
 
 ------------------------------------------------------------------------
 
@@ -374,7 +478,46 @@ Cuando la IA permita instrucciones negativas:
 > detailed armor, excessive microdetails, smooth airbrushed painting,
 > oil painting, watercolor, soft photographic gradients, no outlines,
 > thin outlines, generic fantasy character, anime, manga, pixel art,
-> low-poly, text, logo, watermark, UI, frame
+> low-poly, text, logo, watermark, UI, frame, close-up, extreme
+> close-up, portrait crop, bust shot, half body, waist-up, cowboy shot,
+> cropped legs, cropped feet, cut off at the knees, feet out of frame,
+> subject touching frame edge, off-center subject, landscape
+> orientation, wide-angle lens, extreme low angle, fashion model,
+> supermodel, cover model, glamour shot, beauty portrait, makeup,
+> lipstick, airbrushed face, flawless poreless skin, perfectly
+> symmetrical face, idealized beauty, sexy, cleavage, bare midriff,
+> detailed background, busy background, cluttered background, competing
+> background detail, readable background architecture, background
+> outlines, bokeh, depth of field, lens blur, out-of-focus background,
+> scenic landscape, five-layer depth
+
+> **Añadido el bloque de fondo** (21 de agosto de 2026): de
+> `detailed background` a `five-layer depth`. Tercera vez que el mismo tipo de
+> fallo cuesta una tirada: la §16 decía «secundario» y «no robar protagonismo»,
+> que son deseos y no instrucciones, y el primer Guerrero salió con un castillo
+> de sillares contados y una bandera legible detrás. **Y fíjate en que `bokeh`,
+> `depth of field` y `lens blur` están PROHIBIDOS, no pedidos**: la referencia que
+> inspiró esta regla es pintura y difumina, pero aquí se dibuja a tinta y un fondo
+> borroso parece un error. Lo que se retira con la distancia es la línea.
+
+> **Añadido el bloque de encuadre** (21 de agosto de 2026): de `close-up` a
+> `extreme low angle`. Los tres primeros héroes de Humanos salieron en plano
+> medio, cortados por el muslo y con la figura fuera del eje, porque el encuadre
+> se pedía solo en positivo y la IA por defecto se acerca. La §18 lo pide en
+> positivo **y** aquí se prohíbe lo contrario: hacen falta las dos.
+
+> **Añadido el bloque de belleza** (misma fecha): de `fashion model` a
+> `bare midriff`. Mismo fallo por otro lado — los tres héroes salieron guapos,
+> jóvenes y musculosos, y en el Mago y el Sacerdote eso no tiene sentido.
+>
+> **Ojo con lo que NO está en esa lista, y es a propósito:** ni `muscular`, ni
+> `athletic build`, ni `young`, ni `handsome`, ni `beautiful`. Prohibirlos
+> rompería al Guerrero, al Paladín, a los Orkos enteros, al Miliciano —que es
+> joven a propósito— y a los Elfos, que **son** hermosos por diseño de raza. Es
+> la misma lección que `heavy plate armor`: **al negativo solo va lo que ningún
+> sujeto del juego quiere nunca**. El cuerpo, la edad y la cara que sí tocan se
+> piden en positivo, sujeto a sujeto, con los ejes de raza de
+> [`../races-concept/sujetos.md`](../races-concept/sujetos.md#identidad-de-raza).
 
 > **Retiradas `pristine heroic armor` y `heavy plate armor`** (20 de agosto de
 > 2026). Venían de calibrar el estilo contra un personaje de cuero gastado, y V3
@@ -410,12 +553,19 @@ Cuando la IA permita instrucciones negativas:
 
 Añadir después:
 
-> **PERSONAJE:** \[descripción\]\
+> **CUERPO:** \[complexión de este sujeto, dentro del rango de su raza\]\
+> **EDAD:** \[década concreta, o «sin edad» si su raza lo es\]\
+> **ROSTRO:** \[rasgos + la belleza que le toca a su raza, en positivo\]\
 > **EQUIPO:** \[equipo\]\
 > **PERSONALIDAD:** \[personalidad\]\
-> **POSE:** \[pose\]\
+> **POSE:** \[pose, de cuerpo entero\]\
 > **ESCENARIO:** \[escenario\]\
 > **PALETA:** \[colores\]
+
+Los tres primeros campos eran uno solo, **PERSONAJE**, y por eso se rellenaban
+con la anatomía de la raza y los doce sujetos salían iguales. Separados, cada uno
+obliga a una decisión: **cuánta masa**, **cuántos años** y **qué cara**. El
+reparto de quién decide cada cosa está en la §4.
 
 ------------------------------------------------------------------------
 
@@ -471,6 +621,9 @@ o cartoon infantil, está fuera del estilo.
 -   [ ] Contorno negro claramente visible.
 -   [ ] Se percibe como dibujo 2D.
 -   [ ] Anatomía estilizada.
+-   [ ] **La complexión es la de su papel, no la de su raza** (§4): el que no debe tener masa, no la tiene.
+-   [ ] **La edad se lee, y es la que le toca** (§4). Si todos los sujetos de la raza parecen tener treinta años, está mal.
+-   [ ] **La belleza es la de su raza** (§5), no la que la IA da por defecto. Un humano corriente no es guapo; un elfo sí.
 -   [ ] Silueta reconocible.
 -   [ ] Rostro con personalidad.
 -   [ ] Colores ricos y gráficos.
@@ -478,12 +631,19 @@ o cartoon infantil, está fuera del estilo.
 -   [ ] Pocos degradados fotográficos.
 -   [ ] Detalle concentrado en zonas importantes.
 -   [ ] Equipo reconocible.
--   [ ] Fondo subordinado.
+-   [ ] **El fondo lejano no tiene ni una línea de contorno** (§16). Si tiene, no es fondo: es un segundo dibujo.
+-   [ ] **No se puede leer ningún objeto del fondo** — ni heráldica, ni caras, ni ventanas contables (§16).
+-   [ ] **El acento de color de la raza no está en el fondo**, solo en el personaje (§16).
+-   [ ] **Las dos esquinas de arriba están tranquilas**, sin silueta que las cruce: ahí van números (§16).
+-   [ ] **Hay contraluz** y la figura se despega del fondo (§17).
+-   [ ] La luz principal viene de arriba a la izquierda (§17).
 -   [ ] Puede convertirse posteriormente en sprite.
 -   [ ] Pertenece visualmente al mismo videojuego.
 -   [ ] No hay fotorealismo.
 -   [ ] No parece un render 3D.
 -   [ ] No hay exceso de microdetalle.
+-   [ ] **Se ve el personaje entero, pies incluidos** (§18). Si está cortado por el muslo, se descarta sin mirar nada más.
+-   [ ] **La figura va centrada** y ocupa unos dos tercios de la altura, no toda (§18).
 -   [ ] Nada importante pegado al borde (§18).
 -   [ ] No contiene texto, logos, marcas de agua ni interfaz.
 

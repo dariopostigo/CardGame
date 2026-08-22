@@ -18,7 +18,7 @@
 |---|---|
 | [`razas.md`](razas.md) | El documento de trabajo. Copia de `docs/v3/razas.md` del 20 de agosto de 2026, con los enlaces reapuntados. **Este es el que se edita.** |
 | [`sujetos.md`](sujetos.md) | La cola de generación de arte: los **132 sujetos** de `razas.md` enumerados, más la **identidad visual de las 11 razas**. Derivado de `razas.md` — si cambia un nombre allí, cambia aquí. |
-| [`prompts/`](prompts/humanos.md) | Los prompts **montados y listos para pegar** en una IA, un archivo por raza. Hoy solo [`humanos.md`](prompts/humanos.md), los 12 sujetos de la raza piloto. |
+| [`prompts/`](prompts/preambulo.md) | Los prompts **montados y listos para pegar** en una IA. **Las once razas escritas, los 132 sujetos.** [`preambulo.md`](prompts/preambulo.md) es lo invariante —prompt base, formato, encuadre, negative prompt— y se pega una vez; cada archivo de raza lleva su identidad y sus 12 bloques. |
 
 Las imágenes de referencia de razas, héroes y unidades —si hacen falta para
 decidir— van aquí junto al texto, como en `card-concept/`. La referencia visual

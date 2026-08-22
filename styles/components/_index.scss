@@ -38,4 +38,6 @@
 @use "card-sketch/losa";
 // El D es una mezcla del C con card-themes/armored, así que va después de los
 // dos: hereda del esqueleto como los otros, pero pisa piezas que el C ya tocó.
+// Y el E sale del D, así que cierra la fila.
 @use "card-sketch/blindada";
+@use "card-sketch/forja";

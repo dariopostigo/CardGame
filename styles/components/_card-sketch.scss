@@ -6,14 +6,16 @@
 //
 // Espejo de _card.scss para la carta de v2, y separado de ella a propósito:
 // aquella está congelada y esta se está decidiendo
-// (knowledge/v3/card-concept/). Aquí va SOLO lo que los tres bocetos
+// (knowledge/v3/card-concept/). Aquí va SOLO lo que todos los bocetos
 // comparten, que es lo que ya no está en discusión porque las tres
 // referencias del concepto coinciden en ello:
 //
 //   · arte a sangre, sin ventana enmarcada;
 //   · el nombre sobre banda opaca, nunca sobre el arte desnudo;
 //   · Características en glifo, nunca en texto;
-//   · Rareza en el filete, la única decisión que se hereda tal cual de v2.
+//   · Rareza en el filete, la única decisión que se hereda tal cual de v2
+//     (y la que los bocetos D y E ponen en duda, cada uno subiendo la apuesta:
+//     el marco entero de la aleación, y luego encendido).
 //
 // Lo que cambia de un boceto a otro —dónde caen las ocho Habilidades y las
 // Características— vive en card-sketch/, un parcial por boceto, que van
@@ -129,15 +131,20 @@
   background: card-sketch("void");
 }
 
-// Las ilustraciones de relleno son las apaisadas de v2 (ver sample.ts): en
-// vertical hay que recortarlas por los lados, y el encuadre se sube porque lo
-// que interesa de una figura es la cabeza — que es justo la restricción que el
-// boceto C acaba imponiendo a la dirección de arte.
+// El `cover` centrado es lo correcto para el arte de V3, que se especifica
+// vertical 5:7 y a sangre justamente por esta caja: encaja sin recortar nada
+// (ver public/assets/v3/README.md §"Lienzo y formato").
+//
+// Con las ilustraciones apaisadas que quedan —las de relleno de v2 y los tres
+// héroes de la primera tirada, ver sample.ts— el `cover` llena la altura y
+// recorta la mitad de la anchura, que es el defecto que obligó a cerrar la
+// medida. El eje Y no pinta nada mientras la fuente sea apaisada, así que
+// centrar no cambia lo de ahora y es lo que querrá el arte nuevo.
 .sketch__art-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 28%;
+  object-position: 50% 50%;
 }
 
 // Sin ilustración, el emoji del sujeto hace de arte. Pasa en cuanto se sale de
@@ -157,10 +164,21 @@
 }
 
 // --- Nombre y subtítulo ---------------------------------------------------
+// El rótulo va en Platypi, la serif de titulación de remates de pala, y no en la
+// serif de libro de las cartas de v2 ($font-serif-display, que sigue siendo la
+// de aquellas). Se carga variable, así que el 300 es un peso real y no una fina
+// fabricada por el navegador —que no sabe adelgazar, solo engordar—: el eje va
+// de 300 a 800 y aquí se puede mover sin descargar nada más.
+//
+// 300 es el extremo ligero del eje, y es una decisión de tono: el rótulo grabado
+// y macizo competía con los números; en fino, el nombre se lee como una
+// inscripción y deja mandar al arte. Necesita el tamaño grande para sostenerse
+// —una fina pequeña se deshace—, y por eso el par corto/largo del boceto E va
+// donde va.
 .sketch__name {
-  font-family: $font-serif-display;
+  font-family: $font-sketch-display;
   font-size: sketch-font("name");
-  font-weight: 600;
+  font-weight: 300;
   line-height: 1.08;
   color: game("gold-hi");
   text-shadow: 0 1px 0 game("border");

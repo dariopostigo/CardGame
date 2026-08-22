@@ -14,6 +14,15 @@ $font-serif-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
 // Serif de lectura de los temas de carta (cuerpo, p. ej. sobre vitela).
 $font-serif-body: var(--font-eb-garamond), Georgia, serif;
 
+// Display de titulación de los bocetos de marco V3 (el nombre de la carta):
+// Platypi, serif de titulación con remates de pala, cargada variable (300–800).
+// Aparte de $font-serif-display porque no la sustituye: las cartas de v2 siguen
+// con Cormorant, y este token es solo de lo que se está decidiendo. La reserva
+// es la misma serif de siempre para que, si la fuente no carga, el rótulo caiga
+// en algo con la misma intención.
+// La carga components/design/v3/sketch-fonts.ts.
+$font-sketch-display: var(--font-platypi), Georgia, "Times New Roman", serif;
+
 // --- Escala de la carta ---------------------------------------------------
 // Tamaños en rem propios de la carta: no siguen la escala de la wiki porque
 // la carta es un lienzo de tamaño fijo (260×364px) y aquí manda que el texto
@@ -37,6 +46,17 @@ $card-font: (
 $sketch-font: (
   "name": 1.3rem,
   "name-long": 1.06rem,   // nombres de 14+ caracteres (🐉 Dragón esquelético)
+  // El escalón grande, hoy solo del boceto E: allí el pie es UNA placa en vez
+  // de tres bandas apiladas, así que el rótulo tiene sitio para mandar. Va
+  // aquí y no suelto en el parcial porque el par largo/corto hay que poder
+  // leerlo junto — si uno se toca, el otro casi siempre también.
+  //
+  // Bajaron de 1.62/1.24 al pasar el rótulo a peso 300: en fino, el mismo cuerpo
+  // ocupa lo mismo pero pesa menos, y el nombre se estiraba de lado a lado de la
+  // placa sin llegar a sostenerla. Más pequeño y ligero se lee como una
+  // inscripción; más grande y ligero, como un texto que se quedó sin tinta.
+  "name-xl": 1.46rem,
+  "name-xl-long": 1.14rem,
   "sub": 0.68rem,         // "👤 Humanos · Tier 8"
   "stat": 0.95rem,        // el número de una Habilidad
   "stat-icon": 0.8rem,    // su icono (hoy emoji de marcador)
@@ -44,9 +64,21 @@ $sketch-font: (
   "gem-icon": 0.58rem,    // su icono, que ahí va de apoyo y no de rótulo
   "hang": 0.82rem,        // número de la ficha que cuelga bajo una gema
   "pod": 0.74rem,         // número dentro de una cápsula de la fila de ocho
+  // El escalón grande de la fila de ocho, hoy solo del boceto E: al quitarle
+  // el recuadro a cada cápsula sobra el sitio que ocupaba el acolchado, y sin
+  // casilla que la sostenga la cifra tiene que ganar peso o se pierde sobre la
+  // chapa. El tope lo pone la columna: (300 − 34) / 8 = 33px, y ahí tiene que
+  // caber una Vida de tres cifras.
+  "pod-xl": 1rem,
+  "stat-icon-xl": 1.1rem,
   "glyph": 0.78rem,       // glifo de Característica en cenefa
   "medal": 0.92rem,       // glifo de Característica en medallón
   "boss": 1.15rem,        // el Tier dentro del medallón del marco (boceto D)
+  // El mismo medallón cuando lleva un EMBLEMA en vez de una cifra (boceto E:
+  // ahí va la raza). Va bastante más grande que "boss" porque un emoji no
+  // llena su caja como lo hace un número —trae su propio aire alrededor— y a
+  // 1.15rem se veía como una pegatina pequeña en mitad de un disco de 42px.
+  "boss-icon": 1.5rem,
 );
 
 // Escalones de ajuste: tamaño de cuerpo, interlineado y nº de líneas.
