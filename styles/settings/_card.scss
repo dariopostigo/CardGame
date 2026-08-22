@@ -39,17 +39,12 @@ $chip-border: 2px;
 $sketch-width: 300px;
 $sketch-height: 420px;
 $sketch-radius: 14px;
-$sketch-rim: 3px;                  // filete de rareza, el único borde común
 
-$sketch-medal: 30px;               // medallón de Característica (raíl, boceto A)
-$sketch-gem: 46px;                 // gema de esquina desbordada (boceto B)
-$sketch-glyph: 21px;               // glifo de la cenefa (bocetos B y C)
-$sketch-inset: 9px;                // aire de cualquier pieza al borde
+$sketch-medal: 30px;               // medallón de Característica, en el raíl
 
-// Boceto D (Blindada): el marco deja de ser un filete y pasa a ser una BANDA
-// de metal, así que hay dos medidas más que no tenían sentido en los otros
-// tres. $sketch-band es espejo del último anillo de BAND en
+// El marco no es un filete sino una BANDA de metal, y de ahí estas dos.
+// $sketch-band es espejo del último anillo de SEAM en
 // components/design/v3/sketch-frames.tsx: si allí crece el filete y aquí no,
 // el marco se come la fila de ocho.
-$sketch-band: 15px;                // grosor del filete metálico (boceto D)
-$sketch-boss: 42px;                // medallón de Tier montado en la placa (D)
+$sketch-band: 15px;                // grosor del filete metálico
+$sketch-boss: 42px;                // medallón montado en la placa

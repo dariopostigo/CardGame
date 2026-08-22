@@ -1,22 +1,18 @@
 // =========================================================================
 // Marcos vectoriales de los bocetos de V3
 //
-// Los de los bocetos D y E, que es lo único que un gradiente CSS no sabe
-// dibujar —una banda de metal con las cantoneras remachadas encima—. Los
-// bocetos A, B y C no tienen marco vectorial a propósito: su filete es un
-// borde de 3px y eso lo hace el SCSS.
-//
-// D y E comparten herrajes y aleación y se diferencian SOLO en el corte del
-// filete: en D es una banda maciza de metal, en E son dos raíles finos con una
-// veta encendida entre medias. Por eso las cantoneras, el gradiente y el
-// recorte viven aquí arriba, compartidos, y lo único propio de cada uno es su
-// tabla de anillos.
+// Lo que un gradiente CSS no sabe dibujar: una banda de metal con las
+// cantoneras remachadas encima. Hoy hay uno, el de la E; las piezas comunes
+// —cantoneras, gradiente de aleación, recorte, destellos— siguen separadas de
+// él porque un boceto derivado cambia el CORTE del filete y no el herraje, que
+// es exactamente lo que pasó entre la D y la E: la misma escuadra, una banda
+// maciza en una y dos raíles con luz entre medias en la otra.
 //
 // Reparto con el SCSS, el mismo de todo el proyecto: AQUÍ va lo que NO depende
 // del contenido (el filete y las cuatro cantoneras, que siempre caen en los
-// bordes de la carta); en styles/components/card-sketch/_blindada.scss va todo
-// lo que tiene que seguir al pie, que crece o encoge según cuántas
-// Características traiga el sujeto — la placa, el medallón y sus roblones.
+// bordes de la carta); en styles/components/card-sketch/_forja.scss va todo lo
+// que tiene que seguir al pie, que crece o encoge según cuántas Características
+// traiga el sujeto — la placa y el medallón.
 //
 // POR QUÉ NO SE IMPORTA card-frames.tsx. El tema `armored` de v2 dibuja este
 // mismo lenguaje, pero sobre un viewBox de 260×364 y alrededor de una VENTANA
@@ -40,17 +36,6 @@ import { useId } from "react";
 const W = 300;
 const H = 420;
 const R = 14;
-
-// --------------------------------------------------------- El filete
-// Cuatro anillos concéntricos, cada uno pintado como el trazo de un rect y
-// guardado como [desde, hasta] respecto al borde. El último cierra en 15, que
-// es $sketch-band: por dentro de esa línea empieza lo que se lee.
-const BAND = {
-  rim: [2.5, 5.5], // filo exterior, el más brillante
-  groove: [5.5, 7.5], // ranura oscura que separa filo y banda
-  main: [7.5, 13.5], // banda de metal
-  lip: [13.5, 15], // hairline oscuro contra el arte
-} as const;
 
 // ------------------------------------------------------ Las cantoneras
 // Escuadra achaflanada con bocel grabado y tres roblones. Va anclada en el
@@ -209,40 +194,10 @@ function FrameSvg({ children }: { children: React.ReactNode }) {
   );
 }
 
-/**
- * Marco del boceto D · Blindada.
- *
- * No pinta ni fondo ni ventana: solo el filete y los herrajes. El color entero
- * sale de las variables --m/--m-hi/--m-lo/--m-edge que el parcial emite por
- * [data-rarity], que es lo que convierte al marco en el portador de la Rareza.
- */
-export function BlindadaFrame() {
-  const gid = useId();
-  const metal = `url(#${gid}-metal)`;
-
-  return (
-    <FrameSvg>
-      <FrameDefs gid={gid} />
-      <g clipPath={`url(#${gid}-card)`}>
-        <Band from={0} to={BAND.rim[1]} fill={metal} />
-        <Band from={BAND.groove[0]} to={BAND.groove[1]} fill="var(--m-edge)" />
-        <Band from={BAND.main[0]} to={BAND.main[1]} fill={metal} />
-        <Band from={BAND.lip[0]} to={BAND.lip[1]} fill="var(--m-edge)" opacity={0.85} />
-        <Band from={BAND.main[1] - 1.2} to={BAND.main[1]} fill="var(--m-hi)" opacity={0.5} />
-        <Band from={BAND.main[0]} to={BAND.main[0] + 1} fill="var(--m-lo)" opacity={0.5} />
-
-        <Brackets metal={metal} />
-        <Glints gid={gid} />
-      </g>
-    </FrameSvg>
-  );
-}
-
 // ----------------------------------------------------- El filete del E
-// La banda maciza del D, abierta por la mitad: dos raíles finos y un canal
-// entre ellos. Ocupa lo mismo que la del D (14.5 ≈ $sketch-band) a propósito,
-// para que los dos bocetos dejen el mismo hueco al contenido y la comparación
-// sea solo de aspecto y no de sitio.
+// Una banda maciza de metal abierta por la mitad: dos raíles finos y un canal
+// entre ellos. Ocupa 14.5 ≈ $sketch-band, la misma anchura que un filete
+// macizo, así que el corte no le quita ni un píxel de sitio al contenido.
 //
 //   outer    raíl exterior, 2.5px de metal
 //   channel  el hueco: 7px de veta encendida
@@ -258,8 +213,8 @@ const SEAM = {
 /**
  * Marco del boceto E · Forja.
  *
- * El mismo herraje que el D, pero el filete se parte en dos raíles y por el
- * canal que dejan corre luz. La luz NO es un borde teñido: es un anillo
+ * El filete se parte en dos raíles y por el canal que dejan corre luz. La luz
+ * NO es un borde teñido: es un anillo
  * desenfocado (feGaussianBlur) con un anillo nítido encima y un núcleo más
  * claro dentro, que es lo que hace que se lea como algo encendido y no como
  * una tercera línea de color.
@@ -306,7 +261,8 @@ export function ForjaFrame() {
             dibujado antes, los raíles lo tapaban y el canal quedaba como una
             barra plana entre dos cantos duros, o sea un borde pintado.
             Pero solo un poco: pasado cierto punto el peltre deja de ser peltre
-            y la carta entera se tiñe, que es lo que hace el boceto D.
+            y la carta entera se tiñe del color de su rareza, que es justo lo
+            que este boceto no quiere hacer.
             0.35 sobre un desborde de 1px por lado es donde se queda el metal
             sin dejar de recibir luz.
 

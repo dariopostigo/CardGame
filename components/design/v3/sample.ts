@@ -13,8 +13,8 @@
 // y no con media docena de casos elegidos para que salga bien.
 //
 // Los héroes están por dos motivos. Uno: NO son unidades, no tienen tier, y
-// eso descoloca a cualquier marco que reserve sitio fijo para el Tier —como el
-// boceto D, que lo había subido al medallón—. Dos: son lo ÚNICO que tiene arte
+// eso descoloca a cualquier marco que reserve un sitio fijo para el Tier — el
+// hueco reservado para un número se queda esperándolo. Dos: son lo ÚNICO que tiene arte
 // de V3 (public/assets/v3/races/humanos/), así que son las tres cartas que de
 // verdad enseñan cómo queda un marco sobre una ilustración de este juego y no
 // sobre un emoji o sobre un recorte prestado de v2. Ojo: ese arte está pendiente
@@ -46,14 +46,6 @@ export const SKILLS = [
 ] as const;
 
 export type SkillKey = (typeof SKILLS)[number]["key"];
-
-/** Las cuatro que el boceto B saca a las esquinas, en orden de esquina. */
-export const CORNER_SKILLS: readonly SkillKey[] = ["vida", "ataque", "defensa", "velocidad"];
-
-/** Las otras cuatro, las que ese mismo boceto manda a la tira fina. */
-export const STRIP_SKILLS: readonly SkillKey[] = SKILLS.map((s) => s.key).filter(
-  (k) => !CORNER_SKILLS.includes(k)
-);
 
 export type Trait = { icon: string; label: string };
 
@@ -382,7 +374,7 @@ export const HEROES: readonly Subject[] = [
     },
     // OJO: dos de sus tres Características comparten emoji (🛡️ Resistente al
     // daño físico y 🛡️ Último aliento). En un marco que dibuja las
-    // Características como glifos y sin texto —los cuatro bocetos— la carta
+    // Características como glifos y sin texto —que es lo que hace la E— la carta
     // enseña el mismo icono dos veces y no hay manera de distinguirlas. Sale
     // de razas.md tal cual: es un problema del catálogo de Características,
     // pero se descubre mirando la carta.

@@ -44,7 +44,6 @@
 // =========================================================================
 
 $boss-half: math.div($sketch-boss, 2);
-$rivet: 7px;
 
 // La placa va a sangre —de x = 0 a x = 300— y es el marco, que se pinta por
 // encima, quien le recorta los extremos: así queda pegada al canto interior
@@ -260,27 +259,12 @@ $rail-top: $sketch-band + 12px;
       0 0 16px var(--rarity-soft);
   }
 
-  .sketch__boss::before,
-  .sketch__boss::after {
-    content: "";
-    position: absolute;
-    top: 74%;
-    width: $rivet;
-    height: $rivet;
-    margin-top: math.div(-$rivet, 2);
-    border-radius: 50%;
-    background: radial-gradient(circle at 36% 30%, var(--m-hi), var(--m) 48%, var(--m-edge) 100%);
-    box-shadow: 0 1px 2px card-sketch("shadow");
-  }
-
-  .sketch__boss::before {
-    left: -16px;
-  }
-
-  .sketch__boss::after {
-    right: -16px;
-  }
-
+  // Sin los dos remaches que el boceto D pone a los lados del medallón: aquí no
+  // hay nada que remachar. En el D la placa está ATORNILLADA al marco y los
+  // remaches son la explicación de por qué se sostiene; en el E la placa es del
+  // mismo metal que el marco y va a sangre, así que los puntos no sujetaban
+  // nada — eran dos manchas más en la única banda de la carta que se lee.
+  //
   // Dentro del medallón ya no hay una cifra: hay el EMBLEMA DE LA RAZA. Por eso
   // esta regla no hereda la del boceto D —tipografía de titulación, oro y
   // sombra de grabado—: un emoji no toma el color ni la familia que le pongas,
@@ -326,21 +310,14 @@ $rail-top: $sketch-band + 12px;
     margin-top: 16px;
   }
 
-  // Sin contorno y sin fondo: el número se apoya en la chapa y en nada más.
-  // Con ocho en fila, el recuadro era la mitad de la tinta del pie y cada
-  // cifra competía con su propia casilla.
-  .sketch__pod {
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: none;
-    box-shadow: none;
-  }
-
-  // Y por eso van más grandes que en los demás bocetos: el sitio que ocupaba
-  // el acolchado de la cápsula está libre, y sin casilla que la sostenga la
-  // cifra necesita peso propio para no perderse sobre la chapa. Lo que la
-  // caja daba por contraste ahora lo tiene que dar el cuerpo de letra.
+  // La cápsula no dibuja caja —ni recuadro, ni fondo, ni acolchado; eso ya no
+  // está en la regla común—, así que aquí no hay nada que apagar: el número se
+  // apoya en la chapa y en nada más. Con ocho en fila, el recuadro era la mitad
+  // de la tinta del pie y cada cifra competía con su propia casilla.
+  //
+  // Y por eso el par va grande: el sitio que ocupaba el acolchado está libre, y
+  // sin casilla que la sostenga la cifra necesita peso propio para no perderse
+  // sobre la chapa. Lo que la caja daba por contraste lo da el cuerpo de letra.
   .sketch__pod-icon {
     font-size: sketch-font("stat-icon-xl");
   }

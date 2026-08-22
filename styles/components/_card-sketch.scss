@@ -6,20 +6,21 @@
 //
 // Espejo de _card.scss para la carta de v2, y separado de ella a propósito:
 // aquella está congelada y esta se está decidiendo
-// (knowledge/v3/card-concept/). Aquí va SOLO lo que todos los bocetos
-// comparten, que es lo que ya no está en discusión porque las tres
-// referencias del concepto coinciden en ello:
+// (knowledge/v3/card-concept/). Aquí va SOLO lo que no depende del boceto:
 //
-//   · arte a sangre, sin ventana enmarcada;
-//   · el nombre sobre banda opaca, nunca sobre el arte desnudo;
-//   · Características en glifo, nunca en texto;
-//   · Rareza en el filete, la única decisión que se hereda tal cual de v2
-//     (y la que los bocetos D y E ponen en duda, cada uno subiendo la apuesta:
-//     el marco entero de la aleación, y luego encendido).
+//   · la caja de la carta y el escenario donde se mira;
+//   · el arte a sangre, sin ventana enmarcada;
+//   · el rótulo y la cápsula de Habilidad, que son las dos piezas de texto
+//     que cualquier boceto va a necesitar.
 //
-// Lo que cambia de un boceto a otro —dónde caen las ocho Habilidades y las
-// Características— vive en card-sketch/, un parcial por boceto, que van
-// después en la cascada.
+// Lo que un boceto decide —dónde caen las ocho Habilidades y las
+// Características, y de qué está hecho el marco— vive en card-sketch/, un
+// parcial por boceto, que van después en la cascada.
+//
+// Hubo cinco bocetos y queda uno (E · Forja); lo que aquí se comparte quedó
+// medido contra los cinco, así que sigue siendo el suelo común y no un resto
+// de la E. Lo que solo servía a los otros cuatro —la cenefa de glifos, el
+// subtítulo, el filete de rareza de 3px— se borró con ellos.
 //
 // La piel sale de game() y no de skin(): la carta es una pieza de la interfaz
 // de producción, y su oro tiene que ser el mismo oro del botón. Por eso el
@@ -82,8 +83,9 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  // Visible, no hidden: el boceto B saca las gemas fuera del marco. Cada pieza
-  // que deba recortarse (el arte, el pie) se recorta por su cuenta.
+  // Visible, no hidden: cada pieza que deba recortarse —el arte, el pie— se
+  // recorta por su cuenta, y así un boceto puede sacar algo fuera del marco sin
+  // pelearse con el contenedor. Hoy no lo hace ninguno.
   overflow: visible;
   background: card-sketch("void");
   color: game("text");
@@ -92,17 +94,6 @@
     0 18px 34px -18px card-sketch("shadow"),
     0 0 22px -8px var(--rarity-soft);
   user-select: none;
-
-  // Filete de rareza, por encima de todo y sin capturar el puntero.
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border: $sketch-rim solid var(--rarity);
-    border-radius: inherit;
-    z-index: z("frame");
-    pointer-events: none;
-  }
 
   // Las listas de la carta son estructura, no viñetas.
   ul {
@@ -118,8 +109,9 @@
 }
 
 // --- El arte --------------------------------------------------------------
-// A sangre en los tres. Se recorta él solo al radio de la carta para que las
-// gemas del boceto B puedan seguir desbordando.
+// A sangre. Se recorta él solo al radio de la carta, y no con un overflow del
+// contenedor, para que un boceto pueda sacar piezas fuera del marco sin que el
+// arte se le escape con ellas.
 .sketch__art {
   position: absolute;
   inset: 0;
@@ -191,60 +183,28 @@
   }
 }
 
-.sketch__sub {
-  font-size: sketch-font("sub");
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: game("muted");
-}
-
 // --- Cápsula de Habilidad -------------------------------------------------
-// Compartida por los bocetos B (los cuatro secundarios) y C (los ocho), con
-// distinta disposición en cada uno pero la misma pieza: si en uno se lee y en
-// el otro no, es la fila lo que falla y no la cápsula.
+// El par icono-SOBRE-número, ocho por carta. Aquí va lo que la pieza es en
+// cualquier boceto: el apilado —que es la pieza, no su adorno: en fila, icono y
+// cifra dejan de leerse como un par y pasan a ser dieciséis cosas sueltas— más
+// la tipografía y el color de la cifra.
+//
+// Lo que NO va aquí es la caja. Hubo un recuadro con fondo y acolchado mientras
+// los bocetos apilaban bandas; la E lo quitó —sus números se apoyan en la chapa
+// y en nada más— y con ella se fue. Si un boceto nuevo quiere casilla, se la
+// pone él.
 .sketch__pod {
   display: grid;
   justify-items: center;
   gap: 1px;
-  padding: 3px 1px;
-  border-radius: radius("sm");
-  background: card-sketch("glass");
-  border: 1px solid card-sketch("glass-hi");
 }
 
 .sketch__pod-icon {
-  font-size: sketch-font("stat-icon");
   line-height: 1;
 }
 
 .sketch__pod-value {
   font-family: $font-game-display;
-  font-size: sketch-font("pod");
   line-height: 1;
   color: game("text");
-}
-
-// --- Cenefa de Características -------------------------------------------
-// La segunda respuesta al rango 0–5 (bocetos B y C): en horizontal al pie, en
-// vez del raíl vertical del boceto A. No se pinta con cero Características —el
-// TSX no la emite—, así que el Miliciano no deja una banda vacía.
-.sketch__frieze {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
-  padding: 4px $sketch-inset;
-  background: card-sketch("veil-soft");
-}
-
-.sketch__glyph {
-  display: grid;
-  place-items: center;
-  width: $sketch-glyph;
-  height: $sketch-glyph;
-  border-radius: radius("pill");
-  background: card-sketch("glass");
-  border: 1px solid card-sketch("glass-hi");
-  font-size: sketch-font("glyph");
-  line-height: 1;
 }

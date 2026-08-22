@@ -60,10 +60,17 @@ Y tiene que aguantar los dos extremos de
 
 ## Dónde se ven dibujados
 
-Los tres conceptos de abajo están montados como bocetos funcionando en la wiki,
-en **Cartas › Diseño de cartas** (`/docs/v3/cards/design`): un boceto por
-concepto. El código está en `components/design/v3/` y sus estilos en
+En la wiki, en **Cartas › Diseño de cartas** (`/docs/v3/cards/design`). El
+código está en `components/design/v3/` y sus estilos en
 `styles/components/card-sketch/`.
+
+> **Lo que hay dibujado hoy es UN boceto: la mezcla E · Forja.** Hubo cinco —uno
+> por cada concepto de abajo, más las dos mezclas— y el 22 de agosto de 2026 se
+> borraron los cuatro anteriores del código, con sus parciales y sus piezas.
+> **Este documento no se borra con ellos**: es el razonamiento, y es de donde
+> sale la E. Lo que se lee aquí abajo sigue siendo la explicación de por qué la
+> carta es como es — solo que ya no se puede pinchar A, B, C ni D en la página.
+> Los bocetos nuevos se derivan de la E.
 
 **Los sujetos son la plantilla real de la raza piloto**, no una selección: las
 **ocho unidades de 👤 Humanos** en su orden de progresión (tier 1 → 8) y **tres
@@ -85,9 +92,8 @@ Es donde se contesta lo que este documento deja abierto, porque hay cosas —si
 la fila de ocho se lee, si el cero molesta, cuánto arte se come un panel— que
 no se deciden mirando referencias sino mirando la carta.
 
-A partir del cuarto, los bocetos ya **no salen de una referencia nueva sino de
-cruzar los que hay** (ver §"Mezclas"). Se siguen numerando con letra y viven en
-la misma página.
+A partir del cuarto, los bocetos ya no salían de una referencia nueva sino de
+**cruzar los que había** (ver §"Mezclas"). De ahí sale el que quedó.
 
 ---
 
@@ -220,9 +226,10 @@ piel, y qué se descubre al juntarlos que no se veía por separado.
 
 ### Mezcla D — Blindada (boceto C × tema `armored` de v2)
 
-Boceto **D · Blindada** en `/docs/v3/cards/design`. Código en
-`components/design/v3/sketch-frames.tsx` (el marco vectorial) y
-`styles/components/card-sketch/_blindada.scss`.
+> **Borrada del código** (22 de agosto de 2026). Se lee aquí porque la E sale de
+> ella: es la mitad del par que decidió dónde vive la Rareza, y sin esta mitad
+> la otra no se entiende. Su marco vectorial y su parcial
+> (`_blindada.scss`) ya no existen.
 
 **El esqueleto es entero del concepto C**: arte a carta entera, placa solapada
 sobre el tercio inferior, las ocho Habilidades en una sola fila de cápsulas,
@@ -358,6 +365,12 @@ emoji trae sus propios tonos y no acepta color, así que necesita **papel claro*
 detrás o se lee como una mancha —👤 sobre el disco negro era exactamente eso—. Va
 de peltre claro, misma lección que las fichas del tablero (`$piece`: oro claro
 bajo el cofre).
+
+Y va **desnudo**: el D le pone dos remaches a los lados y aquí no están, porque
+aquí no hay nada que remachar. En el D la placa está atornillada al marco y los
+remaches son la explicación de por qué se sostiene; en el E la placa es del
+mismo metal que el marco y va a sangre, así que los dos puntos no sujetaban nada
+— eran dos manchas más en la única banda de la carta que se lee.
 
 **Lo que se descubre:**
 
