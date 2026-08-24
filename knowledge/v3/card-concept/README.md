@@ -67,17 +67,24 @@ En la wiki, en **Cartas › Diseño de cartas** (`/docs/v3/cards/design`). El
 código está en `components/design/v3/` y sus estilos en
 `styles/components/card-sketch/`.
 
-> **Hay DOS bocetos dibujados: la mezcla E · Forja y el boceto F · Blasón.** De
-> la primera tanda hubo cinco —uno por cada concepto de abajo, más las dos
+> **Hay DOS bocetos dibujados: la mezcla E · Forja y la mezcla G · Estandarte.**
+> De la primera tanda hubo cinco —uno por cada concepto de abajo, más las dos
 > mezclas— y el 22 de agosto de 2026 se borraron los cuatro anteriores del
 > código, con sus parciales y sus piezas. **Este documento no se borra con
 > ellos**: es el razonamiento, y es de donde sale la E. Lo que se lee aquí abajo
 > sigue siendo la explicación de por qué la carta es como es — solo que ya no se
 > puede pinchar A, B, C ni D en la página.
 >
-> El **F** (24 de agosto de 2026) no se deriva de la E: sale de una referencia
-> nueva y la contradice punto por punto. Están los dos a la vez porque lo que
-> hay que comparar ahora es *encendido contra acuñado*, no una piel contra otra.
+> La segunda tanda acabó igual, y en dos días. El **F** (24 de agosto de 2026)
+> no se derivaba de la E: salía de una referencia nueva y la contradecía punto
+> por punto. La **G** (mismo día) sale de los dos: el octógono de la F con la
+> veta de la E — y con ella montada, la F se quedó sin nada propio que enseñar,
+> así que **se borró el 25 de agosto de 2026**, con su marco y su parcial. Lo
+> suyo que valía está en la G; lo que discutió sigue escrito aquí abajo.
+>
+> Lo que queda enfrentado en la página es *rectángulo contra octógono* y *veta
+> partida en cuatro tramos contra aro continuo*. Lo que ya **no** se puede mirar
+> —*encendido contra acuñado*, que era la discusión de la F— está solo escrito.
 
 **Los sujetos son la plantilla real de la raza piloto**, no una selección: las
 **ocho unidades de 👤 Humanos** en su orden de progresión (tier 1 → 8) y **tres
@@ -516,12 +523,21 @@ documento tenía abiertas o dadas por cerradas de más:
 
 ### Boceto F — Blasón (la réplica del concepto F con el modelo de V3)
 
-Boceto **F · Blasón** en `/docs/v3/cards/design`. `BlasonFrame` en
-`components/design/v3/sketch-frames.tsx` y su parcial en
-`styles/components/card-sketch/_blason.scss`.
+> **Borrado el 25 de agosto de 2026**, un día después de dibujarse. No porque
+> fallara: porque la **G · Estandarte** se quedó con todo lo suyo que valía —la
+> silueta, el disco del Tier, los dos pines, el rótulo en versalitas, el fundido
+> del pie— y lo único que ya no compartían era *dónde vive la Rareza*, que es
+> justo lo que esta perdía. Con las dos en pantalla, la F era la G con el color
+> en otro sitio y un hilo de oro; borrada, la página gana una comparación limpia
+> —rectángulo contra octógono— en vez de tres cartas que se parecen dos a dos.
+> Su marco (`BlasonFrame`) y su parcial (`_blason.scss`) se fueron con ella.
+>
+> **Lo de aquí abajo no se borra**, por lo mismo que A, B, C y D: es el
+> razonamiento, y la mitad de lo que la G es hoy salió de montar esto. Solo que
+> ya no se puede pinchar.
 
-**No sale de la E**, y está a su lado para discutirle cuatro cosas que aquella
-daba por cerradas:
+**No salía de la E**, y estuvo a su lado para discutirle cuatro cosas que
+aquella daba por cerradas:
 
 | | Boceto E · Forja | Boceto F · Blasón |
 |---|---|---|
@@ -620,6 +636,145 @@ eje es decorar.
   panel cambia de alto. El precio es que el rótulo no puede caer en el tramo a
   medio teñir: de ahí los 20px de acolchado de arriba del panel.
 
+### Mezcla G — Estandarte (el octógono de la F con la veta de la E)
+
+*(24 de agosto de 2026.)* La primera mezcla desde la E, y la primera que no
+discute nada: con dos bocetos en la mesa que se contradicen en cuatro puntos, lo
+que faltaba era una carta que se quedara con **lo mejor de cada uno** — y, de
+paso, separar preguntas que hasta ahora venían pegadas.
+
+Porque el problema de comparar la E con la F es que cambian **cuatro cosas a la
+vez**. Si la F gusta más, no se sabe si es por la silueta, por el canto teñido,
+por la jerarquía de los números o por el disco del Tier. La G fija tres y mueve
+una: **mismo octógono, misma jerarquía, mismo disco, y la Rareza vuelve a ser
+luz**. Puesta al lado de la F, lo que se veía era exactamente la respuesta a *si
+lo que gustaba era la forma o el color del canto*.
+
+Y esa comparación duró un día: **la G se llevó todo lo que la F tenía de
+bueno**, así que la F se borró el 25 de agosto de 2026 y en la página quedan la
+E y la G. La tabla se queda con las tres columnas porque es el acta de cómo se
+llegó aquí, pero la del medio ya no se puede pinchar.
+
+| | E · Forja | F · Blasón *(borrada)* | G · Estandarte |
+|---|---|---|---|
+| **Silueta** | rectángulo redondeado | octógono | octógono |
+| **Rareza** | veta de luz en el canal | filete en el canto | veta de luz en el canal |
+| **Remate de esquina** | cantonera en L | roblón en el chaflán | roblón en el chaflán |
+| **La veta** | cuatro tramos entre cantoneras | — | **un aro continuo de ocho lados** |
+| **Los ocho** | ocho iguales en fila | 2 pines + rejilla 3×2 | 2 pines + **una fila de seis** |
+| **Rombo** | — | cara plana | **piedra tallada** |
+| **Raza** | emblema en el medallón | texto al pie | **emblema en estandarte + texto al pie** |
+| **Hilo de oro** | — | sí | no cabe |
+
+**1. La Rareza vuelve dentro del metal.** El filete se parte otra vez en dos
+raíles con el canal de luz entre medias (`SEAM`, el mismo de la E, dibujado con
+`Ring` en vez de con `Band`), y vuelve el **baño** que derrama hacia dentro sobre
+la ilustración. El canto teñido de la F desaparece: la carta vuelve a estar
+encendida en vez de acuñada, pero con la silueta cortada.
+
+Con una diferencia que no es de detalle: **la veta da la vuelta entera**. La E
+lleva sus cuatro cantoneras encima del canal, así que allí la luz se ve como
+cuatro *tramos* entre placas —metal recién forjado entre chapas— y aquí no hay
+escuadra ninguna, solo el roblón del chaflán de la F, que le pasa por encima sin
+cortarla. El canal se cierra en un **aro de ocho lados**. Es la tercera cosa que
+se puede mirar en la página, y en el fondo es la misma pregunta que la del
+material: si la luz tiene que parecer **una pieza de metal caliente** o **un
+contorno encendido**.
+
+**2. El rombo se talla.** En la F es una cara de color girada 45°, que a 15px es
+una mancha. Aquí son tres capas: **engaste** de metal, **cuatro facetas** que se
+cortan en la mitad —un `conic-gradient` sobre una caja girada, así que los cortes
+caen en la vertical y la horizontal del rombo— y una **tabla** con su destello.
+Sube a 20px, porque a 15 la tabla se quedaba en dos píxeles y medio.
+
+**3. Cuelga un estandarte de raza del disco del Tier.** Es la ficha que la
+réplica había dejado en blanco: en la referencia ahí va el banderín de la
+facción, y V3 no tiene facción. Se dibuja con lo único que hay, la **raza**, en
+emblema — que es la respuesta que ya daba la E. Y la carta la dice ahora **dos
+veces**, porque el texto al pie sigue ahí: es deliberado, y es la única forma de
+mirar juntas en una misma carta las dos respuestas que la E (emblema sin texto) y
+la F (texto sin emblema) daban por separado.
+
+**4. Las seis del panel van juntas, en una fila.** La rejilla de 3×2 salía del
+párrafo de reglas de la referencia y leía como un bloque de texto; en una fila
+leen como lo que son, una tira de valores. El panel pierde un renglón entero
+—unos 26px— y ese sitio se lo queda la ilustración.
+
+**Lo que se descubre al montarlo:**
+
+- **Se probó a traerse también las cantoneras de la E, y se descartó.** El primer
+  montaje llevaba su escuadra en L con la punta cortada a 45° para apoyarse en el
+  chaflán, con el argumento de que la E corta el canal en las esquinas por algo.
+  **No es lo que quiere este boceto**: el remate de la F es un roblón, no una
+  placa, y con las cuatro escuadras encima la carta dejaba de parecer la mezcla
+  de las dos para parecer la E con las esquinas limadas. Lo que queda es el aro
+  continuo, y eso es una respuesta más que se puede mirar, no un descuido.
+- **O hilo de oro o veta, no las dos.** El canal se come los 7px centrales del
+  filete y la E ya reparte los 15 enteros entre raíles y lip. La primera cosa que
+  la mezcla obliga a elegir, y el motivo es de espacio — que suele ser el más
+  honesto.
+- **El baño de luz hay que recortarlo al octógono.** La sombra interior se pinta
+  sobre una caja rectangular y el hueco que tiene que bañar tiene ocho lados, así
+  que sin `clip-path` las cuatro esquinas del baño asoman por los chaflanes,
+  donde la carta ya no tiene carta. Y el chaflán de dentro **no es el de fuera**:
+  al meter el borde 15px, el corte encoge `C − d(2 − √2)` — la misma cuenta que
+  hace `octagon(d)` en el TSX, repetida en Sass.
+- **El apilado icono-sobre-número era de la anchura, y ahora está probado.** La E
+  lo apila con ocho columnas de 33px; la F lo pone en línea con tres de ~85px y
+  aguanta; la G tiene seis de ~41px y el par en línea ocupa 39 de los 41 — dos
+  vecinos se tocan y la fila se lee como una tapia, así que vuelve a apilarse.
+  **Por debajo de unos 60px hay que apilar; por encima se puede elegir.** Tres
+  bocetos para cerrar una regla que llevaba desde el A escrita como si fuera de
+  la pieza.
+- **La bandera necesita cara clara y el medallón cara oscura, y no es una
+  contradicción.** El estandarte lleva el emblema de la **raza** (👤, una silueta
+  oscura) y el medallón del raíl lleva **Características** (💀, 🐾, glifos
+  claros). Un emoji no acepta color: lo que hay detrás tiene que hacerle de
+  papel, y el papel que hace falta depende del glifo. Es la misma lección que las
+  fichas del tablero, y la G la tiene puesta en las dos direcciones a la vez.
+- **La sombra de una pieza recortada tiene que vivir en el padre, y a veces hay
+  que inventarle uno.** Los pines y los medallones ya lo hacían; el estandarte no
+  tiene hermanos, así que **la bandera es su `::before`**: el clip va en el hijo
+  y el `drop-shadow` en el elemento, que no está recortado. Un `filter` en el
+  mismo elemento que el `clip-path` no vale — se aplica antes de recortar, así
+  que la sombra se recorta con la pieza.
+- **Una carta cortada no puede llevar sombra de caja, y eso vale también para
+  la F.** Se vio aquí porque este boceto lleva el halo fuerte de la E: una
+  `box-shadow` sigue el borde de la **caja**, y la caja de un octógono sigue
+  siendo un rectángulo, así que el halo iluminaba el fondo pegado a las cuatro
+  esquinas *que ya no existen* y los cuatro chaflanes quedaban como un trozo
+  negro entre el marco y el resplandor. No lo pintaba nadie: era el fondo sin
+  iluminar, recortado por la luz de al lado — y por eso cuanto más fuerte el
+  halo, más se veía. La sombra pasa a `filter: drop-shadow()`, que sigue la
+  **silueta ya compuesta** —el arte va recortado— y dobla por el corte. Es el
+  mismo truco que ya usaban los pines y el raíl, una capa más arriba. Las dos
+  piezas viven en la misma capa —`z("chip")`, la de lo que monta sobre el
+  marco— y entre iguales manda el orden del árbol, así que el TSX dibuja la
+  bandera *antes* que el disco. Bajarle el z-index la habría metido debajo del
+  marco, que es la capa siguiente, y entonces dejaría de montar sobre el filete.
+  Con la bandera detrás, sus 10px de arriba no se ven nunca: se le quitó el
+  cordón de oro que llevaba ahí, porque era tinta que no ve nadie — lo que
+  sujeta la bandera es el disco. El emblema, en cambio, tiene que bajar hasta
+  librar el disco **entero** y no solo su caja: el disco es un círculo y por el
+  eje de la bandera su canto de abajo cae más abajo que en los lados.
+- **El rombo se centra en el filete, no en el canto.** Su eje cae en la mitad de
+  la banda de metal, así que la piedra se lee montada *sobre* el marco. Medio
+  píxel más arriba y parece que se cae de la carta.
+- **El rojo del héroe choca aún más que en la F.** El pin de ❤️ Vida es rojo y en
+  una carta de héroe el marco también: en la F es un filete de 2,2px y aquí es
+  una **veta encendida que baña media carta**. El roce que la F encontró, la G lo
+  agranda.
+- **La anatomía octogonal se sacó a un mixin, y al día siguiente se deshizo.**
+  Mientras hubo dos bocetos octogonales, el contorno, el pie, el panel, el
+  rótulo, la línea de raza, el disco, el raíl y los pines vivían en un mixin
+  (`_octagon.scss`) y en un componente (`OctagonCard`), porque escrito dos veces
+  se habría separado en la primera corrección. Al borrarse la F **volvieron
+  dentro de la G**: una pieza compartida con un solo consumidor deja escrito en
+  el código que hay dos cosas cuando ya solo hay una. Se comprobó con un diff de
+  píxeles contra la captura anterior — lo único que se movió son los cuatro
+  roblones, **una décima de píxel**, porque su posición se medía desde el reparto
+  de anillos de la F y ahora se mide desde el de la G.
+
 ## Lo que esto cambia de lo ya escrito
 
 **El lienzo heredado de v2 era el equivocado, y ya está corregido.** La
@@ -647,17 +802,20 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 
 - **Si la carta es un rectángulo.** *(Abierto desde el 24-ago-2026.)* Los cinco
   primeros bocetos no lo preguntaron: los cinco son la misma caja redondeada con
-  distinta piel. El **F** la corta —octógono de chaflán 18px, con roblón en cada
-  corte— y eso no es una piel: es lo primero que se reconoce a distancia de mesa,
-  obliga a que el disco del Tier **desborde** la esquina en vez de caber dentro,
-  y si algún día se imprime es un troquel y no un corte recto. Es la decisión más
-  barata de tomar mirando y la más cara de cambiar después.
+  distinta piel. El **F** la cortó —octógono de chaflán 18px, con roblón en cada
+  corte— y el **G** se quedó esa silueta, así que borrada la F la pregunta queda
+  **una contra una**: rectángulo (E) contra octógono (G), que es la comparación
+  más limpia que ha tenido la página. No es una piel: es lo primero que se
+  reconoce a distancia de mesa, obliga a que el disco del Tier **desborde** la
+  esquina en vez de caber dentro, y si algún día se imprime es un troquel y no un
+  corte recto. Es la decisión más barata de tomar mirando y la más cara de
+  cambiar después.
 - **Cuál de los esqueletos se toma de base**, o qué híbrido: el candidato
   obvio es *proporción y paleta de B + tira de ocho de A + subtítulo y ausencia
   de texto de C*. La mezcla D va por otro lado —deja C intacto y le cambia la
   piel—, así que las dos vías siguen abiertas. Y desde el F hay una tercera, que
-  no es un híbrido de las anteriores: *silueta y jerarquía de números del F +
-  fundido en vez de placa*.
+  no es un híbrido de las anteriores y hoy la sostiene el **G**: *silueta y
+  jerarquía de números de la réplica + fundido en vez de placa*.
 - **Dónde vive la Rareza.** Ninguno de los tres primeros conceptos la trata: A y
   C no la tienen y B la insinúa con el color del arte; el F sí, y la pone en el
   canto. En v2 se resolvió en el borde (halo + filete tintados) y esa decisión
@@ -670,34 +828,68 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   y si el marco es una pieza distinta por rareza o una sola pieza con color en un
   sitio — que también es una decisión de producción.
 
-  De lo que ya se ve en la página: **el filete del F se lee antes que la veta del
-  E**, y no por sutileza sino por área —2,2px alrededor de la silueta entera
-  contra 7px en un canal que las cantoneras tapan en las cuatro esquinas—. Las
-  dos fallan igual con la común, porque `$rarity` arranca en un gris.
+  De lo que se vio mientras el F estuvo montado: **su filete se lee antes que la
+  veta del E**, y no por sutileza sino por área —2,2px alrededor de la silueta
+  entera contra 7px en un canal que las cantoneras tapan en las cuatro
+  esquinas—. Las dos fallan igual con la común, porque `$rarity` arranca en un
+  gris.
+
+  El **G** no añadía una quinta respuesta: repetía la del E dentro de la silueta
+  del F, y sirvió para **separar la forma del color** — que hasta entonces venían
+  pegados, porque el único octógono que había era también la única carta con el
+  canto teñido. Contestado eso, la F se borró, así que **el canto teñido ya no
+  está dibujado en ningún sitio**: si vuelve a la mesa hay que volver a montarlo,
+  y esta vez sobre la silueta que se elija.
 - **Si los ocho números van todos iguales.** *(Abierto desde el 24-ago-2026.)*
   A, C, D y E dicen que sí: misma fila, mismo cuerpo, mismo peso, y la ventaja es
-  que la carta no elige por ti. El **F** dice que no y saca ⚔️ Ataque y ❤️ Vida a
+  que la carta no elige por ti. El **F** dijo que no y sacó ⚔️ Ataque y ❤️ Vida a
   las esquinas de abajo, con forma y tamaño propios — que es lo que el concepto B
-  ya señalaba como digno de robar y nadie había dibujado. La pregunta de fondo no
-  es de maquetación: es si el marco puede **congelar** cuáles son los dos números
-  de combate antes de que las reglas estén cerradas.
+  ya señalaba como digno de robar y nadie había dibujado; el **G** heredó ese
+  reparto y solo cambió cómo se agrupan los otros seis, así que sigue en
+  pantalla. La pregunta de fondo no es de maquetación: es si el marco puede
+  **congelar** cuáles son los dos números de combate antes de que las reglas
+  estén cerradas.
+- **Si el icono va encima del número o al lado.** *(Contestado el 24-ago-2026.)*
+  El esqueleto lo tenía escrito como si fuera una propiedad de la pieza —en fila,
+  icono y cifra dejan de leerse como un par— y se había medido con **ocho** en
+  columnas de 33px. El F lo probó con **seis** en columnas de ~85px, donde en
+  línea aguanta, y el G con **seis** en columnas de ~41px, donde no: el par en
+  línea ocupa 39 de los 41 y la fila se lee como una tapia. **La regla era de la
+  anchura**: por debajo de unos 60px hay que apilar, por encima se puede elegir.
+- **Si la carta puede decir la raza dos veces.** *(Abierto desde el
+  24-ago-2026.)* La E la dice en **emblema** y no la escribe; la F la **escribía**
+  en versalitas al pie y no la dibujaba; el G hace las dos cosas —emblema en el
+  estandarte que cuelga del disco, texto al pie— para poder compararlas en la
+  misma carta, y por eso el punto sobrevive a la F: la comparación no dependía de
+  tenerla delante, está entera dentro de la G. Una de las dos sobra, y decidir
+  cuál es decidir también qué pasa con el hueco: si sobra el estandarte, la carta
+  se queda sin la ficha que la referencia dedica a la facción, que es un eje que
+  V3 no tiene.
+- **Cuánto detalle aguanta una pieza pequeña.** *(Abierto desde el 24-ago-2026.)*
+  El rombo de la Rareza se dibujó de dos maneras: **cara plana** de 15px (F) y
+  **piedra tallada** con engaste, cuatro facetas y tabla (G), que además tuvo que
+  crecer a **20px** porque a 15 la tabla se quedaba en dos píxeles y medio. Eso
+  ya es media respuesta: la talla no cabe en la medida de la plana. Queda la otra
+  mitad, que solo contesta la imprenta — si a 63mm las facetas se emborronan y
+  queda una mancha más sucia que la plana. Vale igual para los roblones y el
+  bocel del marco.
 - **Si los ceros se imprimen o se ocultan.** A los imprime; con Suerte 0 en
   media plantilla, ocultarlos deja huecos irregulares en la tira.
 - **Si el Tier se escribe o se enseña.** A, B y C lo escriben en el subtítulo; la
   mezcla D lo sube al medallón del marco y le quita el subtítulo; la **E no lo
   escribe en ningún sitio** y paga que solo puede decir de qué *clase* de tier es
   —cinco escalones para ocho tiers, el Miliciano y el Arquero son la misma carta
-  gris—; el **F lo escribe otra vez**, en número, en el disco de la esquina, que
+  gris—; el **G lo escribe otra vez**, en número, en el disco de la esquina, que
   es lo que la referencia hace con el coste. Las dos posiciones extremas están
   dibujadas y se pueden mirar juntas.
 - **Qué pone donde va el Tier en una carta de héroe**, que no lo tiene. Hoy
-  A, B y C escriben «Héroe» en el subtítulo, la D y la F ponen una corona en el
-  disco, y la E disuelve el problema —su medallón lleva la raza, no un número, así
+  A, B y C escriben «Héroe» en el subtítulo, la D y la G ponen una corona en
+  el disco, y la E disuelve el problema —su medallón lleva la raza, no un número, así
   que no hay hueco que rellenar—. **Ya no depende de nada**: V3 no tiene
   progresión de personaje *(24-ago-2026,
   [`docs/v3/status.md`](../../../docs/v3/status.md) §5)*, así que no hay ningún
   número esperando ese hueco y la respuesta se elige libre — un emblema, una
-  palabra, o no reservar el sitio. Lo que el F enseña es el coste de reservarlo:
+  palabra, o no reservar el sitio. Lo que el G enseña es el coste de reservarlo:
   quien reserva, rellena.
 - **Si el rojo sangre es el color de los héroes.** Ya está puesto: un héroe no
   está en la escala de rareza —no tiene tier— y prestarle un escalón decía que
@@ -710,11 +902,14 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   tenía la carta de Enemigo, en un tono vecino). **Todos los héroes van iguales**:
   no hay ningún número que los ordene entre sí.
 
-  **El boceto F le ha encontrado un roce** *(24-ago-2026)*: su pin de ❤️ Vida es
-  la gema roja de la referencia, y en una carta de héroe acaba a juego con el
-  filete del marco — las dos cosas rojas de la carta dejan de distinguirse. O el
-  héroe cambia de color, o la Vida no puede ser roja. En la E no se veía, porque
-  allí la Vida es un número más de la fila y no tiene color propio.
+  **El boceto octogonal le ha encontrado un roce** *(24-ago-2026)*: su pin de
+  ❤️ Vida es la gema roja de la referencia, y en una carta de héroe acaba a juego
+  con el color del marco — las dos cosas rojas de la carta dejan de
+  distinguirse. Se vio primero en la **F**, donde el marco rojo era un filete de
+  2,2px; en la **G** es una veta encendida que además baña la ilustración
+  entera, así que se ve bastante peor. O el héroe cambia de color, o la Vida no
+  puede ser roja. En la E no se veía, porque allí la Vida es un número más de la
+  fila y no tiene color propio.
 - **Dos Características distintas con el mismo emoji** — *destapado aquí,
   resuelto en el catálogo (22-ago-2026)*. El héroe ⚔️ Guerrero de Humanos llevaba
   🛡️ Resistente al daño físico y 🛡️ Último aliento, y como las Características se
@@ -726,9 +921,9 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   equivalentes de ☠️ y 🧊), y ahí es deliberado: el glifo compartido dice que van
   del mismo tema, y lo que falta por marcar es el *papel*, que es tratamiento
   visual del icono y no otro dibujo. Anotado en `docs/v3/status.md` §6.
-- **De qué metal es la carta.** Se puede preguntar en la E y en la F: en las dos
-  el metal no lleva ningún dato —en el D *es* la rareza— y por tanto el tono es
-  una decisión libre. Está montada una **probeta** en el
+- **De qué metal es la carta.** Se puede preguntar en la E y en la G: en las dos
+  el metal no lleva ningún dato —en el D *es* la rareza— y por tanto el
+  tono es una decisión libre. Está montada una **probeta** en el
   lab (`$sketch-alloy` en `styles/settings/_colors.scss`, selector "Aleación" en
   la página) con **catorce** candidatos ordenados de oscuro a claro, para que la
   fila se lea como una escala: carbón, pavonado, hierro, cardenillo, óxido,
@@ -741,11 +936,12 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   luz, la sombra y el filo, así que aquí no se elige una paleta, se elige un
   material. Lo que hay que juzgar no es el marco suelto sino las cosas que se
   apoyan en él —el oro del rótulo, el emblema del medallón, que necesita cara
-  clara, la veta de rareza, que se apaga si el metal ya es de su tono, y en la F
-  el **hilo de oro** del filete, que desaparece con los metales claros—. La
-  probeta mueve los dos marcos a la vez, a propósito: comparten aleación para que
-  lo que se compare sea el marco y no el color. Cuando se decida, el ganador pasa
-  a `"alloy"` y la probeta se borra entera.
+  clara, la veta de rareza, que se apaga si el metal ya es de su tono, y en la G
+  el **estandarte** de raza, que necesita cara clara por lo mismo que el
+  medallón: en carbón o pavonado el 👤 se pierde—. La probeta mueve los dos
+  marcos a la vez, a propósito: comparten aleación para que lo que se compare sea
+  el marco y no el color. Cuando se decida, el ganador pasa a `"alloy"` y la
+  probeta se borra entera.
 - **Qué tipografía titula la carta.** Hasta ahora el nombre iba en **Cormorant**
   (`$font-serif-display`), la serif de libro que se heredó de las cartas de v2 sin
   discutirla: correcta y neutra, dice "documento" antes que "objeto de juego".
@@ -765,18 +961,21 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   entrando en una línea. Las cartas de v2 siguen con Cormorant: el token es nuevo
   y no sustituye al viejo.
 
-  **Y el F ha encontrado el límite del 300** *(24-ago-2026)*: titula en
+  **Y el F encontró el límite del 300** *(24-ago-2026)*: titulaba en
   **versalitas**, como su referencia, y una versal fina y a cuerpo pequeño no
-  tiene trazo con el que sostenerse — ahí el rótulo sube a **500**. O la carta
-  titula en fino y en caja mixta (E), o titula en versalitas y necesita peso (F).
-  Las dos a la vez, no. La caja alta arrastra además su propia escala, porque
-  ocupa más ancho por carácter y no tiene descendentes: el par corto/largo del F
-  va un escalón por debajo del de la E aunque el panel sea igual de ancho.
+  tiene trazo con el que sostenerse — ahí el rótulo sube a **500**, y el G lo
+  heredó junto con las versalitas. O la carta titula en fino y en caja mixta (E),
+  o titula en versalitas y necesita peso (G). Las dos a la vez, no. La caja alta
+  arrastra además su
+  propia escala, porque ocupa más ancho por carácter y no tiene descendentes: el
+  par corto/largo de los octógonos va un escalón por debajo del de la E aunque el
+  panel sea igual de ancho.
 - **Dónde van las Características: raíl vertical o cenefa al pie.** El raíl
-  (A, E y F) resuelve mejor el caso vacío —con cero medallones queda arte— y deja
-  el pie más limpio; la cenefa (B, C y D) no toca la ilustración. El E enseña
+  (A, E, F y G) resuelve mejor el caso vacío —con cero medallones queda arte— y
+  deja el pie más limpio; la cenefa (B, C y D) no toca la ilustración. El E enseña
   el coste del raíl cuando el marco lleva herrajes: hay que bajarlo para que no
-  se meta debajo de la cantonera. El F enseña otra cosa: **de qué lado cae no lo
-  decide la pieza, lo decide lo que ya ocupa la esquina** — allí se va a la
-  derecha porque la izquierda se la lleva el disco del Tier, y sus medallones
-  dejan de ser redondos para repetir el octógono de la carta en pequeño.
+  se meta debajo de la cantonera. El G enseña otra cosa: **de qué lado cae no lo
+  decide la pieza, lo decide lo que ya ocupa la esquina** — se va a la derecha
+  porque la izquierda se la llevan el disco del Tier y el estandarte que cuelga
+  de él, y sus medallones dejan de ser redondos para repetir el octógono de la
+  carta en pequeño.

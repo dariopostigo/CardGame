@@ -59,7 +59,7 @@ iridiscente encendido. El cuerpo no cambia de tamaño casi nada.
 
 ## Héroes de clase (4)
 
-### 1 · 🪄 Hechicero feérico
+### 1 · 💫 Hechicero feérico
 
 ```
 QUÉ ES: héroe de clase. Un individuo, protagonista, con nombre propio.

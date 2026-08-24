@@ -62,7 +62,7 @@ Las decisiones de rumbo que enmarcan este documento —los dos tableros, qué ti
 - 🏹 **Cazador** — Daño a distancia / trampas / rastreo
 
 ### 🧚 Feéricos
-- 🪄 **Hechicero feérico** — Magia / control / ilusiones
+- 💫 **Hechicero feérico** — Magia / control / ilusiones
 - 🦋 **Ilusionista** — Clones / confusión / engaño
 - 🧚 **Hada** — Volador / apoyo / evasión / magia
 - 🗡️ **Danzante de hojas** — Movilidad / críticos / ataques rápidos
@@ -205,7 +205,7 @@ siendo Características, y montan *encima* del tipo que tenga la ficha: un
 - 💫 **Aturdimiento** — Los ataques tienen una probabilidad de impedir que el objetivo actúe durante 1 turno.
 - 🗡️ **Perforante** — Ignora una parte de la Defensa del enemigo.
 - 💣 **Explosivo** — Al impactar, inflige parte del daño a los enemigos cercanos.
-- 🫀 **Robo de vida** — Recupera un porcentaje del daño infligido como Vida.
+- 🧛 **Robo de vida** — Recupera un porcentaje del daño infligido como Vida.
 
 ### 🌪️ Elementales y estados alterados
 - 🔥 **Fuego** — El daño elemental aplica Quemadura, que inflige daño adicional al final de cada turno durante X turnos.
@@ -256,7 +256,7 @@ siendo Características, y montan *encima* del tipo que tenga la ficha: un
 > está topada, así que la inmunidad total es algo que el porcentaje no puede
 > expresar.
 
-### 🪽 Movimiento y terreno
+### 🦅 Movimiento y terreno
 - 🦅 **Volador** — Ignora obstáculos del mapa durante el movimiento, pero no puede atravesar enemigos.
 - 🐾 **Ágil** — Puede atravesar determinadas casillas u obstáculos que otras criaturas no pueden.
 - 🌊 **Anfibio** — Puede desplazarse por agua sin penalización.
@@ -285,7 +285,7 @@ siendo Características, y montan *encima* del tipo que tenga la ficha: un
 | ⛏️ Enanos | 🔯 Maestro de runas | ✨ Mágico | 🛡️ Resistente al daño físico |
 | 💀 No-muertos | ⚔️ Guerrero | 🗡️ Cuerpo a cuerpo | 💀 No-muerto · 🛡️ Resistente al daño físico · ☠️ Inmune al veneno |
 | 💀 No-muertos | 💀 Nigromante | ✨ Mágico | 💀 No-muerto |
-| 💀 No-muertos | 🩸 Vampiro | 🗡️ Cuerpo a cuerpo | 💀 No-muerto · 🫀 Robo de vida · 🐾 Ágil |
+| 💀 No-muertos | 🩸 Vampiro | 🗡️ Cuerpo a cuerpo | 💀 No-muerto · 🧛 Robo de vida · 🐾 Ágil |
 | 💀 No-muertos | ☠️ Liche | ✨ Mágico | 💀 No-muerto · ☠️ Inmune al veneno |
 | 🔥 Demonios infernales | ⚔️ Guerrero | 🗡️ Cuerpo a cuerpo | 😈 Demonio · 🔥 Resistente al fuego · 🛡️ Resistente al daño físico |
 | 🔥 Demonios infernales | 🧙 Brujo | ✨ Mágico | 😈 Demonio · 🔥 Resistente al fuego |
@@ -299,7 +299,7 @@ siendo Características, y montan *encima* del tipo que tenga la ficha: un
 | 🧟 Orkos | 🛡️ Jefe de guerra | 🗡️ Cuerpo a cuerpo | 🛡️ Resistente al daño físico · 😱 Inmune al miedo · 👑 Líder |
 | 🧟 Orkos | 🔮 Chamán | ✨ Mágico | 😱 Inmune al miedo |
 | 🧟 Orkos | 🏹 Cazador | 🏹 A distancia | 👁️ Percepción · 🐺 Bestia |
-| 🧚 Feéricos | 🪄 Hechicero feérico | ✨ Mágico | 🐾 Ágil · 🌀 Confusión |
+| 🧚 Feéricos | 💫 Hechicero feérico | ✨ Mágico | 🐾 Ágil · 🌀 Confusión |
 | 🧚 Feéricos | 🦋 Ilusionista | ✨ Mágico | 🐾 Ágil · 🌀 Confusión · 👁️ Percepción |
 | 🧚 Feéricos | 🧚 Hada | ✨ Mágico | 🦅 Volador · 🐾 Ágil · 🧪 Inmune a estados alterados |
 | 🧚 Feéricos | 🗡️ Danzante de hojas | 🗡️ Cuerpo a cuerpo | 🐾 Ágil · 💥 Golpe crítico · 🩸 Hemorragia |
@@ -379,13 +379,13 @@ siendo Características, y montan *encima* del tipo que tenga la ficha: un
 - 🐗 **Jinete de jabalí** — Movilidad / carga / combate cuerpo a cuerpo
 - 🔮 **Chamán** — Magia espiritual / maldiciones / apoyo
 - 🩸 **Carnicero** — Daño masivo / hemorragia / ejecución
-- 🧌 **Troll de guerra** — Criatura / regeneración / resistencia
+- 🗿 **Troll de guerra** — Criatura / regeneración / resistencia
 - 👹 **Gigante orko** — Criatura legendaria / daño masivo / resistencia
 
 ### 🧚 Feéricos — Progresión de unidades
 - 🍄 **Duende feérico** — Hostigamiento / movilidad / engaño
 - 🏹 **Arquero feérico** — Daño a distancia / precisión
-- 🪄 **Hada** — Volador / apoyo / evasión
+- 🧚 **Hada** — Volador / apoyo / evasión
 - 🗡️ **Danzante de hojas** — Movilidad / críticos / ataques rápidos
 - 🦋 **Ilusionista** — Clones / confusión / engaño
 - 🌙 **Encantador** — Control mental / sueño / debilitaciones
@@ -469,7 +469,7 @@ siendo Características, y montan *encima* del tipo que tenga la ficha: un
 | 🧟 Necrófago | 🗡️ Cuerpo a cuerpo | 💀 No-muerto · 🐾 Ágil |
 | 💀 Guerrero esquelético | 🗡️ Cuerpo a cuerpo | 💀 No-muerto · 🛡️ Resistente al daño físico |
 | 🧙 Nigromante | ✨ Mágico | 💀 No-muerto |
-| 🧛 Vampiro | 🗡️ Cuerpo a cuerpo | 💀 No-muerto · 🫀 Robo de vida · 🐾 Ágil |
+| 🧛 Vampiro | 🗡️ Cuerpo a cuerpo | 💀 No-muerto · 🧛 Robo de vida · 🐾 Ágil |
 | ☠️ Abominación | 🗡️ Cuerpo a cuerpo | 💀 No-muerto · 🛡️ Resistente al daño físico · 🩸 Hemorragia · 😱 Inmune al miedo |
 | 🐉 Dragón esquelético | 🗡️ Cuerpo a cuerpo | 💀 No-muerto · 🦅 Volador · 🧊 Hielo · 😱 Inmune al miedo · 🧪 Inmune a estados alterados |
 
@@ -509,7 +509,7 @@ siendo Características, y montan *encima* del tipo que tenga la ficha: un
 | 🐗 Jinete de jabalí | 🗡️ Cuerpo a cuerpo | 🐾 Ágil · 💥 Golpe crítico |
 | 🔮 Chamán | ✨ Mágico | 😱 Inmune al miedo |
 | 🩸 Carnicero | 🗡️ Cuerpo a cuerpo | 🩸 Hemorragia · 💥 Golpe crítico · 😤 Último aliento |
-| 🧌 Troll de guerra | 🗡️ Cuerpo a cuerpo | 🛡️ Resistente al daño físico · 💚 Regeneración · 😱 Inmune al miedo |
+| 🗿 Troll de guerra | 🗡️ Cuerpo a cuerpo | 🛡️ Resistente al daño físico · 💚 Regeneración · 😱 Inmune al miedo |
 | 👹 Gigante orko | 🗡️ Cuerpo a cuerpo | 🛡️ Resistente al daño físico · 💚 Regeneración · 🩸 Hemorragia · 😱 Inmune al miedo |
 
 ### 🧚 Feéricos

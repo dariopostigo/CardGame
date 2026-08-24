@@ -326,7 +326,7 @@ PALETA: verde oliva sucio y óxido dominantes, cuero pardo, BERMELLÓN mate
 protagonista en la sangre — el sujeto más rojo de la raza.
 ```
 
-### Tier 7 · 🧌 Troll de guerra
+### Tier 7 · 🗿 Troll de guerra
 
 ```
 QUÉ ES: unidad de tier 7. NO ES ORKO: es un troll del bando orko, una criatura

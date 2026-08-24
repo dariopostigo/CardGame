@@ -18,15 +18,16 @@
 // parcial por boceto, que van después en la cascada.
 //
 // Hubo cinco bocetos, quedó uno (E · Forja) y desde el 24 de agosto de 2026 hay
-// otro al lado (F · Blasón). Lo que aquí se comparte quedó medido contra los
-// cinco, así que sigue siendo el suelo común y no un resto de la E. Lo que solo
-// servía a los otros cuatro —la cenefa de glifos, el subtítulo, el filete de
-// rareza de 3px— se borró con ellos.
+// otro al lado (G · Estandarte). Lo que aquí se comparte quedó medido contra
+// los cinco, así que sigue siendo el suelo común y no un resto de la E. Lo que
+// solo servía a los otros cuatro —la cenefa de glifos, el subtítulo, el filete
+// de rareza de 3px— se borró con ellos.
 //
-// Ojo con lo que se da por común: el F rompe la SILUETA (es un octógono) y con
+// Ojo con lo que se da por común: la G rompe la SILUETA (es un octógono) y con
 // ella el radio, el fondo y el recorte del arte y del pie. Todo eso sigue aquí
 // porque es lo que hace cualquier carta que no diga lo contrario, pero ya no es
-// una constante — es el caso por defecto.
+// una constante — es el caso por defecto, y lo que la G hace en su lugar vive
+// en card-sketch/_estandarte.scss.
 //
 // La piel sale de game() y no de skin(): la carta es una pieza de la interfaz
 // de producción, y su oro tiene que ser el mismo oro del botón. Por eso el
@@ -204,9 +205,12 @@
 
 // --- Cápsula de Habilidad -------------------------------------------------
 // El par icono-SOBRE-número, ocho por carta. Aquí va lo que la pieza es en
-// cualquier boceto: el apilado —que es la pieza, no su adorno: en fila, icono y
-// cifra dejan de leerse como un par y pasan a ser dieciséis cosas sueltas— más
-// la tipografía y el color de la cifra.
+// cualquier boceto: el apilado, más la tipografía y el color de la cifra. Y el
+// apilado es el caso por defecto, no una ley de la pieza — la regla resultó ser
+// de la ANCHURA: por debajo de unos 60px de columna hay que apilar o el par se
+// deshace en dos cosas sueltas, y por encima se puede elegir. Se cerró con tres
+// medidas: 33px con ocho en fila (E), ~85 con seis en 3×2 (donde en línea
+// aguanta) y ~41 con seis en una fila (G), donde vuelve a apilarse.
 //
 // Lo que NO va aquí es la caja. Hubo un recuadro con fondo y acolchado mientras
 // los bocetos apilaban bandas; la E lo quitó —sus números se apoyan en la chapa
@@ -235,8 +239,9 @@
 // se reconstruye solo. Por eso la probeta cabe en un @each de tres líneas.
 //
 // Vive AQUÍ, en el esqueleto, y no en el parcial de un boceto: la piden los dos
-// marcos —la E y la F usan la misma aleación— y lo que se elige es el material
-// de la carta, no el de un boceto. Estuvo en _forja.scss mientras hubo uno solo.
+// marcos —la E y la G usan la misma aleación— y lo que se elige es el material
+// de la carta, no el de un boceto. Estuvo en _forja.scss mientras hubo uno
+// solo.
 //
 // El data-alloy va en el CONTENEDOR del lab y no en cada carta, por lo mismo: lo
 // que se elige es el material de todas. La regla gana a la del boceto por

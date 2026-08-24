@@ -12,11 +12,14 @@
 // knowledge/v3/card-concept/README.md, que es donde vive el razonamiento; aquí
 // solo vive lo que se dibuja.
 //
-// La F · Blasón abre tanda nueva. NO se deriva de la E: sale de una referencia
-// (Might & Magic: Fates) y está montada para discutirla punto por punto —dónde
-// vive la Rareza, si los ocho números van todos iguales, si la carta escribe el
-// Tier o no—. Por eso la lista y el Record vuelven a tener dos entradas y la
-// fila de pestañas del lab vuelve a aparecer.
+// La segunda tanda hizo lo mismo en dos días. La F · Blasón —réplica de una
+// referencia, Might & Magic: Fates— entró para discutirle a la E cuatro cosas
+// que daba por cerradas, y de ella y la E salió la G · Estandarte: el octógono
+// de la F con la veta de la E. Montada la mezcla, la F dejó de tener nada que
+// enseñar que la G no enseñara igual, así que se borró con su marco y su
+// parcial. Lo suyo que valía —la silueta, el disco del Tier, los dos pines de
+// esquina, el rótulo en versalitas— está en la G; lo que discutió sigue
+// analizado en el concepto, que es donde vive el razonamiento.
 //
 // Reparto con el SCSS, el mismo de card-frames.tsx: aquí va la ESTRUCTURA (qué
 // piezas hay y en qué orden), en styles/components/card-sketch/ va todo lo
@@ -28,9 +31,9 @@
 // =========================================================================
 
 import { DAMAGE, LONG_NAME, rankOf, SKILLS, type SkillKey, type Subject } from "./sample";
-import { BlasonFrame, ForjaFrame } from "./sketch-frames";
+import { EstandarteFrame, ForjaFrame } from "./sketch-frames";
 
-export type SketchId = "forja" | "blason";
+export type SketchId = "forja" | "estandarte";
 
 /** Ficha de cada boceto: de aquí comen las pestañas y las notas del lab. */
 export const SKETCHES: readonly {
@@ -48,17 +51,17 @@ export const SKETCHES: readonly {
     bet: "El metal NO lleva la rareza: todas las cartas son del mismo peltre —material de carta, no dato— y el color vive en una veta encendida que corre por el canal entre los dos raíles del filete, derramándose hacia dentro sobre la ilustración. La carta no está teñida, está encendida. El pie se reduce a UNA pieza: una placa traslúcida a sangre de lado a lado con el rótulo —a mayor tamaño— y las ocho Habilidades dentro. Sin subtítulo: el medallón lleva el emblema de la raza y el color de la veta dice la clase de tier, así que no queda texto que escribir bajo el nombre. Las Características van en un raíl vertical de medallones sobre el arte.",
   },
   {
-    id: "blason",
-    label: "F · Blasón",
-    source: "Might & Magic: Fates (concepto F)",
-    bet: "Rompe lo único que los cinco anteriores no discutían: la SILUETA. La carta es un octógono —cuatro esquinas cortadas a 45° con su roblón— y el color de la Rareza es el canto de fuera, un filete que rodea el corte entero. Y rompe la otra herencia: las ocho Habilidades dejan de ir todas iguales. Las dos que se consultan en cada intercambio de golpes salen a las esquinas de abajo en pines con forma —⚔️ Ataque en hoja de acero, ❤️ Vida en gema roja— y las otras seis se quedan en una rejilla de 3×2 dentro del panel, con el icono al lado del número. El Tier vuelve a escribirse, en un disco montado sobre la esquina superior izquierda, y la raza se escribe en versalitas al pie, entre los dos pines.",
+    id: "estandarte",
+    label: "G · Estandarte",
+    source: "El octógono de la F · Blasón (borrada) con la luz de la E",
+    bet: "Rompe lo único que la primera tanda no discutió, la SILUETA: la carta es un octógono, cuatro esquinas cortadas a 45° con un roblón en cada corte. Eso y la jerarquía de los ocho vienen de la réplica de Might & Magic: Fates —las dos que se consultan en cada intercambio de golpes salen a las esquinas de abajo en pines con forma, ⚔️ Ataque en hoja de acero y ❤️ Vida en gema de sangre, y las otras seis se juntan en UNA fila dentro del panel—, junto con el Tier escrito en número en un disco montado sobre la esquina y el rótulo en versalitas. Pero la Rareza NO va en el canto: vuelve dentro del metal, en la veta encendida de la E, que corre por el canal del filete y derrama su baño sobre la ilustración. Y sin las cantoneras de la E, que allí cortan la veta en las cuatro esquinas: aquí el canal da la vuelta entera y la carta queda rodeada por un aro continuo de ocho lados. El rombo de la Rareza va tallado —engaste de metal, cuatro facetas y tabla— y del disco del Tier cuelga un estandarte con el emblema de la raza: la ficha que la referencia dedica a la facción, que V3 no tiene.",
   },
 ];
 
 const skillOf = (key: SkillKey) => SKILLS.find((s) => s.key === key)!;
 
 /**
- * El reparto de las ocho del boceto F, y es SU apuesta, no un detalle de
+ * El reparto de las ocho del boceto G, y es SU apuesta, no un detalle de
  * maquetación: los dos que se consultan en cada intercambio de golpes salen del
  * grupo y se van a las esquinas de abajo, con forma y tamaño propios; los otros
  * seis se quedan juntos en el panel.
@@ -144,8 +147,8 @@ function Plate({
  * es una capa encima — por eso no vive dentro del pie.
  *
  * De qué lado cae lo decide el boceto y no esta pieza: la E lo pone a la
- * izquierda y la F a la derecha, porque allí la esquina izquierda se la lleva
- * el disco del Tier.
+ * izquierda y la G a la derecha, porque allí la esquina izquierda se la llevan
+ * el disco del Tier y el estandarte que cuelga de él.
  */
 function Rail({ subject }: { subject: Subject }) {
   if (subject.traits.length === 0) return null;
@@ -253,48 +256,68 @@ function ForjaCard({ subject }: { subject: Subject }) {
   );
 }
 
-// --- F · Blasón -----------------------------------------------------------
-// La réplica de `knowledge/v3/card-concept/imgs/might-magic-fates-heroes-tcg-pc-cd-key-4.webp`
-// con el modelo de datos de V3. No sale de la E: sale de una referencia, y está
-// puesta al lado de la E para discutirle tres cosas que aquella daba por
-// cerradas.
+// --- G · Estandarte -------------------------------------------------------
+// El boceto que salió de cruzar la E con la réplica de
+// `knowledge/v3/card-concept/imgs/might-magic-fates-heroes-tcg-pc-cd-key-4.webp`
+// (F · Blasón, borrada el 25 de agosto de 2026 en cuanto esta la absorbió). De
+// la réplica se queda tres cosas que la E daba por cerradas:
 //
-//   · LA SILUETA SE DISCUTE. Los cinco bocetos anteriores son el mismo
+//   · LA SILUETA SE DISCUTE. Los cinco bocetos de la primera tanda son el mismo
 //     rectángulo redondeado con distinta piel. Este es un OCTÓGONO, y es lo
 //     primero que se reconoce de la referencia antes de leer un solo número.
 //   · LOS OCHO NÚMEROS NO SON IGUALES. La E los pone todos del mismo tamaño en
 //     una fila; aquí ⚔️ Ataque y ❤️ Vida se van a las esquinas de abajo en pines
-//     con forma propia y los otros seis se quedan en una rejilla de 3×2. La
-//     carta dice cuáles se consultan en combate y cuáles se consultan una vez.
+//     con forma propia y los otros seis se quedan juntos en el panel. La carta
+//     dice cuáles se consultan en combate y cuáles se consultan una vez.
 //   · LA CARTA VUELVE A ESCRIBIR. La E no escribe el Tier en ningún sitio —lo
 //     dice el color de la veta, y por eso solo puede decir de qué CLASE de tier
 //     es—; aquí va en número, en el disco de la esquina, que es lo que la
 //     referencia hace con el coste. Y la raza vuelve a escribirse, en
 //     versalitas al pie, donde la referencia pone el tipo de criatura.
 //
-// LO QUE LA REFERENCIA TIENE Y AQUÍ NO ESTÁ: el banderín de facción que cuelga
-// bajo el disco. En la referencia hay DOS taxonomías —la facción (Academy) y el
-// tipo de criatura (WIZARD)— y en V3 solo hay una, la raza, que ya se escribe al
-// pie. El banderín habría tenido que repetirla o inventarse un dato; el tipo de
-// daño, que era el otro candidato, ya viaja pegado al número de Ataque desde el
-// boceto E y ahí cuesta cero píxeles. Así que no está, y esa ausencia es un
-// hallazgo de la réplica: la mitad de las fichas de esta referencia existen
-// porque su juego tiene un eje que el nuestro no tiene.
+// Y de la E se queda lo que la réplica había sacado fuera: la RAREZA vuelve
+// dentro del metal —la veta de luz por el canal del filete, con su baño sobre
+// la ilustración—, así que el canto teñido desaparece y la carta está encendida
+// en vez de acuñada. Con dos diferencias propias:
 //
-// El Miliciano vuelve a ser el caso que hay que mirar: sin Características el
-// raíl derecho desaparece y la carta se queda con el disco a un lado y nada al
-// otro, que es justo lo que el raíl vertical resolvía en la E.
-function BlasonCard({ subject }: { subject: Subject }) {
+//   · LA VETA DA LA VUELTA ENTERA. La E la corta en cuatro tramos con sus
+//     cantoneras —metal encendido entre chapas—; aquí no hay escuadra, solo el
+//     roblón del chaflán, así que el canal se cierra en un aro de ocho lados.
+//     Tramos contra aro, y es la misma pregunta con otra forma.
+//   · CUELGA UN ESTANDARTE DE RAZA del disco del Tier, por debajo de él. Es la
+//     ficha que la réplica había dejado VACÍA: allí cuelga el banderín de la
+//     facción, y V3 no tiene facción —tiene una sola taxonomía, la raza, y ya
+//     se escribe al pie—. Aquí se dibuja con lo único que hay, la raza en
+//     emblema, así que la carta la dice dos veces a propósito: puestas las dos,
+//     se puede decidir cuál sobra, que es la discusión que la E (emblema, sin
+//     texto) y la réplica (texto, sin emblema) tenían abierta sin poder mirarla
+//     junta.
+//
+// El Miliciano es el caso que hay que mirar: sin Características el raíl
+// derecho desaparece y la carta se queda con el disco a un lado y nada al otro,
+// que es justo lo que el raíl vertical resolvía en la E.
+function EstandarteCard({ subject }: { subject: Subject }) {
   return (
     <>
       <Art subject={subject} />
-      <BlasonFrame />
+      <EstandarteFrame />
       <Rail subject={subject} />
 
-      {/* La Rareza, en rombo a caballo del canto de arriba. Es la ÚNICA pieza
-          de la carta que la dice con una forma y no con un color prestado, y
-          va donde la referencia la pone: en el eje del nombre. */}
+      {/* La Rareza, en rombo a caballo del canto de arriba, donde la referencia
+          la pone: en el eje del nombre. Es la tercera vez que la carta la dice,
+          contando la veta y su baño. */}
       <span className="sketch__gem" title={`Rareza: ${subject.rarity}`} />
+
+      {/* El estandarte de raza va ANTES que el disco a propósito: las dos
+          piezas viven en la misma capa (z("chip"), la de las fichas que montan
+          sobre el marco) y ahí manda el orden del árbol, así que quien va
+          primero queda debajo. Es lo que hace que la bandera asome por debajo
+          del disco en vez de taparle el canto. Con un z-index menor se habría
+          metido debajo del marco, que es la capa siguiente hacia abajo, y
+          entonces dejaría de montar sobre el filete. */}
+      <span className="sketch__banner" title={`Raza: ${subject.race}`}>
+        <b className="sketch__banner-icon">{subject.raceIcon}</b>
+      </span>
 
       {/* El disco del Tier, montado sobre el chaflán y desbordándolo. Un héroe
           no tiene tier y aquí NO se le deja el hueco vacío: lleva corona, que
@@ -310,6 +333,9 @@ function BlasonCard({ subject }: { subject: Subject }) {
           className="sketch__plate sketch__plate--panel"
           after={
             <>
+              {/* Las seis del panel, en el orden de razas.md. Que vayan en una
+                  fila y no en dos renglones lo decide el SCSS: aquí no se
+                  calcula ni una posición. */}
               <ul className="sketch__pods">
                 {PANEL_SKILLS.map((k) => (
                   <Stat key={k} subject={subject} skill={k} base="pod" />
@@ -338,7 +364,7 @@ function BlasonCard({ subject }: { subject: Subject }) {
 
 const SKETCH_CARDS: Record<SketchId, (p: { subject: Subject }) => React.ReactElement> = {
   forja: ForjaCard,
-  blason: BlasonCard,
+  estandarte: EstandarteCard,
 };
 
 /**

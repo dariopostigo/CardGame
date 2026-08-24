@@ -47,19 +47,38 @@ $sketch-medal: 30px;               // medallón de Característica, en el raíl
 // components/design/v3/sketch-frames.tsx: si allí crece el filete y aquí no,
 // el marco se come la fila de ocho.
 //
-// Y vale para los DOS bocetos a propósito: el F reparte sus anillos de otra
-// manera (RIM en el mismo archivo) pero suma exactamente los mismos 15px. Entre
-// bocetos cambia el aspecto, nunca la medida — si no, no se pueden comparar.
+// Y vale para los DOS bocetos a propósito: el G reparte sus anillos sobre otra
+// silueta pero suma exactamente los mismos 15px. Entre bocetos cambia el
+// aspecto, nunca la medida — si no, no se pueden comparar.
 $sketch-band: 15px;                // grosor del filete metálico
 $sketch-boss: 42px;                // medallón montado en la placa
 
-// --- Boceto F · Blasón ----------------------------------------------------
+// --- Boceto G · Estandarte ------------------------------------------------
 // Su silueta no es un rectángulo redondeado: es un OCTÓGONO, con las cuatro
 // esquinas cortadas a 45°. El chaflán es el cateto de ese corte medido sobre
 // cada borde, y es espejo de la C de sketch-frames.tsx — el marco vectorial
 // dibuja el mismo contorno que recortan el arte y el pie, así que las dos
 // medidas tienen que moverse juntas o el filete deja de seguir a la silueta.
+//
+// Las tres primeras cotas vienen de la F · Blasón —la réplica de Might & Magic:
+// Fates, borrada el 25 de agosto de 2026 en cuanto la G la absorbió— y siguen
+// midiendo lo mismo: lo que la mezcla cambió fue dónde vive la Rareza, no la
+// forma.
 $sketch-chamfer: 18px;
 
 $sketch-disc: 46px;                // disco de Tier, montado en la esquina
-$sketch-gem: 15px;                 // rombo de Rareza, a caballo del canto
+// El rombo de Rareza, a caballo del canto de arriba. En la réplica era una cara
+// plana de 15px y aquí va tallado —engaste, cuatro facetas y tabla—, así que
+// tuvo que crecer: a 15 la tabla se quedaba en dos píxeles y medio.
+$sketch-gem: 20px;
+
+// El estandarte de raza que cuelga del disco del Tier: la ficha que la
+// referencia dedica a la facción y que la réplica dejó fuera por no tener qué
+// escribir en ella.
+//
+// La anchura no es libre: va centrada en el eje del disco, así que sale de él
+// —(46 − 28) / 2 = 9px a cada lado— y es a propósito MÁS ANCHA que el filete
+// (15px), para que se lea como una bandera clavada sobre el marco y no como un
+// trozo de marco pintado de otro color. Su alto es dos veces y pico el ancho:
+// menos que eso deja de ser bandera y es una segunda ficha colgada.
+$sketch-banner: 28px;

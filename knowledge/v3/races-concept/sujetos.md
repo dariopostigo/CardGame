@@ -373,7 +373,7 @@ resistencia.
 | 💣 Explosivo | Carga, bomba, o el gesto de lanzarla |
 | 🐺 Bestia | Rasgo animal real, no un adorno |
 | 👑 Líder | Insignia de mando, estandarte |
-| 🫀 Robo de vida / 🩸 Hemorragia | Filo dentado, sangre, sed |
+| 🧛 Robo de vida / 🩸 Hemorragia | Filo dentado, sangre, sed |
 | 🐌 Lentitud | Masa que explica la lentitud |
 
 **Y el [tipo de daño](razas.md#-tipo-de-daño) manda sobre todas ellas**, porque
@@ -459,9 +459,9 @@ se mira sola.
 | 3 | 🛡️ **Caballero** | Tanque / cuerpo a cuerpo | Masa y coraza sobre el Miliciano | Resistente al daño físico |
 | 4 | 🔮 **Mago** | Daño mágico / control | **Foco arcano** (✨), sin armadura | — |
 | 5 | 🐎 **Caballería** | Movilidad / carga | **Montado**, lanza en carga | Ágil · Golpe crítico |
-| 6 | 🦅 **Grifo** | Criatura voladora | **Alas** (🪽) — no es humano, es criatura aliada | Golpe crítico · Ágil |
+| 6 | 🦅 **Grifo** | Criatura voladora | **Alas** (🦅) — no es humano, es criatura aliada | Golpe crítico · Ágil |
 | 7 | ✝️ **Paladín** | Tanque / apoyo / sagrado | Cima humana: la armadura más completa de la raza, **arma de contacto** (🗡️) | Resistente al daño físico · Inmune al miedo |
-| 8 | 🐉 **Dragón dorado** | Legendaria / daño masivo | **Alas** (🪽) + **fuego** (🔥) + **estallido** (💣). Enorme; el oro de la raza aquí es literal | Inmune al fuego |
+| 8 | 🐉 **Dragón dorado** | Legendaria / daño masivo | **Alas** (🦅) + **fuego** (🔥) + **estallido** (💣). Enorme; el oro de la raza aquí es literal | Inmune al fuego |
 
 > Dos de las ocho —**Grifo** y **Dragón dorado**— no son humanos. Son criaturas
 > del bando humano: se someten a la paleta de la raza (§ criaturas de
@@ -508,7 +508,7 @@ cerrado**: sin esa vara de medir no hay contra qué juzgar cuánta masa es un ti
 | 5 | 🧙 Nigromante | Invocación / control | Muerto que conserva ropa y rango |
 | 6 | 🧛 Vampiro | Movilidad / robo de vida | Sed, sangre (🩸) |
 | 7 | ☠️ Abominación | Daño masivo | Carne cosida, filo sangrante (🩸) |
-| 8 | 🐉 Dragón esquelético | Legendaria | Hueso (💀) + alas (🪽) + escarcha (🧊) |
+| 8 | 🐉 Dragón esquelético | Legendaria | Hueso (💀) + alas (🦅) + escarcha (🧊) |
 
 ## 🔥 Demonios infernales
 
@@ -557,15 +557,15 @@ encargarlos.
 
 ## 🧟 Orkos
 **Héroes:** 🪓 Bárbaro · 🛡️ Jefe de guerra *(👑 insignia de mando)* · 🔮 Chamán · 🏹 Cazador *(🏹 arco, 🐺 rasgo bestial)*. ⚠️ **Bárbaro**, **Chamán**.
-**Unidades:** 1 🪓 Guerrero orko *(🩸)* · 2 🏹 Cazador orko *(🏹)* · 3 🪓 Bárbaro *(🩸)* · 4 🐗 Jinete de jabalí *(montado)* · 5 🔮 Chamán · 6 🩸 Carnicero *(🩸 ejecución)* · 7 🧌 Troll de guerra *(💚 regenera)* · 8 👹 Gigante orko *(🩸, colosal)*
+**Unidades:** 1 🪓 Guerrero orko *(🩸)* · 2 🏹 Cazador orko *(🏹)* · 3 🪓 Bárbaro *(🩸)* · 4 🐗 Jinete de jabalí *(montado)* · 5 🔮 Chamán · 6 🩸 Carnicero *(🩸 ejecución)* · 7 🗿 Troll de guerra *(💚 regenera)* · 8 👹 Gigante orko *(🩸, colosal)*
 
 ## 🧚 Feéricos
-**Héroes:** 🪄 Hechicero feérico · 🦋 Ilusionista · 🧚 Hada *(🪽 alas)* · 🗡️ Danzante de hojas *(🩸)*. ⚠️ **Hada**, **Ilusionista**, **Danzante de hojas**.
-**Unidades:** 1 🍄 Duende feérico · 2 🏹 Arquero feérico *(🏹)* · 3 🧚 Hada *(🪽)* · 4 🗡️ Danzante de hojas *(🩸)* · 5 🦋 Ilusionista · 6 🌙 Encantador · 7 🦌 Ciervo feérico *(criatura)* · 8 🐉 Dragón feérico *(🪽)*
+**Héroes:** 💫 Hechicero feérico · 🦋 Ilusionista · 🧚 Hada *(🦅 alas)* · 🗡️ Danzante de hojas *(🩸)*. ⚠️ **Hada**, **Ilusionista**, **Danzante de hojas**.
+**Unidades:** 1 🍄 Duende feérico · 2 🏹 Arquero feérico *(🏹)* · 3 🧚 Hada *(🦅)* · 4 🗡️ Danzante de hojas *(🩸)* · 5 🦋 Ilusionista · 6 🌙 Encantador · 7 🦌 Ciervo feérico *(criatura)* · 8 🐉 Dragón feérico *(🦅)*
 
 ## 🐉 Dracónidos
-**Héroes:** 🐲 Caballero dragón · 🔥 Piromante *(🔥)* · 🐲 Dracoguerrero *(🪽)* · 🌟 Oráculo dracónico. ⚠️ **Piromante**, **Dracoguerrero**.
-**Unidades:** 1 🗡️ Guerrero dracónido · 2 🏹 Cazador dracónido *(🏹)* · 3 🛡️ Caballero dracónido · 4 🔥 Piromante *(🔥)* · 5 🐲 Dracoguerrero *(🪽)* · 6 🐲 Dracónido ancestral · 7 🐉 Joven dragón *(🪽 🔥)* · 8 🐉 Dragón ancestral *(🪽 🔥 💣, colosal)*
+**Héroes:** 🐲 Caballero dragón · 🔥 Piromante *(🔥)* · 🐲 Dracoguerrero *(🦅)* · 🌟 Oráculo dracónico. ⚠️ **Piromante**, **Dracoguerrero**.
+**Unidades:** 1 🗡️ Guerrero dracónido · 2 🏹 Cazador dracónido *(🏹)* · 3 🛡️ Caballero dracónido · 4 🔥 Piromante *(🔥)* · 5 🐲 Dracoguerrero *(🦅)* · 6 🐲 Dracónido ancestral · 7 🐉 Joven dragón *(🦅 🔥)* · 8 🐉 Dragón ancestral *(🦅 🔥 💣, colosal)*
 
 ## 🐀 Hombres rata
 **Héroes:** 🗡️ Asaltante · ☠️ Alquimista *(☠️ viales)* · 🐀 Señor de la plaga *(☠️)* · ⚙️ Maquinista *(🏹)*. ⚠️ **los cuatro colisionan.**

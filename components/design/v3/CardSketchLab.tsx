@@ -17,10 +17,12 @@ import { HEROES, STRESS, SUBJECTS, UNITS, type Subject } from "./sample";
 
    Hubo cinco bocetos en la primera tanda y quedó uno, la E · Forja; los cuatro
    anteriores se borraron y lo que enseñó cada uno está en
-   knowledge/v3/card-concept/README.md. La F · Blasón abre la segunda: no se
-   deriva de la E, sale de una referencia y la contradice a propósito. Con dos
-   en la lista vuelve a pintarse la fila de pestañas —con uno solo no se pinta,
-   porque una pestaña que no lleva a ningún sitio es ruido—.
+   knowledge/v3/card-concept/README.md. La segunda tanda acabó igual: entró la
+   F · Blasón —réplica de una referencia, montada para contradecir a la E— y de
+   cruzarla con la E salió la G · Estandarte, que la dejó sin nada propio que
+   enseñar, así que la F se borró también. Quedan dos. Con más de uno en la
+   lista vuelve a pintarse la fila de pestañas —con uno solo no se pinta, porque
+   una pestaña que no lleva a ningún sitio es ruido—.
 
    Las dos fuentes que carga: Platypi para el nombre —la serif de titulación que
    entra en lugar de Cormorant, la serif de libro de las cartas de v2— y Oswald
@@ -40,7 +42,7 @@ const EVERYTHING = "@todo";
    El metal de la carta sale de un solo color, así que probarlo es cambiar ese
    color: el atributo data-alloy va al escenario y el @each de
    styles/components/_card-sketch.scss hace el resto. Mueve los dos marcos a la
-   vez —la E y la F comparten aleación—, que es lo que hay que querer: si cada
+   vez —la E y la G comparten aleación—, que es lo que hay que querer: si cada
    boceto llevara su metal, la comparación sería de color y no de marco.
 
    Esta lista es el espejo de las claves de $sketch-alloy (settings/_colors.scss)
@@ -81,7 +83,7 @@ export default function CardSketchLab() {
   // los once sujetos a la vez.
   //
   // El último de la lista y no un id escrito: dar de alta un boceto nuevo tiene
-  // que bastar con añadirlo a SKETCHES. Hoy la lista tiene uno.
+  // que bastar con añadirlo a SKETCHES. Hoy la lista tiene dos.
   const [view, setView] = useState<SketchId>(SKETCHES[SKETCHES.length - 1].id);
   const [pick, setPick] = useState<string>(EVERYTHING);
   // Arranca en el metal que hoy está puesto en settings/, para que la primera
@@ -131,10 +133,16 @@ export default function CardSketchLab() {
           knowledge/v3/card-concept/
         </code>
         — quedó <b>la E · Forja</b>; los otros cuatro están borrados y lo que enseñó cada uno
-        sigue escrito en el concepto. Al lado está ahora la <b>F · Blasón</b>, que no se deriva de
-        ella: es la réplica de una referencia (<i>Might &amp; Magic: Fates</i>) y le lleva la
-        contraria en las cuatro cosas que la E daba por cerradas — la silueta, dónde vive la
-        Rareza, si los ocho números van todos iguales y si la carta escribe el Tier o lo enseña.
+        sigue escrito en el concepto. Al lado está la <b>G · Estandarte</b> <i>(24 de agosto)</i>,
+        que sale de cruzar la E con la <b>F · Blasón</b> —la réplica de una referencia,{" "}
+        <i>Might &amp; Magic: Fates</i>, montada para llevarle la contraria a la E en las cuatro
+        cosas que daba por cerradas—. De la réplica se queda <b>el octógono</b>, la jerarquía de
+        los ocho números y el Tier escrito en el disco; de la E, la <b>veta</b> encendida por
+        dentro del metal, así que el canto teñido desaparece. Encima talla el rombo de la Rareza,
+        junta las seis Habilidades del panel en una sola fila y cuelga del disco del Tier un{" "}
+        <b>estandarte con el emblema de la raza</b> — la ficha que la referencia dedica a la
+        facción y que la réplica había dejado en blanco. Con eso la <b>F se quedó sin nada propio
+        que enseñar y está borrada</b>: lo que discutió sigue en el concepto.
       </p>
       <p className="mb-2 max-w-3xl text-sm text-[var(--wiki-muted)]">
         Los sujetos son la <b>plantilla real de la raza piloto</b>: las <b>ocho unidades</b> de
@@ -193,10 +201,10 @@ export default function CardSketchLab() {
             Todo junto
           </button>
         </div>
-        {/* La probeta de metal. Vale para los dos bocetos porque en los dos el
-            metal NO lleva la rareza: si el marco fuera la rareza —como en la
+        {/* La probeta de metal. Vale para los dos bocetos porque en los dos
+            el metal NO lleva la rareza: si el marco fuera la rareza —como en la
             D—, cambiarle el tono sería cambiar de boceto y no de material.
-            Y es la misma aleación para ambos a propósito: así se comparan con
+            Y es la misma aleación para todos a propósito: así se comparan con
             el mismo material y lo que se ve es el marco, no el color. */}
         <div className="flex flex-wrap items-center gap-2">
           {label("Aleación")}
@@ -235,67 +243,91 @@ export default function CardSketchLab() {
         <ul className="list-disc space-y-1.5 pl-5 text-[var(--wiki-muted)]">
           <li>
             <b>Si la carta es un rectángulo.</b> Los cinco bocetos de la primera tanda no lo
-            preguntaron nunca: los cinco son la misma caja redondeada con distinta piel. La{" "}
-            <b>F</b> la corta — es un <b>octógono</b>, con las cuatro esquinas a 45° y un roblón
-            en cada corte— y eso no es una piel, es lo primero que se reconoce de una carta a
-            distancia de mesa. El precio se ve en el propio marco: cada esquina cortada es sitio
-            que se pierde, y por eso el disco del Tier tiene que <i>desbordar</i> el chaflán en vez
-            de caber dentro. Cambia también la producción: una carta impresa con las esquinas
-            cortadas es un troquel, no un corte recto.
+            preguntaron nunca: los cinco son la misma caja redondeada con distinta piel. La
+            réplica de la referencia lo cortó —un <b>octógono</b>, con las cuatro esquinas a 45° y
+            un roblón en cada corte— y la <b>G</b> se quedó esa silueta, así que la pregunta está
+            en pantalla: <b>rectángulo (E) contra octógono (G)</b>. No es una piel, es lo primero
+            que se reconoce de una carta a distancia de mesa. El precio se ve en el propio marco:
+            cada esquina cortada es sitio que se pierde, y por eso el disco del Tier tiene que{" "}
+            <i>desbordar</i> el chaflán en vez de caber dentro. Cambia también la producción: una
+            carta impresa con las esquinas cortadas es un troquel, no un corte recto.
           </li>
           <li>
             <b>Si los ocho números van todos iguales.</b> La <b>E</b> dice que sí —misma fila,
-            mismo cuerpo, mismo peso—, y la ventaja es que la carta no elige por ti. La <b>F</b>{" "}
+            mismo cuerpo, mismo peso—, y la ventaja es que la carta no elige por ti. La <b>G</b>{" "}
             dice que no: ⚔️ Ataque y ❤️ Vida se van a las esquinas de abajo en pines con forma
-            propia y a mayor tamaño, y los otros seis se quedan en una rejilla de 3×2. Es lo que
-            el concepto B señalaba como digno de robar y ningún boceto había dibujado. Míralas
-            juntas y decide si la carta debe decir <i>cuáles</i> se consultan en cada golpe, o si
-            eso es una decisión de reglas que el marco no tiene por qué congelar.
+            propia y a mayor tamaño, y los otros seis se quedan juntos en el panel. Es lo que el
+            concepto B señalaba como digno de robar y ningún boceto dibujó hasta la réplica.
+            Decide si la carta debe decir <i>cuáles</i> se consultan en cada golpe, o si eso es
+            una decisión de reglas que el marco no tiene por qué congelar.
           </li>
           <li>
-            <b>Si el icono va encima del número o al lado.</b> El esqueleto tiene escrito que el
-            apilado <i>es</i> la pieza —en fila, icono y cifra dejan de leerse como un par—, y se
-            escribió con ocho en una fila de 33px. La F lo prueba en las otras condiciones: seis
-            en tres columnas de ~85px, con el icono al lado. Si ahí también se deshace, la regla
-            es de la pieza; si aguanta, era de la anchura.
+            <b>Si el icono va encima del número o al lado</b>, y ya con la respuesta. El esqueleto
+            tenía escrito que el apilado <i>era</i> la pieza —en fila, icono y cifra dejan de
+            leerse como un par—, y se escribió con ocho en una fila de 33px. La réplica lo probó
+            en las otras condiciones: seis en tres columnas de ~85px, con el icono al lado, y ahí
+            el par aguanta. La <b>G</b> los junta en una fila de seis, o sea ~41px por columna, y
+            a esa anchura el par en línea ocupa 39 de los 41 — dos vecinos se tocan y la fila se
+            lee como una tapia, así que vuelven a apilarse. <b>La regla era de la anchura, no de
+            la pieza</b>: por debajo de unos 60px hay que apilar, por encima se puede elegir.
           </li>
           <li>
             <b>Si el Tier se escribe o se enseña</b>, ya con las dos respuestas dibujadas. La{" "}
             <b>E</b> no lo escribe en ningún sitio y paga que solo puede decir de qué{" "}
             <i>clase</i> de tier es (cinco escalones para ocho tiers: el Miliciano y el Arquero son
-            la misma carta gris). La <b>F</b> lo escribe en número, en el disco de la esquina —que
-            es lo que la referencia hace con el coste—, y de paso la raza vuelve a escribirse en
-            versalitas al pie. Una enseña y la otra escribe; es la misma pregunta que la del
-            subtítulo, pero ahora se puede mirar en vez de discutirse.
+            la misma carta gris). La <b>G</b> lo escribe en número, en el disco de la esquina —que
+            es lo que la referencia hace con el coste—. Una enseña y la otra escribe; es la misma
+            pregunta que la del subtítulo, pero ahora se puede mirar en vez de discutirse.
           </li>
           <li>
-            <b>Lo que la referencia tiene y aquí no cabe.</b> Bajo su disco de coste cuelga un{" "}
-            <b>banderín de facción</b>, y no está en la réplica: esa carta tiene <b>dos</b>{" "}
-            taxonomías —la facción (Academy) y el tipo de criatura (WIZARD)— y V3 solo tiene una,
-            la raza, que ya se escribe al pie. El otro candidato, el tipo de daño, viaja pegado al
-            número de Ataque desde la E y ahí no cuesta ni un pixel. Merece anotarse: la mitad de
-            las fichas de una referencia existen porque su juego tiene un eje que el nuestro no
-            tiene, y copiarlas sin ese eje es rellenar huecos.
+            <b>Si la carta puede decir la raza dos veces.</b> Bajo el disco de coste de la
+            referencia cuelga un <b>banderín de facción</b>, y la réplica lo dejó fuera: esa carta
+            tiene <b>dos</b> taxonomías —la facción (Academy) y el tipo de criatura (WIZARD)— y V3
+            solo tiene una. La <b>G</b> lo dibuja de todas formas y le pone lo único que hay, la{" "}
+            <b>raza</b>, que ya está escrita en versalitas al pie: 👤 arriba y «HUMANOS» abajo, el
+            mismo dato dos veces y de dos maneras. Está así a propósito, porque es la única forma
+            de mirar juntas en una misma carta las dos respuestas que hasta ahora venían por
+            separado —emblema sin texto (E) y texto sin emblema (la réplica)— y quedarse con una.
+            Míralo en el 🐉 Dragón esquelético, que es el único que no es de Humanos: 💀 y
+            «NO-MUERTOS». Y si sobra el estandarte, lo que queda pendiente es el hueco: media
+            docena de fichas de una referencia existen porque su juego tiene un eje que el nuestro
+            no tiene.
           </li>
           <li>
-            <b>Dónde vive la Rareza</b>, con dos respuestas opuestas en pantalla. La <b>E</b> la
-            mete <i>dentro</i> del metal: una <b>veta</b> de luz entre los dos raíles del filete,
-            más el baño que derrama sobre la ilustración — la carta no está teñida, está
-            encendida. La <b>F</b> la saca al <i>canto</i>: un filete duro de 2,2px que rodea el
-            octógono entero, más un <b>rombo</b> a caballo del borde de arriba, en el eje del
-            nombre. Encendido contra acuñado. La tercera vía, teñir el marco entero de la aleación
-            de la rareza, ya se probó y se descartó (mezcla D): se reconoce antes en una mano,
-            pero convierte el marco en cinco piezas distintas y le roba la carta a la ilustración.
-            Mira el Miliciano (común) junto al Dragón dorado (legendaria) con «Todo junto» en los
-            dos bocetos.
+            <b>Dónde vive la Rareza.</b> Los dos bocetos que quedan dan la misma respuesta —una{" "}
+            <b>veta</b> de luz entre los dos raíles del filete, más el baño que derrama sobre la
+            ilustración: la carta no está teñida, está encendida—, y eso es lo que hace que sirvan
+            para comparar la <i>forma</i> y no el color. La respuesta contraria se probó y está
+            borrada: la réplica sacaba el color al <i>canto</i>, un filete duro de 2,2px alrededor
+            del octógono entero, y de ahí quedó apuntado que <b>el filete se lee antes que la
+            veta</b>, no por sutileza sino por área. Encendido contra acuñado, y esa parte de la
+            discusión ya no está en pantalla. Lo que sí se puede mirar es <b>cómo</b> se enseña la
+            veta: la <b>E</b> la corta en <b>cuatro tramos</b> con sus cantoneras —metal encendido
+            entre chapas— y la <b>G</b> no lleva escuadras, solo el roblón del chaflán, así que el
+            canal se cierra en un <b>aro continuo</b> de ocho lados. Si la luz tiene que parecer
+            una pieza de metal caliente o un contorno encendido. La otra vía, teñir el marco
+            entero de la aleación de la rareza, ya se probó y se descartó (mezcla D): se reconoce
+            antes en una mano, pero convierte el marco en cinco piezas distintas y le roba la
+            carta a la ilustración. Mira el Miliciano (común) junto al Dragón dorado (legendaria)
+            con «Todo junto» en los dos bocetos.
+          </li>
+          <li>
+            <b>Cuánto detalle aguanta una pieza pequeña.</b> El rombo de la Rareza de la <b>G</b>{" "}
+            es una <b>piedra tallada</b> de 20px: engaste de metal, cuatro facetas que se cortan
+            en la mitad y una tabla con su destello. Se probó antes plano —una cara de color
+            girada 45°, a 15px— y a esa medida la talla no cabía: la tabla se quedaba en dos
+            píxeles y medio. A tamaño de pantalla la talla se ve; la pregunta es si se vería en
+            una carta impresa de 63mm, o si a ese tamaño las facetas se emborronan y lo único que
+            queda es una mancha más sucia que la plana. Es la misma pregunta que hay que hacerle a
+            los roblones y al bocel del marco.
           </li>
           <li>
             <b>Si el raíl de Características se lleva bien con un marco con herrajes.</b> El raíl
             va sobre el arte, y con las cantoneras en las esquinas tiene que arrancar más abajo
             para no meterse debajo de una. Míralo en el 🐉 Dragón esquelético, que trae cinco. En
-            la F además cambia de lado —se va a la derecha, porque la esquina izquierda se la
-            lleva el disco del Tier— y los medallones dejan de ser redondos: repiten el octógono
-            de la carta en pequeño.
+            la <b>G</b> además cambia de lado —se va a la derecha, porque la esquina izquierda se
+            la llevan el disco del Tier y el estandarte que cuelga de él— y los medallones dejan
+            de ser redondos: repiten el octógono de la carta en pequeño.
           </li>
           <li>
             <b>Arriba no caben.</b> Se probó a subir las ocho Habilidades a una banda de
@@ -320,16 +352,18 @@ export default function CardSketchLab() {
             hay nada escrito. Es lo que más aligera el pie, y su prueba está en el 🐉 Dragón
             esquelético junto a cualquier humano — 💀 contra 👤 y sin leer. El reparo: el emoji de
             Humanos es una silueta genérica, así que como emblema depende de que razas.md le dé
-            uno que valga a ese tamaño. La <b>F</b> hace lo contrario y escribe «HUMANOS» en
-            versalitas al pie, que es lo que la referencia hace con el tipo de criatura: cuesta
-            una línea y no depende de ningún catálogo de iconos.
+            uno que valga a ese tamaño. Lo contrario es escribir «HUMANOS» en versalitas al pie,
+            que es lo que la referencia hace con el tipo de criatura: cuesta una línea y no
+            depende de ningún catálogo de iconos. La <b>G</b> pone las dos a la vez —emblema en el
+            estandarte y texto al pie— para poder compararlas en la misma carta; el punto está
+            arriba, en «si la carta puede decir la raza dos veces».
           </li>
           <li>
             <b>Qué pone en el hueco del Tier una carta de héroe.</b> Un héroe no tiene tier y no
             tiene nada que lo sustituya: V3 no tiene progresión de personaje, así que no hay ningún
             número en camino para ese sitio. La <b>E</b> disuelve el problema —el medallón lleva la
             raza, no un número— pero a cambio deja de decir «Héroe» con palabras y lo fía todo al
-            rojo de la veta. La <b>F</b> sí reserva el sitio, así que tiene que rellenarlo: pone
+            rojo de la veta. La <b>G</b> sí reserva el sitio, así que tiene que rellenarlo: pone
             una 👑, que es la respuesta que ya daba la mezcla D. Mira el ⚔️ Guerrero entre las ocho
             unidades en los dos y decide si se reconoce solo.
           </li>
@@ -340,10 +374,11 @@ export default function CardSketchLab() {
             en las únicas cartas con la veta encendida en rojo, y se reconocen de un vistazo entre
             las unidades. Lo único que queda por decidir es si ese rojo se comparte con algo más
             (en v2 lo tenía la carta de Enemigo). Todos los héroes van iguales, porque no hay
-            ningún número que los ordene entre sí. <b>La F le ha encontrado un roce</b>: su pin de
+            ningún número que los ordene entre sí. <b>La G le ha encontrado un roce</b>: su pin de
             ❤️ Vida es una gema roja —de la referencia— y en una carta de héroe acaba a juego con
-            el filete del marco, así que las dos cosas rojas de la carta dejan de distinguirse. O
-            el héroe cambia de color, o la Vida no puede ser roja.
+            la veta encendida del marco, que además baña la ilustración entera. Se vio primero en
+            la réplica, donde el rojo del marco era un filete de 2,2px; aquí es media carta, así
+            que se ve bastante peor. O el héroe cambia de color, o la Vida no puede ser roja.
           </li>
           <li>
             <b>De qué metal es la carta.</b> Se puede preguntar porque aquí el metal no dice
@@ -359,9 +394,10 @@ export default function CardSketchLab() {
             la familia a propósito: el <b>cardenillo</b> (verde de pátina, el único que no es gris
             ni dorado) y el <b>marfil</b>, que ya no parece metal — están para ver si el marco
             tiene que ser metálico siquiera. El selector mueve <b>los dos bocetos a la vez</b>:
-            comparten aleación para que lo que se compare sea el marco y no el color. En la F hay
-            una cosa más que mirar, el <b>hilo de oro</b> que corre por dentro del filete — con los
-            metales claros deja de verse.
+            comparten aleación para que lo que se compare sea el marco y no el color. En la G hay
+            una cosa más que mirar, el <b>estandarte</b>, que necesita cara clara para que el
+            emblema se lea — en carbón o pavonado el 👤 se pierde, y es el mismo reparo que el
+            medallón de la E.
           </li>
           <li>
             <b>Qué tipografía titula la carta.</b> El nombre iba en <b>Cormorant</b>, la serif de
@@ -373,10 +409,10 @@ export default function CardSketchLab() {
             El precio es que la jerarquía ya no la hace el contraste sino el aire, y por eso la
             fila de ocho baja 16px del rótulo — con menos, el nombre fino y los números macizos
             se leen como un solo bloque. Las cartas de v2 no se tocan.{" "}
-            <b>Y la F ha encontrado el límite del 300</b>: titula en <b>versalitas</b>, como la
+            <b>Y la G ha encontrado el límite del 300</b>: titula en <b>versalitas</b>, como la
             referencia, y una versal fina y pequeña no tiene trazo con el que sostenerse — ahí
             sube a 500. O la carta titula en fino y en caja mixta (E), o titula en versalitas y
-            necesita peso (F); las dos a la vez, no.
+            necesita peso (G); las dos a la vez, no.
           </li>
           <li>
             <b>Dos Características distintas con el mismo emoji</b>, ya resuelto. El ⚔️ Guerrero
