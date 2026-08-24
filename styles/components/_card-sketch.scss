@@ -17,10 +17,16 @@
 // Características, y de qué está hecho el marco— vive en card-sketch/, un
 // parcial por boceto, que van después en la cascada.
 //
-// Hubo cinco bocetos y queda uno (E · Forja); lo que aquí se comparte quedó
-// medido contra los cinco, así que sigue siendo el suelo común y no un resto
-// de la E. Lo que solo servía a los otros cuatro —la cenefa de glifos, el
-// subtítulo, el filete de rareza de 3px— se borró con ellos.
+// Hubo cinco bocetos, quedó uno (E · Forja) y desde el 24 de agosto de 2026 hay
+// otro al lado (F · Blasón). Lo que aquí se comparte quedó medido contra los
+// cinco, así que sigue siendo el suelo común y no un resto de la E. Lo que solo
+// servía a los otros cuatro —la cenefa de glifos, el subtítulo, el filete de
+// rareza de 3px— se borró con ellos.
+//
+// Ojo con lo que se da por común: el F rompe la SILUETA (es un octógono) y con
+// ella el radio, el fondo y el recorte del arte y del pie. Todo eso sigue aquí
+// porque es lo que hace cualquier carta que no diga lo contrario, pero ya no es
+// una constante — es el caso por defecto.
 //
 // La piel sale de game() y no de skin(): la carta es una pieza de la interfaz
 // de producción, y su oro tiene que ser el mismo oro del botón. Por eso el
@@ -108,6 +114,19 @@
   }
 }
 
+// --- El marco vectorial ---------------------------------------------------
+// La capa donde cae el <svg> de components/design/v3/sketch-frames.tsx. Es la
+// misma para los dos marcos —encima de todo y sin capturar el puntero—; lo que
+// cambia de un boceto a otro es lo que el SVG dibuja dentro, no dónde se pone.
+.sketch__frame {
+  position: absolute;
+  inset: 0;
+  z-index: z("frame");
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 // --- El arte --------------------------------------------------------------
 // A sangre. Se recorta él solo al radio de la carta, y no con un overflow del
 // contenedor, para que un boceto pueda sacar piezas fuera del marco sin que el
@@ -162,15 +181,15 @@
 // fabricada por el navegador —que no sabe adelgazar, solo engordar—: el eje va
 // de 300 a 800 y aquí se puede mover sin descargar nada más.
 //
-// 300 es el extremo ligero del eje, y es una decisión de tono: el rótulo grabado
-// y macizo competía con los números; en fino, el nombre se lee como una
-// inscripción y deja mandar al arte. Necesita el tamaño grande para sostenerse
-// —una fina pequeña se deshace—, y por eso el par corto/largo del boceto E va
+// 600 es media alta del eje, y es una decisión de tono: el rótulo tiene que
+// ganar a los ocho números sin recurrir al tamaño, y un peso real —no engordado
+// por el navegador— le da el cuerpo de inscripción grabada que la fina no
+// sostenía en los escalones cortos. El par corto/largo del boceto E sigue
 // donde va.
 .sketch__name {
   font-family: $font-sketch-display;
   font-size: sketch-font("name");
-  font-weight: 300;
+  font-weight: 600;
   line-height: 1.08;
   color: game("gold-hi");
   text-shadow: 0 1px 0 game("border");
@@ -207,4 +226,28 @@
   font-family: $font-game-display;
   line-height: 1;
   color: game("text");
+}
+
+// --- Probeta de aleación (TEMPORAL) --------------------------------------
+// El metal de la carta sale de UN color ($card-sketch "alloy"), así que
+// probarlo es sustituir ese color y nada más: armor-vars() (tools/_mixins.scss)
+// vuelve a sacar la luz, la sombra y el filo de la nueva base y el marco entero
+// se reconstruye solo. Por eso la probeta cabe en un @each de tres líneas.
+//
+// Vive AQUÍ, en el esqueleto, y no en el parcial de un boceto: la piden los dos
+// marcos —la E y la F usan la misma aleación— y lo que se elige es el material
+// de la carta, no el de un boceto. Estuvo en _forja.scss mientras hubo uno solo.
+//
+// El data-alloy va en el CONTENEDOR del lab y no en cada carta, por lo mismo: lo
+// que se elige es el material de todas. La regla gana a la del boceto por
+// especificidad (dos selectores contra uno), que es justo lo que se quiere
+// mientras haya un valor puesto.
+//
+// Se borra entera cuando se decida, junto con $sketch-alloy
+// (styles/settings/_colors.scss) y el selector del lab
+// (components/design/v3/CardSketchLab.tsx).
+@each $name, $base in $sketch-alloy {
+  [data-alloy="#{$name}"] .sketch {
+    @include armor-vars($base);
+  }
 }

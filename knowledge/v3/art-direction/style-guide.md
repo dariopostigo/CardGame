@@ -419,10 +419,29 @@ Lo de arriba es la paleta de recursos; estas dos son fijas, y lo son porque hay
 Lo que es estilo son tres cosas, y las tres se piden en positivo porque una IA
 por defecto no las da:
 
-**1. Plano entero.** El personaje se ve **completo, de la coronilla a los pies**,
-con los pies apoyados en suelo visible. Ni busto, ni plano medio, ni primer
-plano: si la figura se corta por el muslo, la ilustración está mal aunque el
-dibujo sea bueno. Es lo que se pinta en una carta, no un retrato.
+**1. Plano general, cámara alejada.** El personaje se ve **completo, de la
+coronilla a los pies**, con los pies apoyados en suelo visible **y entorno
+alrededor**. Ni busto, ni plano medio, ni primer plano: si la figura se corta por
+el muslo, la ilustración está mal aunque el dibujo sea bueno. Es lo que se pinta
+en una carta, no un retrato.
+
+> **Y es «plano general», no «plano entero».** Esta sección decía lo segundo, y
+> era un error de vocabulario con consecuencias: «plano entero» es
+> técnicamente el plano en el que **el cuerpo llena el cuadro** de la cabeza a los
+> pies. Pedirlo así devolvió exactamente eso — figura al 90% del alto, la coronilla
+> a un dedo del borde y los pies apoyados en el filo. El plano que queremos es el
+> **general**: la figura completa **y aire alrededor**.
+>
+> **Y los porcentajes no bastan.** «El 60–70% del alto» estaba escrito y la IA lo
+> ignoró, porque un modelo de imagen no mide: hacen falta **anclas visuales**.
+> Estas tres funcionan y son las que van al prompt:
+>
+> -   por encima de la cabeza cabe **otra cabeza entera** de aire libre;
+> -   por debajo de los pies se ve **suelo** un buen trozo antes del borde;
+> -   a cada lado queda el hueco de **un brazo**.
+>
+> Los números se quedan, pero como criterio de **comprobación** a posteriori, no
+> como instrucción.
 
 **2. Centrado y de tamaño contenido.** El eje del cuerpo va en el centro
 horizontal de la imagen, y **la figura ocupa dos tercios de la altura, no la
@@ -489,7 +508,9 @@ Cuando la IA permita instrucciones negativas:
 > detailed background, busy background, cluttered background, competing
 > background detail, readable background architecture, background
 > outlines, bokeh, depth of field, lens blur, out-of-focus background,
-> scenic landscape, five-layer depth
+> scenic landscape, five-layer depth, full-frame subject, subject
+> filling the frame, tight crop, no headroom, head touching top edge,
+> feet on the bottom edge, figure too large in frame
 
 > **Añadido el bloque de fondo** (21 de agosto de 2026): de
 > `detailed background` a `five-layer depth`. Tercera vez que el mismo tipo de
@@ -643,6 +664,7 @@ o cartoon infantil, está fuera del estilo.
 -   [ ] No parece un render 3D.
 -   [ ] No hay exceso de microdetalle.
 -   [ ] **Se ve el personaje entero, pies incluidos** (§18). Si está cortado por el muslo, se descarta sin mirar nada más.
+-   [ ] **Cabe otra cabeza de aire por encima de la coronilla y se ve suelo bajo los pies** (§18). Si la figura va justa, es plano entero ajustado y no plano general: se descarta.
 -   [ ] **La figura va centrada** y ocupa unos dos tercios de la altura, no toda (§18).
 -   [ ] Nada importante pegado al borde (§18).
 -   [ ] No contiene texto, logos, marcas de agua ni interfaz.

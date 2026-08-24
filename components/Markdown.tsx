@@ -28,6 +28,11 @@ export default function Markdown({
       if (r.kind === "internal") {
         return <Link href={r.href}>{children}</Link>;
       }
+      // Archivo del repositorio fuera de docs/ (knowledge/, public/…): la wiki
+      // no lo sirve, así que se queda como texto en vez de enlazar a un 404.
+      if (r.kind === "outside") {
+        return <span title={r.href}>{children}</span>;
+      }
       if (r.kind === "external") {
         return (
           <a href={r.href} target="_blank" rel="noopener noreferrer">

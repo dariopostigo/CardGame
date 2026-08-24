@@ -46,8 +46,8 @@ La sección "Nuevo cambio de rumbo en el juego" de `conceptV3.md` se elimina, pe
 | 6 | Mercenarios obsoletos | no se replica `mercenaries.md`; nota en `v3/cards/units.md` |
 | 7 | Los enemigos son las propias razas; una raza como Boss final | `v3/characters/enemies.md` |
 | 8 | Campañas sin definir (necesitan historia) | `v3/status.md`, como no-alcance |
-| 9 | Nivel y rareza se mantienen como están | `v3/game-design.md` |
-| 10 | El héroe sube de nivel igual que las unidades | `v3/characters/heroes.md` |
+| 9 | ~~Nivel y rareza se mantienen como están~~ — **la mitad retirada** el 24-ago-2026: la Rareza se queda (y sale del tier), la subida de nivel **sale de V3** | `v3/game-design.md` |
+| 10 | ~~El héroe sube de nivel igual que las unidades~~ — **retirado** el 24-ago-2026: V3 no tiene progresión de personaje; la curva de una unidad es su tier | `v3/characters/heroes.md` |
 | 11 | Armas y armaduras obsoletas | no se replican; nota en `v3/cards/README.md` |
 | 12 | Items, maldiciones y mazo de encuentro: repasar por coherencia | `v3/status.md`, como tarea pendiente |
 
@@ -100,7 +100,7 @@ Crear los ficheros vacíos con su índice de secciones, para que la estructura e
 ```
 docs/v3/
   README.md        índice del árbol V3 y estado de cada documento
-  game-design.md   reglas generales, turno, nivel, rareza
+  game-design.md   reglas generales, turno, progresión, rareza
   glossary.md      vocabulario V3
   status.md        qué está decidido, qué falta, qué falta balancear
   ideas.md         aparcadas
@@ -127,12 +127,12 @@ Sin `weapons.md` ni `armor.md` (punto 11). `units.md` ocupa el lugar de `mercena
 
 Son decisiones de diseño de V3, no de migración, y se toman al escribir `v3/game-design.md` y `v3/razas.md`:
 
-- **Alcance**: el motor habla de "dentro de tu rango" pero ninguna de las 8 Habilidades es alcance.
+- ~~**Alcance**~~: **resuelto** (23-ago-2026) — valor fijo por tipo de daño (🗡️ 1 · ✨ 2 · 🏹 4 hexágonos), sin tocar las 8 Habilidades.
 - **Caster**: el Foco de hechizos se retira como objeto y no hay Característica que lo sustituya en el catálogo.
-- **Regla de facción**: si se pueden reclutar unidades de razas distintas a la del héroe.
-- **Escala de unidades**: cómo se relacionan los 8 tiers de progresión con Rareza y con Nivel 1-5.
-- **Estados**: qué estados existen en V3 y qué hacen, definidos sobre el motor sin dados en vez de traducidos desde 2d20/CA.
-- **Valores numéricos** de las 8 Habilidades: insumo pendiente de Dario.
+- ~~**Regla de facción**~~: **resuelto** (23-ago-2026) — no se pueden reclutar unidades de razas distintas a la del héroe.
+- ~~**Escala de unidades**~~: **resuelto** (24-ago-2026) — hay **un solo eje**: el tier de las unidades, con la Rareza derivada de él. La **progresión de personaje sale de V3** y no se replantea hasta tener el juego en marcha. Sigue abierto **cómo se obtienen las unidades de tier alto**, que es economía.
+- ~~**Estados**~~: **resuelto** (22 y 23-ago-2026) — nueve estados escritos en `docs/v3/effects.md` sobre el motor sin dados, con sus diales cerrados.
+- **Valores numéricos** de las 8 Habilidades: insumo pendiente de Dario. La **escala** sí está cerrada (23-ago-2026), en `docs/v3/razas.md`.
 
 ## Punto de no retorno
 

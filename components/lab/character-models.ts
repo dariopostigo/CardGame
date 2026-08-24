@@ -6,7 +6,7 @@
 // dice-geometry.ts está separado de dice-scene.ts — la lista de qué se puede
 // cargar no necesita arrastrar WebGL.
 //
-// Son modelos PRESTADOS de prueba (licencias en public/assets/models/
+// Son modelos PRESTADOS de prueba (licencias en public/assets/v2/models/
 // README.md), no arte del juego: están para validar el pipeline
 // «IA 3D → auto-rig → animaciones de biblioteca → .glb → navegador» antes de
 // generar los personajes de verdad. Al haber modelos propios, esta lista
@@ -32,7 +32,7 @@ export const CHARACTER_MODELS: readonly CharacterModel[] = [
   {
     id: "robot",
     label: "Robot",
-    url: "/assets/models/robot-expressive.glb",
+    url: "/assets/v2/models/robot-expressive.glb",
     rig: "humanoide",
     bytes: 463988,
     defaultClip: "Idle",
@@ -41,7 +41,7 @@ export const CHARACTER_MODELS: readonly CharacterModel[] = [
   {
     id: "fox",
     label: "Zorro",
-    url: "/assets/models/fox.glb",
+    url: "/assets/v2/models/fox.glb",
     rig: "cuadrúpedo",
     bytes: 162852,
     defaultClip: "Survey",

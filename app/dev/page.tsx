@@ -38,9 +38,10 @@ export default function DevIndexPage() {
             Todavía sin nada implementado
           </p>
           <p className="text-sm text-[var(--wiki-muted)]">
-            No es un olvido: el motor de combate de V3 aún no está definido en la wiki, y hasta que
-            lo esté, cualquier cosa que se construya aquí habría que rehacerla. Mientras tanto, el
-            motor anterior sigue funcionando en{" "}
+            No es un olvido. El motor de combate ya está escrito en la wiki, pero lo que se
+            construya aquí necesita datos que ejecutar, y los valores de las 8 Habilidades de las
+            132 fichas siguen sin rellenarse. Mientras tanto, el motor anterior sigue funcionando
+            en{" "}
             <Link href="/lab" className="text-[var(--wiki-accent)] hover:underline">
               Lab
             </Link>

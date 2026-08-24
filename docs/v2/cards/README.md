@@ -23,7 +23,7 @@ Carpeta dedicada a **todos los tipos de carta** del juego, uno por documento. El
 
 ## Ver una tabla en modo cartas
 
-En la wiki, cada tabla de catálogo de estos documentos tiene un conmutador **Tabla / Cartas**: la vista cartas pinta esas mismas filas con el diseño real de carta ([Diseño de cartas](/docs/cards/design)), para ver de un vistazo cómo queda todo lo implementado y decidir sobre el juego o sobre el propio diseño. Las dos vistas salen de la **misma fila** de markdown, así que no pueden decir cosas distintas: la tabla sigue siendo la fuente de verdad.
+En la wiki, cada tabla de catálogo de estos documentos tiene un conmutador **Tabla / Cartas**: la vista cartas pinta esas mismas filas con el diseño real de carta ([Diseño de cartas](/docs/v2/cards/design)), para ver de un vistazo cómo queda todo lo implementado y decidir sobre el juego o sobre el propio diseño. Las dos vistas salen de la **misma fila** de markdown, así que no pueden decir cosas distintas: la tabla sigue siendo la fuente de verdad.
 
 Una tabla entra en el catálogo cuando lleva encima su directiva (si no la lleva, se queda como tabla y ya está — así las tablas que no son catálogo, como la fórmula de CA de [`armor.md`](armor.md) §1 o las progresiones de rareza, no salen como cartas):
 

@@ -46,5 +46,20 @@ $sketch-medal: 30px;               // medallón de Característica, en el raíl
 // $sketch-band es espejo del último anillo de SEAM en
 // components/design/v3/sketch-frames.tsx: si allí crece el filete y aquí no,
 // el marco se come la fila de ocho.
+//
+// Y vale para los DOS bocetos a propósito: el F reparte sus anillos de otra
+// manera (RIM en el mismo archivo) pero suma exactamente los mismos 15px. Entre
+// bocetos cambia el aspecto, nunca la medida — si no, no se pueden comparar.
 $sketch-band: 15px;                // grosor del filete metálico
 $sketch-boss: 42px;                // medallón montado en la placa
+
+// --- Boceto F · Blasón ----------------------------------------------------
+// Su silueta no es un rectángulo redondeado: es un OCTÓGONO, con las cuatro
+// esquinas cortadas a 45°. El chaflán es el cateto de ese corte medido sobre
+// cada borde, y es espejo de la C de sketch-frames.tsx — el marco vectorial
+// dibuja el mismo contorno que recortan el arte y el pie, así que las dos
+// medidas tienen que moverse juntas o el filete deja de seguir a la silueta.
+$sketch-chamfer: 18px;
+
+$sketch-disc: 46px;                // disco de Tier, montado en la esquina
+$sketch-gem: 15px;                 // rombo de Rareza, a caballo del canto

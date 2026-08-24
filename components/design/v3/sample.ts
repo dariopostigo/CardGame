@@ -31,6 +31,16 @@
 // cifras), que es lo que decide si el hueco del número se rompe. Lo que NO es
 // inventado es todo lo demás: nombres, emojis, orden, raza y Características
 // salen de razas.md tal cual.
+//
+// PERO YA NO SON LIBRES: el 23-ago-2026 se cerró la ESCALA de las ocho
+// (docs/v3/razas.md §"La escala"), así que los inventados tienen que caber en
+// ella o el marco se estaría juzgando con números imposibles. Al cotejarlos
+// salió un desajuste real y está corregido: 🎯 Precisión iba de 7 a 18 cuando
+// es un UMBRAL sobre 1..100 y su banda es 65-95. Ahora va de 66 a 90 — mismas
+// dos cifras, así que el marco no se mueve, pero ya se lee como lo que es.
+// El resto ya encajaba: ⚔️ Ataque 5-48 (1-2 cifras), ❤️ Vida 15-240 (2-3),
+// 🛡️/🔮 por debajo de 75, 🍀 Suerte por debajo de 25, y del Miliciano al
+// Dragón dorado hay ×8 de Ataque y ×13 de Vida, que es la curva ×10 por tier.
 // =========================================================================
 
 /** Las 8 Habilidades, en el orden de docs/v3/razas.md §"Habilidades". */
@@ -41,19 +51,37 @@ export const SKILLS = [
   { key: "resistencia", label: "Resistencia mágica", icon: "🔮" },
   { key: "precision", label: "Precisión", icon: "🎯" },
   { key: "suerte", label: "Suerte", icon: "🍀" },
-  { key: "velocidad", label: "Velocidad", icon: "⚡" },
+  { key: "iniciativa", label: "Iniciativa", icon: "⚡" },
   { key: "movimiento", label: "Movimiento", icon: "👢" },
 ] as const;
 
 export type SkillKey = (typeof SKILLS)[number]["key"];
 
+/**
+ * El tipo de daño (docs/v3/razas.md §"Tipo de daño"). Campo obligatorio de toda
+ * ficha, uno y solo uno — no es una Característica: lo llevan las 132, y un
+ * rasgo que lleva todo el mundo no dice nada en la fila de glifos.
+ *
+ * Por eso se dibuja EN EL SITIO DEL ICONO DE ⚔️ Ataque: el glifo que acompaña
+ * al número es el del tipo, así que la carta dice cuánto pega y de qué manera
+ * en el mismo hueco y sin gastar ni un pixel más de marco.
+ */
+export const DAMAGE = {
+  cuerpo: { icon: "🗡️", label: "Cuerpo a cuerpo" },
+  distancia: { icon: "🏹", label: "A distancia" },
+  magico: { icon: "✨", label: "Mágico" },
+} as const;
+
+export type DamageKey = keyof typeof DAMAGE;
+
 export type Trait = { icon: string; label: string };
 
 /**
  * Unidad o héroe. No es un matiz de sabor: la unidad tiene tier (1–8, su
- * puesto en la progresión de la raza) y el héroe no —tiene nivel, que es otra
- * cosa y todavía no está definida—. Cualquier boceto que meta el Tier en una
- * pieza fija del marco tiene que decir qué pone ahí en una carta de héroe.
+ * puesto en la progresión de la raza) y el héroe NO TIENE NADA en su lugar —V3
+ * no tiene progresión de personaje (docs/v3/status.md §5), así que no hay ningún
+ * dato en camino para ese hueco—. Cualquier boceto que meta el Tier en una pieza
+ * fija del marco tiene que resolverlo poniendo otra cosa, no esperando el dato.
  */
 export type SubjectKind = "unidad" | "heroe";
 
@@ -88,6 +116,8 @@ export type Subject = {
    */
   readonly art?: string;
   readonly skills: Record<SkillKey, number>;
+  /** Tipo de daño. Obligatorio: no hay defecto, igual que en razas.md. */
+  readonly damage: DamageKey;
   readonly traits: readonly Trait[];
 };
 
@@ -131,7 +161,7 @@ export const rankOf = (s: Subject) => (s.kind === "heroe" ? "Héroe" : `Tier ${s
 /**
  * Raíl de color de un héroe: el suyo, no un escalón prestado de la escala de
  * rareza. Clave de $rarity (styles/settings/_colors.scss), donde vive junto a
- * las otras categorías que no son niveles ("clase", "enemigo"…), y allí está
+ * las otras categorías que no son escalones de rareza ("clase", "enemigo"…), y allí está
  * el porqué del color — es la sangre del tema de producción.
  *
  * Un héroe no tiene tier, así que no puede tener rareza por tier; y darle una
@@ -162,11 +192,12 @@ export const UNITS: readonly Subject[] = [
       ataque: 6,
       defensa: 4,
       resistencia: 1,
-      precision: 7,
+      precision: 66,
       suerte: 0,
-      velocidad: 5,
+      iniciativa: 5,
       movimiento: 4,
     },
+    damage: "cuerpo",
     traits: [],
   },
   {
@@ -184,12 +215,17 @@ export const UNITS: readonly Subject[] = [
       ataque: 7,
       defensa: 3,
       resistencia: 1,
-      precision: 9,
+      precision: 78,
       suerte: 2,
-      velocidad: 6,
+      iniciativa: 6,
       movimiento: 4,
     },
-    traits: [{ icon: "🏹", label: "Ataque a distancia" }],
+    damage: "distancia",
+    // Sin Características: la única que tenía era 🏹 Ataque a distancia, que
+    // ahora es el campo `damage`. Los casos vacíos de la raza pasan de uno a
+    // TRES —Miliciano, Arquero y Mago—, así que el raíl sin medallones deja de
+    // ser una rareza y hay que mirarlo.
+    traits: [],
   },
   {
     id: "caballero",
@@ -205,11 +241,12 @@ export const UNITS: readonly Subject[] = [
       ataque: 10,
       defensa: 12,
       resistencia: 3,
-      precision: 8,
+      precision: 72,
       suerte: 2,
-      velocidad: 4,
+      iniciativa: 4,
       movimiento: 3,
     },
+    damage: "cuerpo",
     traits: [{ icon: "🛡️", label: "Resistente al daño físico" }],
   },
   {
@@ -227,12 +264,13 @@ export const UNITS: readonly Subject[] = [
       ataque: 5,
       defensa: 3,
       resistencia: 12,
-      precision: 8,
+      precision: 74,
       suerte: 3,
-      velocidad: 5,
+      iniciativa: 5,
       movimiento: 4,
     },
-    traits: [{ icon: "🔮", label: "Resistencia mágica" }],
+    damage: "magico",
+    traits: [],
   },
   {
     id: "caballeria",
@@ -248,11 +286,12 @@ export const UNITS: readonly Subject[] = [
       ataque: 16,
       defensa: 9,
       resistencia: 4,
-      precision: 11,
+      precision: 76,
       suerte: 4,
-      velocidad: 10,
+      iniciativa: 10,
       movimiento: 7,
     },
+    damage: "cuerpo",
     traits: [
       { icon: "🐾", label: "Ágil" },
       { icon: "💥", label: "Golpe crítico" },
@@ -272,11 +311,12 @@ export const UNITS: readonly Subject[] = [
       ataque: 19,
       defensa: 11,
       resistencia: 6,
-      precision: 13,
+      precision: 80,
       suerte: 5,
-      velocidad: 14,
+      iniciativa: 14,
       movimiento: 9,
     },
+    damage: "cuerpo",
     traits: [
       { icon: "🦅", label: "Volador" },
       { icon: "💥", label: "Golpe crítico" },
@@ -297,15 +337,15 @@ export const UNITS: readonly Subject[] = [
       ataque: 24,
       defensa: 22,
       resistencia: 14,
-      precision: 16,
+      precision: 85,
       suerte: 6,
-      velocidad: 9,
+      iniciativa: 9,
       movimiento: 5,
     },
+    damage: "cuerpo",
     traits: [
       { icon: "🛡️", label: "Resistente al daño físico" },
       { icon: "😱", label: "Inmune al miedo" },
-      { icon: "🔮", label: "Resistencia mágica" },
     ],
   },
   {
@@ -324,11 +364,12 @@ export const UNITS: readonly Subject[] = [
       ataque: 48,
       defensa: 30,
       resistencia: 28,
-      precision: 18,
+      precision: 90,
       suerte: 8,
-      velocidad: 12,
+      iniciativa: 12,
       movimiento: 9,
     },
+    damage: "cuerpo",
     traits: [
       { icon: "🦅", label: "Volador" },
       { icon: "🔥", label: "Inmune al fuego" },
@@ -367,21 +408,21 @@ export const HEROES: readonly Subject[] = [
       ataque: 22,
       defensa: 20,
       resistencia: 8,
-      precision: 14,
+      precision: 82,
       suerte: 5,
-      velocidad: 8,
+      iniciativa: 8,
       movimiento: 5,
     },
-    // OJO: dos de sus tres Características comparten emoji (🛡️ Resistente al
-    // daño físico y 🛡️ Último aliento). En un marco que dibuja las
-    // Características como glifos y sin texto —que es lo que hace la E— la carta
-    // enseña el mismo icono dos veces y no hay manera de distinguirlas. Sale
-    // de razas.md tal cual: es un problema del catálogo de Características,
-    // pero se descubre mirando la carta.
+    damage: "cuerpo",
+    // Esta ficha fue la que destapó el problema del glifo repetido: Último
+    // aliento llevaba 🛡️, igual que Resistente al daño físico, y en un marco que
+    // dibuja las Características como glifos y sin texto la carta enseñaba el
+    // mismo icono dos veces. Resuelto en razas.md (22-ago-2026) dándole 😤, que
+    // además deja de mentir: Último aliento es un buff de daño, no de defensa.
     traits: [
       { icon: "🛡️", label: "Resistente al daño físico" },
       { icon: "😱", label: "Inmune al miedo" },
-      { icon: "🛡️", label: "Último aliento" },
+      { icon: "😤", label: "Último aliento" },
     ],
   },
   {
@@ -398,16 +439,17 @@ export const HEROES: readonly Subject[] = [
       ataque: 14,
       defensa: 9,
       resistencia: 26,
-      precision: 13,
+      precision: 80,
       suerte: 6,
-      velocidad: 7,
+      iniciativa: 7,
       movimiento: 5,
     },
-    // El único héroe con dos Características: es el que enseña el raíl corto.
-    traits: [
-      { icon: "🔮", label: "Resistencia mágica" },
-      { icon: "🧊", label: "Resistente al frío" },
-    ],
+    damage: "magico",
+    // El héroe con menos Características del set: es el que enseña el raíl
+    // corto. Tenía dos y se queda en una — ✨ Ataque mágico dejó de ser rasgo
+    // el 23-ago-2026 y ahora es el campo `damage`, que se dibuja en el icono
+    // del Ataque. Ese hueco liberado es justo lo que compra el campo nuevo.
+    traits: [{ icon: "🧊", label: "Resistente al frío" }],
   },
   {
     id: "heroe-sacerdote",
@@ -423,15 +465,13 @@ export const HEROES: readonly Subject[] = [
       ataque: 11,
       defensa: 12,
       resistencia: 20,
-      precision: 12,
+      precision: 77,
       suerte: 7,
-      velocidad: 7,
+      iniciativa: 7,
       movimiento: 5,
     },
-    traits: [
-      { icon: "🔮", label: "Resistencia mágica" },
-      { icon: "😱", label: "Inmune al miedo" },
-    ],
+    damage: "magico",
+    traits: [{ icon: "😱", label: "Inmune al miedo" }],
   },
 ];
 
@@ -455,15 +495,16 @@ export const STRESS: readonly Subject[] = [
       ataque: 44,
       defensa: 26,
       resistencia: 32,
-      precision: 15,
+      precision: 86,
       suerte: 4,
-      velocidad: 11,
+      iniciativa: 11,
       movimiento: 9,
     },
+    damage: "cuerpo",
     traits: [
       { icon: "💀", label: "No-muerto" },
       { icon: "🦅", label: "Volador" },
-      { icon: "🧊", label: "Congelación" },
+      { icon: "🧊", label: "Hielo" },
       { icon: "😱", label: "Inmune al miedo" },
       { icon: "🧪", label: "Inmune a estados alterados" },
     ],

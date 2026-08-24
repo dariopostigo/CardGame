@@ -88,15 +88,28 @@ animaciones y sprites.
 FORMATO: 1080×1512 px, ratio 5:7, VERTICAL, a sangre, sin transparencia.
 
 ENCUADRE — es obligatorio y manda sobre cualquier otra consideración:
-PLANO ENTERO. Se ve el personaje COMPLETO, de la coronilla a los pies, con los
-pies dentro del cuadro y apoyados en suelo visible. NO es un retrato: nada de
-primer plano, busto, plano medio ni recorte por la cintura o el muslo.
-La figura ocupa el 60–70% del alto de la imagen, no más: si dudas, aléjate.
-La figura va CENTRADA en el eje horizontal de la imagen.
-La figura entera cabe entre el 8% y el 75% de la altura. El 25% inferior lo tapa
-después una banda opaca con el nombre: ahí abajo solo puede haber suelo.
-Aire de al menos el 8% a cada lado, y nada importante (rostro, manos, arma,
-escudo) pegado al filo ni en las esquinas — encima va un marco decorativo.
+PLANO GENERAL, cámara ALEJADA. Se ve el personaje completo, de la coronilla a los
+pies, y ADEMÁS se ve entorno alrededor de él. NO es un plano entero ajustado: el
+cuerpo NO llena el cuadro. NO es un retrato: nada de primer plano, busto, plano
+medio ni recorte por la cintura o el muslo.
+
+EL PERSONAJE NO TOCA NINGÚN BORDE, y el aire se mide así:
+— Por encima de la cabeza cabe OTRA CABEZA ENTERA de aire libre. Como mínimo una;
+  mejor dos. Nada de la cabeza ni del casco ni del penacho cerca del borde de
+  arriba.
+— Por debajo de los pies se ve SUELO por delante y por detrás, un buen trozo,
+  antes de llegar al borde de abajo. Los pies quedan claramente por encima del
+  filo inferior, no apoyados en él.
+— A cada lado queda hueco: el ancho de un brazo, como poco.
+Si al mirar la imagen la figura parece que va justa, está mal. Aléjate más.
+
+En números, para comprobarlo después: la figura ocupa un 60% del alto y vive
+entre el 12% y el 72% de la altura. El 25% inferior lo tapa una banda opaca con
+el nombre, así que ahí abajo solo puede haber suelo.
+
+La figura va CENTRADA en el eje horizontal.
+Nada importante (rostro, manos, arma, escudo) pegado al filo ni en las esquinas:
+encima va un marco decorativo que las tapa.
 Cámara a la altura del pecho y lente neutra. Sin contrapicado y sin gran angular.
 Legible en miniatura.
 
@@ -160,7 +173,7 @@ del bloque 1.
 | 💀 No-muertos | [`no-muertos.md`](no-muertos.md) | 2 |
 | 🔥 Demonios infernales | [`demonios.md`](demonios.md) | 2 |
 | 🧝 Elfos | [`elfos.md`](elfos.md) | 2 |
-| 🧌 Orkos | [`orkos.md`](orkos.md) | 3 — fuera de alcance |
+| 🧟 Orkos | [`orkos.md`](orkos.md) | 3 — fuera de alcance |
 | 🧚 Feéricos | [`feericos.md`](feericos.md) | 3 — fuera de alcance |
 | 🐉 Dracónidos | [`draconidos.md`](draconidos.md) | 3 — fuera de alcance |
 | 🐀 Hombres rata | [`hombres-rata.md`](hombres-rata.md) | 3 — fuera de alcance |
@@ -191,7 +204,12 @@ legs, cropped feet, cut off at the knees, feet out of frame, subject touching
 frame edge, off-center subject, landscape orientation, wide-angle lens, extreme
 low angle, fashion model, supermodel, cover model, glamour shot, beauty
 portrait, makeup, lipstick, airbrushed face, flawless poreless skin, perfectly
-symmetrical face, idealized beauty, sexy, cleavage, bare midriff
+symmetrical face, idealized beauty, sexy, cleavage, bare midriff, detailed
+background, busy background, cluttered background, competing background detail,
+readable background architecture, background outlines, bokeh, depth of field,
+lens blur, out-of-focus background, scenic landscape, five-layer depth,
+full-frame subject, subject filling the frame, tight crop, no headroom, head
+touching top edge, feet on the bottom edge, figure too large in frame
 ```
 
 **Pégalo tal cual, sin excepciones por sujeto.** Dos avisos sobre lo que **no**
@@ -215,9 +233,17 @@ que prohibir en bloque lo contrario.**
 ## Al terminar cada imagen
 
 **Primero el encuadre, que es lo que más falla y lo único que no se arregla
-retocando:** ¿se ve el personaje entero con los pies dentro? ¿va centrado? ¿es
-vertical? ¿queda libre el cuarto de abajo para la banda del nombre? Si alguna es
-no, se vuelve a tirar; no se recorta ni se rellena.
+retocando.** Y se comprueba con las anclas, no con el ojo:
+
+- ¿Cabe **otra cabeza** por encima de la coronilla?
+- ¿Se ve **suelo** por debajo de los pies antes del borde?
+- ¿Queda el hueco de **un brazo** a cada lado?
+- ¿Se ve el personaje entero, centrado, y en vertical?
+
+Si alguna es no, se vuelve a tirar; no se recorta ni se rellena. **El fallo
+típico es que la figura sale demasiado grande** —coronilla pegada arriba, pies en
+el filo—: cuando pase, repítele que es PLANO GENERAL con la cámara ALEJADA, no un
+plano entero ajustado.
 
 **Después el reparto, que es lo segundo que falla:** ¿la complexión es la de su
 papel o la IA le ha puesto el mismo cuerpo que a todos? ¿se le ve la edad que

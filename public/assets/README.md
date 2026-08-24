@@ -6,9 +6,8 @@ agosto de 2026 **el arte de juego está partido por versión**, igual que
 
 | Carpeta | Qué es | Se toca |
 |---|---|---|
-| `v2/` | Arte del juego anterior (héroes de clase D&D, sprite del tablero). Es lo que sirven `/lab` y `/play` | **No.** Congelado, como `docs/v2/` |
+| `v2/` | Arte del juego anterior (héroes de clase D&D, sprite del tablero) más los `.glb` prestados de [`v2/models/`](v2/models/README.md). Es lo que sirven `/lab` y `/play` | **No.** Congelado, como `docs/v2/` |
 | `v3/` | Arte del juego vigente. **Aquí va todo lo nuevo** | Sí |
-| `models/` | Modelos `.glb` **prestados**, material de laboratorio para medir el pipeline de personaje. No son arte del juego, por eso no llevan versión | Sí, hasta que haya modelos propios |
 
 Y fuera de `assets/`, sin versión porque no se sirven al jugador:
 

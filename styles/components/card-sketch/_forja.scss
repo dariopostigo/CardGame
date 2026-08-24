@@ -79,12 +79,6 @@ $rail-top: $sketch-band + 12px;
     }
   }
 
-  // Sin filete de rareza del esqueleto: aquí el color no vive en un borde,
-  // vive en la veta.
-  &::after {
-    display: none;
-  }
-
   // El halo exterior sube respecto al del esqueleto: si la veta está
   // encendida, tiene que tirar algo de luz fuera de la carta o parece un
   // dibujo de una veta encendida.
@@ -120,15 +114,6 @@ $rail-top: $sketch-band + 12px;
     box-shadow:
       inset 0 0 42px -10px var(--seam-soft),
       inset 0 0 96px -34px var(--seam-soft);
-    pointer-events: none;
-  }
-
-  .sketch__frame {
-    position: absolute;
-    inset: 0;
-    z-index: z("frame");
-    width: 100%;
-    height: 100%;
     pointer-events: none;
   }
 
@@ -324,24 +309,5 @@ $rail-top: $sketch-band + 12px;
 
   .sketch__pod-value {
     font-size: sketch-font("pod-xl");
-  }
-}
-
-// --- Probeta de aleación (TEMPORAL) --------------------------------------
-// El metal del boceto E sale de UN color ($card-sketch "alloy"), así que
-// probarlo es sustituir ese color y nada más: armor-vars() vuelve a sacar la
-// luz, la sombra y el filo de la nueva base y el marco entero se reconstruye
-// solo. Por eso la probeta cabe en un @each de tres líneas.
-//
-// El data-alloy va en el CONTENEDOR del lab y no en cada carta: lo que se
-// elige es el material de todas, no el de una, y así se cambia en un sitio.
-// La regla gana a la de arriba por especificidad (dos clases contra una), que
-// es justo lo que se quiere mientras haya un valor puesto.
-//
-// Se borra entero cuando se decida, junto con $sketch-alloy y el selector del
-// lab (components/design/v3/CardSketchLab.tsx).
-@each $name, $base in $sketch-alloy {
-  [data-alloy="#{$name}"] .sketch--forja {
-    @include armor-vars($base);
   }
 }

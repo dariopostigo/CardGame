@@ -182,7 +182,7 @@ iridiscente mínimo en los filos de cristal.
 
 ## Unidades (8) — progresión de tier
 
-### Tier 1 · 🧚 Duende feérico
+### Tier 1 · 🍄 Duende feérico
 
 ```
 QUÉ ES: unidad de tier 1. Tropa. Uno cualquiera de cincuenta. Es el escalón más
@@ -363,7 +363,7 @@ PALETA: blanco y lila pálidos dominantes, menta en el fondo, NÁCAR iridiscente
 la cornamenta y las motas.
 ```
 
-### Tier 8 · 🐲 Dragón feérico
+### Tier 8 · 🐉 Dragón feérico
 
 ```
 QUÉ ES: unidad de tier 8, criatura legendaria. NO ES HUMANOIDE. Es el techo de la

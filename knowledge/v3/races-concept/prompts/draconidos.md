@@ -122,7 +122,7 @@ PALETA: púrpura profundo y negro escama dominantes, BRONCE en las placas, naran
 de llama concentrado solo en el fuego y la garganta.
 ```
 
-### 3 · 🪽 Dracoguerrero
+### 3 · 🐲 Dracoguerrero
 
 ```
 QUÉ ES: héroe de clase. Un individuo, protagonista. NO es la unidad Dracoguerrero
@@ -151,7 +151,7 @@ PALETA: púrpura profundo y negro escama dominantes, BRONCE en la armadura y el
 borde de las alas.
 ```
 
-### 4 · ✨ Oráculo dracónico
+### 4 · 🌟 Oráculo dracónico
 
 ```
 QUÉ ES: héroe de clase. Un individuo, protagonista. Es el sujeto de más autoridad
@@ -281,7 +281,7 @@ PALETA: púrpura profundo y negro escama dominantes, bronce en las placas, naran
 de llama solo en el fuego.
 ```
 
-### Tier 5 · 🪽 Dracoguerrero
+### Tier 5 · 🐲 Dracoguerrero
 
 ```
 QUÉ ES: unidad de tier 5. Tropa alada: uno de muchos. Es el primer sujeto de la
@@ -361,7 +361,7 @@ PALETA: púrpura profundo y negro escama dominantes, BRONCE en el arnés y las g
 naranja de llama solo en las fauces.
 ```
 
-### Tier 8 · 🐲 Dragón ancestral
+### Tier 8 · 🐉 Dragón ancestral
 
 ```
 QUÉ ES: unidad de tier 8, criatura legendaria. NO ES HUMANOIDE. Es el techo de la

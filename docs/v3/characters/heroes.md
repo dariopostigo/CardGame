@@ -6,17 +6,13 @@
 
 Para cada héroe jugable: su ficha de personaje, su trasfondo y sus fuertes y débiles de cara a la pantalla de selección.
 
-## Progresión *(decidido)*
+## Anatomía de la ficha *(cerrada; faltan los valores)*
 
-**El héroe sube de nivel con la misma mecánica que las unidades**, no con un sistema propio. El detalle —cuántos niveles, qué se gana en cada uno— se define en [game-design.md](../game-design.md) §3.
-
-## Anatomía de la ficha *(pendiente de cerrar en game-design.md §4)*
-
-Cada héroe necesita:
+Un héroe lleva **lo mismo que una unidad menos el tier**, y nada más — no hay campo de rango, de nivel ni de progresión:
 
 - Las **8 Habilidades** con su valor numérico *(los números siguen siendo insumo pendiente)*.
 - Su lista de **Características**, ya asignada en la tabla de héroes de [razas.md](../razas.md).
-- **Alcance**, en cuanto se decida dónde vive ese número.
+- Su **tipo de daño**, que además trae el alcance puesto —🗡️ 1 hexágono · ✨ 2 · 🏹 4, fijo por tipo *(23-ago-2026)*—, así que la ficha no lleva campo de alcance.
 
 ## Por definir
 

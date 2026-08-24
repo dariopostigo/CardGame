@@ -2,11 +2,17 @@
 // Marcos vectoriales de los bocetos de V3
 //
 // Lo que un gradiente CSS no sabe dibujar: una banda de metal con las
-// cantoneras remachadas encima. Hoy hay uno, el de la E; las piezas comunes
-// —cantoneras, gradiente de aleación, recorte, destellos— siguen separadas de
-// él porque un boceto derivado cambia el CORTE del filete y no el herraje, que
-// es exactamente lo que pasó entre la D y la E: la misma escuadra, una banda
-// maciza en una y dos raíles con luz entre medias en la otra.
+// cantoneras remachadas encima. Hay dos, el de la E y el de la F; las piezas
+// comunes —gradiente de aleación, destello, el <svg>— siguen separadas de ellos
+// porque un boceto derivado cambia el CORTE del filete y no el material, que es
+// exactamente lo que pasó entre la D y la E: la misma escuadra, una banda maciza
+// en una y dos raíles con luz entre medias en la otra.
+//
+// La F rompe algo que las cinco anteriores daban por hecho: la SILUETA. Deja de
+// ser un rectángulo redondeado y pasa a ser un octógono, así que su marco no
+// puede reutilizar ni Band (rect+rx) ni Brackets (escuadras de esquina recta):
+// tiene sus propios Ring y octagon(). Lo que sí comparte es todo lo que no
+// depende de la forma.
 //
 // Reparto con el SCSS, el mismo de todo el proyecto: AQUÍ va lo que NO depende
 // del contenido (el filete y las cuatro cantoneras, que siempre caen en los
@@ -279,6 +285,168 @@ export function ForjaFrame() {
         <Band from={6.4} to={8.6} fill="var(--seam-hi)" opacity={0.75} />
 
         <Brackets metal={metal} />
+        <Glints gid={gid} />
+      </g>
+    </FrameSvg>
+  );
+}
+
+// ---------------------------------------------------- El marco del F · Blasón
+// Espejo de $sketch-chamfer (styles/settings/_card.scss). El CSS recorta el
+// arte y el pie con este mismo corte, así que las dos medidas se mueven juntas
+// o el filete se despega de la silueta.
+const C = 18;
+
+/**
+ * El contorno de la carta, encogido `d` píxeles hacia dentro.
+ *
+ * El chaflán NO es constante al encoger: los dos bordes rectos se desplazan `d`
+ * y el corte de 45° también, así que su cateto pasa de C a C − d(2 − √2). Sin
+ * esa corrección los cuatro cortes se van abriendo anillo a anillo y el marco
+ * deja de ser paralelo a la silueta — se nota enseguida, porque el hilo de oro
+ * interior es el que más encoge.
+ */
+function octagon(d: number) {
+  const x0 = d;
+  const y0 = d;
+  const x1 = W - d;
+  const y1 = H - d;
+  const c = Math.max(C - d * (2 - Math.SQRT2), 1);
+
+  return [
+    `M${x0 + c},${y0}`,
+    `L${x1 - c},${y0}`,
+    `L${x1},${y0 + c}`,
+    `L${x1},${y1 - c}`,
+    `L${x1 - c},${y1}`,
+    `L${x0 + c},${y1}`,
+    `L${x0},${y1 - c}`,
+    `L${x0},${y0 + c}`,
+    "Z",
+  ].join(" ");
+}
+
+/** Lo que Band es al marco rectangular, pero sobre el octógono. */
+function Ring({
+  from,
+  to,
+  fill,
+  opacity,
+}: {
+  from: number;
+  to: number;
+  fill: string;
+  opacity?: number;
+}) {
+  const mid = (from + to) / 2;
+  return (
+    <path
+      d={octagon(mid)}
+      fill="none"
+      style={{ stroke: fill }}
+      strokeWidth={to - from}
+      strokeLinejoin="miter"
+      opacity={opacity}
+    />
+  );
+}
+
+// Los cuatro anillos, de fuera hacia dentro. Suman los mismos 15px que la banda
+// del E ($sketch-band) para que los dos marcos ocupen igual, pero repartidos de
+// otra manera: aquí el color vive en el anillo de FUERA y no en un canal
+// interior.
+//
+//   rarity  filete de Rareza, 2.2px — el único color del marco
+//   body    cuerpo de la aleación, 8.7px
+//   gold    hilo de oro por dentro, 1.7px
+//   lip     sombra contra el arte, 1.8px
+const RIM = {
+  rarity: [0.6, 2.8],
+  body: [2.8, 11.5],
+  gold: [11.5, 13.2],
+  lip: [13.2, 15],
+} as const;
+
+// El roblón que remata cada chaflán: va en el centro del corte, empujado hacia
+// dentro media banda para quedar montado sobre el cuerpo del marco. Es lo que
+// hace que la esquina cortada se lea como una pieza atornillada y no como una
+// esquina a la que le falta un trozo.
+const STUD = C / 2 + (RIM.lip[1] - RIM.rarity[0]) / 2 / Math.SQRT2;
+
+const STUDS: readonly [number, number][] = [
+  [STUD, STUD],
+  [W - STUD, STUD],
+  [STUD, H - STUD],
+  [W - STUD, H - STUD],
+];
+
+/**
+ * Marco del boceto F · Blasón, sacado de
+ * `knowledge/v3/card-concept/imgs/might-magic-fates-heroes-tcg-pc-cd-key-4.webp`.
+ *
+ * Tres cosas, y las tres son de la referencia:
+ *
+ *   · LA SILUETA ES UN OCTÓGONO. Ningún boceto anterior toca la forma de la
+ *     carta —los cinco son el mismo rectángulo redondeado con distinta piel—,
+ *     y es lo que más se reconoce de la referencia antes de leer nada.
+ *   · EL COLOR VA EN EL ANILLO DE FUERA. Un filete de Rareza de 2,2px que
+ *     rodea la silueta entera, con su halo. Es la tercera respuesta a dónde
+ *     vive la Rareza y es la opuesta a la de la E: allí la luz corre por
+ *     DENTRO del metal y aquí el color es el canto mismo de la carta.
+ *   · EL HILO DE ORO POR DENTRO. En la referencia el marco no es metal a
+ *     secas: es metal oscuro con una línea clara pegada al arte, y esa línea
+ *     es la mitad de lo que hace que la carta parezca acuñada. Va en el oro
+ *     del tema (--rim-gold, que publica el parcial) porque el SVG no puede
+ *     pedir game() y el oro tiene que ser el mismo de la interfaz.
+ *
+ * El metal sigue saliendo de --m-* como en la E, así que la probeta de aleación
+ * mueve los dos marcos a la vez y se pueden comparar con el mismo material.
+ */
+export function BlasonFrame() {
+  const gid = useId();
+  const metal = `url(#${gid}-metal)`;
+
+  return (
+    <FrameSvg>
+      <FrameDefs gid={gid}>
+        <filter id={`${gid}-bloom`} x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2.6" />
+        </filter>
+        <clipPath id={`${gid}-oct`}>
+          <path d={octagon(0)} />
+        </clipPath>
+      </FrameDefs>
+
+      <g clipPath={`url(#${gid}-oct)`}>
+        {/* Fondo del marco entero: si los anillos se pintaran sueltos, entre
+            dos de ellos asomaría el arte por las juntas del miter. */}
+        <Ring from={RIM.rarity[0]} to={RIM.lip[1]} fill="var(--m-edge)" />
+
+        <Ring from={RIM.body[0]} to={RIM.body[1]} fill={metal} />
+        {/* Los dos filos del cuerpo: luz por el lado de dentro, sombra por el
+            de fuera. Es lo que le da grosor a una banda que solo son 8,7px. */}
+        <Ring from={RIM.body[1] - 1} to={RIM.body[1]} fill="var(--m-hi)" opacity={0.55} />
+        <Ring from={RIM.body[0]} to={RIM.body[0] + 0.9} fill="var(--m-lo)" opacity={0.6} />
+
+        <Ring from={RIM.gold[0]} to={RIM.gold[1]} fill="var(--rim-gold)" opacity={0.9} />
+        <Ring from={RIM.lip[0]} to={RIM.lip[1]} fill="var(--m-edge)" opacity={0.9} />
+
+        {/* El filete de Rareza, con su halo por debajo. Poco halo a propósito:
+            pasado cierto punto deja de ser un canto de color y se convierte en
+            la veta de la E, que es otro boceto. */}
+        <g filter={`url(#${gid}-bloom)`} opacity={0.5}>
+          <Ring from={RIM.rarity[0] - 0.8} to={RIM.rarity[1] + 1.2} fill="var(--rarity-soft)" />
+        </g>
+        <Ring from={RIM.rarity[0]} to={RIM.rarity[1]} fill="var(--rarity)" />
+
+        {/* Los cuatro roblones de chaflán, encima de todo. */}
+        {STUDS.map(([x, y]) => (
+          <g key={`${x}-${y}`} transform={`translate(${x},${y})`}>
+            <circle r="3.2" fill={metal} style={{ stroke: "var(--m-edge)" }} strokeWidth="1" />
+            <circle cx="-0.9" cy="-0.9" r="1.1" style={{ fill: "var(--m-hi)" }} opacity="0.75" />
+          </g>
+        ))}
+
         <Glints gid={gid} />
       </g>
     </FrameSvg>

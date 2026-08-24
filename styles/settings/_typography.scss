@@ -50,6 +50,11 @@ $card-font: (
 // grande. Los escalones de las piezas que se fueron con los bocetos borrados
 // (gema, ficha colgada, glifo de cenefa, subtítulo) no están: se borraron con
 // ellas.
+//
+// Y desde el boceto F hay un tercer juego, el de abajo. No es una piel del
+// mismo texto: el F reparte los ocho números en DOS grupos de tamaño distinto
+// —dos en las esquinas y seis en un panel— y titula en versalitas, así que
+// ninguno de sus escalones tiene equivalente en la E.
 $sketch-font: (
   "name": 1.3rem,
   "name-long": 1.06rem,   // nombres de 14+ caracteres (🐉 Dragón esquelético)
@@ -75,6 +80,34 @@ $sketch-font: (
   // alrededor— y más pequeño se ve como una pegatina en mitad de un disco de
   // 42px.
   "boss-icon": 1.5rem,
+
+  // --- Boceto F · Blasón --------------------------------------------------
+  // El rótulo va en VERSALITAS, y eso cambia la cuenta entera: una caja alta
+  // ocupa más ancho por carácter y no tiene descendentes que den altura, así
+  // que el mismo cuerpo se lee más grande y cabe menos. De ahí que el par
+  // corto/largo esté un escalón por debajo del par "xl" del boceto E aunque la
+  // placa sea igual de ancha. «DRAGÓN ESQUELÉTICO» son 18 versales: es el que
+  // fija el escalón largo, y por poco.
+  "name-caps": 1.02rem,
+  "name-caps-long": 0.8rem,
+  // Los seis números del panel. Van más grandes que los del E aunque la carta
+  // sea la misma: allí son ocho en una fila de 33px y aquí son seis en una
+  // rejilla de 3×2, o sea ~85px por columna. El sitio que sobra se gasta en
+  // cuerpo de letra, no en aire.
+  "pod-md": 0.98rem,
+  "stat-icon-md": 0.86rem,
+  // Los dos de las esquinas de abajo (⚔️ Ataque y ❤️ Vida). Son los que se
+  // consultan en cada intercambio de golpes, así que mandan sobre los seis del
+  // panel: la diferencia de cuerpo ES la jerarquía, que es justo lo que este
+  // boceto prueba y el E no hace.
+  "pin": 1.15rem,
+  "pin-icon": 0.72rem,
+  // El Tier dentro del disco de la esquina. Es el número más grande de la
+  // carta a propósito: en la referencia ese disco es lo primero que se lee.
+  "disc": 1.45rem,
+  // La raza en versalitas al pie, entre los dos pines. Diminuta y muy
+  // espaciada: es una etiqueta de catálogo, no un dato que se consulte.
+  "type": 0.6rem,
 );
 
 // Escalones de ajuste: tamaño de cuerpo, interlineado y nº de líneas.

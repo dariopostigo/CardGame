@@ -59,7 +59,7 @@ la raza, está bien resuelto.
 
 ### Unidades
 
-Ocho por raza, en progresión de tier — de Miliciano a Dragón Dorado, de Minero
+Ocho por raza, en progresión de tier — de Miliciano a Dragón dorado, de Minero
 a Coloso de adamantita. **La escalada tiene que verse en la silueta**, no solo
 en la calidad del equipo: cada escalón crece en masa, en altura o en amenaza
 respecto al anterior.
@@ -82,8 +82,8 @@ respecto al anterior.
 > | **Amenaza** | Postura recogida, defensiva | Postura que ocupa espacio |
 >
 > La cabeza pequeña respecto al cuerpo es lo que lee «enorme» — es el truco de
-> siempre y funciona en una sola imagen. **El alto de la figura sigue siendo
-> 60–70% en los 132**, sin excepciones de encuadre.
+> siempre y funciona en una sola imagen. **El alto de la figura sigue siendo el
+> mismo ~60% en los 132**, sin excepciones de encuadre.
 
 Comparten familia visual con su raza —mismos materiales, misma paleta, mismos
 motivos— porque son el mismo ejército.
@@ -121,7 +121,7 @@ raza. Es decisión de catálogo y está sin tomar; no la resuelvas dibujando.
 
 Hay **dos**, y piden cosas distintas:
 
-- **Ilustración de carta** — **vertical**, a sangre, en **plano entero**: el
+- **Ilustración de carta** — **vertical**, a sangre, en **plano general**: el
   personaje completo de la coronilla a los pies, centrado en el eje horizontal y
   ocupando unos dos tercios de la altura, con aire en los cuatro bordes porque
   encima va un marco que los tapa y abajo una banda opaca con el nombre. Se
@@ -131,13 +131,26 @@ Hay **dos**, y piden cosas distintas:
   encuadre cerrado. Dibújalo con el mismo criterio y **deja margen de sobra**:
   recortar es barato, inventar el borde que faltaba no.
 
-> **Vertical y plano entero, y esto no es un matiz.** Los tres primeros héroes de
-> Humanos se generaron apaisados y en plano medio —cortados por el muslo, la
-> figura fuera del eje— y en el marco vertical de la carta hay que tirar la mitad
-> de la anchura: el personaje sale enorme y descentrado. El plano hay que pedirlo
-> **en positivo en el prompt y en negativo en el negative prompt**, porque la IA
-> por defecto se acerca. Un sujeto ancho (la Caballería) o enorme (el Dragón) se
-> resuelve **retrocediendo la cámara**, nunca recortándolo.
+> **Vertical y con aire, y esto no es un matiz.** Ha costado dos tiradas:
+>
+> 1. La primera salió **apaisada y en plano medio** —cortada por el muslo, la
+>    figura fuera del eje—, y en un marco vertical hay que tirar la mitad de la
+>    anchura.
+> 2. La segunda salió vertical y completa, pero **en plano entero ajustado**: la
+>    figura al 90% del alto, la coronilla a un dedo del borde y los pies apoyados
+>    en el filo. Y era culpa del vocabulario de estos documentos, que pedían
+>    literalmente «plano entero» — que es, por definición, el plano en que el
+>    cuerpo llena el cuadro.
+>
+> Lo que se pide es **plano general con la cámara alejada**, y se pide con
+> **anclas visuales, no con porcentajes**: una cabeza de aire por encima, suelo
+> visible por debajo de los pies, el hueco de un brazo a los lados. Los
+> porcentajes estaban escritos y la IA los ignoró, porque no mide.
+>
+> Y el plano hay que pedirlo **en positivo en el prompt y en negativo en el
+> negative prompt**: la IA por defecto se acerca. Un sujeto ancho (la Caballería)
+> o enorme (el Dragón) se resuelve **retrocediendo la cámara**, nunca
+> recortándolo.
 
 **Las medidas no están aquí.** Tamaño, ratio, sangrado, transparencia y los
 porcentajes exactos —alto de la figura, aire por borde, cuánto se come la banda
@@ -157,12 +170,17 @@ Cada bloque se escribe listo para pegar tal cual en la IA, en tres piezas:
    no las escribas de memoria:
 
    > Ilustración de \[tamaño\], ratio \[ratio\], **vertical**, a sangre, sin
-   > transparencia. **Plano entero**: el personaje completo, de la coronilla a
-   > los pies, pies apoyados en suelo visible. La figura ocupa \[alto\] de la
-   > altura y va **centrada** en el eje horizontal. \[aire\] de aire en los
-   > cuatro bordes (especialmente las esquinas) porque un marco decorativo los
-   > va a tapar, y el \[banda\] inferior lo cubre la banda del nombre: ahí solo
+   > transparencia. **Plano general, cámara alejada**: el personaje completo de
+   > la coronilla a los pies **y entorno alrededor**; el cuerpo NO llena el
+   > cuadro. **El personaje no toca ningún borde**: cabe otra cabeza entera de
+   > aire por encima de la coronilla, se ve suelo por debajo de los pies antes
+   > del borde, y a cada lado queda el hueco de un brazo. Va **centrado** en el
+   > eje horizontal. El \[banda\] inferior lo cubre la banda del nombre: ahí solo
    > suelo. Cámara a la altura del pecho, lente neutra. Legible en miniatura.
+   >
+   > *(El \[alto\] de la figura no va en el prompt: es criterio de comprobación
+   > posterior. Un modelo de imagen no mide porcentajes — el aire se pide con
+   > anclas.)*
    >
    > **SUJETO:** \[raza + clase, o nombre de la unidad\]
    > **CUERPO:** \[la complexión de **este** sujeto, dentro del rango de su raza\]
@@ -246,7 +264,8 @@ La de [`style-guide.md`](style-guide.md#24-checklist-de-aprobación) §24, más
 cinco comprobaciones propias de V3:
 
 -   [ ] **Se ve el personaje entero, pies incluidos y apoyados en el suelo.** Cortado por el muslo, se descarta.
--   [ ] **Va centrado** en el eje horizontal, y la figura no pasa del 75% de la altura.
+-   [ ] **Cabe otra cabeza de aire** por encima de la coronilla, y **se ve suelo** por debajo de los pies antes del borde. Si va justo, se descarta: es plano entero ajustado, no plano general.
+-   [ ] **Va centrado** en el eje horizontal, y la figura no pasa del 72% de la altura.
 -   [ ] **Es vertical.** Una imagen apaisada no entra en la carta sin perder media anchura.
 -   [ ] **La complexión es la de su papel**, no la de su raza: el que no debe tener masa no la tiene.
 -   [ ] **La edad se lee y es la que pide su bloque.** Si todos los sujetos de la raza parecen tener treinta años, el reparto no llegó.
@@ -263,6 +282,6 @@ cinco comprobaciones propias de V3:
 
 - ~~**La identidad de cada raza**~~ → **resuelta**: la §4 nombra los **ocho** ejes que se mueven por raza —paleta, rango anatómico, edad, belleza, materiales, motivos, fondo, silueta— y los valores de las **11 razas** están en [`../races-concept/sujetos.md`](../races-concept/sujetos.md). Se deciden allí y no aquí porque son diseño de raza, no de estilo. Sin ellos una tirada larga inventaba una paleta por imagen — y, como se vio con los tres primeros héroes, también un cuerpo y una cara por defecto para todos. **Queda un resto**: solo la ficha de Humanos está aprobada; Edad y Belleza de las otras diez son derivación y hay que confirmarlas cuando le toque su turno.
 - **Para las cartas**: el motor de combate ([`game-design.md`](../../../docs/v3/game-design.md) §4), y después la tabla de al menos un tipo en `docs/v3/cards/`.
-- ~~**Para el lienzo de carta**~~ → **cerrado**: vertical 5:7, plano entero y figura centrada, en [`public/assets/v3/README.md`](../../../public/assets/v3/README.md#lienzo-y-formato). Sale de la carta construida (300×420) y lo comparten los cinco bocetos, así que no depende de cuál gane. Lo que sigue pendiente es **la medida del retrato**: no hay pantalla de héroe ni ficha de unidad que la dé.
+- ~~**Para el lienzo de carta**~~ → **cerrado**: vertical 5:7, plano general con aire y figura centrada, en [`public/assets/v3/README.md`](../../../public/assets/v3/README.md#lienzo-y-formato). Sale de la carta construida (300×420) y lo comparten los cinco bocetos, así que no depende de cuál gane. Lo que sigue pendiente es **la medida del retrato**: no hay pantalla de héroe ni ficha de unidad que la dé.
 - **Para la calibración**: aprobar el primer héroe de Humanos. V3 no tiene imagen de referencia contra la que juzgar el estilo (§14 de la biblia), y esa será la primera.
 - **El diseño de la carta en sí** —marco, tipografía, disposición, Rareza— sin empezar. No es este documento.

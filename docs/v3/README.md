@@ -8,14 +8,14 @@ Rediseño del juego alrededor de **razas**, con referencias declaradas en Heroes
 
 | Documento | Contenido | Estado |
 |---|---|---|
-| [razas.md](razas.md) | 10 razas con sus clases, las 8 Habilidades, el catálogo de Características, y las 8 unidades de cada raza | **Escrito** — pendiente de valores numéricos |
-| [game-design.md](game-design.md) | Reglas generales, turno, motor de combate, nivel y rareza | Esqueleto |
+| [razas.md](razas.md) | 11 razas con sus clases, las 8 Habilidades, el catálogo de Características, y las 8 unidades de cada raza | **Escrito** — pendiente de valores numéricos |
+| [game-design.md](game-design.md) | Reglas generales, turno, motor de combate, progresión y rareza | **Parcial** — §4 motor de combate escrito; economía de cartas, economía de partida y balance sin definir |
 | [glossary.md](glossary.md) | Vocabulario V3 | Esqueleto |
 | [status.md](status.md) | Qué está decidido, qué falta, qué falta balancear | **Escrito** |
 | [ideas.md](ideas.md) | Ideas aparcadas | Esqueleto |
-| [effects.md](effects.md) | Estados y efectos temporales | Esqueleto |
+| [effects.md](effects.md) | Estados y efectos temporales | **Escrito** — 9 estados; diales sin balancear |
 | [board/board-map.md](board/board-map.md) | Tablero de exploración | Esqueleto |
-| [board/battle.md](board/battle.md) | Tablero de batalla | Esqueleto |
+| [board/battle.md](board/battle.md) | Tablero de batalla | **Escrito** — terreno y retirada aplazados con motivo |
 | [characters/heroes.md](characters/heroes.md) | Héroes jugables y su progresión | Esqueleto |
 | [characters/enemies.md](characters/enemies.md) | Las razas en su cara hostil | Esqueleto |
 | [characters/npcs.md](characters/npcs.md) | NPCs | Esqueleto |

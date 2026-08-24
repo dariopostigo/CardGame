@@ -1,4 +1,4 @@
-# Prompts — 🧌 Orkos
+# Prompts — 🧟 Orkos
 
 > **Los 12 sujetos de Orkos, montados y listos para pegar.** Traducción a prompt
 > de la cola de [`../sujetos.md`](../sujetos.md).

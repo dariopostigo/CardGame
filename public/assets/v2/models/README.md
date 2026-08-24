@@ -1,13 +1,16 @@
 # Modelos 3D (.glb)
 
-> **Sin versión a propósito.** Esto es material de laboratorio, no arte del
-> juego, y por eso no está ni en [`../v2/`](../v2/cards/README.md) ni en
-> [`../v3/`](../v3/README.md). Cuando haya modelos propios de V3, van a
-> `v3/`; ver [`../README.md`](../README.md).
+> **Cuelga de `v2/` porque es material de los laboratorios de v2**, los únicos
+> que lo cargan: `/lab/character` y `/lab/combat`. Sigue sin ser arte del
+> juego —de eso van [`../cards/README.md`](../cards/README.md) y
+> [`../../v3/README.md`](../../v3/README.md)—, pero pertenece a la versión
+> anterior y se va con ella. Los modelos propios de V3, cuando haya, van a
+> `v3/`; ver [`../../README.md`](../../README.md).
 
 Personajes en glTF binario con **esqueleto y animaciones dentro del propio
-archivo**. Los consume el laboratorio `/lab/character`
-(`components/lab/character-scene.ts`).
+archivo**. Los consumen los laboratorios `/lab/character`
+(`components/lab/character-scene.ts`) y `/lab/combat`, desde el catálogo
+`components/lab/character-models.ts`.
 
 Estos dos son **modelos prestados de prueba**, no arte del juego: están aquí
 para validar el pipeline (generar en una IA 3D → auto-rig → animaciones de

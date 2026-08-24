@@ -1,0 +1,418 @@
+@use "../../abstracts" as *;
+
+// =========================================================================
+// Boceto F · Blasón — réplica de Might & Magic: Fates con el modelo de V3
+//
+// Referencia:
+// knowledge/v3/card-concept/imgs/might-magic-fates-heroes-tcg-pc-cd-key-4.webp
+//
+// No sale de la E. Sale de fuera, y está al lado de la E para discutirle tres
+// cosas que aquella daba por cerradas:
+//
+//   · LA SILUETA. Los cinco bocetos anteriores son el mismo rectángulo
+//     redondeado con distinta piel; este es un OCTÓGONO, con las cuatro
+//     esquinas cortadas a 45° y un roblón en cada corte. Es lo primero que se
+//     reconoce de la referencia, antes de leer un número.
+//   · LA JERARQUÍA DE LOS OCHO. La E los pone todos del mismo tamaño en una
+//     fila. Aquí ⚔️ Ataque y ❤️ Vida se van a las esquinas de abajo en pines con
+//     forma propia —hoja de acero y gema roja— y los otros seis se quedan en
+//     una rejilla de 3×2 dentro del panel. La carta dice cuáles se consultan en
+//     cada golpe y cuáles se consultan una vez.
+//   · SI LA CARTA ESCRIBE O ENSEÑA. La E no escribe el Tier en ningún sitio y
+//     paga el precio de no poder decir cuál es. Aquí va en número, en el disco
+//     de la esquina, y la raza vuelve a escribirse en versalitas al pie.
+//
+// Y hay una cuarta diferencia, la de la Rareza, que es la que de verdad opone
+// los dos marcos: en la E el color vive en una veta de luz por DENTRO del
+// metal; aquí es el canto de fuera, un filete duro que rodea la silueta entera.
+// Encendido contra acuñado.
+//
+// Reparto con el TSX, el de siempre: el contorno y sus anillos los dibuja
+// BlasonFrame (components/design/v3/sketch-frames.tsx), aquí va todo lo que
+// crece o encoge con el contenido.
+// =========================================================================
+
+// Espejo de la C de sketch-frames.tsx. Aquí se usa para recortar el arte y el
+// pie, allí para dibujar el marco: si las dos no dicen lo mismo, el filete deja
+// de seguir a la silueta y se ve en las cuatro esquinas a la vez.
+$c: $sketch-chamfer;
+
+// El octógono completo, para el arte, que ocupa la carta entera.
+$oct-card: "polygon(#{$c} 0, calc(100% - #{$c}) 0, 100% #{$c}, 100% calc(100% - #{$c}), calc(100% - #{$c}) 100%, #{$c} 100%, 0 calc(100% - #{$c}), 0 #{$c})";
+
+// Y solo los dos cortes de abajo, para el pie: los de arriba caen muy por
+// encima de él, y recortarlos obligaría a saber cuánto mide — que es
+// justamente lo que no se sabe, porque el pie crece con su contenido.
+$oct-foot: "polygon(0 0, 100% 0, 100% calc(100% - #{$c}), calc(100% - #{$c}) 100%, #{$c} 100%, 0 calc(100% - #{$c}))";
+
+// Un octógono pequeño para las piezas que repiten la silueta de la carta: el
+// medallón de Característica. El chaflán va en proporción, no en píxeles.
+$oct-chip: "polygon(28% 0, 72% 0, 100% 28%, 100% 72%, 72% 100%, 28% 100%, 0 72%, 0 28%)";
+
+// El pie a sangre: la placa va de x = 0 a x = 300 y es el marco, que se pinta
+// encima, quien le recorta los extremos. Lo que escriba dentro de esos 15px no
+// se ve, así que el acolchado tiene que descontarlo a mano.
+$frame-clear: $sketch-band + 6px;
+
+// Los pines montan sobre el marco a propósito —como en la referencia—, así que
+// arrancan por dentro del filete pero no del todo.
+$pin-inset: $sketch-band - 4px;
+$pin-width: 54px;
+
+// La franja de abajo del panel: los dos pines y, entre ellos, la línea de raza.
+// El panel tiene que RESERVARLA con acolchado, porque ni los pines ni la línea
+// están en el flujo —los pines viven fuera del pie y la línea va anclada—, así
+// que si no se reserva, la segunda fila de la rejilla les cae encima. Es el
+// primer fallo que enseñó este boceto montado.
+$pin-band: 48px;
+
+.sketch--blason {
+  // --- La silueta ---------------------------------------------------------
+  // Lo primero que hay que deshacer del esqueleto. El radio se va, y con él el
+  // fondo: la carta no puede pintar su propio relleno porque sus esquinas ya no
+  // son las de su caja — las cuatro puntas del rectángulo asomarían por fuera
+  // del octógono como cuatro manchas. El fondo lo pone el arte, que sí va
+  // recortado.
+  border-radius: 0;
+  background: transparent;
+
+  @include armor-vars(card-sketch("alloy"));
+  --m-glint: #{card-sketch("glint")};
+
+  // El oro del hilo interior del marco. Va como custom property porque lo
+  // necesita el SVG, y un SVG no puede llamar a game(): tiene que llegarle por
+  // CSS. Y es el oro del tema y no uno propio, por lo mismo que el rótulo — si
+  // el oro de la carta no fuera el del botón se notaría en cuanto las dos cosas
+  // aparecieran juntas.
+  --rim-gold: #{game("gold")};
+
+  // La sombra tiene que redibujarse porque la del esqueleto sigue al
+  // border-radius, que aquí es 0. La de contacto se queda (es difusa y no
+  // delata la forma) y el halo de rareza baja: aquí el color ya está en el
+  // canto, así que un halo fuerte sería decirlo dos veces.
+  box-shadow:
+    0 18px 34px -18px card-sketch("shadow"),
+    0 0 20px -10px var(--rarity-soft);
+
+  .sketch__art {
+    border-radius: 0;
+    clip-path: #{$oct-card};
+  }
+
+  // --- El pie -------------------------------------------------------------
+  // El fundido del arte hacia el panel, que en la referencia es largo: la
+  // ilustración no se corta contra el panel, se disuelve en él.
+  .sketch__foot {
+    padding-top: 44px;
+    border-radius: 0;
+    clip-path: #{$oct-foot};
+    background: linear-gradient(
+      to bottom,
+      card-sketch("veil-none") 0,
+      card-sketch("veil-soft") 100%
+    );
+  }
+
+  // El panel. A sangre y sin contorno propio: no es una etiqueta pegada sobre
+  // la carta, es el fondo de la carta cerrando contra el marco. De los cuatro
+  // bordes solo se vería el de arriba, y ahí no hay ninguno a propósito —lo que
+  // separa el panel del arte es el fundido, no una línea—.
+  //
+  // Y por eso el degradado arranca EN TRANSPARENTE y no en el velo: el pie ya
+  // viene oscureciéndose desde 44px más arriba, y si el panel entrara de golpe a
+  // su opacidad se vería el escalón entre los dos — una raya horizontal a media
+  // carta, que es justo lo que el fundido evita. Los 20px de acolchado de arriba
+  // son los que hacen falta para que el rótulo no caiga en ese tramo a medio
+  // teñir: el nombre no se negocia.
+  .sketch__plate--panel {
+    position: relative;
+    padding: 20px $frame-clear $pin-band;
+    text-align: center;
+    background: linear-gradient(
+      to bottom,
+      card-sketch("veil-none") 0,
+      card-sketch("veil") 15%,
+      color-mix(in srgb, #{card-sketch("void")} 94%, transparent) 100%
+    );
+  }
+
+  // --- El rótulo ----------------------------------------------------------
+  // En VERSALITAS, que es como titula la referencia, y ahí está el matiz que
+  // hay que mirar: el peso 300 que se eligió para la E no aguanta la caja alta.
+  // Una versal fina y pequeña no tiene trazo con el que sostenerse, así que
+  // aquí sube a 500 — el eje variable de Platypi lo da sin descargar nada. Es
+  // una decisión abierta: o la carta titula en fino y en caja mixta (E), o
+  // titula en versalitas y necesita peso (F). Las dos a la vez, no.
+  .sketch__name {
+    font-size: sketch-font("name-caps");
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    // El espaciado se aplica también al último carácter, así que un texto
+    // centrado se va medio espacio a la izquierda. Se devuelve a mano.
+    text-indent: 0.07em;
+
+    &[data-long="true"] {
+      font-size: sketch-font("name-caps-long");
+    }
+
+    // El filete bajo el nombre, de la referencia. Se apaga por los extremos:
+    // una línea que muere en seco parece un borde de caja, y esto no es una
+    // caja — es un subrayado.
+    &::after {
+      content: "";
+      display: block;
+      height: 1px;
+      margin-top: 7px;
+      background: linear-gradient(
+        to right,
+        card-sketch("veil-none"),
+        game("gold") 50%,
+        card-sketch("veil-none")
+      );
+      opacity: 0.7;
+    }
+  }
+
+  // --- Las seis del panel -------------------------------------------------
+  // Rejilla de 3×2 donde la referencia pone su párrafo de reglas. Es el hueco
+  // que V3 tiene libre —nuestras cartas no llevan prosa— y es lo que hace que
+  // esta réplica sea posible: sin ese hueco no hay sitio para seis números.
+  //
+  // Y van con el icono AL LADO del número, no encima. El esqueleto dice que el
+  // apilado es la pieza, y lo dice con razón: con ocho en una fila de 33px, en
+  // línea el par se deshace en dieciséis cosas sueltas. Pero aquí son seis en
+  // tres columnas de ~85px, y a esa anchura el par se lee como par y gana el
+  // alto de una línea — que es lo que deja caber dos filas donde la referencia
+  // tiene cuatro renglones de texto. Esa es la prueba, y solo vale a esta
+  // anchura.
+  .sketch__pods {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px 4px;
+    margin-top: 10px;
+  }
+
+  .sketch__pod {
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .sketch__pod-icon {
+    font-size: sketch-font("stat-icon-md");
+  }
+
+  .sketch__pod-value {
+    font-size: sketch-font("pod-md");
+  }
+
+  // --- La línea de raza ---------------------------------------------------
+  // Donde la referencia escribe el tipo de criatura. Va muy espaciada y muy
+  // pequeña: es una etiqueta de catálogo, no un dato que se consulte jugando.
+  //
+  // Va ANCLADA a la franja de abajo y no al final del flujo: tiene que caer a
+  // la misma altura que los dos pines —que están fuera del pie— y en el flujo
+  // caería justo encima de ellos. El acolchado lateral tampoco es estético: es
+  // el sitio que ocupan, y sin él «No-muertos» se metería bajo la hoja de acero.
+  .sketch__type {
+    position: absolute;
+    right: 0;
+    bottom: 24px;
+    left: 0;
+    padding-inline: 70px;
+    font-family: $font-game-display;
+    font-size: sketch-font("type");
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    line-height: 1.2;
+    text-indent: 0.18em;
+    text-transform: uppercase;
+    color: game("muted");
+  }
+
+  // --- El disco del Tier --------------------------------------------------
+  // Montado sobre el chaflán y desbordándolo, como el disco de coste de la
+  // referencia. Es la única pieza de la carta que se sale del contorno, y es
+  // deliberado: lo que la hace parecer un sello colgado y no un botón dibujado
+  // es justamente que no cabe.
+  //
+  // Cara oscura y aro de oro, al revés que el medallón de la E: ahí dentro va
+  // un NÚMERO —que sí toma color— y no un emoji, así que no necesita papel
+  // claro y gana leyéndose en oro sobre negro. La corona del héroe es la
+  // excepción, y funciona porque es un emoji claro.
+  .sketch__disc {
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    z-index: z("chip");
+    display: grid;
+    place-items: center;
+    width: $sketch-disc;
+    height: $sketch-disc;
+    border: 3px solid var(--m);
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 28%, game("surface-2"), card-sketch("void") 74%);
+    box-shadow:
+      0 0 0 1.5px game("gold"),
+      inset 0 1px 0 card-sketch("glass-hi"),
+      0 4px 10px card-sketch("shadow");
+  }
+
+  .sketch__disc-value {
+    font-family: $font-game-display;
+    font-size: sketch-font("disc");
+    line-height: 1;
+    @include game-engraved-text;
+  }
+
+  // --- El rombo de Rareza -------------------------------------------------
+  // A caballo del canto de arriba, en el eje del nombre. Es la segunda vez que
+  // la carta dice la rareza —la primera es el filete del marco— y es a
+  // propósito: en la referencia el canto teñido se ve de lejos y la gema se ve
+  // de cerca, en la mano. Aquí sirve además para separar la común del héroe sin
+  // mirar el borde entero.
+  .sketch__gem {
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    z-index: z("chip");
+    width: $sketch-gem;
+    height: $sketch-gem;
+    margin-left: -$sketch-gem * 0.5;
+    background: linear-gradient(
+      140deg,
+      color-mix(in srgb, white 45%, var(--rarity)),
+      var(--rarity) 55%,
+      color-mix(in srgb, black 30%, var(--rarity))
+    );
+    // El giro es lo que lo convierte en rombo, y por eso la caja es cuadrada:
+    // un rombo dibujado con clip-path no admitiría ni borde ni halo.
+    transform: rotate(45deg);
+    box-shadow:
+      0 0 0 1px var(--m-edge),
+      0 0 10px var(--rarity-soft);
+  }
+
+  // --- El raíl de Características, a la DERECHA ---------------------------
+  // Cambia de lado respecto a la E porque la esquina izquierda se la lleva el
+  // disco del Tier. Sigue siendo la misma idea del boceto A —con cero
+  // medallones no queda hueco, queda arte— y sigue por debajo del marco, para
+  // que si alguno llega a rozar el chaflán pase por debajo del herraje.
+  //
+  // La sombra la pone el raíl y no cada medallón: van recortados con clip-path,
+  // y un clip se come el box-shadow. En el padre, el drop-shadow sigue la
+  // silueta ya recortada, que es justo lo que se quiere.
+  .sketch__rail {
+    position: absolute;
+    top: $sketch-band + 13px;
+    right: $sketch-band + 3px;
+    z-index: z("content");
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    filter: drop-shadow(0 2px 3px card-sketch("shadow"));
+  }
+
+  // El medallón repite la silueta de la carta en pequeño: octógono, no círculo.
+  // Es lo que lo hace parte de este marco y no un chip prestado del A.
+  //
+  // Dos capas de fondo, de arriba abajo: primero la cara oscura —el disco
+  // interior donde se apoya el glifo— y debajo el metal, que solo asoma por el
+  // aro. Un emoji sobre metal claro se pierde (💀, 🐾), y por eso la cara va
+  // oscura aunque el marco sea claro.
+  .sketch__medal {
+    display: grid;
+    place-items: center;
+    width: $sketch-medal;
+    height: $sketch-medal;
+    clip-path: #{$oct-chip};
+    background:
+      radial-gradient(circle at 50% 50%, card-sketch("glass") 0 56%, transparent 56%),
+      linear-gradient(155deg, var(--m-hi), var(--m) 45%, var(--m-lo));
+    font-size: sketch-font("medal");
+    line-height: 1;
+  }
+
+  // --- Los dos pines ------------------------------------------------------
+  // Lo que la referencia pone en las esquinas de abajo, y lo que el concepto B
+  // señalaba como digno de robar sin que ningún boceto llegara a dibujarlo:
+  // los números que se consultan en cada intercambio de golpes salen del grupo
+  // y se van a las esquinas, con forma y tamaño propios.
+  //
+  // Van FUERA del pie porque montan sobre el marco y sobre el chaflán, y el pie
+  // va recortado. Y la sombra va aquí por lo mismo que en el raíl: los pines
+  // llevan clip-path.
+  .sketch__pins {
+    position: absolute;
+    bottom: 8px;
+    left: $pin-inset;
+    right: $pin-inset;
+    z-index: z("chip");
+    display: flex;
+    justify-content: space-between;
+    filter: drop-shadow(0 2px 4px card-sketch("shadow"));
+  }
+
+  // La punta hacia abajo es de la referencia y no es adorno: es lo que hace que
+  // el pin se lea como una pieza colgada del marco y no como una casilla del
+  // panel. El acolchado de abajo es el sitio que se come esa punta.
+  //
+  // Icono y número van EN LÍNEA, al revés que las seis del panel: apilados el
+  // pin crece a lo alto, y a lo alto es justo donde no hay sitio —cada píxel que
+  // sube se lo quita a la rejilla—. En línea cabe en la franja y de paso deja el
+  // número más grande, que es lo que este pin viene a hacer.
+  .sketch__pin {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    width: $pin-width;
+    padding: 5px 0 13px;
+    clip-path: polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%);
+  }
+
+  .sketch__pin-icon {
+    font-size: sketch-font("pin-icon");
+    line-height: 1;
+  }
+
+  .sketch__pin-value {
+    font-family: $font-game-display;
+    font-size: sketch-font("pin");
+    line-height: 1;
+    color: game("text");
+    text-shadow: 0 1px 2px card-sketch("shadow");
+  }
+
+  // El de ⚔️ Ataque, en acero: mismo metal que el marco, para que se lea como
+  // una hoja atornillada a la carta. Lleva el icono del TIPO DE DAÑO en vez del
+  // de Ataque (lo pone Stat, desde el boceto E), así que la esquina dice cuánto
+  // pega y de qué manera.
+  //
+  // El filo de luz de arriba va como parada dura del degradado y no como borde:
+  // con clip-path no hay borde que valga.
+  .sketch__pin:first-child {
+    background: linear-gradient(
+      to bottom,
+      var(--m-hi) 0 2px,
+      var(--m) 2px,
+      var(--m-lo) 100%
+    );
+  }
+
+  // Y el de ❤️ Vida en la sangre del tema, que es lo que la referencia hace con
+  // su gema roja. Ojo: es el mismo rojo del raíl de los héroes, así que en una
+  // carta de héroe el pin y el filete del marco van a juego — hay que mirar si
+  // eso ayuda o si confunde las dos cosas.
+  .sketch__pin:last-child {
+    background: linear-gradient(
+      to bottom,
+      game("accent-hi") 0 2px,
+      color-mix(in srgb, #{game("accent-hi")} 62%, #{game("accent")}) 2px,
+      game("accent") 100%
+    );
+  }
+}

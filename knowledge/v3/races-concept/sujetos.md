@@ -59,7 +59,7 @@ Es el hallazgo gordo, y no es una errata suelta: pasa en **las once razas**.
 | 💀 No-muertos | Nigromante · Vampiro |
 | 🔥 Demonios | Señor demoníaco |
 | 🧝 Elfos | Druida |
-| 🧌 Orkos | Bárbaro · Chamán |
+| 🧟 Orkos | Bárbaro · Chamán |
 | 🧚 Feéricos | Hada · Danzante de hojas · Ilusionista |
 | 🐉 Dracónidos | Piromante · Dracoguerrero |
 | 🐀 Hombres rata | **los 4**: Asaltante · Alquimista · Señor de la plaga · Maquinista |
@@ -156,7 +156,7 @@ sigan distinguiéndose a 100 px.
 | 💀 No-muertos | Marfil hueso · verdín gris | **Verde espectral frío** |
 | 🔥 Demonios | Negro carbón · rojo sangre | **Brasa naranja** |
 | 🧝 Elfos | Verdes fríos (salvia, teal) · plata | **Ámbar pálido** |
-| 🧌 Orkos | Verde oliva sucio · óxido | **Bermellón mate** |
+| 🧟 Orkos | Verde oliva sucio · óxido | **Bermellón mate** |
 | 🧚 Feéricos | Lila · menta · rosa pálidos | **Nácar iridiscente** |
 | 🐉 Dracónidos | Púrpura profundo · negro escama | **Bronce cálido** |
 | 🐀 Hombres rata | Marrón enfermo · gris rata | **Amarillo-verde ácido** |
@@ -245,7 +245,7 @@ La vara de medir: las otras diez se desvían respecto a esta.
 | **Fondo** | Bosque de troncos como columnas, luz filtrada en haces verticales |
 | **Silueta** | Alta y estrecha, dominada por **verticales**: telas largas, arcos, cabello. Ocupa poco ancho aunque el tier suba |
 
-### 🧌 Orkos
+### 🧟 Orkos
 
 | Eje | Definición |
 |---|---|
@@ -368,21 +368,30 @@ resistencia.
 | 🌊 Anfibio | Branquias, aletas, membranas |
 | 🔥 Fuego / 🔥 Inmune al fuego | Llama en el arma, el cuerpo o la estela |
 | ☠️ Veneno | Verdes enfermos, viales, filo manchado |
-| 🧊 Congelación | Escarcha, hielo, vaho |
-| 🏹 Ataque a distancia | Arma de proyectil en mano |
+| 🧊 Hielo | Escarcha, hielo, vaho |
 | 🗡️ Perforante | Punta o filo diseñado para atravesar |
 | 💣 Explosivo | Carga, bomba, o el gesto de lanzarla |
 | 🐺 Bestia | Rasgo animal real, no un adorno |
 | 👑 Líder | Insignia de mando, estandarte |
-| 🩸 Robo de vida / 🩸 Hemorragia | Filo dentado, sangre, sed |
+| 🫀 Robo de vida / 🩸 Hemorragia | Filo dentado, sangre, sed |
 | 🐌 Lentitud | Masa que explica la lentitud |
 
+**Y el [tipo de daño](razas.md#-tipo-de-daño) manda sobre todas ellas**, porque
+lo llevan las 132 fichas y decide qué tiene el sujeto en las manos. Va en el
+prompt siempre, aunque la ficha no tenga ni una Característica:
+
+| Tipo de daño | Qué se ve |
+|---|---|
+| 🗡️ Cuerpo a cuerpo | Arma de contacto: espada, hacha, maza, garras, puños |
+| 🏹 A distancia | Arma de proyectil en mano: arco, ballesta, arma de fuego, arpón |
+| ✨ Mágico | Foco de magia —bastón, grimorio, símbolo, la mano desnuda cargada— y **ningún arma de contacto en guardia** |
+
 **No se dibujan** (son mecánica invisible, y forzarlas ensucia la imagen):
-🔮 Resistencia mágica · 🛡️ Resistente al daño físico · ✨ Resistente a la magia ·
+🛡️ Resistente al daño físico · 💨 Evasivo ·
 🔥/☠️/🧊 Resistente a… · 😱 Inmune al miedo · 🧪 Inmune a estados alterados ·
-🌀 Inmune a la magia · 💥 Golpe crítico · 🎯 Provocación · 🍀 Suerte ·
-🛡️ Último aliento · 💚 Regeneración · ☠️ Inmortal · 👻 Resurrección ·
-👁️ Percepción · 🐾 Ágil · 🌲 Explorador · ⚡ Aturdimiento · 🌀 Confusión ·
+🧿 Inmune a la magia · 💥 Golpe crítico · 🗣️ Provocación · 🍀 Suerte ·
+😤 Último aliento · 💚 Regeneración · 🕯️ Inmortal · 👻 Resurrección ·
+👁️ Percepción · 🐾 Ágil · 🌲 Explorador · 💫 Aturdimiento · 🌀 Confusión ·
 🌑 Ceguera · 🕸️ Inmovilización · 😱 Miedo
 
 Con una excepción de criterio: **si un sujeto se queda sin ninguna
@@ -425,8 +434,8 @@ Individuos. Protagonistas. Cada uno con algo suyo.
 | # | Héroe | Papel | Debe verse | Invisible (no dibujar) |
 |---|---|---|---|---|
 | 1 | ⚔️ **Guerrero** | Tanque / cuerpo a cuerpo | Planta los pies, peso bajo | Resistente al daño físico · Inmune al miedo · Último aliento |
-| 2 | 🔮 **Mago** | Daño mágico / control | Sin armadura, foco arcano en mano | Resistencia mágica · Resistente al frío |
-| 3 | ✝️ **Sacerdote** | Curación / apoyo | Símbolo sagrado, gesto de bendición | Resistencia mágica · Inmune al miedo |
+| 2 | 🔮 **Mago** | Daño mágico / control | Sin armadura, **foco arcano en mano** (✨) | Resistente al frío |
+| 3 | ✝️ **Sacerdote** | Curación / apoyo | **Símbolo sagrado** (✨), gesto de bendición | Inmune al miedo |
 | 4 | 🏹 **Arquero** | Daño a distancia | **Arco en mano** (🏹) | Percepción · Golpe crítico |
 
 > ⚠️ **Arquero** y **Mago** vuelven como unidades (#6 y #8). Aplica la regla de
@@ -448,10 +457,10 @@ se mira sola.
 | 1 | 🗡️ **Miliciano** | Infantería básica | *Nada.* Es el suelo: equipo pobre, poca masa, sin adorno | — |
 | 2 | 🏹 **Arquero** | Daño a distancia | **Arco** (🏹) | — |
 | 3 | 🛡️ **Caballero** | Tanque / cuerpo a cuerpo | Masa y coraza sobre el Miliciano | Resistente al daño físico |
-| 4 | 🔮 **Mago** | Daño mágico / control | Foco arcano, sin armadura | Resistencia mágica |
+| 4 | 🔮 **Mago** | Daño mágico / control | **Foco arcano** (✨), sin armadura | — |
 | 5 | 🐎 **Caballería** | Movilidad / carga | **Montado**, lanza en carga | Ágil · Golpe crítico |
 | 6 | 🦅 **Grifo** | Criatura voladora | **Alas** (🪽) — no es humano, es criatura aliada | Golpe crítico · Ágil |
-| 7 | ✝️ **Paladín** | Tanque / apoyo / sagrado | Cima humana: la armadura más completa de la raza | Resistente al daño físico · Inmune al miedo · Resistencia mágica |
+| 7 | ✝️ **Paladín** | Tanque / apoyo / sagrado | Cima humana: la armadura más completa de la raza, **arma de contacto** (🗡️) | Resistente al daño físico · Inmune al miedo |
 | 8 | 🐉 **Dragón dorado** | Legendaria / daño masivo | **Alas** (🪽) + **fuego** (🔥) + **estallido** (💣). Enorme; el oro de la raza aquí es literal | Inmune al fuego |
 
 > Dos de las ocho —**Grifo** y **Dragón dorado**— no son humanos. Son criaturas
@@ -546,17 +555,17 @@ cerrado**: sin esa vara de medir no hay contra qué juzgar cuánta masa es un ti
 primer pase de balance. Van aquí para que la lista esté completa, no para
 encargarlos.
 
-## 🧌 Orkos
+## 🧟 Orkos
 **Héroes:** 🪓 Bárbaro · 🛡️ Jefe de guerra *(👑 insignia de mando)* · 🔮 Chamán · 🏹 Cazador *(🏹 arco, 🐺 rasgo bestial)*. ⚠️ **Bárbaro**, **Chamán**.
 **Unidades:** 1 🪓 Guerrero orko *(🩸)* · 2 🏹 Cazador orko *(🏹)* · 3 🪓 Bárbaro *(🩸)* · 4 🐗 Jinete de jabalí *(montado)* · 5 🔮 Chamán · 6 🩸 Carnicero *(🩸 ejecución)* · 7 🧌 Troll de guerra *(💚 regenera)* · 8 👹 Gigante orko *(🩸, colosal)*
 
 ## 🧚 Feéricos
 **Héroes:** 🪄 Hechicero feérico · 🦋 Ilusionista · 🧚 Hada *(🪽 alas)* · 🗡️ Danzante de hojas *(🩸)*. ⚠️ **Hada**, **Ilusionista**, **Danzante de hojas**.
-**Unidades:** 1 🧚 Duende feérico · 2 🏹 Arquero feérico *(🏹)* · 3 🧚 Hada *(🪽)* · 4 🗡️ Danzante de hojas *(🩸)* · 5 🦋 Ilusionista · 6 🌙 Encantador · 7 🦌 Ciervo feérico *(criatura)* · 8 🐲 Dragón feérico *(🪽)*
+**Unidades:** 1 🍄 Duende feérico · 2 🏹 Arquero feérico *(🏹)* · 3 🧚 Hada *(🪽)* · 4 🗡️ Danzante de hojas *(🩸)* · 5 🦋 Ilusionista · 6 🌙 Encantador · 7 🦌 Ciervo feérico *(criatura)* · 8 🐉 Dragón feérico *(🪽)*
 
 ## 🐉 Dracónidos
-**Héroes:** 🐲 Caballero dragón · 🔥 Piromante *(🔥)* · 🪽 Dracoguerrero *(🪽)* · ✨ Oráculo dracónico. ⚠️ **Piromante**, **Dracoguerrero**.
-**Unidades:** 1 🗡️ Guerrero dracónido · 2 🏹 Cazador dracónido *(🏹)* · 3 🛡️ Caballero dracónido · 4 🔥 Piromante *(🔥)* · 5 🪽 Dracoguerrero *(🪽)* · 6 🐲 Dracónido ancestral · 7 🐉 Joven dragón *(🪽 🔥)* · 8 🐲 Dragón ancestral *(🪽 🔥 💣, colosal)*
+**Héroes:** 🐲 Caballero dragón · 🔥 Piromante *(🔥)* · 🐲 Dracoguerrero *(🪽)* · 🌟 Oráculo dracónico. ⚠️ **Piromante**, **Dracoguerrero**.
+**Unidades:** 1 🗡️ Guerrero dracónido · 2 🏹 Cazador dracónido *(🏹)* · 3 🛡️ Caballero dracónido · 4 🔥 Piromante *(🔥)* · 5 🐲 Dracoguerrero *(🪽)* · 6 🐲 Dracónido ancestral · 7 🐉 Joven dragón *(🪽 🔥)* · 8 🐉 Dragón ancestral *(🪽 🔥 💣, colosal)*
 
 ## 🐀 Hombres rata
 **Héroes:** 🗡️ Asaltante · ☠️ Alquimista *(☠️ viales)* · 🐀 Señor de la plaga *(☠️)* · ⚙️ Maquinista *(🏹)*. ⚠️ **los cuatro colisionan.**
@@ -583,10 +592,11 @@ encargarlos.
 | Fase 3 — 6 razas DLC | 24 | 48 | **72** |
 | | **44** | **88** | **132** |
 
-> **Son 11 razas, no 10.** Cinco base (Humanos, Enanos, No-muertos, Demonios,
-> Elfos) y **seis** de DLC (Orkos, Feéricos, Dracónidos, Hombres rata,
-> Constructos, Abisales). `razas.md` dice «5 razas base y 6 de DLC» —correcto— y
-> tres líneas después «las 10 razas»; el mismo «10» está en
-> [`docs/v3/status.md`](../../../docs/v3/status.md) y en
-> [`lib/dev-registry.ts`](../../../lib/dev-registry.ts). La tabla de héroes tiene
-> 44 filas, que confirma 11. Hay que corregir el número, o quitar una raza.
+> **Son 11 razas, no 10** *(zanjado el 23 de agosto de 2026)*. Cinco base
+> (Humanos, Enanos, No-muertos, Demonios, Elfos) y **seis** de DLC (Orkos,
+> Feéricos, Dracónidos, Hombres rata, Constructos, Abisales). `razas.md` decía
+> «5 razas base y 6 de DLC» —correcto— y tres líneas después «las 10 razas»; el
+> mismo «10» estaba en [`docs/v3/status.md`](../../../docs/v3/status.md),
+> `docs/v3/README.md` y [`lib/dev-registry.ts`](../../../lib/dev-registry.ts).
+> La tabla de héroes tiene 44 filas, que confirma 11, y esta de aquí arriba las
+> reparte en 12 + 48 + 72 = 132. Corregido en los cinco sitios.

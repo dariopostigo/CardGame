@@ -48,7 +48,8 @@ y la biblia visual que gobierna todo el arte del juego,
 Lo que se sirva al jugador en la URL `/assets/v3/…`: ilustraciones de carta,
 retratos, sprites, modelos propios. **No** los moodboards ni las referencias
 —eso vive en [`../../concepts/`](../../concepts/)— ni los modelos prestados de
-prueba, que están en [`../models/`](../models/) hasta que haya propios.
+prueba, que se quedan con la versión anterior en
+[`../v2/models/`](../v2/models/README.md) hasta que haya propios.
 
 ## La estructura, cuando toque
 
@@ -103,7 +104,7 @@ Si la herramienta no ofrece 5:7, coge el ratio vertical más alto que tenga (2:3
 y deja el aire de sobra arriba y abajo: recortar hasta 5:7 es barato, inventar el
 borde que faltaba no.
 
-### Encuadre: plano entero y figura centrada
+### Encuadre: plano general, con aire, y figura centrada
 
 Esto no es estética, es lo que decide si la carta se lee. Los tres primeros
 héroes se generaron sin esta tabla y salieron en **plano medio**, cortados por el
@@ -111,12 +112,18 @@ muslo y con la figura fuera del eje.
 
 | | Norma |
 |---|---|
-| Plano | **Entero.** De la coronilla a los pies, pies incluidos y apoyados en suelo visible. Nunca busto, nunca plano medio, nunca primer plano |
-| Alto de la figura | **60–70%** del alto del lienzo. Por encima de eso ya está recortando algo |
+| Plano | **General**, cámara alejada. La figura completa **y entorno alrededor**. No «plano entero», que es el plano en que el cuerpo llena el cuadro. Nunca busto, plano medio ni primer plano |
+| Aire arriba | **Otra cabeza entera** por encima de la coronilla, como mínimo |
+| Aire abajo | **Suelo visible** por delante y por detrás de los pies antes del borde. Los pies no se apoyan en el filo |
+| Aire lateral | El hueco de **un brazo** a cada lado |
 | Eje horizontal | El cuerpo **centrado**: su eje a ±5% del centro del lienzo |
-| Banda vertical útil | La figura entera cabe entre el **8%** y el **75%** de la altura |
-| Aire lateral | **≥8%** a cada lado |
+| Alto de la figura | **~60%** del alto del lienzo, entre el **12%** y el **72%** de la altura |
 | Cámara | A la altura del pecho, lente neutra. Sin contrapicado ni gran angular: agrandan al sujeto y le comen los pies |
+
+> **Las cuatro filas de aire van en el prompt; la del alto de la figura, no.** Un
+> modelo de imagen no mide porcentajes —el «60–70%» estuvo escrito y devolvió un
+> 90%—, así que el aire se pide con **anclas visuales** (una cabeza, un brazo, un
+> trozo de suelo) y el número se guarda para **comprobar** el resultado.
 
 **El cuarto inferior no es tuyo.** Del 75% hacia abajo va la banda opaca del
 nombre, que se pinta encima. Ahí solo puede haber suelo: ni pies, ni punta de

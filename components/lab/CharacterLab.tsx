@@ -17,7 +17,7 @@
 // que el nº 12 cuesta generarlo, no animarlo.
 //
 // Los dos modelos cargados son PRESTADOS y de licencia libre (créditos en
-// public/assets/models/README.md): están para medir el pipeline antes de
+// public/assets/v2/models/README.md): están para medir el pipeline antes de
 // generar los héroes de verdad. El zorro no es decoración: cubre el caso
 // cuadrúpedo de characters/enemies.md, que es justo donde los auto-rig de IA
 // empiezan a fallar.

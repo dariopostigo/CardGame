@@ -8,7 +8,7 @@
 > Mago y Sacerdote, en `public/assets/v3/races/humanos/`— salió **apaisada y en
 > plano medio**: personajes cortados por el muslo, fuera del eje y demasiado
 > grandes para un marco vertical. El preámbulo pedía composición centrada pero
-> no pedía **plano entero**, y ninguna IA lo da por defecto. Ahora el bloque
+> no pedía **el plano**, y ninguna IA lo da por defecto. Ahora el bloque
 > ENCUADRE lo exige en positivo, el negativo lo prohíbe y cada POSE dice dónde
 > están los pies. **Los tres héroes existentes se regeneran**; valen como
 > referencia de estilo, no de encuadre.
