@@ -34,16 +34,24 @@
 // boceto, que es la capa que puede pisarlo. Lo que dos bocetos comparten baja a
 // card-sketch; lo de cada uno vive en su parcial.
 //
-// Hay tres: la E, que ganó la primera tanda (las otras cuatro se borraron); la
-// G, que abre la segunda cruzándola con una réplica de referencia —la
+// Hay cuatro: la E, que ganó la primera tanda (las otras cuatro se borraron);
+// la G, que abre la segunda cruzándola con una réplica de referencia —la
 // F · Blasón, borrada a su vez en cuanto la G la absorbió—, su octógono con la
-// veta de la E; y la H, que es la G con todo dentro del contorno y las ocho
-// Habilidades juntas.
+// veta de la E; la H, que es la G con todo dentro del contorno y las ocho
+// Habilidades juntas; y la I, que cruza la H con una carta de Magic y es la
+// primera que mete la ilustración en una VENTANA en vez de a sangre.
 //
 // La H es el único caso de boceto DERIVADO: no tiene parcial propio completo,
 // solo pisa a la G con lo que cambia, así que su selector lleva las dos clases
 // y va necesariamente DESPUÉS de estandarte. No es un orden estético.
+//
+// La I no deriva de nadie: comparte el CONTORNO con la G y nada más, y eso no
+// se hereda pisando sino con un mixin (octagon-shell, en tools/_mixins.scss).
+// Es el mismo criterio de cuando la F y la G convivían: lo que comparten dos
+// hermanos se extrae, lo que un boceto copia de otro se hereda. Por eso su
+// posición aquí sí es indiferente.
 @use "card-sketch";
 @use "card-sketch/forja";
 @use "card-sketch/estandarte";
 @use "card-sketch/recinto";
+@use "card-sketch/retablo";

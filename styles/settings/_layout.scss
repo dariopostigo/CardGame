@@ -16,6 +16,13 @@ $radius: (
 // Una sola escala para toda la carta: así se ve de un vistazo qué tapa a qué
 // y no hay que ir buscando z-index sueltos por el archivo.
 $z: (
+  // El cuerpo de la carta cuando NO es la ilustración: la página de franjas del
+  // boceto I · Retablo. Va por debajo de "art-overlay" a propósito, y ese es
+  // todo el motivo de que exista un escalón aquí: el baño de luz de la veta
+  // tiene que caer SOBRE la página, igual que en los demás bocetos cae sobre el
+  // arte. Puesta por encima, la página lo taparía entero y la carta perdería la
+  // mitad de su rareza.
+  "page": 1,
   "art-overlay": 2,      // marco vectorial y ola: tapan el arte, no el texto
   "legendary-frame": 3,  // marco dorado, por DEBAJO del contenido
   "content": 4,          // nombre, descripción, pie

@@ -43,7 +43,7 @@
 import { DAMAGE, LONG_NAME, rankOf, SKILLS, type SkillKey, type Subject } from "./sample";
 import { EstandarteFrame, ForjaFrame } from "./sketch-frames";
 
-export type SketchId = "forja" | "estandarte" | "recinto";
+export type SketchId = "forja" | "estandarte" | "recinto" | "retablo";
 
 /** Ficha de cada boceto: de aquí comen las pestañas y las notas del lab. */
 export const SKETCHES: readonly {
@@ -82,6 +82,12 @@ export const SKETCHES: readonly {
     source: "La G · Estandarte, con todo dentro del contorno",
     derives: "estandarte",
     bet: "Es la G con DOS cambios, y existe para separar dos preguntas que la E y la G tenían pegadas. (1) Nada se sale del contorno: el disco del Tier deja de montar sobre el chaflán y se mete en la esquina por dentro del filete, y el estandarte de raza baja con él, así que la bandera ya no tapa el canal de la veta y el aro de ocho lados da la vuelta entero. Se pierde el sello colgado —lo que hacía que el disco pareciera una pieza puesta y no un botón dibujado era justamente que no cabía— y se gana una carta que se puede recortar por su octógono sin cortar un número. (2) Las ocho vuelven a ser una: ⚔️ Ataque y ❤️ Vida dejan las esquinas y vuelven a la fila, con los mismos escalones de letra que la E —así el cuerpo de la cifra deja de ser una diferencia entre las dos cartas— pero abriendo por ⚔️ Ataque y no por ❤️ Vida, al revés que razas.md; y la línea de raza vuelve al flujo del panel porque ya no hay pines que esquivar. El disco del Tier además pierde su aro de oro: era el remate que lo hacía moneda, y una moneda es algo que se cuelga del canto. Con esto hay tres de las cuatro celdas posibles —E: rectángulo y ocho juntas; G: octógono y ocho partidas; H: octógono y ocho juntas—, así que por fin se puede saber si lo que gusta de la G es la silueta o la jerarquía.",
+  },
+  {
+    id: "retablo",
+    label: "I · Retablo",
+    source: "La H · Recinto cruzada con una carta de Magic: The Gathering",
+    bet: "Contradice lo único que los ocho bocetos anteriores nunca discutieron: que la carta ES su ilustración. Aquí la carta es una PÁGINA de franjas apiladas y el arte va METIDO EN UNA VENTANA, hundida y enmarcada, sin un solo dato encima. De la referencia (imgs/magic-the-gathering-fading-hope-mid.webp) se queda la anatomía entera: barra de título con el rótulo solo y el Tier en el bisel donde va el coste de maná; ventana de arte; línea de tipo que ESCRIBE «Unidad — Humanos» y remata con un sello de Rareza de 12px —en Magic el símbolo de colección es literalmente lo que dice la rareza, por color—; y una caja de datos sobre VITELA, el primer sitio claro de una carta de V3, con los ocho números arriba y las Características debajo del filete que la referencia usa para separar su texto de ambientación. De la H se queda el octógono con su roblón, el filete de metal con la veta, la aleación única y las ocho Habilidades juntas en una fila. Tres cosas contesta que ningún otro podía: si la ilustración puede dejar de cargar con los datos —el panel de la H le corta las piernas al Miliciano y eso no tiene arreglo mientras el arte sea el fondo—, si la carta aguanta un bloque de papel dentro (y qué le pasa a un 💀 o un 🧊 sobre vitela), y si la Rareza necesita ser una pieza tallada o le basta un glifo en un renglón. El precio está medido: la ventana se queda con el 52% del interior, así que una fuente vertical 5:7 pierde ~38% del alto — pero las tres ilustraciones apaisadas que hoy están mal solo perderían el 18% del ancho, o sea que si gana este boceto la norma de encuadre cambia de signo. Y la tensión que la mezcla no resuelve: Magic TAMBIÉN saca fuerza y resistencia del grupo, en su ficha de esquina, así que las dos referencias votan lo contrario que la H en la jerarquía de los ocho.",
   },
 ];
 
@@ -467,10 +473,107 @@ function RecintoCard({ subject }: { subject: Subject }) {
   );
 }
 
+// --- I · Retablo ----------------------------------------------------------
+// La mezcla de la H con una carta de Magic
+// (knowledge/v3/card-concept/imgs/magic-the-gathering-fading-hope-mid.webp), y
+// el primer boceto cuyo ÁRBOL es distinto de verdad: los otros tres son arte a
+// sangre más piezas sueltas encima, y este es una PÁGINA con franjas dentro.
+//
+// Aquí sí importa el orden y la anidación, al revés que en la G y la H:
+//
+//   · EL MARCO VA PRIMERO Y SUELTO, como siempre (se pinta encima por z-index).
+//   · TODO LO DEMÁS CUELGA DE .sketch__page, que es la chapa que rellena el
+//     octógono. No hay ni una pieza flotando sobre la carta: si algo no está en
+//     la página, no está.
+//   · EL ARTE VA DENTRO DE LA VENTANA, y por eso se reutiliza <Art> tal cual sin
+//     una sola prop nueva: su `inset: 0` deja de referirse a la carta y pasa a
+//     referirse a la ventana en cuanto el SCSS le da `position: relative`. Es la
+//     única pieza compartida que cambia de significado con el sitio, y conviene
+//     saberlo antes de tocarle nada al esqueleto.
+//
+// No hay <Rail>: las Características bajan de la ilustración a la caja de datos,
+// que es la mitad de lo que este boceto viene a probar. Y no hay <Plate>: el
+// rótulo va solo en su barra, sin nada que envolver.
+//
+// Los sujetos que dicen la verdad aquí son dos, y por motivos opuestos: el
+// 🗡️ Miliciano, que con cero Características deja medio cajón de vitela en
+// blanco —el caso que el raíl vertical resolvía sin despeinarse—, y el
+// 🐉 Dragón esquelético, que con cinco lo llena y enseña qué le pasa a un 💀 y a
+// un 🧊 sobre papel claro.
+function RetabloCard({ subject }: { subject: Subject }) {
+  return (
+    <>
+      <EstandarteFrame />
+
+      <div className="sketch__page">
+        {/* La barra de título: el rótulo solo y, al otro extremo, el bisel
+            donde la referencia pone el coste de maná. Un héroe no tiene tier y
+            lleva corona, que es la respuesta que la G ya daba y que no obliga a
+            inventar una escala que V3 no tiene. */}
+        <header className="sketch__bar">
+          <h3 className="sketch__name" data-long={subject.name.length > LONG_NAME || undefined}>
+            {subject.name}
+          </h3>
+          <span className="sketch__cost" title={rankOf(subject)}>
+            <b className="sketch__cost-value">{subject.tier ?? "👑"}</b>
+          </span>
+        </header>
+
+        {/* La ventana. Es lo único que este boceto añade al árbol y lo que más
+            cambia de la carta: la ilustración deja de ser el fondo. */}
+        <div className="sketch__window">
+          <Art subject={subject} />
+        </div>
+
+        {/* La línea de tipo, donde la referencia escribe «Creature — Human
+            Soldier». La carta dice la raza DOS veces a propósito, en emblema y
+            en texto, como la G: puestas las dos se puede decidir cuál sobra. */}
+        <p className="sketch__typeline">
+          <span className="sketch__typeline-text">
+            <b aria-hidden="true">{subject.raceIcon}</b>{" "}
+            {subject.kind === "heroe" ? "Héroe" : "Unidad"} — {subject.race}
+          </span>
+          {/* El sello, en el sitio del símbolo de colección: en Magic ese glifo
+              ES la rareza, por color. Aquí la carta la dice tres veces contando
+              la veta y su baño, que es lo que hay que mirar — o sobra el sello
+              o sobra la piedra tallada de la G. */}
+          <span className="sketch__seal" title={`Rareza: ${subject.rarity}`} />
+        </p>
+
+        {/* La caja de datos, sobre vitela. Los ocho en el orden de la H, no en
+            el de razas.md: se reutiliza RECINTO_SKILLS a propósito para que el
+            orden no sea una diferencia más entre las dos cartas que se
+            comparan. */}
+        <div className="sketch__databox">
+          <ul className="sketch__pods">
+            {RECINTO_SKILLS.map((k) => (
+              <Stat key={k} subject={subject} skill={k} base="pod" />
+            ))}
+          </ul>
+
+          {/* Las Características bajan del raíl al cajón. Con cero no se pinta
+              nada —ni la lista ni el filete que la separa—, así que el hueco
+              queda en blanco: es el caso del Miliciano y no se disimula. */}
+          {subject.traits.length > 0 && (
+            <ul className="sketch__traits">
+              {subject.traits.map((t) => (
+                <li className="sketch__trait" key={t.label} title={t.label}>
+                  {t.icon}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
 const SKETCH_CARDS: Record<SketchId, (p: { subject: Subject }) => React.ReactElement> = {
   forja: ForjaCard,
   estandarte: EstandarteCard,
   recinto: RecintoCard,
+  retablo: RetabloCard,
 };
 
 /**

@@ -397,6 +397,26 @@ $card-sketch: (
   "glint": rgba(255, 248, 230, 0.7),      // destello sobre el metal (bocetos D y E)
   "shadow": rgba(0, 0, 0, 0.55),
 
+  // --- La vitela del boceto I · Retablo -----------------------------------
+  // El primer sitio CLARO de una carta de V3, y es toda la apuesta de ese
+  // boceto: la caja de datos de una carta de Magic es papel, no cristal
+  // ahumado. Los ocho bocetos anteriores pintan siempre oscuro sobre oscuro
+  // —velo, cristal, metal— y el valor nunca se invierte, así que esto no es un
+  // color más: es la única variante que prueba si la carta aguanta un bloque de
+  // papel dentro.
+  //
+  // Va con dos tonos porque el papel no es plano: el de arriba recibe la luz
+  // que en esta carta viene de arriba-izquierda, como en el metal. Y no es
+  // blanco: un blanco puro al lado de un peltre cálido se lee como un agujero
+  // recortado en la carta. Es hueso, del mismo lado cálido que el resto.
+  "vellum": #cfc3a8,
+  "vellum-lo": #ab9d7f,
+  // La tinta. Va sobre vitela, así que no puede ser ninguno de los $game de
+  // texto —todos son claros, están hechos para fondo oscuro—. Marrón muy
+  // oscuro y no negro, por lo mismo que la vitela no es blanca.
+  "ink": #241b12,
+  "ink-soft": #6b5b45,          // rótulos secundarios y filetes sobre vitela
+
   // El metal de la carta, el mismo en todas (boceto E). Peltre cálido: es el
   // hierro de $game visto a plena luz, no un gris neutro — en una interfaz de
   // cuero y hierro un acero frío se lee como de otro juego. Con este color de

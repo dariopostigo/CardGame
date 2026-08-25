@@ -52,26 +52,15 @@
 // crece o encoge con el contenido.
 // =========================================================================
 
-// Espejo de la C de sketch-frames.tsx. Aquí se usa para recortar el arte y el
-// pie, allí para dibujar el marco: si las dos no dicen lo mismo, el filete deja
-// de seguir a la silueta y se ve en las cuatro esquinas a la vez.
+// Espejo de la C de sketch-frames.tsx. Aquí solo lo pide el pie; el contorno
+// entero lo da oct-clip() (tools/_functions.scss), que hace la misma cuenta.
 $c: $sketch-chamfer;
 
-// El octógono completo, para el arte, que ocupa la carta entera.
-$oct-card: "polygon(#{$c} 0, calc(100% - #{$c}) 0, 100% #{$c}, 100% calc(100% - #{$c}), calc(100% - #{$c}) 100%, #{$c} 100%, 0 calc(100% - #{$c}), 0 #{$c})";
-
-// Y solo los dos cortes de abajo, para el pie: los de arriba caen muy por
-// encima de él, y recortarlos obligaría a saber cuánto mide — que es
-// justamente lo que no se sabe, porque el pie crece con su contenido.
+// Solo los dos cortes de ABAJO, para el pie: los de arriba caen muy por encima
+// de él, y recortarlos obligaría a saber cuánto mide — que es justamente lo que
+// no se sabe, porque el pie crece con su contenido. Por eso este no sale de
+// oct-clip(): no es el contorno encogido, es medio contorno.
 $oct-foot: "polygon(0 0, 100% 0, 100% calc(100% - #{$c}), calc(100% - #{$c}) 100%, #{$c} 100%, 0 calc(100% - #{$c}))";
-
-// El chaflán del contorno visto desde DENTRO del filete. No es el mismo que el
-// de fuera: al meter el borde 15px, el cateto del corte encoge C − d(2 − √2).
-// Es la misma cuenta que hace octagon(d) en sketch-frames.tsx, y hay que
-// repetirla aquí porque el baño de luz de la veta se recorta contra el canto
-// interior del marco y no contra la silueta de la carta.
-$c-inner: $sketch-chamfer - $sketch-band * (2 - math.sqrt(2));
-$oct-inner: "polygon(#{$c-inner} 0, calc(100% - #{$c-inner}) 0, 100% #{$c-inner}, 100% calc(100% - #{$c-inner}), calc(100% - #{$c-inner}) 100%, #{$c-inner} 100%, 0 calc(100% - #{$c-inner}), 0 #{$c-inner})";
 
 // El pie a sangre: la placa va de x = 0 a x = 300 y es el marco, que se pinta
 // encima, quien le recorta los extremos. Lo que escriba dentro de esos 15px no
@@ -115,79 +104,21 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
 
 .sketch--estandarte {
   // --- La silueta ---------------------------------------------------------
-  // Lo primero que hay que deshacer del esqueleto. El radio se va, y con él el
-  // fondo: la carta no puede pintar su propio relleno porque sus esquinas ya no
-  // son las de su caja — las cuatro puntas del rectángulo asomarían por fuera
-  // del octógono como cuatro manchas. El fondo lo pone el arte, que sí va
-  // recortado.
-  border-radius: 0;
-  background: transparent;
-
-  // Y fuera la sombra del esqueleto, que es de CAJA. Una box-shadow sigue el
-  // borde del rectángulo, así que en una carta cortada ilumina el fondo pegado
-  // a las cuatro esquinas que ya no existen y deja los chaflanes como cuatro
-  // trozos oscuros: no los pinta nadie, es el fondo sin iluminar recortado por
-  // la luz de al lado. Se vuelve a poner abajo con `filter: drop-shadow()`, que
-  // sigue la silueta ya compuesta y dobla por el corte.
-  box-shadow: none;
-
-  @include armor-vars(card-sketch("alloy"));
-  --m-glint: #{card-sketch("glint")};
-
-  // La veta, que es lo que este boceto se trae de la E. Hoy sale de --rarity,
-  // que en las unidades es función directa del tier (sample.ts, rarityForTier).
-  // El metal no la toca: sigue siendo el mismo peltre en las once cartas.
-  @include seam-vars(rarity("comun", "base"));
-
-  @each $name, $tokens in $rarity {
-    &[data-rarity="#{$name}"] {
-      @include seam-vars(rarity($name, "base"));
-    }
-  }
-
-  // El halo alto de la E: si la veta está encendida tiene que tirar luz fuera
-  // de la carta.
+  // Todo lo que cuesta dejar de ser un rectángulo está en octagon-shell
+  // (tools/_mixins.scss) y ahí se explica pieza a pieza: el radio y el fondo
+  // fuera, la sombra de caja cambiada por un drop-shadow que dobla por el
+  // chaflán, el material —aleación y veta— y el baño de luz hacia dentro,
+  // recortado al canto interior del filete.
   //
-  // Y va en `filter` y no en `box-shadow`, que es lo que arregla los cuatro
-  // chaflanes. Una sombra de caja sigue el borde de la CAJA, y la caja de esta
-  // carta es un rectángulo: el halo iluminaba el fondo pegado a las cuatro
-  // esquinas que ya no existen, y como el chaflán no lo tapa nada, el corte
-  // quedaba como un trozo negro entre el marco y el resplandor. No lo pintaba
-  // nadie — era el fondo sin iluminar, recortado por la luz de al lado. Con
-  // drop-shadow la sombra sigue la SILUETA ya compuesta —el arte va
-  // recortado—, así que el halo dobla por el chaflán y el corte se lee como un
-  // corte. Ver la misma cuenta abajo, en los pines y el raíl.
-  filter:
-    drop-shadow(0 12px 12px card-sketch("shadow"))
-    drop-shadow(0 0 12px var(--rarity-soft));
-
-  // Y la otra mitad de esa luz: la que cae hacia DENTRO, sobre la ilustración.
-  // Sin esto la veta se lee como un tubo de neón pegado al borde; con esto el
-  // arte queda dentro de un farol.
-  //
-  // Va a $sketch-band y no a 0 por lo mismo que en la E: pegado al borde, los
-  // 15px de marco se comen el desenfoque y lo único que asoma por dentro es el
-  // tramo fuerte, cortado en seco — que no se lee como luz sino como un borde.
-  //
-  // Lo que aquí es nuevo es el recorte: la caja es un rectángulo y el hueco que
-  // tiene que bañar es un octógono, así que sin clip-path las cuatro esquinas
-  // del baño asomarían por los chaflanes, que es donde la carta ya no tiene
-  // carta. De ahí $oct-inner.
-  &::before {
-    content: "";
-    position: absolute;
-    inset: $sketch-band;
-    z-index: z("art-overlay");
-    clip-path: #{$oct-inner};
-    box-shadow:
-      inset 0 0 42px -10px var(--seam-soft),
-      inset 0 0 96px -34px var(--seam-soft);
-    pointer-events: none;
-  }
+  // Salió del parcial cuando entró la I · Retablo, que corta las esquinas igual
+  // y no tiene nada más en común con esta carta. Lo que el mixin NO decide, a
+  // propósito, es QUIÉN rellena el octógono: aquí lo hace el arte a sangre
+  // —recortado justo debajo—, y en la I una página de franjas.
+  @include octagon-shell;
 
   .sketch__art {
     border-radius: 0;
-    clip-path: #{$oct-card};
+    clip-path: oct-clip();
   }
 
   // --- El pie -------------------------------------------------------------

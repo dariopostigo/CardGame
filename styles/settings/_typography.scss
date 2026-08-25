@@ -138,6 +138,37 @@ $sketch-font: (
   // raíl —30px— y el glifo puede ocuparla casi entera; a 1.08rem se veía
   // pequeño no por ser pequeño, sino por estar solo.
   "medal-bare": 1.4rem,
+
+  // --- Boceto I · Retablo -------------------------------------------------
+  // El rótulo vuelve a CAJA MIXTA, como en la E y al revés que la G, y no es
+  // una vuelta atrás: es lo que hace la referencia. En una carta de Magic el
+  // nombre va solo en su propia barra, con el coste al otro extremo, y en una
+  // barra estrecha la caja mixta se lee antes que la versal porque las
+  // ascendentes y descendentes le dan silueta a la palabra. La versal de la G
+  // necesita el ancho entero de la placa para funcionar; aquí compite con el
+  // bisel del Tier por unos 210px.
+  //
+  // Y sube respecto al par base porque la barra no comparte renglón con nada:
+  // el nombre puede ocupar su alto entero. «Dragón esquelético», 18 caracteres,
+  // es el que fija el escalón largo.
+  "name-page": 1.12rem,
+  "name-page-long": 0.94rem,
+  // El Tier en el bisel de la barra, donde la referencia pone el coste de maná.
+  // Más pequeño que el disco de la G (1.45rem) a propósito: allí es la pieza que
+  // domina la carta y aquí es el segundo dato de una barra. El rótulo manda y el
+  // número acompaña, que es el reparto de la referencia.
+  "cost": 0.98rem,
+  // La línea de tipo. Es la única línea de la carta que se lee como PROSA
+  // —«Unidad — Humanos»—, así que va en caja mixta y no en versalitas
+  // espaciadas como la etiqueta de raza de la G, que es una etiqueta y no una
+  // frase. Diminuta porque en la referencia comparte cuerpo con el texto de
+  // reglas, y aquí no hay reglas con las que compararla.
+  "typeline": 0.68rem,
+  // El glifo de Característica dentro de la caja de datos. Muy por debajo del
+  // del raíl (1.4rem) y no por una cuestión de sitio: allí el glifo va desnudo
+  // sobre la ilustración y tiene que sostenerse solo, y aquí es un renglón
+  // dentro de una caja de papel, donde lo que lo sostiene es la caja.
+  "trait-glyph": 0.86rem,
 );
 
 // Escalones de ajuste: tamaño de cuerpo, interlineado y nº de líneas.

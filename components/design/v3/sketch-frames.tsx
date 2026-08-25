@@ -8,10 +8,16 @@
 // exactamente lo que pasó entre la D y la E: la misma escuadra, una banda
 // maciza en una y dos raíles con luz entre medias en la otra.
 //
-// Dos marcos y TRES bocetos: la H · Recinto usa EstandarteFrame tal cual, sin
-// una línea de diferencia. No es un ahorro, es lo que la hace servir: discute
-// dónde caen las piezas de la G, así que si además le cambiara el contorno
+// Dos marcos y CUATRO bocetos: la H · Recinto y la I · Retablo usan
+// EstandarteFrame tal cual, sin una línea de diferencia. No es un ahorro, es lo
+// que las hace servir: las dos discuten dónde caen las piezas —la H el reparto
+// de la G, la I la anatomía entera—, así que si además les cambiara el contorno
 // habría dos variables en juego y no se podría leer ni una.
+//
+// Y en la I hay un matiz que conviene tener presente al tocar este archivo: allí
+// el filete ya no rodea una ilustración, rodea una PÁGINA. El baño de luz de la
+// veta cae sobre chapa y no sobre arte, así que si algún día se le sube la
+// intensidad, hay que mirarla en esa carta antes que en ninguna.
 //
 // La G rompe algo que las cinco de la primera tanda daban por hecho: la
 // SILUETA. Deja de ser un rectángulo redondeado y pasa a ser un octógono, así
@@ -39,11 +45,17 @@
 // traiga el sujeto — la placa y el medallón.
 //
 // POR QUÉ NO SE IMPORTA card-frames.tsx. El tema `armored` de v2 dibuja este
-// mismo lenguaje, pero sobre un viewBox de 260×364 y alrededor de una VENTANA
-// de arte que V3 no tiene (los tres conceptos de knowledge/v3/card-concept/
-// coinciden en el arte a sangre). Traer aquel trazado obligaría a escalarlo y
-// a arrastrar la ventana; se reescribe, que es lo que manda AGENTS.md cuando
-// algo de v2 sirve para V3.
+// mismo lenguaje, pero sobre un viewBox de 260×364 y alrededor de una VENTANA de
+// arte que estos marcos no tienen: los suyos rodean el canto de la carta, no un
+// hueco interior. Traer aquel trazado obligaría a escalarlo y a arrastrar la
+// ventana; se reescribe, que es lo que manda AGENTS.md cuando algo de v2 sirve
+// para V3.
+//
+// (Aquí ponía «una VENTANA de arte que V3 no tiene, porque los tres conceptos
+// coinciden en el arte a sangre». Desde la I · Retablo eso ya no es cierto —esa
+// carta sí tiene ventana— pero el motivo de no importar aquel SVG no cambia: la
+// ventana de la I la dibuja el CSS con un borde y una sombra, no un trazado, y
+// estos marcos siguen siendo del canto.)
 //
 // Los <defs> van por carta y no en una hoja común de la página: el metal es un
 // gradiente de paradas var(--m-*), y esas variables solo valen lo que valen

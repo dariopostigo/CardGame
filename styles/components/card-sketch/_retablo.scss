@@ -1,0 +1,341 @@
+@use "../../abstracts" as *;
+
+// =========================================================================
+// Boceto I · Retablo — la anatomía de una carta de Magic sobre el octógono
+//
+// Sale de mezclar la H · Recinto con una carta de *Magic: The Gathering*
+// (knowledge/v3/card-concept/imgs/magic-the-gathering-fading-hope-mid.webp,
+// «Fading Hope», MID, ilustración de Rovina Cai). No es una piel: es el primer
+// boceto que contradice la frase que el esqueleto daba por cerrada desde el
+// primer día —«el arte a sangre, sin ventana enmarcada»
+// (styles/components/_card-sketch.scss)—.
+//
+// LA APUESTA, en una frase: LA CARTA ES UNA PÁGINA, NO UNA ILUSTRACIÓN CON
+// COSAS ENCIMA.
+//
+// Los ocho bocetos anteriores son todos la misma idea con distinta piel: una
+// ilustración a sangre y los datos flotando por encima —raíl de Características
+// sobre el arte, disco en la esquina, estandarte, placa traslúcida al pie—. La
+// referencia hace lo contrario y lo hace entero: apila franjas con fondo propio
+// y mete la ilustración en una ventana que no lleva NI UN dato encima.
+//
+// De la referencia se queda su anatomía completa, franja por franja:
+//
+//   · BARRA DE TÍTULO. El rótulo solo, en su propia caja, y al otro extremo el
+//     bisel donde ella pone el coste de maná. Aquí va el Tier — y la corona en
+//     un héroe, que es la respuesta que la G ya daba.
+//   · VENTANA DE ARTE. Enmarcada y hundida. Es el cambio grande y el que hay
+//     que juzgar: la ilustración deja de ser el fondo de la carta y pasa a ser
+//     una lámina pegada en una página.
+//   · LÍNEA DE TIPO. Donde ella escribe «Instant» o «Creature — Human Soldier»,
+//     aquí va «Unidad — Humanos», y al final el SELLO DE RAREZA: en Magic ese
+//     símbolo de colección es literalmente lo que dice la rareza, por color.
+//   · CAJA DE DATOS SOBRE VITELA. Su recuadro de reglas, que es el primer sitio
+//     CLARO de una carta de V3. Dentro van los ocho números y, bajo el filete
+//     que ella usa para separar el texto de ambientación, las Características.
+//
+// Y de la H se queda lo que la hace una carta de este juego y no una de Magic:
+// el OCTÓGONO con su roblón en cada chaflán, el filete de metal con la veta de
+// Rareza corriendo por el canal, la aleación única y LAS OCHO HABILIDADES
+// JUNTAS en una fila. Usa EstandarteFrame sin tocar una línea, igual que la H:
+// lo que discute es la anatomía, no el contorno.
+//
+// LO QUE ESTE BOCETO CONTESTA, Y NINGÚN OTRO PODÍA
+//
+//   1. Si la ilustración puede dejar de cargar con los datos. El 25 de agosto
+//      de 2026 se midió que el panel de la H le corta las piernas al Miliciano
+//      (public/assets/v3/README.md), y ese problema no tiene arreglo mientras
+//      el arte sea el fondo: siempre habrá algo encima. Aquí no hay nada
+//      encima, y el precio está medido abajo.
+//   2. Si la carta aguanta un bloque de PAPEL dentro. El valor nunca se ha
+//      invertido en V3 —ocho bocetos de oscuro sobre oscuro—, y la vitela pone
+//      en evidencia de golpe el hilo que el concepto lleva abierto desde la E:
+//      un emoji no acepta color y necesita un papel detrás que le vaya bien.
+//      Sobre vitela, 💀 y 🧊 son el caso malo, y aquí se ven sin buscarlos.
+//   3. Si la Rareza necesita ser una PIEZA. La G le dedica una piedra tallada
+//      de 16px a caballo del canto, más la veta, más su baño. La referencia le
+//      dedica un glifo de 12px al final de un renglón. Están las dos en la
+//      carta a propósito —la veta sigue en el filete— y hay que decidir si el
+//      sello sobra o si sobra todo lo demás.
+//
+// LA TENSIÓN QUE LA MEZCLA NO RESUELVE, Y QUE CONVIENE VER
+//
+// La referencia SÍ separa dos números del resto: fuerza y resistencia van en su
+// propia ficha, montada sobre el canto de abajo. O sea que Magic y *Might &
+// Magic: Fates* dicen lo mismo —los dos números de combate salen del grupo— y
+// es la H la que dice lo contrario. Aquí manda la H, porque la mezcla es con
+// ella y porque partirlos otra vez devolvería dos variables a la misma carta;
+// pero queda anotado que las DOS referencias votan lo contrario.
+//
+// EL PRESUPUESTO ES LO QUE MANDA
+//
+// Las cinco cotas de settings/_card.scss suman exactamente el alto útil, y ahí
+// se ve el precio de esta anatomía: la ventana se queda con 220 de los 372, o
+// sea el 52% del interior contra el 100% de los otros bocetos. En una fuente
+// vertical 5:7 —la que manda public/assets/v3/README.md— eso obliga a tirar
+// alrededor del 38% del alto. Y el corolario, que es lo más útil que ha salido
+// de montar esto: las tres ilustraciones APAISADAS que hoy están mal
+// (1484×1060) encajarían aquí perdiendo un 18% del ancho en vez del 49% que
+// pierden en la H. Si gana este boceto, la norma de encuadre cambia de signo.
+// =========================================================================
+
+// El aire de la página, medido desde el CANTO DE LA CARTA y no desde el filete:
+// es un `inset: 0` con acolchado, y no un `inset: $sketch-band`, porque la
+// página tiene que rellenar el octógono ENTERO — es ella la que le da cuerpo a
+// la carta ahora que el arte ya no llega a los bordes. Si solo cubriera el
+// hueco interior, los 15px del filete no tendrían nada detrás y el drop-shadow
+// de la carta seguiría al marco en vez de a la silueta.
+$page-pad: $sketch-band + $sketch-page-pad;
+
+.sketch--retablo {
+  // Lo mismo que paga la G por cortar las esquinas, y por eso está en un mixin
+  // compartido y no copiado: radio y fondo fuera, sombra de caja cambiada por
+  // un drop-shadow que dobla por el chaflán, aleación, veta y el baño de luz
+  // hacia dentro. Lo que el mixin deja abierto —quién rellena el octógono— lo
+  // contesta la página de aquí abajo, y esa es justamente la diferencia entre
+  // los dos bocetos.
+  @include octagon-shell;
+
+  // --- La página -----------------------------------------------------------
+  // La chapa sobre la que se monta todo. Va un punto más apagada que el filete
+  // a propósito: con el mismo metal, marco y página se funden en una sola
+  // plancha y las franjas parecen grabadas al aire; un escalón por debajo, el
+  // filete se lee como el CANTO de una pieza y la página como su cara.
+  //
+  // Sin z-index propio no valdría: tiene que quedar por debajo del baño de luz
+  // de la veta (z("art-overlay")), que es lo que la tiñe por los bordes igual
+  // que tiñe la ilustración en los demás bocetos. De ahí z("page").
+  .sketch__page {
+    position: absolute;
+    inset: 0;
+    z-index: z("page");
+    display: flex;
+    flex-direction: column;
+    gap: $sketch-page-gap;
+    padding: $page-pad;
+    clip-path: oct-clip();
+    background: linear-gradient(158deg, var(--m), var(--m-lo) 55%, var(--m-edge));
+  }
+
+  // --- Las dos franjas de metal --------------------------------------------
+  // Barra de título y línea de tipo son la MISMA pieza a dos alturas, y eso es
+  // de la referencia: allí las dos son el mismo bisel del color de la carta.
+  // Van más claras que la página para leerse levantadas, y el filo de luz va
+  // arriba porque en toda esta carta la luz viene de arriba-izquierda.
+  .sketch__bar,
+  .sketch__typeline {
+    display: flex;
+    align-items: center;
+    gap: $sketch-page-gap;
+    border: 1px solid var(--m-edge);
+    border-radius: radius("xs");
+    background: linear-gradient(to bottom, var(--m-hi), var(--m) 46%, var(--m-lo));
+    box-shadow:
+      inset 0 1px 0 card-sketch("glass-hi"),
+      0 1px 2px card-sketch("shadow");
+  }
+
+  // --- La barra de título ---------------------------------------------------
+  // El acolchado no es simétrico y no es un descuido: por la izquierda respira
+  // el rótulo y por la derecha manda el bisel del Tier, que ya trae su propio
+  // aro. Con los dos iguales, el bisel se veía descolgado hacia dentro.
+  .sketch__bar {
+    height: $sketch-bar;
+    padding: 0 4px 0 9px;
+  }
+
+  // Caja mixta y no versalitas, al revés que la G: aquí el rótulo no tiene el
+  // ancho entero de una placa, comparte barra con el Tier. Y el porqué está en
+  // settings/_typography.scss, junto al escalón.
+  //
+  // Sin recorte ni puntos suspensivos a propósito: si un nombre no cabe tiene
+  // que VERSE que no cabe. Es la misma regla del escalón largo del esqueleto —
+  // el fallo se enseña, no se esconde.
+  .sketch__name {
+    flex: 1;
+    min-width: 0;
+    font-size: sketch-font("name-page");
+    line-height: 1;
+
+    &[data-long="true"] {
+      font-size: sketch-font("name-page-long");
+    }
+  }
+
+  // El bisel del Tier, en el sitio del coste de maná. Cara oscura y aro de
+  // metal, como el disco de la G y por el mismo motivo: dentro va un NÚMERO,
+  // que sí toma color, así que gana leyéndose en oro sobre negro. Y sin aro de
+  // oro, que es la decisión que la H ya tomó para su disco.
+  .sketch__cost {
+    display: grid;
+    place-items: center;
+    width: $sketch-cost;
+    height: $sketch-cost;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle closest-side at 38% 30%,
+      card-sketch("glass"),
+      card-sketch("void") 96%
+    );
+    box-shadow:
+      0 0 0 1px var(--m-edge),
+      inset 0 1px 0 card-sketch("glass-hi");
+  }
+
+  .sketch__cost-value {
+    font-family: $font-game-display;
+    font-size: sketch-font("cost");
+    line-height: 1;
+    @include game-engraved-text;
+  }
+
+  // --- La ventana de arte ---------------------------------------------------
+  // Hundida, no pegada: el borde oscuro más la sombra interior son lo que la
+  // convierten en un hueco abierto en la chapa. Sin eso la ilustración parece
+  // una pegatina, que es exactamente el fallo del que este boceto tiene que
+  // librarse para poder discutirle nada al arte a sangre.
+  //
+  // `position: relative` no es decoración: convierte la ventana en el bloque
+  // contenedor del `.sketch__art`, que en el esqueleto es `inset: 0`. Con esa
+  // línea el hueco de arte no necesita NI UNA regla más para dejar de ocupar la
+  // carta entera — y el `border-radius: inherit` del esqueleto le da el radio
+  // de la ventana sin repetirlo.
+  .sketch__window {
+    position: relative;
+    height: $sketch-window;
+    border: 1px solid var(--m-edge);
+    border-radius: radius("xs");
+    background: card-sketch("void");
+    box-shadow:
+      inset 0 2px 7px card-sketch("shadow"),
+      0 1px 0 card-sketch("glass-hi");
+    overflow: hidden;
+  }
+
+  // La ventana es apaisada (252 × 220) y las fuentes buenas son verticales 5:7,
+  // así que `cover` recorta por arriba y por abajo. Centrado se comería la
+  // cabeza y los pies a partes iguales, y de los dos la cabeza no se negocia:
+  // el encuadre se sube. 26% es donde el 🗡️ Miliciano conserva la cara entera y
+  // el ⚔️ Guerrero no pierde el escudo.
+  .sketch__art-img {
+    object-position: 50% 26%;
+  }
+
+  // --- La línea de tipo -----------------------------------------------------
+  // La única línea de la carta que se lee como una frase. Lleva el emblema de
+  // la raza delante del texto, y eso es lo que la mezcla añade a la referencia:
+  // Magic no tiene dónde poner un emblema porque su identidad la lleva el color
+  // del marco entero, y V3 decidió hace ocho bocetos que la raza se enseña. Va
+  // pegado al texto que dice lo mismo, así que la carta lo dice dos veces —como
+  // en la G, y por la misma razón: puestas las dos, se puede decidir cuál sobra.
+  .sketch__typeline {
+    height: $sketch-typeline;
+    padding: 0 7px 0 9px;
+    font-family: $font-game-display;
+    font-size: sketch-font("typeline");
+    line-height: 1;
+    color: game("text");
+  }
+
+  .sketch__typeline-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  // El sello de Rareza. Rombo, como la piedra de la G, pero PLANO y diminuto: no
+  // es una joya montada en el canto, es un símbolo dentro de un renglón. Esa es
+  // la pregunta que trae —si la Rareza necesita ser una pieza o le basta con un
+  // glifo—, y por eso no se talla: tallado sería la piedra de la G otra vez, más
+  // pequeña, y no habría nada que comparar.
+  .sketch__seal {
+    flex: none;
+    width: $sketch-seal;
+    height: $sketch-seal;
+    background: linear-gradient(135deg, var(--seam-hi), var(--seam) 55%, var(--rarity));
+    transform: rotate(45deg);
+    box-shadow:
+      0 0 0 1px var(--m-edge),
+      0 0 6px var(--rarity-soft);
+  }
+
+  // --- La caja de datos, sobre vitela ---------------------------------------
+  // El recuadro de reglas de la referencia, y el primer sitio claro de una
+  // carta de V3. Alto FIJO y contenido pegado arriba, que es lo que hace la
+  // referencia con las criaturas sin texto: el papel que sobra se queda vacío.
+  // Es feo a propósito —enseña cuánto le sobra a un Miliciano— y la alternativa
+  // era peor: con la caja creciendo con el contenido, cada carta tendría una
+  // ventana de arte distinta y la ilustración no se podría encuadrar una sola
+  // vez para todas.
+  .sketch__databox {
+    display: flex;
+    flex-direction: column;
+    gap: $sketch-page-gap;
+    height: $sketch-databox;
+    padding: 6px 8px;
+    border: 1px solid var(--m-edge);
+    border-radius: radius("xs");
+    background: linear-gradient(
+      to bottom,
+      card-sketch("vellum"),
+      card-sketch("vellum-lo")
+    );
+    box-shadow: inset 0 1px 0 card-sketch("glass-hi");
+  }
+
+  // Las ocho, juntas y en el orden de la H. Ocho columnas de (252 − 18 de
+  // acolchado y borde − 14 de huecos) / 8 ≈ 27,5px: la columna más estrecha de
+  // los cuatro bocetos, por debajo de los 30,5 de la H y los 33 de la E. Los
+  // escalones son los mismos que allí a propósito —el tamaño no puede ser una
+  // de las diferencias— y el ⚔️ Dragón dorado, con su Vida de 240, es quien dice
+  // si a 27,5 la fila se lee o solo cabe.
+  .sketch__pods {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 2px;
+  }
+
+  .sketch__pod-icon {
+    font-size: sketch-font("stat-icon-xl");
+  }
+
+  // Tinta, no el texto claro del esqueleto: es la única cifra de todo el
+  // proyecto que se lee sobre papel.
+  .sketch__pod-value {
+    font-size: sketch-font("pod-xl");
+    color: card-sketch("ink");
+  }
+
+  // --- Las Características, dentro de la caja -------------------------------
+  // Bajan del raíl al cajón, y es el otro cambio grande: dejan de estar sobre la
+  // ilustración. El filete de encima es el que la referencia usa para separar el
+  // texto de reglas del de ambientación, y aquí separa lo que la ficha TIENE
+  // (los ocho números, que llevan todas) de lo que la ficha ES (las
+  // Características, que son excepciones).
+  //
+  // Con cero Características el <ul> no existe y el filete se va con él: el
+  // 🗡️ Miliciano deja medio cajón de papel en blanco. Eso es lo que hay que
+  // mirar, porque es el caso que el raíl vertical resolvía sin despeinarse —allí
+  // con cero medallones queda arte— y aquí no tiene arreglo: queda hueco.
+  .sketch__traits {
+    display: flex;
+    gap: 4px;
+    padding-top: 5px;
+    border-top: 1px solid card-sketch("ink-soft");
+  }
+
+  // Chapita de papel oscurecido y no ficha de metal: dentro de la caja, un
+  // medallón con aleación sería una pieza del marco metida donde no le toca.
+  // El aro es tinta suave, del mismo gris con el que se dibujaría un recuadro
+  // en una página impresa.
+  .sketch__trait {
+    display: grid;
+    place-items: center;
+    width: $sketch-trait;
+    height: $sketch-trait;
+    border-radius: radius("xs");
+    background: card-sketch("vellum-lo");
+    box-shadow: inset 0 0 0 1px card-sketch("ink-soft");
+    font-size: sketch-font("trait-glyph");
+    line-height: 1;
+  }
+}

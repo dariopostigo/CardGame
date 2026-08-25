@@ -24,9 +24,16 @@ import { HEROES, STRESS, SUBJECTS, UNITS, type Subject } from "./sample";
    ella misma con todo dentro del contorno y las ocho Habilidades juntas: existe
    porque la E y la G se diferenciaban en DOS cosas a la vez —silueta y jerarquía
    de los ocho— y así no se podía saber cuál de las dos era la que gustaba.
-   Quedan tres. Con más de uno en la lista vuelve a pintarse la fila de pestañas
-   —con uno solo no se pinta, porque una pestaña que no lleva a ningún sitio es
-   ruido—.
+
+   La I · Retablo abre la tercera tanda y no discute una pieza, discute el
+   AXIOMA: cruza la H con una carta de Magic y mete la ilustración en una
+   ventana. Los ocho bocetos anteriores son la misma idea con distinta piel —arte
+   a sangre y datos flotando encima—, y esa frase estaba escrita en el esqueleto
+   como si fuera un hecho.
+
+   Quedan cuatro. Con más de uno en la lista vuelve a pintarse la fila de
+   pestañas —con uno solo no se pinta, porque una pestaña que no lleva a ningún
+   sitio es ruido—.
 
    Las dos fuentes que carga: Platypi para el nombre —la serif de titulación que
    entra en lugar de Cormorant, la serif de libro de las cartas de v2— y Oswald
@@ -45,9 +52,11 @@ const EVERYTHING = "@todo";
 /* Probeta de aleación (TEMPORAL).
    El metal de la carta sale de un solo color, así que probarlo es cambiar ese
    color: el atributo data-alloy va al escenario y el @each de
-   styles/components/_card-sketch.scss hace el resto. Mueve los tres bocetos a
-   la vez —E, G y H comparten aleación—, que es lo que hay que querer: si cada
-   boceto llevara su metal, la comparación sería de color y no de marco.
+   styles/components/_card-sketch.scss hace el resto. Mueve los cuatro bocetos a
+   la vez —E, G, H e I comparten aleación—, que es lo que hay que querer: si cada
+   boceto llevara su metal, la comparación sería de color y no de marco. En la I
+   además mueve MÁS carta que en los otros: allí el metal no es solo el filete,
+   es también la página entera sobre la que se apoyan las franjas.
 
    Esta lista es el espejo de las claves de $sketch-alloy (settings/_colors.scss)
    y no su fuente: si allí se añade una aleación, aquí se añade su rótulo. No hay
@@ -87,7 +96,7 @@ export default function CardSketchLab() {
   // los once sujetos a la vez.
   //
   // El último de la lista y no un id escrito: dar de alta un boceto nuevo tiene
-  // que bastar con añadirlo a SKETCHES. Hoy la lista tiene tres.
+  // que bastar con añadirlo a SKETCHES. Hoy la lista tiene cuatro.
   const [view, setView] = useState<SketchId>(SKETCHES[SKETCHES.length - 1].id);
   const [pick, setPick] = useState<string>(EVERYTHING);
   // Arranca en el metal que hoy está puesto en settings/, para que la primera
@@ -207,9 +216,10 @@ export default function CardSketchLab() {
             Todo junto
           </button>
         </div>
-        {/* La probeta de metal. Vale para los tres bocetos porque en los tres
-            el metal NO lleva la rareza: si el marco fuera la rareza —como en la
-            D—, cambiarle el tono sería cambiar de boceto y no de material.
+        {/* La probeta de metal. Vale para los cuatro bocetos porque en los
+            cuatro el metal NO lleva la rareza: si el marco fuera la rareza
+            —como en la D—, cambiarle el tono sería cambiar de boceto y no de
+            material.
             Y es la misma aleación para todos a propósito: así se comparan con
             el mismo material y lo que se ve es el marco, no el color. */}
         <div className="flex flex-wrap items-center gap-2">
@@ -247,6 +257,35 @@ export default function CardSketchLab() {
       <section className="mt-8 max-w-3xl text-sm text-[var(--wiki-text)]">
         <h2 className="mb-2 text-lg font-semibold">Qué falta decidir</h2>
         <ul className="list-disc space-y-1.5 pl-5 text-[var(--wiki-muted)]">
+          <li>
+            <b>Si la ilustración va a sangre o en una ventana</b>, que es lo más gordo que hay en
+            esta página y lo más nuevo. Los ocho bocetos anteriores dan por hecho que la carta{" "}
+            <i>es</i> su ilustración y que los datos flotan encima: raíl sobre el arte, disco en la
+            esquina, placa traslúcida al pie. La <b>I</b> hace lo que la carta de Magic —la carta
+            es una <b>página</b> de franjas apiladas y el arte va metido en una ventana hundida,{" "}
+            <b>sin un solo dato encima</b>—. Y no es una preferencia: el 25 de agosto se midió que
+            el panel de la H le corta las piernas al 🗡️ Miliciano, y ese problema{" "}
+            <b>no tiene arreglo mientras el arte sea el fondo</b>, porque siempre habrá algo
+            encima. El precio también está medido y es alto: la ventana se queda con el{" "}
+            <b>52%</b> del interior, así que una ilustración vertical 5:7 —la que manda la norma—
+            pierde alrededor del <b>38% del alto</b>. Míralo en el ⚔️ Guerrero y el 🔮 Mago, que
+            son verticales y se quedan sin piernas, contra el 🗡️ Miliciano y el ✝️ Sacerdote, que
+            son apaisados y aquí entran <i>mejor</i> que en ningún otro boceto. Ahí está el
+            corolario incómodo: <b>si gana la I, las tres ilustraciones que hoy están mal pasan a
+            estar bien</b> y la norma de encuadre cambia de signo.
+          </li>
+          <li>
+            <b>Si la carta aguanta un bloque de papel dentro.</b> Ocho bocetos de oscuro sobre
+            oscuro —velo, cristal ahumado, metal— y el valor no se ha invertido nunca. La caja de
+            datos de la <b>I</b> es <b>vitela</b>, y con ella se ven dos cosas de golpe: las ocho
+            cifras en tinta negra se leen mejor que en ninguna otra carta, y los emoji de
+            Característica pasan la prueba <i>por los pelos</i> gracias a su contorno negro —los
+            casos malos son 💀 y 🧊, míralos en el 🐉 Dragón esquelético—. Es el hilo que el
+            concepto lleva abierto desde la E: un emoji no acepta color y necesita un papel detrás
+            que le vaya bien. Y trae su propio coste, que también se ve sin buscarlo: con{" "}
+            <b>cero</b> Características el cajón se queda medio vacío (el 🗡️ Miliciano). En Magic
+            ese hueco lo llena el texto de ambientación; V3 no tiene texto de ambientación.
+          </li>
           <li>
             <b>Si la carta es un rectángulo.</b> Los cinco bocetos de la primera tanda no lo
             preguntaron nunca: los cinco son la misma caja redondeada con distinta piel. La
@@ -326,10 +365,15 @@ export default function CardSketchLab() {
             no tiene.
           </li>
           <li>
-            <b>Dónde vive la Rareza.</b> Los tres bocetos dan la misma respuesta —una{" "}
-            <b>veta</b> de luz entre los dos raíles del filete, más el baño que derrama sobre la
-            ilustración: la carta no está teñida, está encendida—, y eso es lo que hace que sirvan
-            para comparar la <i>forma</i> y no el color. La respuesta contraria se probó y está
+            <b>Dónde vive la Rareza.</b> Los cuatro bocetos comparten una respuesta —una{" "}
+            <b>veta</b> de luz entre los dos raíles del filete, más el baño que derrama sobre lo
+            que haya dentro: la carta no está teñida, está encendida—, y eso es lo que hace que
+            sirvan para comparar la <i>forma</i> y no el color. La <b>I</b> añade una segunda, y
+            es la de la referencia: un <b>sello</b> de 12px al final de la línea de tipo, que es
+            donde Magic pone su símbolo de colección — un glifo cuyo <i>color</i> es literalmente
+            la rareza. Están los dos puestos a propósito, así que hay que decidir: la G le dedica
+            una piedra tallada de 16px a caballo del canto y la I un rombo plano dentro de un
+            renglón. O sobra el sello, o sobra la piedra. La respuesta contraria se probó y está
             borrada: la réplica sacaba el color al <i>canto</i>, un filete duro de 2,2px alrededor
             del octógono entero, y de ahí quedó apuntado que <b>el filete se lee antes que la
             veta</b>, no por sutileza sino por área. Encendido contra acuñado, y esa parte de la
@@ -341,7 +385,7 @@ export default function CardSketchLab() {
             entero de la aleación de la rareza, ya se probó y se descartó (mezcla D): se reconoce
             antes en una mano, pero convierte el marco en cinco piezas distintas y le roba la
             carta a la ilustración. Mira el Miliciano (común) junto al Dragón dorado (legendaria)
-            con «Todo junto» en los tres bocetos.
+            con «Todo junto» en los cuatro bocetos.
           </li>
           <li>
             <b>Cuánto detalle aguanta una pieza pequeña.</b> El rombo de la Rareza de la <b>G</b>{" "}
@@ -366,16 +410,18 @@ export default function CardSketchLab() {
             la llevan el disco del Tier y el estandarte que cuelga de él. Sus medallones probaron a
             repetir el octógono de la carta en pequeño y <b>volvieron a ser redondos</b>, que es lo
             que hay en pantalla: a 30px el chaflán son dos píxeles por esquina y el eco no llegaba
-            a leerse. Con eso la Característica se dibuja igual en los tres bocetos, así que lo que
-            queda por mirar es solo dónde arranca la columna. Redondo ya, se le subió el{" "}
-            <b>glifo</b> y se le adelgazó el <b>aro</b> a la mitad: el emoji trae su propio aire y
-            no llena su caja, y el aro es lo único que separa este medallón del remache de la{" "}
-            <b>E</b> —allí es un borde de metal atornillado, aquí el metal del fondo asomando por
-            debajo de la cara—, así que a tres píxeles competía con él en vez de insinuarlo. Los
-            dos van juntos porque adelgazar el aro es lo que deja sitio al glifo. Mira el 🐉 Dragón
-            esquelético de la <b>G</b> y el 🛡️ Caballero de la <b>E</b> uno debajo del otro: si a
-            esa distancia el aro ya no dice nada, este medallón puede pasar a ser el de la E y
-            queda una sola Característica para los tres bocetos.
+            a leerse. Y de ahí siguió adelgazando hasta el final: primero el aro se quedó en la
+            mitad y después <b>se fue la chapa entera</b>, así que hoy el glifo de la <b>G</b> va{" "}
+            <b>desnudo</b> sobre la ilustración, más grande, y lo único que lo despega es el
+            drop-shadow del raíl — que sin caja recorta la silueta del emoji en vez de un círculo.
+            Contra el remache de la <b>E</b>, que sigue siendo una pieza atornillada, es la
+            comparación limpia entre <i>ficha</i> y <i>marca</i>. Míralas una debajo de otra en el
+            🐉 Dragón esquelético.
+            <br />Y ahora hay una tercera respuesta que no es ni una ni otra: la <b>I</b>{" "}
+            <b>no tiene raíl</b>. Sus Características bajan de la ilustración a la caja de datos,
+            en una fila bajo el filete, así que dejan de gastar arte y pasan a gastar papel. Ahí se
+            invierte el caso bueno del raíl: con cero Características el raíl deja <i>arte</i>{" "}
+            —que es la razón por la que ganó— y la caja deja <b>hueco en blanco</b>.
           </li>
           <li>
             <b>Arriba no caben.</b> Se probó a subir las ocho Habilidades a una banda de
@@ -414,7 +460,10 @@ export default function CardSketchLab() {
             rojo de la veta. La <b>G</b> sí reserva el sitio, así que tiene que rellenarlo: pone
             una 👑, que es la respuesta que ya daba la mezcla D — y la <b>H</b> la hereda, porque
             mover el disco dentro del marco no cambia que el sitio siga reservado. Mira el
-            ⚔️ Guerrero entre las ocho unidades en los tres y decide si se reconoce solo.
+            ⚔️ Guerrero entre las ocho unidades en los cuatro y decide si se reconoce solo. La{" "}
+            <b>I</b> hereda la corona igual, pero con una diferencia que conviene ver: allí el
+            hueco es el <b>bisel del coste de maná</b> de la referencia, o sea el sitio con más
+            peso de toda su carta, y una 👑 puesta ahí dice «héroe» más alto que en la esquina.
           </li>
           <li>
             <b>Si el rojo es el color de los héroes.</b> No entran en la escala de rareza, así que
@@ -442,11 +491,15 @@ export default function CardSketchLab() {
             oscuros hacen lo contrario: apagan el marco y suben todo lo demás. Dos están fuera de
             la familia a propósito: el <b>cardenillo</b> (verde de pátina, el único que no es gris
             ni dorado) y el <b>marfil</b>, que ya no parece metal — están para ver si el marco
-            tiene que ser metálico siquiera. El selector mueve <b>los tres bocetos a la vez</b>:
+            tiene que ser metálico siquiera. El selector mueve <b>los cuatro bocetos a la vez</b>:
             comparten aleación para que lo que se compare sea el marco y no el color. En la G hay
             una cosa más que mirar, el <b>estandarte</b>, que necesita cara clara para que el
             emblema se lea — en carbón o pavonado el 👤 se pierde, y es el mismo reparo que el
-            medallón de la E.
+            medallón de la E. Y la <b>I</b> es la que más pone en juego con este selector, porque
+            allí el metal no es un filete: es la <b>página entera</b>, la mitad de la superficie de
+            la carta. Un marfil o una plata la convierten en una lámina clara con una foto pegada,
+            y un carbón la acercan a las otras tres. Si hay una aleación que solo funciona en la I,
+            o una que solo funciona en las otras, se va a ver aquí.
           </li>
           <li>
             <b>Qué tipografía titula la carta.</b> El nombre iba en <b>Cormorant</b>, la serif de
@@ -492,6 +545,15 @@ export default function CardSketchLab() {
             figura centrada</b>, con el cuarto inferior reservado a la banda del nombre. No depende
             del marco —la carta es 300×420 con el arte a sangre—, así que a los tres apaisados les
             queda otra vuelta igual. Ojo: este marco se come <b>15px por cada lado</b>.
+            <br />
+            <b>Y ahora sí depende del marco, que es lo que ha cambiado.</b> La <b>I</b> no pinta el
+            arte a sangre: lo mete en una ventana de <b>252×220</b>, o sea apaisada. Ahí las
+            cuentas se dan la vuelta enteras — un vertical 5:7 pierde el <b>38% del alto</b> y un
+            apaisado 7:5 solo el <b>18% del ancho</b>—, así que las tres ilustraciones que hoy
+            están «mal» serían las tres que están bien. Se ve sin medir nada: pon «Todo junto» y
+            compara el 🗡️ Miliciano en la <b>H</b> —cortado por el muslo— con el mismo en la{" "}
+            <b>I</b>, entero y con su paisaje. Antes de mandar a regenerar las tres hay que decidir
+            este boceto, porque una de las dos decisiones manda sobre la otra.
           </li>
         </ul>
       </section>

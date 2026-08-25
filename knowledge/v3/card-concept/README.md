@@ -67,8 +67,8 @@ En la wiki, en **Cartas › Diseño de cartas** (`/docs/v3/cards/design`). El
 código está en `components/design/v3/` y sus estilos en
 `styles/components/card-sketch/`.
 
-> **Hay TRES bocetos dibujados: la mezcla E · Forja, la mezcla G · Estandarte y
-> el derivado H · Recinto.**
+> **Hay CUATRO bocetos dibujados: la mezcla E · Forja, la mezcla G · Estandarte,
+> el derivado H · Recinto y la mezcla I · Retablo.**
 > De la primera tanda hubo cinco —uno por cada concepto de abajo, más las dos
 > mezclas— y el 22 de agosto de 2026 se borraron los cuatro anteriores del
 > código, con sus parciales y sus piezas. **Este documento no se borra con
@@ -89,11 +89,22 @@ código está en `components/design/v3/` y sus estilos en
 > que puestas al lado no se sabía cuál era la que gustaba; con la H, *E contra H*
 > juzga la silueta sola y *G contra H*, la jerarquía sola.
 >
+> Y el 25 de agosto, ya de noche, abrió la tercera tanda la **I**, que no
+> discute una pieza: discute **el axioma**. Los ocho bocetos anteriores son la
+> misma idea con distinta piel —la carta ES su ilustración y los datos flotan
+> encima—, y eso ni siquiera estaba escrito como decisión: estaba escrito como un
+> hecho, en el esqueleto (`styles/components/_card-sketch.scss`, «el arte a
+> sangre, sin ventana enmarcada»). La I cruza la H con una carta de **Magic: The
+> Gathering** y hace lo contrario: la carta es una **página** de franjas apiladas
+> y el arte va metido en una **ventana** que no lleva ni un dato encima. Ver
+> §"Concepto Magic" y §"Mezcla I" abajo.
+>
 > Lo que queda enfrentado en la página es *rectángulo contra octógono*, *veta
-> partida en cuatro tramos contra aro continuo*, *ocho iguales contra dos y seis*
-> y *piezas que desbordan el contorno contra piezas que caben dentro*. Lo que ya
-> **no** se puede mirar —*encendido contra acuñado*, que era la discusión de la
-> F— está solo escrito.
+> partida en cuatro tramos contra aro continuo*, *ocho iguales contra dos y seis*,
+> *piezas que desbordan el contorno contra piezas que caben dentro* y —lo nuevo y
+> lo más gordo— *arte a sangre contra arte en ventana*. Lo que ya **no** se puede
+> mirar —*encendido contra acuñado*, que era la discusión de la F— está solo
+> escrito.
 
 **Los sujetos son la plantilla real de la raza piloto**, no una selección: las
 **ocho unidades de 👤 Humanos** en su orden de progresión (tier 1 → 8) y sus
@@ -913,6 +924,146 @@ delante:
   misma altura y esquivar la hoja de acero para que «No-muertos» no se metiera
   debajo. Sin nada que esquivar, vuelve a ser el último renglón del panel.
 
+## Concepto Magic — Magic: The Gathering
+
+![Carta «Fading Hope» de Magic: The Gathering, edición MID, ilustración de Rovina Cai](imgs/magic-the-gathering-fading-hope-mid.webp)
+
+📎 `imgs/magic-the-gathering-fading-hope-mid.webp` · «Fading Hope», *Innistrad:
+Midnight Hunt* (MID), ilustración de Rovina Cai. Traída al repo el 25 de agosto
+de 2026 desde un enlace de Reddit, por lo mismo que la de *Fates*: un enlace de
+foro no dura.
+
+> **No lleva letra de serie, y es a propósito.** A, B, C y F son referencias que
+> entraron para responder a la pregunta de dónde van los 13 datos, y cada una
+> tenía su boceto. Esta entra a discutir algo que no estaba en esa pregunta —si
+> la ilustración es el fondo de la carta o una lámina metida en ella—, así que la
+> letra se la lleva su mezcla (la I) y la referencia se queda con el nombre.
+
+**Es la referencia más vieja y la más distinta, y por eso hacía falta.** Las
+cuatro anteriores son juegos de mesa o digitales recientes con la misma
+gramática: ilustración a sangre, datos encima, marco decorado. Esta es una carta
+de papel de 1993 que resolvió el problema de otra manera, y su solución sigue
+imprimiéndose treinta años después. **La carta es una página**, no una
+ilustración.
+
+| Zona | Qué hace |
+|---|---|
+| Borde | Negro, ancho, a sangre. La carta se corta recta y el negro absorbe el desalineado de imprenta |
+| Marco | Del color de la carta, y **es una sola pieza**: rodea todo y forma las franjas |
+| Barra de título | El nombre **solo**, en su caja, y al otro extremo el **coste de maná** |
+| Ventana de arte | Rectángulo enmarcado y hundido, ~46% del alto. **Sin un solo dato encima** |
+| Línea de tipo | «Instant», «Creature — Human Soldier». Y al final el **símbolo de colección**, cuyo COLOR es la rareza |
+| Caja de texto | Panel de **papel claro**: reglas arriba, filete fino, y debajo el texto de ambientación en cursiva |
+| Pie | Número de colección, rareza en letra, edición, **firma del ilustrador** y copyright |
+| Fuerza / Resistencia | *(en criaturas)* Ficha propia montada sobre el canto de abajo a la derecha |
+
+**Las cuatro cosas que enseña, en orden de lo que valen:**
+
+1. **La ilustración puede no cargar con nada.** Es lo único de esta referencia
+   que ninguna otra dice, y llega justo cuando hacía falta: el 25 de agosto se
+   midió que el panel de la H le corta las piernas al Miliciano
+   ([`public/assets/v3/README.md`](../../../public/assets/v3/README.md)), y ese
+   problema **no tiene arreglo mientras el arte sea el fondo** — siempre habrá
+   algo encima. Aquí no hay nada encima, nunca, en ninguna carta.
+2. **La rareza cabe en un glifo.** No hay canto teñido ni piedra tallada: es un
+   símbolo de ~12px al final de un renglón, y su color es todo el dato. Es la
+   respuesta más barata de las cuatro referencias y la única que no gasta marco.
+3. **El valor se invierte para lo que se lee.** La caja de datos es papel claro
+   dentro de una carta oscura. Es lo que hace que un bloque de texto sea legible
+   en una carta de 63mm, y V3 no lo ha probado nunca: ocho bocetos de oscuro
+   sobre oscuro.
+4. **Y la carta ESCRIBE.** Tipo, reglas, ambientación, autor, edición. Es el
+   extremo contrario de la E, que no escribe nada bajo el nombre. Puestas al
+   lado, es el eje entero de la discusión: *enseñar contra escribir*.
+
+**Lo que no se puede traer, y conviene tenerlo claro antes de mirar la mezcla:**
+
+- **El texto de ambientación.** Media caja de esa carta la llena una frase de
+  ficción. V3 no tiene ninguna, ni está previsto que la tenga, así que la caja de
+  datos se queda con lo que hay — y con cero Características, medio vacía.
+- **El color como identidad.** Ahí el marco azul *es* el color de maná de la
+  carta, y ese dato gobierna el juego entero. V3 no tiene colores de maná: tiene
+  raza, y la raza ya se decidió que se enseña en emblema.
+- **El borde negro.** Es una solución de imprenta para una carta que se corta
+  recta, y V3 lleva desde la F con una silueta que necesita troquel.
+
+## Mezcla I — Retablo (la H · Recinto con la anatomía de Magic)
+
+**Es el primer boceto que no discute una pieza, sino el axioma.** Los ocho
+anteriores contestan *dónde* van los datos; este contesta *sobre qué*. La carta
+deja de ser una ilustración con cosas encima y pasa a ser una **página**: cuatro
+franjas apiladas dentro del filete, y el arte metido en una ventana.
+
+De la H se queda lo que la hace una carta de este juego: el **octógono** con su
+roblón en cada chaflán, el **filete de metal con la veta** de Rareza —usa
+`EstandarteFrame` sin tocar una línea, igual que la H—, la **aleación única** y
+las **ocho Habilidades juntas** en una fila, en su mismo orden. De la referencia
+se queda la anatomía entera, franja por franja.
+
+| Franja | Alto | Qué lleva |
+|---|---|---|
+| Barra de título | 30px | El rótulo solo, y el **Tier** en el bisel del coste de maná (👑 en un héroe) |
+| Ventana de arte | 220px | La ilustración, hundida y enmarcada. **Sin un dato encima** |
+| Línea de tipo | 22px | 👤 «Unidad — Humanos», y el **sello de Rareza** de 12px al final |
+| Caja de datos | 82px | Sobre **vitela**: los ocho números y, bajo el filete, las Características |
+
+Con el filete de 15px y 9px de aire, el interior son 372px y las cuatro franjas
+más sus tres huecos suman exactamente eso. **El presupuesto es la decisión**: la
+única que puede ceder es la ventana, porque es la única sin un contenido que la
+empuje.
+
+**1. La ventana cuesta el 48% del interior, y ese número lo cambia todo.** La
+ilustración pasa de ocupar 300×420 a ocupar 252×220. En una fuente vertical 5:7
+—la que manda la norma de arte— eso obliga a tirar **~38% del alto**, o sea la
+cabeza o las piernas; se ve en el ⚔️ Guerrero y el 🔮 Mago, que se quedan en
+plano medio. Pero al revés la cuenta se da la vuelta: **un apaisado 7:5 solo
+pierde el 18% del ancho**, y el 🗡️ Miliciano y el ✝️ Sacerdote entran aquí mejor
+que en ningún otro boceto. Eso deja un cabo que hay que atar antes de mandar a
+regenerar nada: **si gana este boceto, las tres ilustraciones que hoy están mal
+son las tres que están bien**, y la norma de encuadre cambia de signo.
+
+**2. La vitela funciona, y de paso contesta el hilo del emoji.** Las ocho cifras
+en tinta negra sobre papel se leen mejor que en ninguna de las otras tres cartas
+—no es una impresión, es contraste—. Y los glifos de Característica pasan la
+prueba, pero **por los pelos y por una razón que no es nuestra**: los emoji traen
+contorno negro de fábrica, y es ese contorno el que salva a 💀 y a 🧊 sobre
+beige. La chapita del glifo va en vitela oscurecida justo por eso. Cuando los
+emoji se sustituyan por iconos propios, este boceto es el que pone la condición
+más dura: **el icono tiene que funcionar sobre papel claro y sobre metal
+oscuro**, porque el raíl de la E y la G lo pide al revés.
+
+**3. Y el precio de la vitela, que no se disimula: el hueco.** La caja tiene alto
+FIJO y el contenido va pegado arriba, como en la referencia. Con cinco
+Características se llena; con cero —el 🗡️ Miliciano— se queda casi medio cajón
+de papel en blanco. En Magic ese hueco lo llena el texto de ambientación y V3 no
+tiene ninguno. **Es la inversión exacta del argumento que ganó el raíl vertical**:
+allí, con cero medallones no queda un hueco, queda arte. Aquí queda hueco. Se
+podría dejar que la caja creciera con el contenido, y se descartó por algo peor:
+cada carta tendría una ventana de arte distinta y la ilustración dejaría de poder
+encuadrarse una sola vez para todas.
+
+**4. La Rareza se dice ahora de dos maneras en la misma carta**, y es a
+propósito, como la raza en la G: la **veta** del filete con su baño, y el
+**sello** de 12px al final de la línea de tipo. La G le dedica una piedra tallada
+a caballo del canto; la referencia le dedica un glifo dentro de un renglón. O
+sobra el sello, o sobra la piedra.
+
+**5. La tensión que la mezcla NO resuelve, y que conviene ver escrita.** Magic
+**también** saca dos números del grupo: fuerza y resistencia van en su propia
+ficha, montada sobre el canto de abajo. O sea que las **dos** referencias
+—*Fates* y Magic— votan lo mismo que la G y lo contrario que la H. Aquí manda la
+H porque la mezcla es con ella y porque volver a partirlos devolvería dos
+variables a la misma carta; pero el recuento de votos queda apuntado.
+
+**Y una nota de código, que es la otra mitad de por qué esto se pudo montar en un
+rato.** La I comparte contorno con la G y **nada más**, así que no hereda: lo que
+comparten dos hermanos se extrae. La silueta octogonal salió a un mixin
+(`octagon-shell`, en `styles/tools/_mixins.scss`) y la cuenta del chaflán a una
+función (`oct-clip()`), y el CSS compilado de la G y la H salió **byte a byte
+idéntico** al de antes de la extracción. Es el mismo criterio que se aplicó
+cuando la F y la G convivían, y el contrario del de la H — que sí es una copia y
+por eso hereda pisando.
+
 ## Lo que esto cambia de lo ya escrito
 
 **El lienzo heredado de v2 era el equivocado, y ya está corregido.** La
@@ -932,6 +1083,18 @@ del marco vertical—, que es exactamente para lo que servía tener los bocetos
 montados.
 
 Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
+
+> **Y el 25 de agosto de 2026 esto volvió a quedar colgando de una decisión, que
+> es justo lo que se había dado por cerrado.** La frase de arriba —«los cinco
+> comparten proporción y los cinco van a sangre»— era verdad de los nueve
+> bocetos hasta que dejó de serlo: la **I · Retablo** mete el arte en una
+> ventana **apaisada** de 252×220. Con ella en la mesa, el 5:7 vertical deja de
+> ser una consecuencia de la carta y pasa a ser una consecuencia del **boceto**:
+> a sangre pide vertical, en ventana pide apaisado, y las cuentas de pérdida se
+> invierten (38% del alto contra 18% del ancho). No se cambia la norma —hoy hay
+> tres bocetos a sangre contra uno en ventana— pero **queda dicho que las tres
+> ilustraciones apaisadas no se regeneran hasta que el marco esté elegido**: sería
+> tirar trabajo en la mitad de los desenlaces.
 
 ## Qué falta decidir
 

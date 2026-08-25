@@ -9,20 +9,31 @@
 // (knowledge/v3/card-concept/). Aquí va SOLO lo que no depende del boceto:
 //
 //   · la caja de la carta y el escenario donde se mira;
-//   · el arte a sangre, sin ventana enmarcada;
+//   · el hueco de arte, que por defecto va a sangre;
 //   · el rótulo y la cápsula de Habilidad, que son las dos piezas de texto
 //     que cualquier boceto va a necesitar.
+//
+// Ese "por defecto" es nuevo y hay que leerlo con cuidado. Hasta el 25 de agosto
+// de 2026 aquí ponía «el arte a sangre, SIN VENTANA ENMARCADA», escrito como un
+// hecho porque los tres conceptos de la primera tanda coincidían en ello. La
+// I · Retablo lo desmiente: mete el arte en una ventana, y le basta con darle
+// `position: relative` a esa ventana para que el `inset: 0` de .sketch__art deje
+// de referirse a la carta y pase a referirse a ella. Así que .sketch__art no es
+// "el fondo de la carta", es "el hueco de arte, donde sea que esté" — y conviene
+// no volver a escribir aquí nada que dé por hecho lo primero.
 //
 // Lo que un boceto decide —dónde caen las ocho Habilidades y las
 // Características, y de qué está hecho el marco— vive en card-sketch/, un
 // parcial por boceto, que van después en la cascada.
 //
 // Hubo cinco bocetos, quedó uno (E · Forja), el 24 de agosto de 2026 entró otro
-// al lado (G · Estandarte) y el 25 un tercero derivado de él (H · Recinto, la G
-// con todo dentro del contorno y las ocho juntas). Lo que aquí se comparte quedó
-// medido contra los cinco, así que sigue siendo el suelo común y no un resto de
-// la E. Lo que solo servía a los otros cuatro —la cenefa de glifos, el
-// subtítulo, el filete de rareza de 3px— se borró con ellos.
+// al lado (G · Estandarte), el 25 un tercero derivado de él (H · Recinto, la G
+// con todo dentro del contorno y las ocho juntas) y ese mismo día un cuarto que
+// no se parece a ninguno (I · Retablo, la H cruzada con una carta de Magic: la
+// carta es una página de franjas y el arte va en una ventana). Lo que aquí se
+// comparte quedó medido contra los cinco, así que sigue siendo el suelo común y
+// no un resto de la E. Lo que solo servía a los otros cuatro —la cenefa de
+// glifos, el subtítulo, el filete de rareza de 3px— se borró con ellos.
 //
 // Ojo con lo que se da por común: la G rompe la SILUETA (es un octógono) y con
 // ella el radio, el fondo y el recorte del arte y del pie. Todo eso sigue aquí
@@ -120,8 +131,8 @@
 // La capa donde cae el <svg> de components/design/v3/sketch-frames.tsx. Es la
 // misma para los dos marcos —encima de todo y sin capturar el puntero—; lo que
 // cambia de un boceto a otro es lo que el SVG dibuja dentro, no dónde se pone.
-// Dos marcos y tres bocetos: la H usa el de la G tal cual, porque lo que discute
-// es dónde caen las piezas y no qué forma tiene la carta.
+// Dos marcos y cuatro bocetos: la H y la I usan el de la G tal cual, porque las
+// dos discuten dónde caen las piezas y no qué forma tiene la carta.
 .sketch__frame {
   position: absolute;
   inset: 0;

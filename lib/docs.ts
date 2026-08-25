@@ -76,9 +76,9 @@ const DESIGN_LAB_GROUP = `${DESIGN_LAB_VERSION}-cards`;
 // Bocetos de marco de V3 (app/docs/v3/cards/design/). Página propia y no la
 // misma de arriba: aquella pinta el catálogo real de v2 con un marco YA
 // decidido, y esta pinta sujetos de muestra escritos a mano
-// (components/design/v3/sample.ts) con tres bocetos POR decidir.
+// (components/design/v3/sample.ts) con cuatro bocetos POR decidir.
 //
-// Cuando uno de los tres gane, las dos se funden en una: esta se queda con el
+// Cuando uno de los cuatro gane, las dos se funden en una: esta se queda con el
 // marco elegido y hereda el catálogo, y entonces la constante de arriba pasa a
 // "v3" con sus tres mudanzas. Hasta ese día conviven, así que el push de abajo
 // se guarda de que no se dupliquen si las dos versiones coincidieran.

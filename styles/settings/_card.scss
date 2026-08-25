@@ -88,3 +88,54 @@ $sketch-gem: 16px;
 // trozo de marco pintado de otro color. Su alto es dos veces y pico el ancho:
 // menos que eso deja de ser bandera y es una segunda ficha colgada.
 $sketch-banner: 28px;
+
+// --- Boceto I · Retablo ---------------------------------------------------
+// El único boceto donde la carta NO es una ilustración con cosas encima: es una
+// página de franjas apiladas, con el arte metido en una ventana que no lleva
+// ningún dato. Sale de mezclar la anatomía de una carta de Magic
+// (imgs/magic-the-gathering-fading-hope-mid.webp) con el octógono de la H.
+//
+// Estas cinco cotas son un PRESUPUESTO y hay que leerlas juntas, porque suman
+// exactamente el alto útil de la carta. Con el filete de 15px y el aire de la
+// página quedan 372px de contenido, y se reparten así:
+//
+//   barra de título   30      (rótulo + Tier)
+//   hueco              6
+//   ventana          220      ← lo que le queda a la ilustración
+//   hueco              6
+//   línea de tipo     22      (raza + sello de Rareza)
+//   hueco              6
+//   caja de datos     82      (los ocho, filete, y las Características)
+//                    ---
+//                    372
+//
+// Cambiar una obliga a mover otra, y la que paga siempre es la VENTANA: es la
+// única que no tiene un contenido que la empuje. Por eso está escrita como
+// medida y no como `flex: 1` — con el sobrante, cada carta tendría una ventana
+// distinta según cuántas Características trajera, y entonces la ilustración no
+// se podría encuadrar una sola vez para todas (public/assets/v3/README.md
+// §"Encuadre" depende de que el recorte sea siempre el mismo).
+$sketch-bar: 30px;                 // barra de título
+$sketch-typeline: 22px;            // línea de tipo
+$sketch-window: 220px;             // ventana de arte
+$sketch-databox: 82px;             // caja de datos sobre vitela
+// El bisel del Tier, en el extremo derecho de la barra de título: es el sitio
+// que la referencia da al coste de maná. Cabe justo en la barra de 30 con 4px
+// de aire arriba y abajo.
+$sketch-cost: 22px;
+// El glifo de Característica dentro de la caja de datos. Es DOS TERCIOS del
+// medallón del raíl (30px) a propósito: allí es una ficha montada sobre la
+// ilustración y aquí es un renglón de la caja, así que tiene que pesar como un
+// dato y no como una pieza.
+$sketch-trait: 20px;
+// El sello de Rareza, al final de la línea de tipo. Es el sitio exacto donde la
+// referencia pone el símbolo de colección, que es LO QUE DICE SU RAREZA (negro
+// común, plata infrecuente, oro rara). Diminuto a propósito: la apuesta de este
+// boceto es que la Rareza no necesita ni un canto teñido ni una piedra de 16px,
+// le basta un glifo en un renglón. Es la medida que hay que mirar de cerca.
+$sketch-seal: 12px;
+// El aire de la página por dentro del filete, y el hueco entre franjas. Los dos
+// juntos son lo que convierte la carta en una PÁGINA: sin margen, las franjas
+// morirían contra el metal y se leerían como parte del marco.
+$sketch-page-pad: 9px;
+$sketch-page-gap: 6px;

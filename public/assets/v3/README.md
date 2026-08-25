@@ -48,6 +48,33 @@ una ilustración de verdad.
 > lateral que pide §"Encuadre", y dejarlos como están tiene un uso: en el lab,
 > pasar del Guerrero vertical al Sacerdote apaisado enseña la diferencia de un
 > vistazo. Mientras tanto los apaisados sirven para juzgar el marco, no el arte.
+>
+> **Y ya se ve en la carta montada, que es la prueba que faltaba** *(25 de agosto
+> de 2026, medido en el lab)*. El hueco de arte es `cover` sobre 300×420, así que
+> un 1484×1060 se escala por el lado corto: sale a **588×420** y se van **144px
+> por cada lado, el 49% de la anchura**. La imagen no se sale de la carta —la
+> caja del `<img>` mide exactamente lo que la carta, comprobado— pero la FIGURA
+> sale al doble del tamaño que supone §"Encuadre", y entonces el cuarto de abajo
+> que esa norma reserva para el rótulo deja de ser aire y pasa a ser piernas: el
+> Miliciano queda cortado por el muslo y el Arquero por la cintura. **Con los
+> héroes verticales no se veía** porque el Guerrero y el Mago entran sin recortar
+> nada. Dato de paso para la decisión de marco, no del arte: el panel de la G y
+> la H se come más ilustración que la placa de la E, y en un apaisado la
+> diferencia se nota a simple vista.
+>
+> ⚠️ **Y esa misma tarde apareció un motivo para NO regenerarlas todavía.** El
+> boceto **I · Retablo** —la mezcla con una carta de Magic— no pinta el arte a
+> sangre: lo mete en una **ventana de 252×220**, o sea apaisada. Ahí las cuentas
+> se invierten enteras: un vertical 5:7 pierde el **38% del alto** —cabeza o
+> piernas— y un apaisado 7:5 solo el **18% del ancho**. Con ese boceto en la
+> mesa, **los tres archivos «mal encuadrados» serían los tres bien encuadrados** y
+> el Guerrero y el Mago los que habría que rehacer. No cambia la norma —hoy son
+> tres bocetos a sangre contra uno en ventana, y §"Lienzo y formato" sigue
+> pidiendo 5:7 vertical— pero sí cambia el **orden de trabajo**: primero se elige
+> marco y después se regenera, porque en la mitad de los desenlaces regenerar
+> ahora es tirar cinco ilustraciones en vez de tres. Se ve sin medir nada en
+> `/docs/v3/cards/design`: el 🗡️ Miliciano sale cortado por el muslo en la H y
+> entero, con su paisaje, en la I.
 
 Qué generar y con qué especificación (sujetos, encuadre, plantilla de prompt):
 [`../../../knowledge/v3/art-direction/illustrations.md`](../../../knowledge/v3/art-direction/illustrations.md),

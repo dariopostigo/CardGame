@@ -9,6 +9,7 @@
 
 @use "sass:map";
 @use "sass:math";
+@use "sass:string";
 @use "../settings" as *;
 
 // Token del skin de la wiki → referencia a la custom property, para que siga
@@ -116,4 +117,33 @@
 // left que centra una sub-ficha en el mismo eje vertical que el badge.
 @function chip-center-left($size, $badge-size: $chip-size, $inset: $chip-inset) {
   @return $inset + math.div($badge-size - $size, 2);
+}
+
+// --- La silueta octogonal de los bocetos V3 -------------------------------
+// El `clip-path` del contorno de carta: las cuatro esquinas cortadas a 45°.
+// Espejo exacto de octagon(d) en components/design/v3/sketch-frames.tsx, que es
+// quien dibuja el filete — si las dos cuentas no dicen lo mismo, el marco deja
+// de seguir a la silueta y se ve en los cuatro chaflanes a la vez.
+//
+// `$shrink` NO desplaza el trazado: dice cuánto se ha metido hacia dentro el
+// ELEMENTO al que se le aplica, y sirve solo para corregir el chaflán. Ahí está
+// toda la miga, y es la razón de que esto sea una función y no una constante: al
+// meter el contorno `d` píxeles, los dos bordes rectos se desplazan `d` y el
+// corte de 45° también, así que su cateto pasa de C a C − d(2 − √2). Con la
+// medida escrita a mano, cada anillo se abre un poco más que el anterior y el
+// error crece hacia dentro.
+//
+//   oct-clip()               el contorno de la carta entera
+//   oct-clip($sketch-band)   el de una caja ya metida por dentro del filete
+//
+// Lo piden DOS bocetos —la G · Estandarte y la I · Retablo— y por eso vive aquí
+// y no en el parcial de uno de ellos. Es el mismo criterio que se siguió cuando
+// la F y la G compartían anatomía: lo que comparten dos HERMANOS baja a una
+// pieza común; lo que un boceto COPIA de otro se hereda pisando (la H).
+@function oct-clip($shrink: 0) {
+  $c: math.max($sketch-chamfer - $shrink * (2 - math.sqrt(2)), 1px);
+
+  @return string.unquote(
+    "polygon(#{$c} 0, calc(100% - #{$c}) 0, 100% #{$c}, 100% calc(100% - #{$c}), calc(100% - #{$c}) 100%, #{$c} 100%, 0 calc(100% - #{$c}), 0 #{$c})"
+  );
 }
