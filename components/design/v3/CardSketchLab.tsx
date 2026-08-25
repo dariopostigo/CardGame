@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { gameFontVars } from "@/components/game/ui/game-fonts";
 import { sketchFontVars } from "./sketch-fonts";
 import SketchCard, { SKETCHES, type SketchId } from "./sketch-cards";
@@ -31,7 +32,19 @@ import { HEROES, STRESS, SUBJECTS, UNITS, type Subject } from "./sample";
    a sangre y datos flotando encima—, y esa frase estaba escrita en el esqueleto
    como si fuera un hecho.
 
-   Quedan cuatro. Con más de uno en la lista vuelve a pintarse la fila de
+   Y la J · Orla cruza la H con Magic por el otro extremo: no la anatomía de
+   franjas, el BORDE. La carta vuelve a ser un rectángulo —ya no hace falta
+   troquel, se corta recta— y detrás de un mat negro vive una H adaptada, no
+   calcada: mismo octógono, misma idea de veta encendida, pero con un anillo
+   propio (OrlaFrame) mucho más fino y sin cantoneras ni roblones — un herraje
+   remachado tenía sentido mientras el octógono ERA el canto de la carta, y
+   aquí ya no lo es. Es la respuesta a algo que el propio concepto había dado
+   por imposible: «el borde negro es una solución de imprenta para una carta
+   que necesita troquel» (knowledge/v3/card-concept/README.md, §Concepto
+   Magic) — la J no le lleva la contraria, le cambia la pregunta: el troquel
+   deja de hacer falta en cuanto el octógono se PINTA en vez de recortarse.
+
+   Quedan cinco. Con más de uno en la lista vuelve a pintarse la fila de
    pestañas —con uno solo no se pinta, porque una pestaña que no lleva a ningún
    sitio es ruido—.
 
@@ -52,11 +65,15 @@ const EVERYTHING = "@todo";
 /* Probeta de aleación (TEMPORAL).
    El metal de la carta sale de un solo color, así que probarlo es cambiar ese
    color: el atributo data-alloy va al escenario y el @each de
-   styles/components/_card-sketch.scss hace el resto. Mueve los cuatro bocetos a
-   la vez —E, G, H e I comparten aleación—, que es lo que hay que querer: si cada
-   boceto llevara su metal, la comparación sería de color y no de marco. En la I
-   además mueve MÁS carta que en los otros: allí el metal no es solo el filete,
-   es también la página entera sobre la que se apoyan las franjas.
+   styles/components/card-sketch/_alloy-probe.scss hace el resto. Mueve los
+   cinco bocetos a la vez —E, G, H, I y J comparten aleación—, que es lo que
+   hay que querer: si cada boceto llevara su metal, la comparación sería de
+   color y no de marco. En la I además mueve MÁS carta que en los otros: allí
+   el metal no es solo el
+   filete, es también la página entera sobre la que se apoyan las franjas. Y en
+   la J el selector NO mueve el borde: el mat negro es card-sketch("void") fijo,
+   ajeno a la aleación, exactamente como en Magic el borde es siempre negro
+   pase lo que pase con el color de la carta.
 
    Esta lista es el espejo de las claves de $sketch-alloy (settings/_colors.scss)
    y no su fuente: si allí se añade una aleación, aquí se añade su rótulo. No hay
@@ -96,7 +113,7 @@ export default function CardSketchLab() {
   // los once sujetos a la vez.
   //
   // El último de la lista y no un id escrito: dar de alta un boceto nuevo tiene
-  // que bastar con añadirlo a SKETCHES. Hoy la lista tiene cuatro.
+  // que bastar con añadirlo a SKETCHES. Hoy la lista tiene cinco.
   const [view, setView] = useState<SketchId>(SKETCHES[SKETCHES.length - 1].id);
   const [pick, setPick] = useState<string>(EVERYTHING);
   // Arranca en el metal que hoy está puesto en settings/, para que la primera
@@ -138,6 +155,16 @@ export default function CardSketchLab() {
   return (
     <div className={`sketch-lab ${sketchFontVars} ${gameFontVars}`}>
       <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">Diseño de cartas</h1>
+      <p className="mb-4 max-w-3xl rounded-md border border-[var(--wiki-accent)] bg-[var(--wiki-accent-soft)] px-4 py-3 text-sm text-[var(--wiki-text)]">
+        <b>J · Orla es el diseño final</b>, elegido el 25 de agosto de 2026. Se ve
+        construido sobre el roster real, raza por raza, en{" "}
+        <Link href="/docs/v3/cards/deck" className="underline">
+          Cartas › Diseño baraja
+        </Link>
+        . Esta página se queda tal cual, como lo que ya era antes de decidirlo:
+        el archivo donde se compararon los nueve bocetos, para el día que haga
+        falta volver a abrir la pregunta del marco.
+      </p>
       <p className="mb-2 max-w-3xl text-sm text-[var(--wiki-muted)]">
         El <b>marco</b> de la carta de V3 — el objeto, no la ilustración que va dentro. La
         pregunta que contesta un boceto es dónde caen los <b>13 datos</b> de una carta de unidad.
@@ -216,10 +243,11 @@ export default function CardSketchLab() {
             Todo junto
           </button>
         </div>
-        {/* La probeta de metal. Vale para los cuatro bocetos porque en los
-            cuatro el metal NO lleva la rareza: si el marco fuera la rareza
+        {/* La probeta de metal. Vale para los cinco bocetos porque en los
+            cinco el metal NO lleva la rareza: si el marco fuera la rareza
             —como en la D—, cambiarle el tono sería cambiar de boceto y no de
-            material.
+            material. En la J solo mueve el ANILLO de dentro, nunca el borde
+            negro que lo rodea —ese es fijo, como en Magic.
             Y es la misma aleación para todos a propósito: así se comparan con
             el mismo material y lo que se ve es el marco, no el color. */}
         <div className="flex flex-wrap items-center gap-2">
@@ -255,7 +283,13 @@ export default function CardSketchLab() {
       {/* Lo que hay que decidir mirando esto. Va en la página y no solo en el
           documento porque es lo que se contesta AQUÍ, con las cartas delante. */}
       <section className="mt-8 max-w-3xl text-sm text-[var(--wiki-text)]">
-        <h2 className="mb-2 text-lg font-semibold">Qué falta decidir</h2>
+        <h2 className="mb-2 text-lg font-semibold">Qué falta decidir (cerrado: J · Orla)</h2>
+        <p className="mb-3 text-[var(--wiki-muted)]">
+          Todo lo de aquí abajo está contestado — J hereda las respuestas de la H y
+          responde por su cuenta la única pregunta que quedaba, si la carta es un
+          rectángulo. La lista se queda entera, sin tocar una línea: es el registro
+          de <i>cómo</i> se llegó ahí, no de qué falta.
+        </p>
         <ul className="list-disc space-y-1.5 pl-5 text-[var(--wiki-muted)]">
           <li>
             <b>Si la ilustración va a sangre o en una ventana</b>, que es lo más gordo que hay en
@@ -300,6 +334,23 @@ export default function CardSketchLab() {
             es el octógono con las ocho juntas y del mismo cuerpo que la E, así que{" "}
             <b>E contra H</b> ya no arrastra la jerarquía. Queda una diferencia y conviene saberla
             al mirar: la H abre su fila por ⚔️ Ataque y la E por ❤️ Vida.
+            <br />
+            Y la <b>J</b> añade un tercer término que la pregunta no tenía: ni redondeado sin más
+            (E) ni cortado de verdad (G, H), sino cortado <i>solo a la vista</i>. Detrás de un mat
+            negro vive una H adaptada, no calcada: mismo octógono, misma idea de veta encendida,
+            pero con un <b>anillo propio</b> —OrlaFrame— mucho más fino que el filete de la G/H y
+            sin cantoneras ni roblones. La primera versión de este boceto se quedó con el filete de
+            la H tal cual, y el mismo día se corrigió: una cantonera remachada dice «esto es
+            blindaje atornillado al canto», y ese mensaje solo se sostiene mientras el octógono ES
+            el canto. Aquí ya no lo es —vive dentro de un borde negro— así que el herraje se quitó
+            en vez de encogerse. El octógono se sigue leyendo porque lo traza el{" "}
+            <b>contraste</b> entre el negro del mat y el metal encendido de dentro, no un recorte
+            físico. La carta vuelve a cortarse recta, como la E, así que la objeción de imprenta
+            que arrastran F, G y H desde que el troquel entró en la página deja de tener con qué
+            discutir: no hace falta troquel donde no hay nada que cortar. El precio sigue siendo
+            nuevo entre los nueve bocetos —la carta <b>crece</b>, 300×420 pasan a 316×436—, pero
+            bastante menos que en la primera versión (330×450): el mat se adelgazó con el anillo,
+            no por separado.
           </li>
           <li>
             <b>Si los ocho números van todos iguales.</b> La <b>E</b> dice que sí —misma fila,
@@ -365,7 +416,7 @@ export default function CardSketchLab() {
             no tiene.
           </li>
           <li>
-            <b>Dónde vive la Rareza.</b> Los cuatro bocetos comparten una respuesta —una{" "}
+            <b>Dónde vive la Rareza.</b> Los cinco bocetos comparten una respuesta —una{" "}
             <b>veta</b> de luz entre los dos raíles del filete, más el baño que derrama sobre lo
             que haya dentro: la carta no está teñida, está encendida—, y eso es lo que hace que
             sirvan para comparar la <i>forma</i> y no el color. La <b>I</b> añade una segunda, y
@@ -385,7 +436,15 @@ export default function CardSketchLab() {
             entero de la aleación de la rareza, ya se probó y se descartó (mezcla D): se reconoce
             antes en una mano, pero convierte el marco en cinco piezas distintas y le roba la
             carta a la ilustración. Mira el Miliciano (común) junto al Dragón dorado (legendaria)
-            con «Todo junto» en los cuatro bocetos.
+            con «Todo junto» en los cinco bocetos. La <b>J</b> hereda la IDEA de la veta —un canal
+            de luz entre dos raíles que dice la Rareza— pero no el filete que la dibuja:{" "}
+            <code>OrlaFrame</code> es un marco propio, más fino que <code>EstandarteFrame</code> y
+            sin cantoneras ni roblones, porque esos herrajes decían «esto es blindaje atornillado
+            al canto» y aquí el canto ya no es el octógono, es el borde negro de fuera. Y le suma
+            un efecto que ningún boceto anterior tenía dónde enseñar: el resplandor de la Rareza
+            (<code>drop-shadow(var(--rarity-soft))</code> de <code>octagon-shell</code>) ya no se
+            pierde contra el fondo de la página, se derrama sobre el negro del propio mat. El tier
+            se ve arder por debajo del marco antes de leer un número.
           </li>
           <li>
             <b>Cuánto detalle aguanta una pieza pequeña.</b> El rombo de la Rareza de la <b>G</b>{" "}
@@ -459,8 +518,9 @@ export default function CardSketchLab() {
             raza, no un número— pero a cambio deja de decir «Héroe» con palabras y lo fía todo al
             rojo de la veta. La <b>G</b> sí reserva el sitio, así que tiene que rellenarlo: pone
             una 👑, que es la respuesta que ya daba la mezcla D — y la <b>H</b> la hereda, porque
-            mover el disco dentro del marco no cambia que el sitio siga reservado. Mira el
-            ⚔️ Guerrero entre las ocho unidades en los cuatro y decide si se reconoce solo. La{" "}
+            mover el disco dentro del marco no cambia que el sitio siga reservado, y la <b>J</b>{" "}
+            hereda la de la H sin cambiar nada, solo con un mat negro alrededor. Mira el
+            ⚔️ Guerrero entre las ocho unidades en los cinco y decide si se reconoce solo. La{" "}
             <b>I</b> hereda la corona igual, pero con una diferencia que conviene ver: allí el
             hueco es el <b>bisel del coste de maná</b> de la referencia, o sea el sitio con más
             peso de toda su carta, y una 👑 puesta ahí dice «héroe» más alto que en la esquina.
@@ -491,7 +551,7 @@ export default function CardSketchLab() {
             oscuros hacen lo contrario: apagan el marco y suben todo lo demás. Dos están fuera de
             la familia a propósito: el <b>cardenillo</b> (verde de pátina, el único que no es gris
             ni dorado) y el <b>marfil</b>, que ya no parece metal — están para ver si el marco
-            tiene que ser metálico siquiera. El selector mueve <b>los cuatro bocetos a la vez</b>:
+            tiene que ser metálico siquiera. El selector mueve <b>los cinco bocetos a la vez</b>:
             comparten aleación para que lo que se compare sea el marco y no el color. En la G hay
             una cosa más que mirar, el <b>estandarte</b>, que necesita cara clara para que el
             emblema se lea — en carbón o pavonado el 👤 se pierde, y es el mismo reparo que el
@@ -499,7 +559,11 @@ export default function CardSketchLab() {
             allí el metal no es un filete: es la <b>página entera</b>, la mitad de la superficie de
             la carta. Un marfil o una plata la convierten en una lámina clara con una foto pegada,
             y un carbón la acercan a las otras tres. Si hay una aleación que solo funciona en la I,
-            o una que solo funciona en las otras, se va a ver aquí.
+            o una que solo funciona en las otras, se va a ver aquí. La <b>J</b> no añade una
+            cuarta cosa que mirar: su anillo es más fino que el de la H pero es el mismo material
+            —peltre, cobre, lo que se elija—, y lo único que la aleación NUNCA toca es el mat negro
+            que lo rodea — ahí está la comparación que sí es suya, la de un marco que cambia de
+            metal contra un borde que no cambia nunca.
           </li>
           <li>
             <b>Qué tipografía titula la carta.</b> El nombre iba en <b>Cormorant</b>, la serif de

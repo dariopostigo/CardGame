@@ -8,11 +8,12 @@
 // exactamente lo que pasó entre la D y la E: la misma escuadra, una banda
 // maciza en una y dos raíles con luz entre medias en la otra.
 //
-// Dos marcos y CUATRO bocetos: la H · Recinto y la I · Retablo usan
+// Dos marcos y CINCO bocetos: la H · Recinto, la I · Retablo y la J · Orla usan
 // EstandarteFrame tal cual, sin una línea de diferencia. No es un ahorro, es lo
-// que las hace servir: las dos discuten dónde caen las piezas —la H el reparto
-// de la G, la I la anatomía entera—, así que si además les cambiara el contorno
-// habría dos variables en juego y no se podría leer ni una.
+// que las hace servir: las tres discuten dónde caen las piezas o dónde vive la
+// carta —la H el reparto de la G, la I la anatomía entera, la J el borde que la
+// rodea—, así que si además les cambiara el contorno habría dos variables en
+// juego y no se podría leer ni una.
 //
 // Y en la I hay un matiz que conviene tener presente al tocar este archivo: allí
 // el filete ya no rodea una ilustración, rodea una PÁGINA. El baño de luz de la
@@ -475,6 +476,81 @@ export function EstandarteFrame() {
             <circle cx="-0.9" cy="-0.9" r="1.1" style={{ fill: "var(--m-hi)" }} opacity="0.75" />
           </g>
         ))}
+
+        <Glints gid={gid} />
+      </g>
+    </FrameSvg>
+  );
+}
+
+// ------------------------------------------------------ El filete del J · Orla
+// Espejo de $orla-ring (styles/components/card-sketch/_orla.scss): un anillo
+// de ~7,6px contra los 15 de SEAM, y SIN herrajes — ni cantoneras ni roblones.
+//
+// No es una versión encogida de SEAM, es un filete pensado para otro sitio.
+// Las cantoneras y los roblones de la G/H dicen «esto es una pieza de
+// blindaje atornillada al canto de la carta» — un mensaje que tiene sentido
+// mientras el octógono ES el canto. En la J el octógono ya no es el canto:
+// vive dentro de un borde negro (ver _orla.scss), y una ficha remachada
+// montada sobre otro borde deja de leerse como blindaje y pasa a leerse
+// como ruido. Lo único que la J se queda de la G y la H no es el herraje, es
+// la IDEA: un canal de luz entre dos raíles de metal que dice la Rareza sin
+// escribirla.
+//
+// La J probó el 25 de agosto de 2026, de madrugada, a cambiar también el
+// chaflán del anillo por una esquina redondeada —dos rectángulos concéntricos
+// en vez de un octógono dentro de un rectángulo—, y se revirtió el mismo día:
+// no gustó vista en el lab. Queda apuntado por si vuelve a probarse: la
+// versión redondeada usaba Band() y el clip rectangular de FrameDefs
+// (${gid}-card) en vez de Ring()/octagon(), el mismo camino que ForjaFrame.
+// Este marco se queda con el octógono, con su propio clipPath (${gid}-oct).
+const ORLA_RING = {
+  outer: [0.4, 1.6],
+  channel: [1.6, 5.6],
+  inner: [5.6, 6.8],
+  lip: [6.8, 7.6],
+} as const;
+
+/**
+ * Marco del boceto J · Orla.
+ *
+ * Mismo contorno que EstandarteFrame —el octógono no cambia, solo lo que
+ * vive dentro de él— y misma receta de luz que SEAM, con dos bandas de
+ * bloom en vez de cuatro: a 4px de canal (contra los 7px de SEAM) las cuatro
+ * bandas concéntricas de la G se pisan entre sí y el canal vuelve a leerse
+ * como color liso, que es justo lo que la receta original evita. Con menos
+ * banda hace falta menos capas, no la misma receta encogida.
+ */
+export function OrlaFrame() {
+  const gid = useId();
+  const metal = `url(#${gid}-metal)`;
+
+  return (
+    <FrameSvg>
+      <FrameDefs gid={gid}>
+        <filter id={`${gid}-bloom`} x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.1" />
+        </filter>
+        <clipPath id={`${gid}-oct`}>
+          <path d={octagon(0)} />
+        </clipPath>
+      </FrameDefs>
+
+      <g clipPath={`url(#${gid}-oct)`}>
+        {/* El rebaje oscuro de todo el filete, igual que en SEAM: la luz sale
+            de dentro y no flota sobre el arte. */}
+        <Ring from={ORLA_RING.outer[0]} to={ORLA_RING.lip[1]} fill="var(--m-edge)" />
+
+        <Ring from={0.4} to={ORLA_RING.outer[0]} fill="var(--m-edge)" />
+        <Ring from={ORLA_RING.outer[0]} to={ORLA_RING.outer[1]} fill={metal} />
+        <Ring from={ORLA_RING.inner[0]} to={ORLA_RING.inner[1]} fill={metal} />
+        <Ring from={ORLA_RING.lip[0]} to={ORLA_RING.lip[1]} fill="var(--m-edge)" opacity={0.9} />
+
+        <g filter={`url(#${gid}-bloom)`} opacity={0.4}>
+          <Ring from={ORLA_RING.channel[0] - 0.6} to={ORLA_RING.channel[1] + 0.6} fill="var(--seam)" />
+        </g>
+        <Ring from={ORLA_RING.channel[0]} to={ORLA_RING.channel[1]} fill="var(--seam)" opacity={0.55} />
+        <Ring from={2.6} to={4.6} fill="var(--seam-hi)" opacity={0.8} />
 
         <Glints gid={gid} />
       </g>

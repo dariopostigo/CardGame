@@ -68,20 +68,29 @@ const GROUPS = DOCS_VERSIONS.flatMap((version) =>
 // mientras docs/v3/cards/ no tenga su primera tabla.
 //
 // El día que se mueva a "v3" hay que mover tres cosas a la vez: esta
-// constante, CARDS_ROOT, y la carpeta de la ruta (app/docs/v2/cards/design/ →
-// app/docs/v3/cards/design/).
+// constante, CARDS_ROOT y la carpeta de la ruta — cuyo destino cambió el
+// 25-ago-2026, cuando se eligió el marco (J · Orla): ya no es
+// app/docs/v3/cards/design/ (esa ruta es de CardSketchLab, el archivo de
+// bocetos, que se queda tal cual y no se funde con nada), es
+// app/docs/v3/cards/deck/ (CardDeck, más abajo).
 const DESIGN_LAB_VERSION: DocsVersion = "v2";
 const DESIGN_LAB_GROUP = `${DESIGN_LAB_VERSION}-cards`;
 
-// Bocetos de marco de V3 (app/docs/v3/cards/design/). Página propia y no la
-// misma de arriba: aquella pinta el catálogo real de v2 con un marco YA
-// decidido, y esta pinta sujetos de muestra escritos a mano
-// (components/design/v3/sample.ts) con cuatro bocetos POR decidir.
+// Bocetos y baraja de V3 (app/docs/v3/cards/design/ y .../deck/). Dos páginas
+// propias, ninguna la de arriba: aquella pinta el catálogo real de v2 con un
+// marco YA decidido; estas pintan sujetos escritos a mano
+// (components/design/v3/sample.ts), no un catálogo leído del disco.
 //
-// Cuando uno de los cuatro gane, las dos se funden en una: esta se queda con el
-// marco elegido y hereda el catálogo, y entonces la constante de arriba pasa a
-// "v3" con sus tres mudanzas. Hasta ese día conviven, así que el push de abajo
-// se guarda de que no se dupliquen si las dos versiones coincidieran.
+// El marco ya se decidió —J · Orla, 25 de agosto de 2026, tras nueve bocetos—
+// pero el CATÁLOGO de v3 sigue sin escribir (docs/v3/cards/ no tiene tabla), y
+// son dos ejes distintos: uno es qué pinta la carta, el otro qué números
+// lleva. Por eso las dos páginas conviven en vez de fundirse en una:
+// "Diseño de cartas" sigue comparando bocetos por si algún día hay que abrir
+// la pregunta del marco otra vez, y "Diseño baraja" pinta YA el marco elegido,
+// pero sobre sujetos de muestra y no sobre catálogo. El día que
+// docs/v3/cards/ tenga su primera tabla, "Diseño baraja" hereda el catálogo
+// real y la constante de arriba pasa a "v3" con sus tres mudanzas — "Diseño de
+// cartas" no se funde con nada, se queda como el archivo de la comparación.
 const SKETCH_LAB_GROUP = "v3-cards";
 
 // Metadatos por documento (etiqueta corta + icono + orden dentro del grupo).
@@ -210,6 +219,18 @@ export const getNavTree = cache((version?: DocsVersion): NavGroup[] => {
         label: "Diseño",
         icon: "pi pi-palette",
         href: `/docs/${DESIGN_LAB_VERSION}/cards/design`,
+      });
+    }
+    // Diseño baraja va ANTES que Diseño de cartas en el push, no por orden
+    // alfabético ni de creación: es el marco ya elegido (J · Orla, 25-ago-2026)
+    // sobre el roster real, y el otro es el laboratorio de comparación que lo
+    // eligió — que se queda para experimentar, pero deja de ser lo primero que
+    // se mira.
+    if (g.key === SKETCH_LAB_GROUP) {
+      items.push({
+        label: "Diseño baraja",
+        icon: "pi pi-images",
+        href: "/docs/v3/cards/deck",
       });
     }
     if (g.key === SKETCH_LAB_GROUP && SKETCH_LAB_GROUP !== DESIGN_LAB_GROUP) {

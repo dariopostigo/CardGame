@@ -29,6 +29,16 @@
 // saber cuál de las dos es la que gusta. Con la H hay tres de las cuatro celdas
 // y las dos preguntas quedan separadas.
 //
+// La I · Retablo cruza la H con una carta de Magic: The Gathering por dentro
+// —mete la ilustración en una ventana— y la J · Orla la cruza con Magic por
+// fuera: un borde negro macizo rodeando la H (knowledge/v3/card-concept/
+// README.md, §Mezcla J). La primera versión de la J envolvía a RecintoCard sin
+// tocarla; se corrigió el mismo día, porque el filete de la H —cantoneras,
+// roblones, 15px de banda— está pensado para ser el CANTO de la carta, y
+// dentro de un borde negro deja de serlo. OrlaCard clona el árbol de la H
+// pieza por pieza (mismo disco, mismo estandarte, misma fila de ocho) pero con
+// su propio marco, OrlaFrame: más fino y sin herrajes.
+//
 // Reparto con el SCSS, el mismo de card-frames.tsx: aquí va la ESTRUCTURA (qué
 // piezas hay y en qué orden), en styles/components/card-sketch/ va todo lo
 // demás. Aquí no se calcula ni una posición.
@@ -41,9 +51,9 @@
 // =========================================================================
 
 import { DAMAGE, LONG_NAME, rankOf, SKILLS, type SkillKey, type Subject } from "./sample";
-import { EstandarteFrame, ForjaFrame } from "./sketch-frames";
+import { EstandarteFrame, ForjaFrame, OrlaFrame } from "./sketch-frames";
 
-export type SketchId = "forja" | "estandarte" | "recinto" | "retablo";
+export type SketchId = "forja" | "estandarte" | "recinto" | "retablo" | "orla";
 
 /** Ficha de cada boceto: de aquí comen las pestañas y las notas del lab. */
 export const SKETCHES: readonly {
@@ -88,6 +98,12 @@ export const SKETCHES: readonly {
     label: "I · Retablo",
     source: "La H · Recinto cruzada con una carta de Magic: The Gathering",
     bet: "Contradice lo único que los ocho bocetos anteriores nunca discutieron: que la carta ES su ilustración. Aquí la carta es una PÁGINA de franjas apiladas y el arte va METIDO EN UNA VENTANA, hundida y enmarcada, sin un solo dato encima. De la referencia (imgs/magic-the-gathering-fading-hope-mid.webp) se queda la anatomía entera: barra de título con el rótulo solo y el Tier en el bisel donde va el coste de maná; ventana de arte; línea de tipo que ESCRIBE «Unidad — Humanos» y remata con un sello de Rareza de 12px —en Magic el símbolo de colección es literalmente lo que dice la rareza, por color—; y una caja de datos sobre VITELA, el primer sitio claro de una carta de V3, con los ocho números arriba y las Características debajo del filete que la referencia usa para separar su texto de ambientación. De la H se queda el octógono con su roblón, el filete de metal con la veta, la aleación única y las ocho Habilidades juntas en una fila. Tres cosas contesta que ningún otro podía: si la ilustración puede dejar de cargar con los datos —el panel de la H le corta las piernas al Miliciano y eso no tiene arreglo mientras el arte sea el fondo—, si la carta aguanta un bloque de papel dentro (y qué le pasa a un 💀 o un 🧊 sobre vitela), y si la Rareza necesita ser una pieza tallada o le basta un glifo en un renglón. El precio está medido: la ventana se queda con el 52% del interior, así que una fuente vertical 5:7 pierde ~38% del alto — pero las tres ilustraciones apaisadas que hoy están mal solo perderían el 18% del ancho, o sea que si gana este boceto la norma de encuadre cambia de signo. Y la tensión que la mezcla no resuelve: Magic TAMBIÉN saca fuerza y resistencia del grupo, en su ficha de esquina, así que las dos referencias votan lo contrario que la H en la jerarquía de los ocho.",
+  },
+  {
+    id: "orla",
+    label: "J · Orla",
+    source: "La H · Recinto detrás del borde negro de una carta de Magic: The Gathering",
+    bet: "Cruza la H con la misma referencia que la I (imgs/magic-the-gathering-fading-hope-mid.webp), pero por el otro extremo: no la anatomía de franjas, el BORDE. La carta deja de ser un octógono físico y vuelve a ser un rectángulo redondeado, como la E —ya no hace falta troquel, se corta recta—, y detrás de un mat negro macizo vive la H adaptada, no calcada: mismo octógono, misma veta encendida de Rareza, mismo disco de Tier metido en la esquina, misma fila de ocho juntas, pero con un ANILLO propio (OrlaFrame) mucho más fino que el de la G/H y sin un solo herraje. Las cantoneras y los roblones decían «esto es blindaje atornillado al canto de la carta» — un mensaje que tenía sentido mientras el octógono ERA el canto; aquí ya no lo es, vive dentro de un borde negro, y una ficha remachada sobre otro borde deja de leerse como blindaje y pasa a leerse como ruido. El octógono se sigue leyendo —lo traza el CONTRASTE entre el negro del mat y el metal encendido de dentro, no un recorte físico—, así que la objeción de imprenta que arrastran la F, la G y la H desde que el troquel entró en la página deja de tener con qué discutir: no hace falta troquel donde no hay nada que cortar, exactamente la solución que Magic usa desde 1993 para absorber el desalineado. Y de regalo, un efecto que ningún boceto anterior tenía dónde enseñar: el resplandor de la Rareza, que en la H se perdía contra el fondo de la página, aquí se derrama sobre el negro del propio marco. El precio sigue siendo nuevo entre los nueve bocetos —la carta CRECE, aunque ahora bastante menos que en la primera versión—, porque el borde se suma por fuera en vez de restarle sitio a la H de dentro.",
   },
 ];
 
@@ -569,11 +585,83 @@ function RetabloCard({ subject }: { subject: Subject }) {
   );
 }
 
+// --- J · Orla ---------------------------------------------------------------
+// Cruza la H con Magic por el otro extremo de lo que cruzó la I: no la
+// anatomía de franjas, el BORDE. La carta vuelve a ser un rectángulo
+// redondeado —ya no hace falta troquel, se corta recta— y detrás de un mat
+// negro macizo (styles/components/card-sketch/_orla.scss) vive la H, adaptada
+// y no calcada.
+//
+// La primera versión de este componente envolvía a <RecintoCard> sin tocarle
+// una prop, con el argumento de que «la H entera, sin tocar un píxel» era la
+// apuesta del boceto. Se corrigió el mismo día: el filete de la H —cantoneras,
+// roblones, 15px de banda— está dibujado para ser el CANTO de la carta, la
+// pieza que dice «esto es blindaje atornillado al borde». Metido dentro de un
+// borde negro deja de serlo, y una ficha remachada montada sobre otro borde no
+// se lee como blindaje, se lee como ruido. Por eso este componente SÍ tiene
+// cuerpo propio: clona el árbol de <RecintoCard> pieza por pieza —mismo Art,
+// mismo raíl, mismo gema, mismo estandarte, mismo disco, misma placa con la
+// fila de ocho— pero con <OrlaFrame /> en vez de <EstandarteFrame />: el
+// mismo octógono, la misma idea de una veta que dice la Rareza, con un anillo
+// mucho más fino y sin un solo herraje (ver sketch-frames.tsx).
+//
+// No lleva `derives` en su ficha de SKETCHES aunque ADAPTA la H: `derives`
+// apila las clases de dos generaciones en el MISMO elemento (así hereda la H
+// el marco de la G sin escribirlo dos veces), y aquí las clases de la H
+// (.sketch--estandarte.sketch--recinto) tienen que caer en el HIJO —el
+// inlay—, no en el artículo —el mat—, y además se pisan con reglas propias de
+// la J (styles/components/card-sketch/_orla.scss) para el filete más fino. Es
+// herencia real, solo que de un nivel del árbol para abajo y con overrides
+// encima, así que el mecanismo genérico de SketchCard no encaja y se escribe
+// a mano aquí.
+//
+// data-rarity se repite en el inlay porque octagon-shell
+// (styles/tools/_mixins.scss) elige la veta con un selector de atributo
+// sobre el MISMO elemento que lleva la clase; sin el atributo aquí, la
+// selección no encuentra pareja y la carta se queda con la veta común.
+function OrlaCard({ subject }: { subject: Subject }) {
+  return (
+    <div className="sketch__inlay sketch--estandarte sketch--recinto" data-rarity={subject.rarity}>
+      <Art subject={subject} />
+      <OrlaFrame />
+      <Rail subject={subject} />
+
+      <span className="sketch__gem" title={`Rareza: ${subject.rarity}`} />
+
+      <span className="sketch__banner" title={`Raza: ${subject.race}`}>
+        <b className="sketch__banner-icon">{subject.raceIcon}</b>
+      </span>
+
+      <span className="sketch__disc" title={rankOf(subject)}>
+        <b className="sketch__disc-value">{subject.tier ?? "👑"}</b>
+      </span>
+
+      <div className="sketch__foot">
+        <Plate
+          subject={subject}
+          className="sketch__plate sketch__plate--panel"
+          after={
+            <>
+              <ul className="sketch__pods">
+                {RECINTO_SKILLS.map((k) => (
+                  <Stat key={k} subject={subject} skill={k} base="pod" />
+                ))}
+              </ul>
+              <p className="sketch__type">{subject.race}</p>
+            </>
+          }
+        />
+      </div>
+    </div>
+  );
+}
+
 const SKETCH_CARDS: Record<SketchId, (p: { subject: Subject }) => React.ReactElement> = {
   forja: ForjaCard,
   estandarte: EstandarteCard,
   recinto: RecintoCard,
   retablo: RetabloCard,
+  orla: OrlaCard,
 };
 
 /**

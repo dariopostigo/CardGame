@@ -28,12 +28,15 @@
 //
 // Hubo cinco bocetos, quedó uno (E · Forja), el 24 de agosto de 2026 entró otro
 // al lado (G · Estandarte), el 25 un tercero derivado de él (H · Recinto, la G
-// con todo dentro del contorno y las ocho juntas) y ese mismo día un cuarto que
+// con todo dentro del contorno y las ocho juntas), ese mismo día un cuarto que
 // no se parece a ninguno (I · Retablo, la H cruzada con una carta de Magic: la
-// carta es una página de franjas y el arte va en una ventana). Lo que aquí se
-// comparte quedó medido contra los cinco, así que sigue siendo el suelo común y
-// no un resto de la E. Lo que solo servía a los otros cuatro —la cenefa de
-// glifos, el subtítulo, el filete de rareza de 3px— se borró con ellos.
+// carta es una página de franjas y el arte va en una ventana) y, ya de noche,
+// un quinto que cruza la misma referencia por el otro lado (J · Orla, la H
+// detrás de un borde negro macizo en vez de dentro de una ventana). Lo que
+// aquí se comparte quedó medido contra los cinco de la primera tanda, así que
+// sigue siendo el suelo común y no un resto de la E. Lo que solo servía a los
+// otros cuatro —la cenefa de glifos, el subtítulo, el filete de rareza de
+// 3px— se borró con ellos.
 //
 // Ojo con lo que se da por común: la G rompe la SILUETA (es un octógono) y con
 // ella el radio, el fondo y el recorte del arte y del pie. Todo eso sigue aquí
@@ -131,7 +134,7 @@
 // La capa donde cae el <svg> de components/design/v3/sketch-frames.tsx. Es la
 // misma para los dos marcos —encima de todo y sin capturar el puntero—; lo que
 // cambia de un boceto a otro es lo que el SVG dibuja dentro, no dónde se pone.
-// Dos marcos y cuatro bocetos: la H y la I usan el de la G tal cual, porque las
+// Dos marcos y cinco bocetos: la H, la I y la J usan el de la G tal cual, porque las
 // dos discuten dónde caen las piezas y no qué forma tiene la carta.
 .sketch__frame {
   position: absolute;
@@ -247,25 +250,9 @@
 }
 
 // --- Probeta de aleación (TEMPORAL) --------------------------------------
-// El metal de la carta sale de UN color ($card-sketch "alloy"), así que
-// probarlo es sustituir ese color y nada más: armor-vars() (tools/_mixins.scss)
-// vuelve a sacar la luz, la sombra y el filo de la nueva base y el marco entero
-// se reconstruye solo. Por eso la probeta cabe en un @each de tres líneas.
-//
-// Vive AQUÍ, en el esqueleto, y no en el parcial de un boceto: la piden los
-// tres —E, G y H usan la misma aleación— y lo que se elige es el material de la
-// carta, no el de un boceto. Estuvo en _forja.scss mientras hubo uno solo.
-//
-// El data-alloy va en el CONTENEDOR del lab y no en cada carta, por lo mismo: lo
-// que se elige es el material de todas. La regla gana a la del boceto por
-// especificidad (dos selectores contra uno), que es justo lo que se quiere
-// mientras haya un valor puesto.
-//
-// Se borra entera cuando se decida, junto con $sketch-alloy
-// (styles/settings/_colors.scss) y el selector del lab
-// (components/design/v3/CardSketchLab.tsx).
-@each $name, $base in $sketch-alloy {
-  [data-alloy="#{$name}"] .sketch {
-    @include armor-vars($base);
-  }
-}
+// Vivió aquí como un @each de tres líneas hasta que la J · Orla demostró que
+// "aquí" era el sitio equivocado: la regla se mudó a
+// card-sketch/_alloy-probe.scss y se carga la ÚLTIMA de todo
+// styles/components/_index.scss. El porqué está escrito allí — en corto, es
+// una pelea de especificidad que esta hoja, cargada ANTES que los parciales de
+// boceto, no podía ganar contra la J.

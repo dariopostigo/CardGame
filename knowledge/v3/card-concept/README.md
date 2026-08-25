@@ -63,12 +63,17 @@ Y tiene que aguantar los dos extremos de
 
 ## Dónde se ven dibujados
 
-En la wiki, en **Cartas › Diseño de cartas** (`/docs/v3/cards/design`). El
-código está en `components/design/v3/` y sus estilos en
+En la wiki hay dos páginas, y no una. **Cartas › Diseño baraja**
+(`/docs/v3/cards/deck`) pinta el marco YA elegido —J · Orla— sobre el roster
+real del juego, raza por raza: hoy solo 👤 Humanos, la única con números de
+Habilidades escritos (inventados, pero con forma real). **Cartas › Diseño de
+cartas** (`/docs/v3/cards/design`) es donde se compararon los nueve bocetos y
+se sigue pudiendo experimentar si algún día hace falta volver a abrir la
+pregunta. El código está en `components/design/v3/` y sus estilos en
 `styles/components/card-sketch/`.
 
-> **Hay CUATRO bocetos dibujados: la mezcla E · Forja, la mezcla G · Estandarte,
-> el derivado H · Recinto y la mezcla I · Retablo.**
+> **Hay CINCO bocetos dibujados: la mezcla E · Forja, la mezcla G · Estandarte,
+> el derivado H · Recinto, la mezcla I · Retablo y la mezcla J · Orla.**
 > De la primera tanda hubo cinco —uno por cada concepto de abajo, más las dos
 > mezclas— y el 22 de agosto de 2026 se borraron los cuatro anteriores del
 > código, con sus parciales y sus piezas. **Este documento no se borra con
@@ -99,12 +104,34 @@ código está en `components/design/v3/` y sus estilos en
 > y el arte va metido en una **ventana** que no lleva ni un dato encima. Ver
 > §"Concepto Magic" y §"Mezcla I" abajo.
 >
+> Y esa misma noche, para no dejar la tercera tanda coja por un solo lado, la
+> **J** cruza la H con Magic por el extremo contrario al de la I: no la
+> anatomía de franjas, el **borde**. La carta deja el octógono físico y vuelve
+> a ser un rectángulo redondeado —ya no hace falta troquel—, y detrás de un
+> **mat negro** vive una H adaptada, no calcada: mismo octógono, mismo concepto
+> de veta, pero con un anillo propio, más fino y sin herrajes —la primera
+> versión sí la dejaba tal cual, y se corrigió el mismo día, porque un anillo
+> con cantoneras remachadas solo tiene sentido de blindaje mientras ES el canto
+> de la carta—. El octógono se sigue leyendo, pero lo traza el contraste entre
+> el negro y el metal encendido, no un recorte. Ver §"Mezcla J" abajo.
+>
 > Lo que queda enfrentado en la página es *rectángulo contra octógono*, *veta
 > partida en cuatro tramos contra aro continuo*, *ocho iguales contra dos y seis*,
-> *piezas que desbordan el contorno contra piezas que caben dentro* y —lo nuevo y
-> lo más gordo— *arte a sangre contra arte en ventana*. Lo que ya **no** se puede
-> mirar —*encendido contra acuñado*, que era la discusión de la F— está solo
-> escrito.
+> *piezas que desbordan el contorno contra piezas que caben dentro*, *arte a
+> sangre contra arte en ventana* y —la más reciente— *silueta cortada de verdad
+> contra silueta solo pintada*. Lo que ya **no** se puede mirar —*encendido
+> contra acuñado*, que era la discusión de la F— está solo escrito.
+>
+> **Y quedó elegida: J · Orla es el diseño final de la carta.** *(25 de agosto
+> de 2026.)* Las preguntas de arriba ya no están abiertas: J hereda las
+> respuestas de la H sin discutir ninguna otra vez —octógono con las ocho
+> juntas, Rareza en la veta, disco dentro del contorno— y contesta por su
+> cuenta la única que ni la H tenía sobre la mesa, si la carta es un
+> rectángulo, diciendo que sí, pero cortado a la vista y no a la fábrica.
+> Se ve construida sobre el roster real, raza por raza, en **Cartas › Diseño
+> baraja** (`/docs/v3/cards/deck`). Esta página, con sus otros ocho bocetos y
+> la comparación entera, se queda tal cual: deja de bloquear nada, pero sigue
+> siendo el sitio donde mirar si algún día hay que reabrir la pregunta.
 
 **Los sujetos son la plantilla real de la raza piloto**, no una selección: las
 **ocho unidades de 👤 Humanos** en su orden de progresión (tier 1 → 8) y sus
@@ -1064,6 +1091,147 @@ idéntico** al de antes de la extracción. Es el mismo criterio que se aplicó
 cuando la F y la G convivían, y el contrario del de la H — que sí es una copia y
 por eso hereda pisando.
 
+## Mezcla J — Orla (la H · Recinto detrás del borde negro de Magic)
+
+*(25 de agosto de 2026, ya de noche.)* La I cruza la H con Magic por dentro —le
+roba la anatomía de franjas—; la J la cruza por el extremo contrario: le roba
+el **borde**. Y el borde era, hasta esta noche, la única pieza de la referencia
+que el propio concepto había dado por intransportable:
+
+> «El borde negro. Es una solución de imprenta para una carta que se corta
+> recta, y V3 lleva desde la F con una silueta que necesita troquel.»
+> — §"Concepto Magic", "Lo que no se puede traer"
+
+La J no le lleva la contraria a esa frase: le cambia la pregunta. Si el
+octógono se **pinta** en vez de recortarse, el troquel deja de hacer falta
+donde no hay nada que cortar.
+
+**La idea, en una frase.** La carta deja el octógono físico y vuelve a ser un
+**rectángulo redondeado**, como la E. Detrás de un **mat negro** vive la H —
+adaptada a su nuevo sitio, no calcada en él—: mismo octógono, misma idea de
+veta encendida de Rareza, mismo disco de Tier metido en la esquina desde que
+la H lo bajó del chaflán, misma fila de ocho juntas, pero con un **anillo
+propio**, más fino que el de la G/H y sin herrajes. El octógono se sigue
+leyendo — lo traza el **contraste** entre el negro del mat y el metal
+encendido de dentro, no un recorte físico.
+
+> **La primera versión se pasó de fiel, y se corrigió el mismo día.** «La H
+> entera, sin tocar un píxel» sonaba a principio de método y era, mirado con
+> las cartas delante, pereza disfrazada de rigor: se reutilizaba el filete de
+> la G y la H —15px de banda, cantoneras, un roblón por chaflán— *porque ya
+> estaba dibujado*, no porque siguiera contando la misma historia. Una
+> cantonera remachada dice «esto es una pieza de blindaje atornillada al canto
+> de la carta», y ese mensaje se sostiene solo mientras el octógono ES el
+> canto. En cuanto el octógono pasa a vivir dentro de un borde negro, deja de
+> serlo — y una ficha remachada montada sobre OTRO borde no se lee como
+> blindaje, se lee como ruido: dos vocabularios de «esto es el borde»
+> compitiendo en la misma carta. Y el mat pagaba la misma factura por otro
+> lado: copiaba el grosor de un filete que ya no estaba, así que 15px de negro
+> más 15px de metal sumaban 30px de moldura antes de que el arte empezara —un
+> 18% del ancho de la carta entre las dos manos— y hasta su margen más fino se
+> veía grueso. La corrección no es un ajuste de medidas, es soltar la premisa:
+> lo único que de verdad valía la pena llevarse de la G y la H no era el
+> herraje, era la IDEA —un canal de luz entre dos raíles de metal que dice la
+> Rareza sin escribirla—, así que eso es lo único que se hereda ahora. El
+> resto se dibujó de nuevo: `OrlaFrame`
+> (`components/design/v3/sketch-frames.tsx`), con su propio `$orla-ring`
+> (`styles/components/card-sketch/_orla.scss`) en vez del `$sketch-band` de
+> siempre, sin cantoneras ni roblones, y un mat que se adelgaza CON el anillo
+> y no por su cuenta.
+
+**1. La carta sigue creciendo, pero bastante menos.** Había dos formas de
+meter un borde alrededor de la H sin tocar su composición: encoger la H hacia
+dentro para dejarle sitio al borde, o sumar el borde por fuera y dejar la
+composición tal cual. La primera exige recalibrar toda la geometría que la H
+ya tenía medida a mano —el disco, el chaflán, el ancho de columna de la fila
+de ocho—; la segunda no toca esos números, solo la banda que los rodea. La J
+sigue eligiendo la segunda vía, con el anillo nuevo: la carta pasa de 300×420
+a **316×436** —contra los 330×450 de la primera versión—, un `.sketch__inlay`
+de exactamente `$sketch-width`×`$sketch-height` metido `$orla-ring` hacia
+dentro de un mat del mismo grosor. Es la diferencia entre una carta que se
+achica para dejar sitio a un marco y una lámina que se enmarca sin tocarla —
+un passe-partout, no un margen robado. El precio sigue siendo nuevo entre los
+nueve bocetos: **ninguno de los otros ocho cambia de tamaño**, y este sí. Si
+eso vale para producción, o si el borde tiene que restarse de los 300×420
+fijos en vez de sumarse, es justo lo que este boceto deja pendiente.
+
+**2. Las esquinas no se rellenan: se heredan solas.** No hace falta pintar los
+cuatro triángulos entre el rectángulo y el octógono a mano. `.sketch--estandarte`
+ya pone `background: transparent` en el elemento que dibuja el octógono —es lo
+que le permite a la H enseñar el arte a través de sus propias esquinas
+cortadas—, así que basta con que ESE elemento (`.sketch__inlay`) viva encima de
+un fondo negro para que las esquinas lean negro. El mat no rellena nada: es lo
+que ya había detrás.
+
+**3. La composición de la H se hereda; el filete, no.** `.sketch__inlay` sigue
+llevando las dos clases de la H (`.sketch--estandarte.sketch--recinto`) para
+heredar dónde cae el disco, dónde el estandarte, que las ocho van en una fila,
+cómo se pinta la placa — nada de eso cambia, y ni una regla de
+`_estandarte.scss` ni de `_recinto.scss` se toca para conseguirlo. Lo que sí
+es propio de este boceto: `OrlaCard` (`components/design/v3/sketch-cards.tsx`)
+ya no envuelve a `<RecintoCard>` como una caja opaca — clona su árbol pieza
+por pieza y sustituye `<EstandarteFrame />` por `<OrlaFrame />`, y
+`_orla.scss` pisa después, con mayor especificidad, todo lo que en la G y la H
+se medía a partir de `$sketch-band` (el inset del disco, dónde cuelga el
+estandarte, el raíl, el acolchado del panel) para que siga al anillo nuevo
+en vez del viejo. Es herencia real —la J adapta a la H, no la calca—, solo que
+de un nivel del árbol hacia abajo y con overrides encima, así que no usa el
+campo `derives` de `SKETCHES`, que apila las clases de dos generaciones en el
+MISMO elemento y aquí no alcanza.
+
+**4. El resplandor de la Rareza, que antes se perdía, encuentra dónde caer.**
+`octagon-shell` ya pintaba un `drop-shadow(var(--rarity-soft))` alrededor de
+toda la H — es lo que hace que el Dragón dorado brille un poco más que el
+Miliciano en la G y en la H de hoy. Contra el fondo oscuro de la página del
+lab, ese resplandor se diluye; contra el **negro sólido del mat**, que está a
+un puñado de píxeles y no a un océano de distancia, el color se ve arder de
+verdad. Es un efecto que nadie pidió y que ningún boceto anterior tenía dónde
+enseñar: el tier se reconoce por el halo antes de leer el disco.
+
+**Lo que se descubre al montarlo:**
+
+- **Un herraje solo significa algo en su sitio.** Es el hallazgo que motivó la
+  corrección: las cantoneras y los roblones de la G y la H no son adorno
+  neutro que se pueda llevar a cualquier parte, son una frase —«esto es
+  blindaje atornillado al canto»— que solo tiene sujeto mientras el octógono
+  es el canto de verdad. Copiarlos a un sitio donde ya no lo es no es
+  reutilizar una pieza, es dejar una frase sin sujeto en medio de la carta.
+- **El anillo y el mat tienen que adelgazarse JUNTOS, no por turnos.** El
+  primer intento de corrección fue tocar solo el mat y dejar el filete de la H
+  como estaba; se veía peor, no mejor — un borde fino pegado a un anillo grueso
+  lee como un error de montaje, dos piezas que no se diseñaron para la misma
+  carta. El mat de la J es, a propósito, del mismo grosor que `$orla-ring` y
+  no de una medida propia.
+- **La probeta de aleación necesitaba un segundo nombre.** El selector de
+  material (`components/design/v3/CardSketchLab.tsx`) movía `--m` con un
+  selector `[data-alloy="…"] .sketch`, y `.sketch__inlay` no lleva la clase
+  `.sketch` — es un elemento nuevo, a propósito, para no arrastrar el
+  `width`/`height` fijo de la carta base. Sin nombrarlo, la probeta habría
+  movido el mat de fuera (que no lee `--m` para nada: es `card-sketch("void")`
+  fijo) y el aro de dentro se habría quedado siempre en la aleación por
+  defecto. Se arregla añadiendo `.sketch__inlay` a la misma regla
+  (`styles/components/_card-sketch.scss`), con la misma especificidad que ya
+  tenía `.sketch`.
+- **`data-rarity` se tiene que repetir en el hijo.** `octagon-shell` elige la
+  veta con `&[data-rarity="…"]` — un selector de atributo sobre el MISMO
+  elemento que la clase, resuelto en tiempo de compilación de Sass y no por la
+  custom property `--rarity` heredada. Sin el atributo en `.sketch__inlay`, la
+  selección no encuentra pareja y la carta se queda con la veta común pase lo
+  que pase con la Rareza real.
+- **El borde negro nunca cambia con la aleación, y es a propósito.** En Magic
+  el borde es negro sin importar el color de maná de la carta; aquí el mat es
+  `card-sketch("void")` fijo, ajeno por completo a `--m`. Es la comparación
+  que sí es propia de este boceto: un anillo que cambia de metal contra un
+  borde que no cambia nunca, la misma jerarquía de Magic entre «el marco es
+  del color de la carta» y «el borde es siempre negro».
+- **El precio de imprenta que se paga es otro, no el que se resuelve.** La J
+  contesta la mitad de la objeción que la F dejó abierta —el troquel—, pero
+  abre una nueva: una carta más grande que el resto del catálogo. Más pequeña
+  que en la primera versión, pero sigue siendo la única de las nueve que no
+  mide 300×420. Ninguno de los otros ocho bocetos toca el tamaño de la carta;
+  este es el primero, y conviene que quede escrito como una decisión y no como
+  un efecto colateral que nadie miró.
+
 ## Lo que esto cambia de lo ya escrito
 
 **El lienzo heredado de v2 era el equivocado, y ya está corregido.** La
@@ -1096,10 +1264,18 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 > ilustraciones apaisadas no se regeneran hasta que el marco esté elegido**: sería
 > tirar trabajo en la mitad de los desenlaces.
 
-## Qué falta decidir
+## Qué falta decidir (cerrado: J · Orla, 25-ago-2026)
 
-> Los puntos de abajo son los que se contestan en `/docs/v3/cards/design`, con
-> los bocetos delante.
+> **Todas las preguntas de aquí abajo están contestadas.** Se eligió
+> **J · Orla** como diseño final, y J hereda las respuestas de la H —el
+> octógono con las ocho juntas, la Rareza en la veta, el disco dentro del
+> contorno, la raza dicha dos veces— sin volver a discutir ninguna; lo único
+> que responde por su cuenta es la que ni la H tenía sobre la mesa, si la
+> carta es un rectángulo, y dice que sí, pero cortado a la vista y no a la
+> fábrica (§"Mezcla J"). La lista se queda entera, sin tocar una línea: es el
+> registro de CÓMO se llegó ahí, con los bocetos delante en
+> `/docs/v3/cards/design`, que sigue viva para el día que haga falta volver a
+> abrir alguna.
 
 - **Si la carta es un rectángulo.** *(Abierto desde el 24-ago-2026.)* Los cinco
   primeros bocetos no lo preguntaron: los cinco son la misma caja redondeada con
@@ -1111,6 +1287,19 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   esquina en vez de caber dentro, y si algún día se imprime es un troquel y no un
   corte recto. Es la decisión más barata de tomar mirando y la más cara de
   cambiar después.
+
+  Y la **J** añade un tercer término que la pregunta no tenía: ni redondeado
+  sin más (E) ni cortado de verdad (G, H), sino cortado **solo a la vista**. La
+  carta vuelve a cortarse recta —un rectángulo, como la E— y el octógono se
+  sigue leyendo por el contraste entre un mat negro y el metal encendido de una
+  H adaptada, no calcada, que vive detrás: mismo octógono, mismo disco, mismo
+  concepto de veta, pero con un anillo propio —sin cantoneras ni roblones— y
+  bastante más fino que el filete de la G/H. Resuelve la mitad de imprenta de
+  esta pregunta —no hace falta troquel donde no hay nada que cortar— pero abre
+  una factura que ningún otro boceto tenía: la carta crece (300×420 pasan a
+  316×436) porque el borde se suma por fuera en vez de restarle sitio a la H.
+  Ver §"Mezcla J" para el porqué —incluida la primera versión, que sí dejaba
+  la H sin tocar y por eso se veía sobrecargada— y para lo que deja pendiente.
 - **Cuál de los esqueletos se toma de base**, o qué híbrido: el candidato
   obvio es *proporción y paleta de B + tira de ocho de A + subtítulo y ausencia
   de texto de C*. La mezcla D va por otro lado —deja C intacto y le cambia la

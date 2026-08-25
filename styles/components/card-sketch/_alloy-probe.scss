@@ -1,0 +1,67 @@
+@use "../../abstracts" as *;
+
+// =========================================================================
+// Probeta de aleación (TEMPORAL)
+//
+// El metal de la carta sale de UN color ($card-sketch "alloy"), así que
+// probarlo es sustituir ese color y nada más: armor-vars() (tools/_mixins.scss)
+// vuelve a sacar la luz, la sombra y el filo de la nueva base y el marco entero
+// se reconstruye solo. Por eso la probeta cabe en un @each de tres líneas.
+//
+// Vive en su PROPIO parcial y no dentro de card-sketch/_card-sketch.scss,
+// donde nació: la piden los cinco —E, G, H, I y J usan la misma aleación— y
+// lo que se elige es el material de la carta, no el de un boceto, así que en
+// principio bastaba con el esqueleto común. Bastó para cuatro. Estuvo en
+// _forja.scss mientras hubo uno solo.
+//
+// EL PORQUÉ DEL PARCIAL PROPIO, Y DE IR EL ÚLTIMO. La J · Orla es la que
+// obligó a moverlo, el 25 de agosto de 2026: era el único boceto que no
+// respondía al selector de abajo, y no por faltarle una rama del selector
+// —.sketch__inlay ya estaba nombrado— sino por una pelea de especificidad que
+// esa rama no podía ganar. .sketch--orla .sketch__inlay
+// (card-sketch/_orla.scss) llama a octagon-shell($ring: $orla-ring), que por
+// dentro fija SU PROPIA aleación —armor-vars(card-sketch("alloy")), la fija,
+// no la elegida— sobre ese mismo selector de DOS clases. La rama de la
+// probeta para .sketch__inlay es [data-alloy] .sketch__inlay: un atributo más
+// una clase, la MISMA especificidad que dos clases. Empatadas, gana quien
+// carga más tarde — y card-sketch/_card-sketch.scss, el esqueleto, carga
+// ANTES que card-sketch/orla en styles/components/_index.scss porque así
+// tiene que ser: un boceto necesita poder pisar al esqueleto. La probeta
+// quedó del lado que pierde el empate sin que nadie lo hubiera decidido así.
+//
+// Para el resto de bocetos el empate no existía: octagon-shell se llama sobre
+// .sketch--estandarte o .sketch--recinto —una sola clase—, así que la rama
+// [data-alloy] .sketch (atributo + clase) la ganaba siempre por especificidad
+// y no le debía nada al orden de carga. La J es la única que mete su copia de
+// la G un nivel del árbol más abajo (.sketch__inlay), y ese nivel es
+// justamente donde vuelve a igualarse la cuenta.
+//
+// La solución no es subir la especificidad del selector —el próximo boceto
+// que envuelva su marco en dos clases volvería a empatar—, es dejar de
+// competir por especificidad: cargando ESTE parcial el último de todos, con
+// el mismo peso de siempre, gana cualquier empate contra CUALQUIER boceto que
+// exista hoy o que se añada mañana. Por eso va después de
+// card-sketch/orla en _index.scss y tiene que seguir siendo el último `@use`
+// de todo el archivo pase lo que pase con el orden de los demás.
+//
+// El data-alloy va en el CONTENEDOR del lab y no en cada carta, por lo mismo: lo
+// que se elige es el material de todas.
+//
+// Y por eso el selector nombra DOS clases y no una. En E, G, H e I el marco
+// vive en el mismo elemento que lleva `.sketch`, así que `.sketch` solo ya
+// bastaba. La J mete su H dentro de `.sketch__inlay` —una caja aparte del
+// artículo, ver card-sketch/_orla.scss—, y ese elemento no lleva `.sketch`:
+// sin nombrarlo aquí, la probeta movería el mat negro de fuera (que no lee
+// --m para nada) y el aro de dentro se quedaría siempre en la aleación fija
+// de octagon-shell.
+//
+// Se borra entero cuando se decida, junto con $sketch-alloy
+// (styles/settings/_colors.scss) y el selector del lab
+// (components/design/v3/CardSketchLab.tsx).
+// =========================================================================
+@each $name, $base in $sketch-alloy {
+  [data-alloy="#{$name}"] .sketch,
+  [data-alloy="#{$name}"] .sketch__inlay {
+    @include armor-vars($base);
+  }
+}

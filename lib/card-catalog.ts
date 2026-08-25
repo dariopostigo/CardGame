@@ -19,7 +19,9 @@ import { cardTablesInDoc, type CardRecord } from "./card-table";
 
 // Sigue apuntando a v2 mientras docs/v3/cards/ no tenga su primera tabla de
 // cartas: así el laboratorio de diseño no se queda vacío durante la migración.
-// Mover a "v3" a la vez que DESIGN_LAB_GROUP en lib/docs.ts.
+// Mover a "v3" a la vez que DESIGN_LAB_GROUP en lib/docs.ts — que desde el
+// 25-ago-2026 (marco elegido: J · Orla) apunta a CardDeck
+// (app/docs/v3/cards/deck/), no a CardSketchLab.
 const CARDS_ROOT = path.join(process.cwd(), "docs", "v2", "cards");
 
 // Orden de los documentos en el catálogo. El resto de .md de docs/cards/ se

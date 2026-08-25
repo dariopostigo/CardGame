@@ -166,11 +166,18 @@
 //     cambia de una carta a otra.
 //   · Y EL BAÑO HACIA DENTRO. La otra mitad de la veta: sin él la luz se lee
 //     como un tubo de neón pegado al borde; con él, lo que hay dentro del marco
-//     queda dentro de un farol. Va a $sketch-band y no a 0 porque pegado al
-//     borde los 15px de filete se comen el desenfoque y solo asoma el tramo
-//     fuerte, cortado en seco — que no se lee como luz sino como un borde. Y va
-//     recortado: la caja es un rectángulo y el hueco que baña es un octógono.
-@mixin octagon-shell {
+//     queda dentro de un farol. Va a $ring y no a 0 porque pegado al borde el
+//     filete se come el desenfoque y solo asoma el tramo fuerte, cortado en
+//     seco — que no se lee como luz sino como un borde. Y va recortado: la
+//     caja es un rectángulo y el hueco que baña es un octógono.
+//
+// $ring es el grosor del filete que hay que librar, y por defecto es
+// $sketch-band —el de la G y la H, que son el filete entero de la carta—.
+// La J · Orla lo llama con su propio $orla-ring, mucho más fino, porque allí
+// el filete ya no es el canto de la carta: vive dentro de un borde negro
+// (styles/components/card-sketch/_orla.scss) y no tiene que absorber su
+// propio desenfoque contando con 15px, tiene los que le quedan.
+@mixin octagon-shell($ring: $sketch-band) {
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -193,9 +200,9 @@
   &::before {
     content: "";
     position: absolute;
-    inset: $sketch-band;
+    inset: $ring;
     z-index: z("art-overlay");
-    clip-path: oct-clip($sketch-band);
+    clip-path: oct-clip($ring);
     box-shadow:
       inset 0 0 42px -10px var(--seam-soft),
       inset 0 0 96px -34px var(--seam-soft);
