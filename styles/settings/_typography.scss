@@ -55,6 +55,14 @@ $card-font: (
 // mismo texto: el G reparte los ocho números en DOS grupos de tamaño distinto
 // —dos en las esquinas y seis en un panel— y titula en versalitas, así que
 // ninguno de sus escalones tiene equivalente en la E.
+//
+// El boceto H no añade ninguno, y eso es una decisión suya y no un descuido: es
+// la G con las ocho juntas, y las dibuja con los escalones "xl" de la E porque
+// su fila reparte una anchura parecida (~30px por columna contra 33). Dibujado
+// igual el par, el TAMAÑO deja de ser una de las diferencias entre las dos
+// cartas, que es lo que se busca: lo que queda enfrentado es la silueta y el
+// orden de lectura de la fila. De la G se queda los de versalitas, disco y
+// estandarte.
 $sketch-font: (
   "name": 1.3rem,
   "name-long": 1.06rem,   // nombres de 14+ caracteres (🐉 Dragón esquelético)
@@ -74,11 +82,20 @@ $sketch-font: (
   // cifras.
   "pod-xl": 1rem,
   "stat-icon-xl": 1.1rem,
-  "medal": 0.92rem,       // glifo de Característica en medallón
+  "medal": 1.08rem,       // glifo de Característica en medallón
   // El emblema dentro del medallón del marco. Grande para lo que es porque un
   // emoji no llena su caja como lo hace un número —trae su propio aire
   // alrededor— y más pequeño se ve como una pegatina en mitad de un disco de
   // 42px.
+  //
+  // Subió de 0.92 a 1.08rem el 25 de agosto de 2026, mirándolo en el lab. Es el
+  // mismo aire de sobra que se le vio al rombo cuando era una cara plana, pero
+  // al revés: la pieza estaba bien de tamaño y era el dibujo de dentro el que se
+  // quedaba corto. Uno solo para la E y la G a propósito —el medallón se dibuja
+  // igual en las dos desde que dejó de ser octógono—, así que no vuelve a ser
+  // una diferencia entre los dos bocetos. El tope lo pone el hueco más
+  // estrecho, que es el de la E: 30px de medallón menos 2 de borde por lado
+  // dejan 26, y ahí un glifo de 17px sigue teniendo aire por los cuatro lados.
   "boss-icon": 1.5rem,
 
   // --- Boceto G · Estandarte ----------------------------------------------
@@ -115,6 +132,12 @@ $sketch-font: (
   // propio aire— pero en una bandera de 28px de ancho, así que va justo por
   // debajo del ancho útil y no puede crecer más.
   "banner-icon": 1.12rem,
+  // Los glifos del raíl, que aquí van DESNUDOS: sin disco detrás, el escalón
+  // compartido "medal" ya no vale porque estaba medido contra el hueco que
+  // dejaba el aro. Sin pieza que lo contenga el tope lo pone la casilla del
+  // raíl —30px— y el glifo puede ocuparla casi entera; a 1.08rem se veía
+  // pequeño no por ser pequeño, sino por estar solo.
+  "medal-bare": 1.4rem,
 );
 
 // Escalones de ajuste: tamaño de cuerpo, interlineado y nº de líneas.

@@ -8,6 +8,11 @@
 // exactamente lo que pasó entre la D y la E: la misma escuadra, una banda
 // maciza en una y dos raíles con luz entre medias en la otra.
 //
+// Dos marcos y TRES bocetos: la H · Recinto usa EstandarteFrame tal cual, sin
+// una línea de diferencia. No es un ahorro, es lo que la hace servir: discute
+// dónde caen las piezas de la G, así que si además le cambiara el contorno
+// habría dos variables en juego y no se podría leer ni una.
+//
 // La G rompe algo que las cinco de la primera tanda daban por hecho: la
 // SILUETA. Deja de ser un rectángulo redondeado y pasa a ser un octógono, así
 // que su marco no puede reutilizar ni Band (rect+rx) ni Brackets (escuadras de

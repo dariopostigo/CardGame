@@ -21,19 +21,29 @@
 // esquina, el rótulo en versalitas— está en la G; lo que discutió sigue
 // analizado en el concepto, que es donde vive el razonamiento.
 //
+// Y de la G salió la H · Recinto, que es el primer boceto DERIVADO: la misma
+// carta con dos cosas cambiadas —todo dentro del contorno, y las ocho
+// Habilidades juntas en vez de dos en las esquinas—. No está para llevarle la
+// contraria a nadie, está para desempatar: la E y la G se diferencian en dos
+// cosas a la vez (silueta y jerarquía), así que puestas al lado no se puede
+// saber cuál de las dos es la que gusta. Con la H hay tres de las cuatro celdas
+// y las dos preguntas quedan separadas.
+//
 // Reparto con el SCSS, el mismo de card-frames.tsx: aquí va la ESTRUCTURA (qué
 // piezas hay y en qué orden), en styles/components/card-sketch/ va todo lo
 // demás. Aquí no se calcula ni una posición.
 //
 // AÑADIR UN BOCETO: un componente aquí, su entrada en SKETCHES (abajo) y su
 // parcial en styles/components/card-sketch/. El Record SKETCH_CARDS es
-// exhaustivo, así que dar de alta un id sin dibujarlo rompe el build.
+// exhaustivo, así que dar de alta un id sin dibujarlo rompe el build. Si el
+// boceto nuevo es una copia de otro con cambios, lleva `derives` en su ficha y
+// su parcial solo escribe las diferencias.
 // =========================================================================
 
 import { DAMAGE, LONG_NAME, rankOf, SKILLS, type SkillKey, type Subject } from "./sample";
 import { EstandarteFrame, ForjaFrame } from "./sketch-frames";
 
-export type SketchId = "forja" | "estandarte";
+export type SketchId = "forja" | "estandarte" | "recinto";
 
 /** Ficha de cada boceto: de aquí comen las pestañas y las notas del lab. */
 export const SKETCHES: readonly {
@@ -43,6 +53,16 @@ export const SKETCHES: readonly {
   source: string;
   /** Su apuesta, en una frase: qué hace distinto de los otros dos. */
   bet: string;
+  /**
+   * De qué boceto es una COPIA, si lo es.
+   *
+   * Un boceto derivado no se dibuja entero: hereda la clase del que le sirve de
+   * base y su parcial solo pisa lo que cambia (styles/components/card-sketch/).
+   * Es la forma honesta de decir «esta carta es aquella con dos cosas
+   * distintas», y de garantizar que lo que no se ha cambiado no se pueda
+   * desviar: si mañana se toca la base, el derivado va detrás.
+   */
+  derives?: SketchId;
 }[] = [
   {
     id: "forja",
@@ -55,6 +75,13 @@ export const SKETCHES: readonly {
     label: "G · Estandarte",
     source: "El octógono de la F · Blasón (borrada) con la luz de la E",
     bet: "Rompe lo único que la primera tanda no discutió, la SILUETA: la carta es un octógono, cuatro esquinas cortadas a 45° con un roblón en cada corte. Eso y la jerarquía de los ocho vienen de la réplica de Might & Magic: Fates —las dos que se consultan en cada intercambio de golpes salen a las esquinas de abajo en pines con forma, ⚔️ Ataque en hoja de acero y ❤️ Vida en gema de sangre, y las otras seis se juntan en UNA fila dentro del panel—, junto con el Tier escrito en número en un disco montado sobre la esquina y el rótulo en versalitas. Pero la Rareza NO va en el canto: vuelve dentro del metal, en la veta encendida de la E, que corre por el canal del filete y derrama su baño sobre la ilustración. Y sin las cantoneras de la E, que allí cortan la veta en las cuatro esquinas: aquí el canal da la vuelta entera y la carta queda rodeada por un aro continuo de ocho lados. El rombo de la Rareza va tallado —engaste de metal, cuatro facetas y tabla— y del disco del Tier cuelga un estandarte con el emblema de la raza: la ficha que la referencia dedica a la facción, que V3 no tiene.",
+  },
+  {
+    id: "recinto",
+    label: "H · Recinto",
+    source: "La G · Estandarte, con todo dentro del contorno",
+    derives: "estandarte",
+    bet: "Es la G con DOS cambios, y existe para separar dos preguntas que la E y la G tenían pegadas. (1) Nada se sale del contorno: el disco del Tier deja de montar sobre el chaflán y se mete en la esquina por dentro del filete, y el estandarte de raza baja con él, así que la bandera ya no tapa el canal de la veta y el aro de ocho lados da la vuelta entero. Se pierde el sello colgado —lo que hacía que el disco pareciera una pieza puesta y no un botón dibujado era justamente que no cabía— y se gana una carta que se puede recortar por su octógono sin cortar un número. (2) Las ocho vuelven a ser una: ⚔️ Ataque y ❤️ Vida dejan las esquinas y vuelven a la fila, con los mismos escalones de letra que la E —así el cuerpo de la cifra deja de ser una diferencia entre las dos cartas— pero abriendo por ⚔️ Ataque y no por ❤️ Vida, al revés que razas.md; y la línea de raza vuelve al flujo del panel porque ya no hay pines que esquivar. El disco del Tier además pierde su aro de oro: era el remate que lo hacía moneda, y una moneda es algo que se cuelga del canto. Con esto hay tres de las cuatro celdas posibles —E: rectángulo y ocho juntas; G: octógono y ocho partidas; H: octógono y ocho juntas—, así que por fin se puede saber si lo que gusta de la G es la silueta o la jerarquía.",
   },
 ];
 
@@ -80,6 +107,23 @@ const PIN_SKILLS: readonly SkillKey[] = ["ataque", "vida"];
 const PANEL_SKILLS: readonly SkillKey[] = SKILLS.map((s) => s.key).filter(
   (k) => !PIN_SKILLS.includes(k),
 );
+
+/**
+ * El orden de los ocho en el boceto H, que junta lo que la G reparte.
+ *
+ * No es el de razas.md —el que usa la E—: **⚔️ Ataque va delante de ❤️ Vida**.
+ * Y no es una lista escrita a mano, son las dos del par de la G seguidas de las
+ * otras seis, así que la fila arranca con las dos que se consultan en cada
+ * intercambio de golpes y en el mismo orden izquierda-derecha que la referencia
+ * les da en las esquinas (hoja de acero primero, gema roja después).
+ *
+ * Cuesta algo y conviene tenerlo escrito: la fila de la H deja de coincidir con
+ * la de la E, que sigue leyendo la Vida primero. Los cuerpos de letra siguen
+ * siendo los mismos, así que entre las dos cartas ya no cambia solo la silueta
+ * —cambia también el orden de lectura—. Si algún día se decide que el orden es
+ * uno para todo el juego, esto se borra y las dos vuelven a SKILLS.
+ */
+const RECINTO_SKILLS: readonly SkillKey[] = [...PIN_SKILLS, ...PANEL_SKILLS];
 
 // --- Piezas compartidas ---------------------------------------------------
 
@@ -222,9 +266,11 @@ function Stat({ subject, skill, base }: { subject: Subject; skill: SkillKey; bas
 // tier es la carta, no cuál. Sin el número, un Miliciano y un Arquero son la
 // misma carta gris.
 //
-// Míralo en los tres héroes: son los únicos sujetos con ilustración definitiva
-// de V3, así que son los que dicen la verdad sobre cómo cae este marco encima
-// del arte de este juego.
+// Míralo en los cuatro héroes y en el 🗡️ Miliciano: son los sujetos con arte
+// propio de V3, así que son los que dicen la verdad sobre cómo cae este marco
+// encima del arte de este juego. Y el Miliciano es ahora la prueba directa de
+// ese precio: es el tier 1 con ilustración, así que la carta gris sin número ya
+// no es una hipótesis.
 function ForjaCard({ subject }: { subject: Subject }) {
   return (
     <>
@@ -362,20 +408,87 @@ function EstandarteCard({ subject }: { subject: Subject }) {
   );
 }
 
+// --- H · Recinto ----------------------------------------------------------
+// La G con dos cambios, y por eso este componente es el de la G con dos líneas
+// menos: mismo marco, mismo orden de piezas, misma placa.
+//
+//   · NO HAY PINES. Las ocho van juntas en la fila del panel, así que el <ul>
+//     de las esquinas desaparece del árbol y los pods pasan de PANEL_SKILLS a
+//     RECINTO_SKILLS: las ocho, pero con ⚔️ Ataque delante de ❤️ Vida y no al
+//     revés como en razas.md, que es el orden que sigue la E.
+//   · EL DISCO Y EL ESTANDARTE ENTRAN. Eso no se ve aquí y es como tiene que
+//     ser: son dos posiciones, y las posiciones las calcula el SCSS. El árbol
+//     no sabe que han cambiado de sitio.
+//
+// Lo que SÍ hay que respetar aquí es el orden de esas dos piezas: el estandarte
+// sigue yendo antes que el disco porque las dos viven en z("chip") y ahí manda
+// el orden del árbol. Metidas dentro del marco el solape es el mismo, así que
+// la razón no ha cambiado ni un pixel.
+//
+// El sujeto que dice la verdad sobre este boceto es el 🐉 Dragón dorado: Vida
+// 240 es el único número de tres cifras del muestrario, y en una fila de ocho
+// columnas de ~30px es él quien decide si la fila se lee o solo cabe.
+function RecintoCard({ subject }: { subject: Subject }) {
+  return (
+    <>
+      <Art subject={subject} />
+      <EstandarteFrame />
+      <Rail subject={subject} />
+
+      <span className="sketch__gem" title={`Rareza: ${subject.rarity}`} />
+
+      <span className="sketch__banner" title={`Raza: ${subject.race}`}>
+        <b className="sketch__banner-icon">{subject.raceIcon}</b>
+      </span>
+
+      <span className="sketch__disc" title={rankOf(subject)}>
+        <b className="sketch__disc-value">{subject.tier ?? "👑"}</b>
+      </span>
+
+      <div className="sketch__foot">
+        <Plate
+          subject={subject}
+          className="sketch__plate sketch__plate--panel"
+          after={
+            <>
+              <ul className="sketch__pods">
+                {RECINTO_SKILLS.map((k) => (
+                  <Stat key={k} subject={subject} skill={k} base="pod" />
+                ))}
+              </ul>
+              {/* Sin pines entre los que caer, la raza vuelve a ser el último
+                  renglón del panel y no una pieza anclada. */}
+              <p className="sketch__type">{subject.race}</p>
+            </>
+          }
+        />
+      </div>
+    </>
+  );
+}
+
 const SKETCH_CARDS: Record<SketchId, (p: { subject: Subject }) => React.ReactElement> = {
   forja: ForjaCard,
   estandarte: EstandarteCard,
+  recinto: RecintoCard,
 };
 
 /**
  * Una carta de boceto: el artículo con su rareza, y dentro el cuerpo que le
  * toque. La rareza se publica como atributo y no como color porque de ella
  * cuelgan las variables --rarity/--seam del SCSS; el artículo no pinta nada.
+ *
+ * Un boceto derivado se lleva las DOS clases, la de su base y la suya, en ese
+ * orden. Es lo que le deja heredar el marco entero y pisar solo lo que cambia,
+ * y por eso su parcial escribe los selectores con las dos juntas: así gana por
+ * especificidad y no por orden de importación.
  */
 export default function SketchCard({ id, subject }: { id: SketchId; subject: Subject }) {
   const Body = SKETCH_CARDS[id];
+  const base = SKETCHES.find((s) => s.id === id)?.derives;
+  const mod = base ? `sketch--${base} sketch--${id}` : `sketch--${id}`;
   return (
-    <article className={`sketch sketch--${id}`} data-rarity={subject.rarity}>
+    <article className={`sketch ${mod}`} data-rarity={subject.rarity}>
       <Body subject={subject} />
     </article>
   );

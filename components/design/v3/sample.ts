@@ -7,19 +7,24 @@
 //
 // PERO NO SE ESCOGEN A DEDO. Son la plantilla entera de la raza piloto tal y
 // como está en knowledge/v3/races-concept/razas.md: las OCHO unidades de
-// 👤 Humanos en su orden de progresión (tier 1 → 8) y TRES de sus cuatro
-// héroes. Un marco se juzga con el reparto real de una raza —cuántos nombres
-// largos hay, cuántas Características caen por carta, cuántas cifras de Vida—
-// y no con media docena de casos elegidos para que salga bien.
+// 👤 Humanos en su orden de progresión (tier 1 → 8) y sus CUATRO héroes, que
+// desde el 25-ago-2026 están los cuatro. Un marco se juzga con el reparto real
+// de una raza —cuántos nombres largos hay, cuántas Características caen por
+// carta, cuántas cifras de Vida— y no con media docena de casos elegidos para
+// que salga bien.
 //
 // Los héroes están por dos motivos. Uno: NO son unidades, no tienen tier, y
 // eso descoloca a cualquier marco que reserve un sitio fijo para el Tier — el
-// hueco reservado para un número se queda esperándolo. Dos: son lo ÚNICO que tiene arte
-// de V3 (public/assets/v3/races/humanos/), así que son las tres cartas que de
-// verdad enseñan cómo queda un marco sobre una ilustración de este juego y no
-// sobre un emoji o sobre un recorte prestado de v2. Ojo: ese arte está pendiente
-// de regenerarse —encuadre, reparto y fondo se cerraron después de tirarlo—, así
-// que sirve para juzgar el marco, no el arte.
+// hueco reservado para un número se queda esperándolo. Dos: concentran el arte
+// de V3 (public/assets/v3/races/humanos/), así que son las cartas que de verdad
+// enseñan cómo queda un marco sobre una ilustración de este juego y no sobre un
+// emoji o sobre un recorte prestado de v2. Ojo: ese arte sigue moviéndose —el
+// Sacerdote y el Arquero entraron apaisados y les queda otra vuelta—, así que
+// sirve para juzgar el marco, no el arte.
+//
+// Y ya no son lo único dibujado: el 🗡️ Miliciano es la primera UNIDAD con arte
+// propio, que es el caso que faltaba —tier, raíl común y cero Características
+// encima de una ilustración de verdad—.
 //
 // El 🐉 Dragón esquelético no es de Humanos y se queda de todas formas: es el
 // peor caso del catálogo entero (cinco Características y dieciocho caracteres
@@ -101,18 +106,19 @@ export type Subject = {
   /**
    * Ilustración. Hay de dos clases y no se mezclan:
    *
-   * - **Los tres héroes llevan arte de V3**
-   *   (`public/assets/v3/races/humanos/`). Es lo primero dibujado para V3 y
-   *   manda para juzgar el marco: si uno no funciona con esas tres, no funciona.
-   *   Pero **no es definitivo**: está pendiente de regenerarse con las reglas de
-   *   encuadre, reparto y fondo, que se cerraron después.
+   * - **Los cuatro héroes y el Miliciano llevan arte de V3**
+   *   (`public/assets/v3/races/humanos/`). Es el arte propio del juego y manda
+   *   para juzgar el marco: si uno no funciona con estas cinco, no funciona.
+   *   Pero **no está cerrado**: Guerrero y Mago ya están en el 5:7 vertical
+   *   bueno, y Sacerdote, Arquero y Miliciano entraron apaisados.
    * - **Dos unidades llevan relleno de v2** (`public/assets/v2/cards/class/`),
    *   prestado de las cartas de clase cuyo papel coincide. Es provisional.
    *
-   * Las demás caen al emoji, que hoy es lo normal —no hay arte de unidad— y
-   * también hay que verlo. Todas son APAISADAS, así que en un marco vertical
-   * se recortan por los lados: con eso basta para juzgar el marco, y de paso
-   * enseña por qué el lienzo heredado de v2 no sirve.
+   * Las demás caen al emoji, que sigue siendo lo normal —siete de las ocho
+   * unidades no tienen arte— y también hay que verlo. Que convivan las dos
+   * proporciones no es un descuido y conviene mirarlo así: las verticales
+   * entran a sangre, y las apaisadas se recortan por los lados, que es
+   * exactamente lo que enseña por qué el lienzo tenía que ser 5:7.
    */
   readonly art?: string;
   readonly skills: Record<SkillKey, number>;
@@ -125,18 +131,27 @@ export type Subject = {
 const ART_V2 = (slug: string) => `/assets/v2/cards/class/${slug}/cards_class_${slug}.png`;
 
 /**
- * Arte de V3. Hoy solo hay tres archivos y son los tres héroes de Humanos
- * dibujados (`public/assets/v3/races/humanos/`).
+ * Arte de V3. Desde el 25-ago-2026 son CINCO archivos: los CUATRO héroes de
+ * Humanos —ya está el 🏹 Arquero, que era el que faltaba— y la primera unidad
+ * dibujada del juego, el 🗡️ Miliciano.
  *
- * La ruta y el nombre ya son los que manda `public/assets/v3/README.md`, que es
- * la fuente única: `races/<raza>/` y slug del nombre español. Queda una
- * divergencia, la extensión: son `.png` de ~2,4 MB y ese documento pide `.webp`.
- * No se convierten porque **los tres se van a regenerar** —salieron apaisados,
- * en plano medio y con el fondo compitiendo, antes de que se cerraran las reglas
- * de encuadre, reparto y fondo—, así que el `.webp` entra con los archivos
- * nuevos y no con una conversión que se va a tirar.
+ * La ruta y el nombre son los que manda `public/assets/v3/README.md`, que es la
+ * fuente única: `races/<raza>/` para los héroes y `races/<raza>/units/` para las
+ * unidades, con el slug del nombre español. De ahí las dos funciones: la carpeta
+ * es lo que separa a un héroe de una unidad, y no el nombre —👤 Humanos tiene un
+ * 🏹 Arquero de cada clase, y los dos se llaman `arquero`—.
+ *
+ * Siguen siendo `.png` de ~2,5 MB donde ese documento pide `.webp`, y el motivo
+ * de no convertirlos no ha cambiado de forma: el arte todavía se está tirando y
+ * volviendo a tirar. Guerrero y Mago ya están regenerados en el 5:7 vertical
+ * bueno; Sacerdote, Arquero y Miliciano entraron APAISADOS (1484×1060, que es el
+ * lienzo correcto girado), así que a estos tres les queda otra vuelta y el
+ * `.webp` entrará con ella.
  */
 const ART_V3 = (slug: string) => `/assets/v3/races/humanos/${slug}.png`;
+
+/** Igual, pero para las unidades: cuelgan de `units/`. */
+const ART_V3_UNIT = (slug: string) => `/assets/v3/races/humanos/units/${slug}.png`;
 
 /**
  * Rareza por tier. No está decidida en ningún documento —status.md la tiene
@@ -187,6 +202,13 @@ export const UNITS: readonly Subject[] = [
     icon: "🗡️",
     // El caso vacío: cero Características y todo a una cifra menos la Vida.
     // Es el que descubre los huecos que se ven vacíos.
+    //
+    // Y desde el 25-ago-2026 es además la PRIMERA UNIDAD con arte propio de V3,
+    // que es un caso que ningún héroe enseña: la carta de tier 1 lleva el raíl
+    // 🩶 común, el rótulo "Tier 1" y el raíl de medallones vacío, todo encima de
+    // una ilustración de verdad. Hasta ahora ese caso solo se había visto con un
+    // emoji detrás, que perdona cualquier contraste.
+    art: ART_V3_UNIT("miliciano"),
     skills: {
       vida: 18,
       ataque: 6,
@@ -379,17 +401,19 @@ export const UNITS: readonly Subject[] = [
   },
 ];
 
-// --- Tres de los cuatro héroes de 👤 Humanos ------------------------------
+// --- Los cuatro héroes de 👤 Humanos ---------------------------------------
 // razas.md §"Razas y clases › 👤 Humanos" y §"Tabla de características de
-// héroes", en su orden. De los cuatro (⚔️ Guerrero, 🔮 Mago, ✝️ Sacerdote,
-// 🏹 Arquero) están los TRES QUE YA ESTÁN DIBUJADOS: son el primer arte
-// definitivo de V3 y por eso mandan sobre cualquier relleno de v2. Falta el
-// 🏹 Arquero, que todavía no tiene ilustración.
+// héroes", en su orden: ⚔️ Guerrero, 🔮 Mago, ✝️ Sacerdote y 🏹 Arquero. Están
+// los cuatro y los cuatro tienen ilustración — el Arquero era el que faltaba y
+// llegó el 25-ago-2026—, así que la clase de héroe ya se juzga entera y no por
+// una muestra.
 //
-// El 🔮 Mago choca de nombre con la unidad 🔮 Mago, y el 🏹 Arquero chocaría
-// con la unidad 🏹 Arquero. Antes lo esquivaba dejando fuera al Mago; ahora
-// que tiene arte entra, y la colisión se ve en la página — que es donde tiene
-// que verse. Es un problema del catálogo de razas.md, no del marco.
+// El 🔮 Mago choca de nombre con la unidad 🔮 Mago, y el 🏹 Arquero con la
+// unidad 🏹 Arquero. Ahora la segunda colisión también está en la página, y es
+// la peor de las dos: los dos Arqueros comparten nombre, emoji y tipo de daño,
+// y lo único que los distingue es el rótulo bajo el nombre ("Héroe" contra
+// "Tier 2"). Un marco que no haga legible esa línea deja dos cartas idénticas.
+// Es un problema del catálogo de razas.md, pero se ve aquí.
 //
 // Los tres comparten HERO_RAIL: los héroes tienen color propio y no un escalón
 // de la escala de rareza, que no les corresponde. Ver ahí el porqué.
@@ -472,6 +496,34 @@ export const HEROES: readonly Subject[] = [
     },
     damage: "magico",
     traits: [{ icon: "😱", label: "Inmune al miedo" }],
+  },
+  {
+    id: "heroe-arquero",
+    name: "Arquero",
+    kind: "heroe",
+    race: "Humanos",
+    raceIcon: "👤",
+    rarity: HERO_RAIL,
+    icon: "🏹",
+    art: ART_V3("arquero"),
+    skills: {
+      vida: 88,
+      ataque: 19,
+      defensa: 10,
+      resistencia: 9,
+      // La 🎯 Precisión más alta de los cuatro, y no por gusto: es el único que
+      // lleva 👁️ Percepción y 💥 Golpe crítico a la vez. Sigue dentro de la
+      // banda 65-95 que fija razas.md §"La escala".
+      precision: 88,
+      suerte: 8,
+      iniciativa: 11,
+      movimiento: 6,
+    },
+    damage: "distancia",
+    traits: [
+      { icon: "👁️", label: "Percepción" },
+      { icon: "💥", label: "Golpe crítico" },
+    ],
   },
 ];
 

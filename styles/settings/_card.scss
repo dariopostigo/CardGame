@@ -68,9 +68,15 @@ $sketch-chamfer: 18px;
 
 $sketch-disc: 46px;                // disco de Tier, montado en la esquina
 // El rombo de Rareza, a caballo del canto de arriba. En la réplica era una cara
-// plana de 15px y aquí va tallado —engaste, cuatro facetas y tabla—, así que
-// tuvo que crecer: a 15 la tabla se quedaba en dos píxeles y medio.
-$sketch-gem: 20px;
+// plana de 15px y aquí va tallado: engaste, cuatro facetas y tabla.
+//
+// Bajó de 20 a 16px el 25 de agosto de 2026, mirándola en el lab. Para que la
+// talla aguante el recorte, los cortes de dentro —engaste y tabla— dejaron de
+// ser medidas clavadas y ahora son fracciones de esta, así que encogen con ella:
+// es la cuenta que faltaba la primera vez, cuando a 15px la piedra se quedó
+// pequeña pero el tallado siguió midiendo lo mismo y la tabla se comió a sí
+// misma. Van en components/card-sketch/_estandarte.scss, junto a la piedra.
+$sketch-gem: 16px;
 
 // El estandarte de raza que cuelga del disco del Tier: la ficha que la
 // referencia dedica a la facción y que la réplica dejó fuera por no tener qué

@@ -12,6 +12,15 @@
 > ENCUADRE lo exige en positivo, el negativo lo prohíbe y cada POSE dice dónde
 > están los pies. **Los tres héroes existentes se regeneran**; valen como
 > referencia de estilo, no de encuadre.
+>
+> **Al 25 de agosto de 2026 va a medias, y el fallo que queda es de proporción,
+> no de plano.** ⚔️ Guerrero y 🔮 Mago están regenerados y correctos: 5:7
+> vertical, plano general, figura entera y centrada. ✝️ Sacerdote, 🏹 Arquero y
+> 🗡️ Miliciano ya salen en **plano general con aire** —el bloque ENCUADRE
+> funciona— pero en **lienzo apaisado**: 1484×1060, que es el 1060×1484 bueno
+> girado. Es decir, lo que no se está respetando es la **relación de aspecto de
+> la herramienta**, que se elige antes de pegar el prompt y no viaja en él.
+> Antes de la siguiente tirada, fija el formato vertical en la interfaz.
 
 > **Corregido también el reparto de cuerpos (misma fecha).** La misma tirada
 > salió con los tres personajes **jóvenes, esbeltos, musculosos y guapos**, que en

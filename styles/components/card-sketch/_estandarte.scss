@@ -65,10 +65,6 @@ $oct-card: "polygon(#{$c} 0, calc(100% - #{$c}) 0, 100% #{$c}, 100% calc(100% - 
 // justamente lo que no se sabe, porque el pie crece con su contenido.
 $oct-foot: "polygon(0 0, 100% 0, 100% calc(100% - #{$c}), calc(100% - #{$c}) 100%, #{$c} 100%, 0 calc(100% - #{$c}))";
 
-// Un octógono pequeño para las piezas que repiten la silueta de la carta: el
-// medallón de Característica. El chaflán va en proporción, no en píxeles.
-$oct-chip: "polygon(28% 0, 72% 0, 100% 28%, 100% 72%, 72% 100%, 28% 100%, 0 72%, 0 28%)";
-
 // El chaflán del contorno visto desde DENTRO del filete. No es el mismo que el
 // de fuera: al meter el borde 15px, el cateto del corte encoge C − d(2 − √2).
 // Es la misma cuenta que hace octagon(d) en sketch-frames.tsx, y hay que
@@ -98,9 +94,13 @@ $pin-band: 48px;
 // estandarte, que tiene que caer centrado en el eje del disco.
 $disc-inset: 7px;
 
-// Media piedra, que hace falta tres veces: para centrarla en el filete y para
-// devolverla al eje del nombre.
-$gem-half: math.div($sketch-gem, 2);
+// Los dos cortes de dentro de la piedra: lo que mide el engaste de metal y lo
+// que se mete la tabla. Van en fracción de $sketch-gem y no en píxeles clavados
+// porque si no, tocar el tamaño encoge el rombo y deja el tallado como estaba
+// —que es como la tabla acabó en dos píxeles y medio la primera vez—. Las
+// fracciones son las que tenía a 20px: 2,5 es un octavo y 6 son tres décimos.
+$gem-bezel: math.div($sketch-gem, 8);
+$gem-table: math.div($sketch-gem * 3, 10);
 
 // El estandarte, centrado en el eje del disco: el disco se sale $disc-inset por
 // la esquina, así que su centro cae en −7 + 46/2 = 16px y la bandera arranca
@@ -331,9 +331,11 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   // debajo del marco, para que si alguno llega a rozar el chaflán pase por
   // debajo del herraje.
   //
-  // La sombra la pone el raíl y no cada medallón: van recortados con clip-path,
-  // y un clip se come el box-shadow. En el padre, el drop-shadow sigue la
-  // silueta ya recortada, que es justo lo que se quiere.
+  // La sombra la pone el raíl y no cada pieza, y ahora es la única forma de que
+  // exista: al quitarles el fondo, un `box-shadow` por pieza dibujaría el círculo
+  // fantasma de una caja que ya no se ve. Aquí es un `filter`, así que recorta la
+  // silueta del glifo y de paso lo hace en una sola pasada de composición para
+  // toda la columna.
   .sketch__rail {
     position: absolute;
     top: $sketch-band + 13px;
@@ -345,23 +347,32 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     filter: drop-shadow(0 2px 3px card-sketch("shadow"));
   }
 
-  // El medallón repite la silueta de la carta en pequeño: octógono, no círculo.
-  // Es lo que lo hace parte de este marco y no un chip prestado del A.
+  // SIN FONDO (25-ago-2026, decidido en el lab). Aquí ya no hay medallón: hay
+  // seis glifos colgados del borde derecho, y la casilla de 30px solo existe
+  // para repartirlos.
   //
-  // Dos capas de fondo, de arriba abajo: primero la cara oscura —el disco
-  // interior donde se apoya el glifo— y debajo el metal, que solo asoma por el
-  // aro. Un emoji sobre metal claro se pierde (💀, 🐾), y por eso la cara va
-  // oscura aunque el marco sea claro.
+  // La pieza venía de un camino largo —nació octógono repitiendo la silueta de
+  // la carta, pasó a redondo porque a 30px el chaflán son dos píxeles y no se
+  // leía, y el aro adelgazó a la mitad para dejar crecer al glifo— y ese camino
+  // es el que dice por qué se quita: cada paso fue restarle dibujo a la pieza
+  // para que se viera lo de dentro. Restado el último queda que el disco no
+  // aportaba nada que el glifo no dijera ya, y este marco claro tiene bastante
+  // herraje sin sumarle seis chapas más en el canto.
+  //
+  // Con eso la Característica vuelve a dibujarse distinta en la E y en la G
+  // —allí sigue siendo un remache atornillado— y es a propósito: es una
+  // diferencia de las que este par de bocetos está para enseñar, no adorno.
+  //
+  // Lo que hacía la cara oscura lo hace ahora la sombra del raíl: un emoji sobre
+  // metal claro se pierde (💀, 🐾), y sin papel detrás lo que lo despega es el
+  // drop-shadow, que al no haber caja recorta la silueta del glifo en vez de un
+  // círculo. Por eso la sombra sigue viviendo en `.sketch__rail` y no aquí.
   .sketch__medal {
     display: grid;
     place-items: center;
     width: $sketch-medal;
     height: $sketch-medal;
-    clip-path: #{$oct-chip};
-    background:
-      radial-gradient(circle at 50% 50%, card-sketch("glass") 0 56%, transparent 56%),
-      linear-gradient(155deg, var(--m-hi), var(--m) 45%, var(--m-lo));
-    font-size: sketch-font("medal");
+    font-size: sketch-font("medal-bare");
     line-height: 1;
   }
 
@@ -490,16 +501,24 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   // de la banda de metal ($sketch-band / 2), así que la pieza se lee montada
   // sobre el marco y no colgada del borde. Es medio píxel de cuenta y se nota:
   // más arriba parece que se cae de la carta.
+  //
+  // Y el centrado se escribe sobre el CENTRO de la piedra, no sobre su esquina:
+  // left/top apuntan al eje de la carta y a la mitad del filete, y el translate
+  // del 50% —que mide sobre la caja, no sobre el padre— la trae encima. Así el
+  // centrado no depende del tamaño: cambiar $sketch-gem la encoge sin moverla,
+  // que con el margen negativo de antes había que recalcularlo a mano.
   .sketch__gem {
     position: absolute;
-    top: math.div($sketch-band, 2) - $gem-half;
+    top: math.div($sketch-band, 2);
     left: 50%;
     z-index: z("chip");
     width: $sketch-gem;
     height: $sketch-gem;
-    margin-left: -$gem-half;
     background: linear-gradient(135deg, var(--m-hi), var(--m) 50%, var(--m-lo));
-    transform: rotate(45deg);
+    // El giro va detrás del translate a propósito: las dos funciones giran sobre
+    // el mismo origen —el centro de la caja—, así que la piedra rota sobre sí
+    // misma una vez ya colocada, y el rombo sale centrado en el punto exacto.
+    transform: translate(-50%, -50%) rotate(45deg);
     box-shadow:
       0 0 0 1px var(--m-edge),
       0 0 12px var(--rarity-soft);
@@ -516,7 +535,7 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     &::before {
       content: "";
       position: absolute;
-      inset: 2.5px;
+      inset: $gem-bezel;
       background: conic-gradient(
         from 45deg,
         color-mix(in srgb, white 30%, var(--seam)) 0 25%,
@@ -532,7 +551,7 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     &::after {
       content: "";
       position: absolute;
-      inset: 6px;
+      inset: $gem-table;
       background: linear-gradient(
         135deg,
         color-mix(in srgb, white 30%, var(--seam-hi)),

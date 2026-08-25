@@ -1,42 +1,53 @@
 # Arte de V3
 
-**Ya hay arte.** Los tres primeros archivos definitivos de V3 son tres héroes
-de la raza piloto:
+**Ya hay arte.** Cinco archivos, todos de la raza piloto: sus **cuatro héroes**
+y su **primera unidad**.
 
-| Archivo | Sujeto |
-|---|---|
-| `races/humanos/guerrero.png` | ⚔️ Guerrero (Humanos) |
-| `races/humanos/mago.png` | 🔮 Mago (Humanos) |
-| `races/humanos/sacerdote.png` | ✝️ Sacerdote (Humanos) |
+| Archivo | Sujeto | Medida | Encuadre |
+|---|---|---|---|
+| `races/humanos/guerrero.png` | ⚔️ Guerrero (Humanos) | 1060×1484 | ✅ Vertical 5:7 |
+| `races/humanos/mago.png` | 🔮 Mago (Humanos) | 1060×1484 | ✅ Vertical 5:7 |
+| `races/humanos/sacerdote.png` | ✝️ Sacerdote (Humanos) | 1477×1065 | ⚠️ Apaisado |
+| `races/humanos/arquero.png` | 🏹 Arquero (Humanos) | 1484×1060 | ⚠️ Apaisado |
+| `races/humanos/units/miliciano.png` | 🗡️ Miliciano (Humanos, tier 1) | 1484×1060 | ⚠️ Apaisado |
 
-Falta el cuarto héroe de Humanos, 🏹 Arquero. Los tres se pintan ya en los
-bocetos de marco de **Cartas › Diseño de cartas** (`/docs/v3/cards/design`),
-que es lo único que hay montado que los use.
+Los cinco se pintan en los bocetos de marco de **Cartas › Diseño de cartas**
+(`/docs/v3/cards/design`), que es lo único que hay montado que los use.
 
-> **Dos cosas no cuadran con lo que dice este mismo documento**, y hay que
-> cerrarlas antes de que lleguen las unidades y se copie el criterio:
+**Ya no faltan héroes**: el 🏹 Arquero llegó el 25 de agosto de 2026 y con él la
+clase de héroe se juzga entera. El Miliciano abre `units/` y con él el caso que
+ningún héroe enseñaba: un tier 1, raíl común y cero Características encima de
+una ilustración de verdad.
+
+> **Dos cosas siguen sin cuadrar con lo que dice este mismo documento**, y hay
+> que cerrarlas antes de que lleguen las 127 restantes y se copie el criterio:
 >
 > 1. ~~**La ruta.**~~ **Cerrada** el 21 de agosto de 2026: estaban en
 >    `human/heroes/` con nombre en inglés y ya están en `races/humanos/` con el
 >    slug español que manda §"Nombre de archivo". Se cerró con tres archivos
 >    dentro porque con 132 cuesta 44 veces más.
 > 2. **El formato sigue abierto.** §"Nombre de archivo" pide `.webp` y estos son
->    `.png` de ~2,4 MB cada uno. A ese peso importa: son la ilustración de una
->    carta, no un fondo de pantalla. **No se convierten** porque los tres se van
->    a regenerar (ver abajo), así que el `.webp` entra con los archivos nuevos y
->    no con una conversión que se tira.
-> 3. **El arte hay que regenerarlo, y por tres motivos, no uno.** Salieron
->    **apaisados y en plano medio** —cortados por el muslo, la figura fuera del
->    eje—; salieron **jóvenes, esbeltos y guapos**, que en el Mago y el Sacerdote
->    no tiene sentido; y salieron con **el fondo compitiendo** —castillo con
->    sillares contados, estandartes, una bandera legible—. Las tres reglas que
->    faltaban ya están escritas: §"Lienzo y formato" y §"Encuadre" aquí, el
->    reparto de cuerpos en
+>    `.png` de ~2,5 MB cada uno. A ese peso importa: son la ilustración de una
+>    carta, no un fondo de pantalla. **No se convierten** mientras al archivo le
+>    quede una vuelta, así que el `.webp` entra con la generación buena y no con
+>    una conversión que se tira. Con Guerrero y Mago ya fijos, esos dos son los
+>    primeros candidatos a convertirse.
+> 3. **Al apaisado le queda otra vuelta, y solo por el encuadre.** Los otros dos
+>    motivos por los que había que regenerar están **resueltos**: el reparto de
+>    cuerpos (el Sacerdote nuevo ya es un hombre mayor y grueso, no un joven
+>    esbelto) y la jerarquía de fondo. Lo que no se ha corregido es la
+>    proporción: **1484×1060 es el lienzo bueno girado**, no un lienzo distinto,
+>    y en un marco vertical obliga a tirar media anchura. Las normas están
+>    escritas en §"Lienzo y formato" y §"Encuadre" aquí, el reparto en
 >    [`sujetos.md`](../../../knowledge/v3/races-concept/sujetos.md#identidad-de-raza)
->    y la jerarquía de fondo en
+>    y el fondo en
 >    [`style-guide.md`](../../../knowledge/v3/art-direction/style-guide.md#16-fondos)
->    §16. **Los tres se regeneran con las tres normas.** Mientras tanto sirven
->    para juzgar el marco de carta, no para juzgar el arte.
+>    §16.
+>
+> **No se recortan a mano.** Recortar un apaisado a 5:7 tira justo el aire
+> lateral que pide §"Encuadre", y dejarlos como están tiene un uso: en el lab,
+> pasar del Guerrero vertical al Sacerdote apaisado enseña la diferencia de un
+> vistazo. Mientras tanto los apaisados sirven para juzgar el marco, no el arte.
 
 Qué generar y con qué especificación (sujetos, encuadre, plantilla de prompt):
 [`../../../knowledge/v3/art-direction/illustrations.md`](../../../knowledge/v3/art-direction/illustrations.md),

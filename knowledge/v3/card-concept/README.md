@@ -67,7 +67,8 @@ En la wiki, en **Cartas › Diseño de cartas** (`/docs/v3/cards/design`). El
 código está en `components/design/v3/` y sus estilos en
 `styles/components/card-sketch/`.
 
-> **Hay DOS bocetos dibujados: la mezcla E · Forja y la mezcla G · Estandarte.**
+> **Hay TRES bocetos dibujados: la mezcla E · Forja, la mezcla G · Estandarte y
+> el derivado H · Recinto.**
 > De la primera tanda hubo cinco —uno por cada concepto de abajo, más las dos
 > mezclas— y el 22 de agosto de 2026 se borraron los cuatro anteriores del
 > código, con sus parciales y sus piezas. **Este documento no se borra con
@@ -82,25 +83,40 @@ código está en `components/design/v3/` y sus estilos en
 > así que **se borró el 25 de agosto de 2026**, con su marco y su parcial. Lo
 > suyo que valía está en la G; lo que discutió sigue escrito aquí abajo.
 >
-> Lo que queda enfrentado en la página es *rectángulo contra octógono* y *veta
-> partida en cuatro tramos contra aro continuo*. Lo que ya **no** se puede mirar
-> —*encendido contra acuñado*, que era la discusión de la F— está solo escrito.
+> Y el 25 de agosto entró la **H**, que no discute nada nuevo: es la G con todo
+> dentro del contorno y las ocho juntas, dibujada para **desempatar**. La E y la
+> G se diferenciaban en dos cosas a la vez —silueta y jerarquía de los ocho—, así
+> que puestas al lado no se sabía cuál era la que gustaba; con la H, *E contra H*
+> juzga la silueta sola y *G contra H*, la jerarquía sola.
+>
+> Lo que queda enfrentado en la página es *rectángulo contra octógono*, *veta
+> partida en cuatro tramos contra aro continuo*, *ocho iguales contra dos y seis*
+> y *piezas que desbordan el contorno contra piezas que caben dentro*. Lo que ya
+> **no** se puede mirar —*encendido contra acuñado*, que era la discusión de la
+> F— está solo escrito.
 
 **Los sujetos son la plantilla real de la raza piloto**, no una selección: las
-**ocho unidades de 👤 Humanos** en su orden de progresión (tier 1 → 8) y **tres
-de sus cuatro héroes** (⚔️ Guerrero, 🔮 Mago y ✝️ Sacerdote), con nombres,
-emojis y Características copiados de
+**ocho unidades de 👤 Humanos** en su orden de progresión (tier 1 → 8) y sus
+**cuatro héroes** (⚔️ Guerrero, 🔮 Mago, ✝️ Sacerdote y 🏹 Arquero), con
+nombres, emojis y Características copiados de
 [`knowledge/v3/races-concept/razas.md`](../races-concept/razas.md). Los héroes
-están por dos motivos: no tienen tier, y son los tres que **ya tienen
-ilustración de V3** (`public/assets/v3/races/humanos/`) — falta el
-🏹 Arquero, que aún no está dibujado. Aparte, etiquetado como caso límite, va
-el 🐉 Dragón esquelético, que no es de Humanos pero es el único que llega a
-cinco Características. Todo eso vive en `sample.ts`; lo único inventado ahí son
-los valores de las 8 Habilidades, y de ellos solo importa cuántas cifras tienen.
+están por dos motivos: no tienen tier, y concentran el **arte de V3**
+(`public/assets/v3/races/humanos/`). Desde el 25 de agosto de 2026 están los
+cuatro —el 🏹 Arquero era el que faltaba— y con él aparece una colisión que
+antes no se veía: **héroe y unidad comparten nombre, emoji y tipo de daño**, y
+lo único que los separa es el rótulo bajo el nombre ("Héroe" contra "Tier 2").
+Aparte, etiquetado como caso límite, va el 🐉 Dragón esquelético, que no es de
+Humanos pero es el único que llega a cinco Características. Todo eso vive en
+`sample.ts`; lo único inventado ahí son los valores de las 8 Habilidades, y de
+ellos solo importa cuántas cifras tienen.
 
-> **Las tres cartas de héroe son las que dicen la verdad.** Son las únicas con
-> arte real de este juego: las demás llevan emoji o un recorte prestado de v2,
-> y un marco encima de un emoji siempre parece mejor de lo que es.
+> **Las cartas con arte de V3 son las que dicen la verdad.** Son los cuatro
+> héroes y, desde el 25 de agosto de 2026, el 🗡️ **Miliciano** — la primera
+> unidad dibujada, y con ella el caso que ningún héroe enseñaba: un tier 1 con
+> raíl común y **cero Características** encima de una ilustración de verdad, que
+> es donde se ve si los huecos vacíos del marco cantan. Las demás llevan emoji o
+> un recorte prestado de v2, y un marco encima de un emoji siempre parece mejor
+> de lo que es.
 
 Es donde se contesta lo que este documento deja abierto, porque hay cosas —si
 la fila de ocho se lee, si el cero molesta, cuánto arte se come un panel— que
@@ -598,10 +614,27 @@ eje es decorar.
   lo alto es donde no hay sitio: cada píxel que sube el pin se lo quita a la
   rejilla. En línea caben en la franja y de paso dejan el número más grande, que
   es lo que el pin viene a hacer.
-- **Un `clip-path` se come el `box-shadow`.** Los pines y los medallones van
-  recortados, así que la sombra la pone el **padre** con `filter: drop-shadow`,
-  que sigue la silueta ya recortada. Es la única forma de darle contorno a una
-  pieza troquelada.
+- **Un `clip-path` se come el `box-shadow`.** Los pines van recortados, así que
+  la sombra la pone el **padre** con `filter: drop-shadow`, que sigue la silueta
+  ya recortada. Es la única forma de darle contorno a una pieza troquelada. Los
+  medallones también lo necesitaban mientras fueron octógonos; ahora que son
+  redondos podrían llevar su propia sombra, y la del padre se queda igual porque
+  sigue siendo mejor trato: una pasada para toda la columna.
+- **Y un corte duro de gradiente no se antialiasa.** Al pasar el medallón a
+  redondo, la cara oscura de dentro —un `radial-gradient` con el tope clavado—
+  salió escalonada y se volvía a leer como un polígono: el octógono reapareciendo
+  de rebote en el relleno justo después de quitarlo del recorte. Se arregla
+  desvaneciendo el tope medio píxel. El aro de fuera no lo necesita porque lo
+  dibuja `border-radius`, que sí suaviza — o sea que en la misma pieza hay dos
+  maneras de hacer un círculo y solo una viene con bordes limpios de serie.
+- **Y el porcentaje de un `radial-gradient` no mide lo que parece.** Un círculo
+  sin tamaño declarado llega hasta la **esquina más lejana** de la caja, así que
+  en un medallón de 30px el 100% son 21,2px y no 15: los topes escritos decían
+  una cosa y dibujaban otra, y el aro de la cara acabó midiendo tres píxeles sin
+  que ninguna cuenta escrita lo dijera. Con `closest-side` el 100% ES el canto
+  del círculo y el grosor del aro se puede leer del código. Vale la pena porque
+  aquí el aro **no es una pieza, es lo que sobra**: se dibuja diciendo dónde
+  acaba la cara, y una medida al revés es la que menos puede permitirse mentir.
 - **El filete de Rareza se lee mucho mejor que la veta**, y no por sutileza sino
   por área: son 2,2px alrededor de la silueta entera contra 7px en un canal
   tapado por las cantoneras en las cuatro esquinas. En la fila de once, el verde
@@ -685,7 +718,14 @@ contorno encendido**.
 una mancha. Aquí son tres capas: **engaste** de metal, **cuatro facetas** que se
 cortan en la mitad —un `conic-gradient` sobre una caja girada, así que los cortes
 caen en la vertical y la horizontal del rombo— y una **tabla** con su destello.
-Sube a 20px, porque a 15 la tabla se quedaba en dos píxeles y medio.
+
+La medida se ajustó dos veces y la segunda enseña más que la primera. Subió a
+20px porque a 15 la tabla se quedaba en dos píxeles y medio; y **bajó a 16px** el
+25-ago-2026 sin que la talla se resintiera, porque de paso los dos cortes de
+dentro —engaste y tabla— dejaron de ser medidas clavadas y pasaron a ser
+fracciones de la piedra. Ahí está el hallazgo: **lo que no cabía a 15px no era el
+tallado, era el tallado a tamaño fijo dentro de una piedra encogida**. Con los
+cortes en proporción, la pieza baja de 20 a 16 y sigue teniendo sus cuatro caras.
 
 **3. Cuelga un estandarte de raza del disco del Tier.** Es la ficha que la
 réplica había dejado en blanco: en la referencia ahí va el banderín de la
@@ -774,6 +814,104 @@ leen como lo que son, una tira de valores. El panel pierde un renglón entero
   píxeles contra la captura anterior — lo único que se movió son los cuatro
   roblones, **una décima de píxel**, porque su posición se medía desde el reparto
   de anillos de la F y ahora se mide desde el de la G.
+
+  Y al día siguiente volvió a haber dos octogonales (la H), así que la pregunta
+  se repitió con otra respuesta: **no se volvió a extraer nada**. La H hereda la
+  clase de la G y su parcial solo escribe las diferencias. La diferencia entre
+  los dos casos es de qué son los bocetos entre sí: la F y la G eran hermanas
+  —dos respuestas distintas que resultaban compartir silueta, y el mixin era el
+  sitio de lo compartido—, y la H es una **copia** de la G. Extraer lo común de
+  una copia es partir en dos algo que solo es uno; heredarlo deja escrito que si
+  la G se mueve, la H se mueve con ella, que es exactamente lo que hace falta
+  para poder compararlas.
+
+### Derivado H — Recinto (la G con todo dentro y las ocho juntas)
+
+*(25 de agosto de 2026.)* El primer boceto **derivado**: una copia de la G con
+dos cambios y ni uno más. Reutiliza su marco vectorial sin tocar una línea y su
+parcial de estilos solo escribe las diferencias, así que todo lo que no se
+nombra aquí es la G literal.
+
+**Existe por un problema de método, no de gusto.** La E y la G no se diferencian
+en una cosa: se diferencian en **dos a la vez** —la silueta y la jerarquía de los
+ocho—, y con las dos moviéndose juntas no hay manera de saber cuál es la que
+gusta. Es la misma trampa que la G había resuelto para la F (allí eran cuatro
+cosas a la vez) y que se había vuelto a colar sin que nadie la pusiera. De las
+cuatro celdas posibles había dos dibujadas y ahora hay tres:
+
+| | las ocho juntas | las ocho partidas |
+|---|---|---|
+| **rectángulo redondeado** | E · Forja | *(sin dibujar)* |
+| **octógono** | **H · Recinto** | G · Estandarte |
+
+**E contra H juzga la silueta sola. G contra H juzga la jerarquía sola.** La
+cuarta celda no hace falta para eso, y por eso no está: un boceto no se dibuja
+para llenar una tabla, se dibuja para contestar algo que no se puede contestar
+sin él.
+
+**1. Nada se sale del contorno.** En la G el disco del Tier monta sobre el
+chaflán de arriba a la izquierda y lo desborda, y el estandarte de raza cuelga de
+él por encima del filete. Aquí los dos se meten dentro, encajados en la esquina
+cortada: el disco a 4px del canto interior del marco, sobre el eje del chaflán,
+y la bandera colgando de él con el mismo solape de 10px. Tres cosas salen de ese
+cambio y ninguna es de gusto:
+
+- **La carta se puede recortar por su octógono sin cortar un número.** Es la
+  mitad de la objeción de imprenta que esta silueta arrastra desde la F —una
+  carta así no se corta recta, necesita troquel—, y es la única mitad que un
+  boceto puede contestar: el troquel sigue siendo troquel, pero ya no hay nada
+  que el troquel pueda partir.
+- **El aro de luz da la vuelta entero.** En la G la bandera arranca a 2px del
+  borde, o sea *por encima* del filete, y le tapa el canal de la veta en ese
+  tramo. Sin ella ahí, el aro de ocho lados —que es lo que este marco tiene y la
+  E no— se ve completo por primera vez.
+- **Y las dos piezas pasan a apoyarse sobre la ilustración**, que es sitio que
+  antes no gastaban. Es el coste, y se mira en los tres héroes: son los únicos
+  sujetos con arte de verdad, y `illustrations.md` manda dejar visible justo la
+  franja de arriba donde ahora caen el disco y la bandera.
+
+Lo que se pierde está dicho desde que se escribió la G: lo que hacía que ese
+disco pareciera un **sello colgado** y no un botón dibujado era justamente que no
+cabía. Metido dentro es un botón. La pregunta que esta carta pone sobre la mesa
+es si el sello valía lo que costaba.
+
+Y de paso el disco **pierde su aro de oro** —el hilo de 1,5px que la G le pone
+por fuera del borde de metal—, que va en el mismo sentido: el oro era el remate
+que lo hacía *moneda*, y una moneda es algo que se cuelga del canto. Dentro del
+marco ese hilo hacía dos cosas malas a la vez: repetía el oro del subrayado del
+rótulo y del rombo de la Rareza sin que ninguno de los tres fuera el importante
+—y en una carta legendaria, además, contra una veta que ya es dorada—, y le
+ponía un contorno duro a la única pieza que aquí tiene que parecer *apoyada*. Se
+queda el borde de metal, que es lo que la ata a la aleación de la carta, y la
+cara oscura, que es lo que deja el número leerse en oro sobre negro.
+
+**2. Las ocho vuelven a ser una.** ⚔️ Ataque y ❤️ Vida dejan las esquinas y
+vuelven a la fila, y con los **mismos escalones de letra que la E**: dibujado
+igual el par, el *tamaño* deja de ser una de las diferencias entre las dos
+cartas. Pero el **orden sí lo es**, y a propósito: la fila abre por ⚔️ Ataque y
+no por ❤️ Vida, al revés que `razas.md` y que la E. No es una lista escrita a
+mano —son las dos del par de la G seguidas de las otras seis—, así que la carta
+arranca por las dos que se consultan en cada intercambio de golpes y en el mismo
+orden izquierda-derecha que la referencia les da en las esquinas: hoja de acero
+primero, gema roja después. Cuesta algo que conviene tener escrito: *E contra H*
+ya no compara solo la silueta, compara silueta **y** orden de lectura. Si algún
+día se decide que el orden es uno para todo el juego, esto se borra y las dos
+cartas vuelven al de `razas.md`.
+
+La columna sale a ~30,5px contra los 33 de la E: es la más estrecha de los tres
+bocetos, y no por casualidad, porque el panel del octógono cierra a sangre contra
+un filete sin cantoneras y gasta más acolchado lateral. El par sigue apilado, que
+a esa anchura no es una elección. Y deshacer la jerarquía se lleva dos piezas por
+delante:
+
+- **El panel pierde la franja de 48px** que reservaba para los pines, y ese sitio
+  se lo queda la ilustración. Era el primer fallo que enseñó la G montada —los
+  pines viven fuera del pie, así que si el panel no les reserva sitio, la última
+  fila les cae encima—, y sin pines la reserva no tiene a quién guardar nada.
+- **La línea de raza vuelve al flujo.** En la G va anclada al fondo con 70px de
+  acolchado a los lados, y las dos cosas eran por los pines: tenía que caer a su
+  misma altura y esquivar la hoja de acero para que «No-muertos» no se metiera
+  debajo. Sin nada que esquivar, vuelve a ser el último renglón del panel.
 
 ## Lo que esto cambia de lo ya escrito
 
@@ -867,12 +1005,14 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   V3 no tiene.
 - **Cuánto detalle aguanta una pieza pequeña.** *(Abierto desde el 24-ago-2026.)*
   El rombo de la Rareza se dibujó de dos maneras: **cara plana** de 15px (F) y
-  **piedra tallada** con engaste, cuatro facetas y tabla (G), que además tuvo que
-  crecer a **20px** porque a 15 la tabla se quedaba en dos píxeles y medio. Eso
-  ya es media respuesta: la talla no cabe en la medida de la plana. Queda la otra
-  mitad, que solo contesta la imprenta — si a 63mm las facetas se emborronan y
-  queda una mancha más sucia que la plana. Vale igual para los roblones y el
-  bocel del marco.
+  **piedra tallada** con engaste, cuatro facetas y tabla (G), que primero tuvo
+  que crecer a **20px** porque a 15 la tabla se quedaba en dos píxeles y medio, y
+  después **volvió a 16px** con los cortes de dentro en proporción y la talla
+  intacta. Es decir: la primera media respuesta —*la talla no cabe en la medida
+  de la plana*— **era falsa**, y lo que en realidad no cabía era el tallado a
+  medida fija dentro de una piedra encogida. Sí queda la otra mitad, que solo
+  contesta la imprenta: si a 63mm las facetas se emborronan y queda una mancha
+  más sucia que la plana. Vale igual para los roblones y el bocel del marco.
 - **Si los ceros se imprimen o se ocultan.** A los imprime; con Suerte 0 en
   media plantilla, ocultarlos deja huecos irregulares en la tira.
 - **Si el Tier se escribe o se enseña.** A, B y C lo escriben en el subtítulo; la
@@ -977,5 +1117,21 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   se meta debajo de la cantonera. El G enseña otra cosa: **de qué lado cae no lo
   decide la pieza, lo decide lo que ya ocupa la esquina** — se va a la derecha
   porque la izquierda se la llevan el disco del Tier y el estandarte que cuelga
-  de él, y sus medallones dejan de ser redondos para repetir el octógono de la
-  carta en pequeño.
+  de él. Sus medallones nacieron repitiendo el octógono de la carta en pequeño y
+  **volvieron a ser redondos** el 25-ago-2026: a 30px el chaflán son dos píxeles
+  por esquina, así que el eco de la silueta no llegaba a leerse —solo ensuciaba
+  el borde—. Es la misma lección de la piedra de Rareza vista desde el otro lado:
+  ahí el tallado sí cabía al ponerlo en proporción, y aquí la silueta no cabe de
+  ninguna manera, porque un octógono de 30px no tiene con qué decir que es un
+  octógono. Y deja las Características **dibujadas igual en la E y en la G**, que
+  es una diferencia de adorno menos entre las dos cartas que se comparan.
+  El mismo día, dos ajustes más de la misma pieza, y los dos van en la misma
+  dirección: **el glifo sube** (0,92 → 1,08rem) y **el aro adelgaza a la mitad**
+  (~3px → ~1,6). El primero es la lección de la piedra otra vez pero al revés
+  —la pieza estaba bien de tamaño y era el dibujo de dentro el que se quedaba
+  corto, porque un emoji trae su propio aire y no llena su caja—; el segundo es
+  que el aro es lo ÚNICO que separa este medallón del remache de la E, y a tres
+  píxeles competía con él en vez de insinuarlo. Se ayudan: adelgazar el aro es lo
+  que sube la cara de 24 a 27px, que es donde cabe el glifo grande. El tamaño va
+  en un solo token para las dos cartas a propósito, y el tope lo pone el hueco
+  más estrecho, que es el de la E (26px libres dentro de su borde).

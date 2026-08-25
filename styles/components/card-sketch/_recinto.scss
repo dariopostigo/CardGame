@@ -1,0 +1,170 @@
+@use "sass:math";
+@use "../../abstracts" as *;
+
+// =========================================================================
+// Boceto H · Recinto — la G con todo dentro y las ocho juntas
+//
+// Es una COPIA de la G · Estandarte con dos cambios, y de ahí que este parcial
+// sea corto: no repite la G, la pisa. El selector lleva las dos clases
+// (`.sketch--estandarte.sketch--recinto`) y eso no es un truco de
+// especificidad, es lo que este boceto ES: la misma carta con dos cosas
+// distintas. Todo lo que no se nombre aquí abajo tiene que seguir a la G, y si
+// mañana cambia una medida suya, esta la sigue sola — que es precisamente lo
+// que hace falta para poder comparar dos cartas sin que se les cuelen
+// diferencias que nadie decidió.
+//
+// LOS DOS CAMBIOS
+//
+//   · NADA SE SALE DEL CONTORNO. En la G el disco del Tier monta sobre el
+//     chaflán de arriba a la izquierda y lo desborda —«lo que la hace parecer
+//     un sello colgado y no un botón dibujado es justamente que no cabe»—, y el
+//     estandarte de raza cuelga de él por encima del filete. Aquí los dos se
+//     meten dentro del marco. Se pierde el sello y se gana una carta cuyo
+//     contorno es de verdad su contorno: la G no se puede recortar por el
+//     octógono sin cortar el número del Tier, y esta sí. Es la mitad de la
+//     objeción que la réplica F ya se había llevado —una carta así no se
+//     imprime sin troquel— y la única mitad que un boceto puede contestar.
+//   · LAS OCHO VUELVEN A SER UNA. La G saca ⚔️ Ataque y ❤️ Vida a las esquinas
+//     de abajo, en pines con forma propia y cuerpo mayor, y deja seis en el
+//     panel. Aquí las ocho van juntas en una fila, como en la E, y con los
+//     mismos escalones de letra: el cuerpo de la cifra deja de ser una
+//     diferencia entre las dos cartas. El ORDEN sí lo es, y a propósito — la
+//     fila arranca por ⚔️ Ataque y no por ❤️ Vida, al revés que razas.md y que
+//     la E (RECINTO_SKILLS en sketch-cards.tsx).
+//
+// POR QUÉ EXISTE
+//
+// La E y la G no se diferencian en una cosa, se diferencian en DOS a la vez
+// —silueta y jerarquía de los ocho—, así que puestas al lado no se puede saber
+// cuál de las dos es la que gusta. De las cuatro celdas posibles había dos
+// dibujadas; con esta hay tres:
+//
+//                          las ocho juntas   las ocho partidas
+//   rectángulo redondeado        E · Forja        (sin dibujar)
+//   octógono                     H · Recinto      G · Estandarte
+//
+// Comparada con la G aísla la jerarquía —misma silueta, mismo metal, misma
+// veta— y comparada con la E aísla la silueta. La cuarta celda no hace falta
+// para eso, y por eso no está.
+//
+// El marco es el MISMO de la G: EstandarteFrame, sin una línea de diferencia.
+// Cambiar el contorno aquí sería añadir una tercera variable y romper justo lo
+// que este boceto viene a hacer.
+// =========================================================================
+
+// El aire lateral del panel, el mismo de la G: se repite en vez de compartirse
+// porque cada boceto tiene el suyo (la E usa +2px) y no es una constante del
+// juego sino una decisión de cada marco.
+$frame-clear: $sketch-band + 6px;
+
+// --- El disco del Tier, metido dentro ------------------------------------
+// Cuánto se separa del canto INTERIOR del filete, no del canto de la carta:
+// por eso arranca en $sketch-band. Los 4px de aire no son estéticos, son lo
+// que impide que el aro de oro del disco muera contra el raíl del marco, que
+// se lee como una pieza mal encajada y no como una pieza puesta encima.
+//
+// Y cabe con sitio de sobra, aunque la esquina esté cortada: el chaflán visto
+// desde dentro mide 18 − 15(2 − √2) ≈ 9,2px, o sea que el corte interior es la
+// recta x + y = 24,2 + 15. El centro del disco cae en (42, 42) y queda a
+// (84 − 39,2) / √2 ≈ 31,7px de esa recta, contra un radio de 23. Ocho píxeles y
+// pico de holgura, y por el mismo eje del chaflán — que es lo que hace que la
+// esquina cortada acabe siendo el sitio del disco en vez de un estorbo.
+$disc-in: $sketch-band + 4px;
+
+// El estandarte sigue colgando del disco, así que sus dos medidas salen de
+// dónde está el disco y no de la carta: centrado en su eje —(46 − 28) / 2 = 9px
+// a cada lado— y arrancando 10px por encima de su canto de abajo, el mismo
+// solape que en la G. Aquí el resultado son 28 y 55px, o sea que la bandera
+// entera cae por dentro del filete: es el segundo cambio de este boceto y no
+// hay que escribirlo dos veces, sale de mover el disco.
+$banner-left: $disc-in + math.div($sketch-disc - $sketch-banner, 2);
+$banner-top: $disc-in + $sketch-disc - 10px;
+
+// Sin pines, la franja de abajo del panel deja de tener que reservarles sitio
+// (la G aparta 48px). Solo queda la línea de raza, que además vuelve al flujo,
+// así que el acolchado de abajo pasa a ser lo que es en cualquier caja: el
+// mismo aire que los lados.
+$panel-foot: $frame-clear;
+
+.sketch--estandarte.sketch--recinto {
+  // --- El disco del Tier, dentro y sin oro --------------------------------
+  // Cambia de sitio, y el sitio cambia lo que la pieza DICE: desbordando el
+  // chaflán se lee como un sello colgado del canto; metida aquí, apoyada en el
+  // arte y contra el filete, se lee como un botón. La pregunta es si el sello
+  // valía lo que costaba.
+  //
+  // Y se le quita el ARO DE ORO —el `0 0 0 1.5px game("gold")` de la G—, que va
+  // en el mismo sentido: el oro era lo que remataba la pieza como moneda, y una
+  // moneda es algo que se cuelga del canto. Dentro del marco ese hilo hacía dos
+  // cosas malas a la vez: repetía el oro del subrayado del rótulo y del rombo
+  // sin que ninguno de los tres fuera el importante, y le ponía un contorno duro
+  // a la única pieza que aquí tiene que parecer apoyada. Se queda el borde de
+  // metal, que es el que la ata a la aleación de la carta, y la cara oscura, que
+  // es lo que deja el número en oro sobre negro. El resto de la sombra sigue
+  // siendo el de la G y hay que escribirlo entero: box-shadow no se hereda por
+  // capas, se reemplaza.
+  .sketch__disc {
+    top: $disc-in;
+    left: $disc-in;
+    box-shadow:
+      inset 0 1px 0 card-sketch("glass-hi"),
+      0 4px 10px card-sketch("shadow");
+  }
+
+  // --- El estandarte, dentro ----------------------------------------------
+  // Baja con el disco y de paso deja de tapar el canal de la veta, que en la G
+  // sí tapa: la bandera arrancaba en x = 2px, o sea por encima del filete.
+  // Aquí el aro de ocho lados da la vuelta entero sin que nada se le cruce, y
+  // eso es un efecto secundario que conviene mirar aparte de la pregunta del
+  // sello — puede ser lo mejor de este boceto o puede dejar la bandera flotando
+  // sobre el arte sin nada de lo que colgar.
+  .sketch__banner {
+    top: $banner-top;
+    left: $banner-left;
+  }
+
+  // --- Las ocho, juntas ---------------------------------------------------
+  // Ocho columnas donde la G pone seis. La cuenta: (300 − 42 de acolchado − 14
+  // de huecos) / 8 = ~30,5px por columna, contra los ~41 de la G y los 33 de la
+  // fila de ocho de la E. Es la columna más estrecha de los tres bocetos, y no
+  // por casualidad: el octógono gasta más acolchado que la E (+6px por lado
+  // contra +2) porque su panel cierra a sangre contra un filete sin cantoneras.
+  // A 30,5px el par sigue teniendo que ir apilado —es la regla de la anchura,
+  // por debajo de ~60px no hay elección— y una Vida de tres cifras entra: 240 a
+  // 1rem de Platypi ocupa unos 24px.
+  .sketch__pods {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  // Los escalones de la E y no los de la G, a propósito. Los "lg" de la G son
+  // para seis columnas de 41px y aquí sobrarían de ancho; los "xl" son los de
+  // la fila de ocho de la E, que reparte 33px. Con el par dibujado igual que en
+  // la E, el TAMAÑO deja de ser una de las diferencias entre las dos cartas —lo
+  // que queda es la silueta y el orden de lectura, que son las dos cosas que
+  // este boceto sí quiere que se miren.
+  .sketch__pod-icon {
+    font-size: sketch-font("stat-icon-xl");
+  }
+
+  .sketch__pod-value {
+    font-size: sketch-font("pod-xl");
+  }
+
+  // --- La línea de raza, de vuelta al flujo -------------------------------
+  // En la G va anclada al fondo del panel y con 70px de acolchado a los lados,
+  // y las dos cosas eran por los pines: tenía que caer a su misma altura —en el
+  // flujo se les habría puesto encima— y esquivar la hoja de acero para que
+  // «No-muertos» no se metiera debajo. Sin pines no queda nada que esquivar ni
+  // ninguna altura que igualar, así que vuelve a ser el último renglón del
+  // panel, que es lo que siempre fue.
+  .sketch__type {
+    position: static;
+    margin-top: 11px;
+    padding-inline: 0;
+  }
+
+  // Y el panel deja de reservar la franja de los pines.
+  .sketch__plate--panel {
+    padding-bottom: $panel-foot;
+  }
+}
