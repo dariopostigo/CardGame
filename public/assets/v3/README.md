@@ -1,48 +1,117 @@
 # Arte de V3
 
-**Ya hay arte.** Cinco archivos, todos de la raza piloto: sus **cuatro héroes**
-y su **primera unidad**.
+> ## ⚠️ TODO LO QUE HAY AQUÍ ES PROVISIONAL
+>
+> **Decidido el 26 de agosto de 2026 por Dario.** El generador no está
+> obedeciendo la especificación de abajo —sale lo que sale, tanda tras tanda—,
+> así que la política mientras dure es: **se van metiendo las ilustraciones que
+> vayan saliendo, tal cual, para que las cartas dejen de ser emojis y se puedan
+> mirar de verdad. Ninguna es definitiva.**
+>
+> Lo que eso implica, y conviene tenerlo escrito porque cambia el sentido de casi
+> todo lo que sigue:
+>
+> - **Los desajustes de la tabla NO son deuda que arreglar.** Ni el lienzo
+>   apaisado de tres archivos, ni el encuadre de siete. Nadie tiene que
+>   regenerarlos, y sobre todo nadie tiene que *recortarlos a mano* para
+>   cuadrarlos. La tabla se mantiene porque es la **lista de comprobación para
+>   cuando llegue la generación buena**, no una lista de tareas.
+> - **La conversión a `.webp` espera a esa misma tanda.** Convertir un relleno es
+>   trabajo que se tira dos veces.
+> - **La especificación de abajo no se toca ni se relaja.** Que el generador no la
+>   cumpla no la convierte en la norma equivocada; la norma es lo que hay que
+>   pedirle. Si algo hay que cambiar es el **prompt**, no el objetivo — ver la
+>   pista del ancla de suelo en el punto 3 del bloque de abajo.
+> - **Y al mirar las cartas montadas, ojo con esto**: una carta que sale cortada
+>   por el muslo lo está por el **archivo**, no por el marco. El marco ya está
+>   decidido —**J · Orla**, 25 de agosto de 2026— y pinta el arte **a sangre**
+>   dentro del octógono, con el panel del pie encima, así que hereda tal cual la
+>   norma del cuarto de abajo: mientras la figura acabe al 86% y no al 72%, el
+>   panel le va a comer las piernas y eso no lo arregla ningún ajuste de CSS.
+>   Sirve para saber qué esperar; no es un fallo de la carta.
 
-| Archivo | Sujeto | Medida | Encuadre |
-|---|---|---|---|
-| `races/humanos/guerrero.png` | ⚔️ Guerrero (Humanos) | 1060×1484 | ✅ Vertical 5:7 |
-| `races/humanos/mago.png` | 🔮 Mago (Humanos) | 1060×1484 | ✅ Vertical 5:7 |
-| `races/humanos/sacerdote.png` | ✝️ Sacerdote (Humanos) | 1477×1065 | ⚠️ Apaisado |
-| `races/humanos/arquero.png` | 🏹 Arquero (Humanos) | 1484×1060 | ⚠️ Apaisado |
-| `races/humanos/units/miliciano.png` | 🗡️ Miliciano (Humanos, tier 1) | 1484×1060 | ⚠️ Apaisado |
+**Ya hay arte.** Ocho archivos, todos de la raza piloto: sus **cuatro héroes** y
+las **cuatro primeras unidades** de su progresión, o sea media raza dibujada.
 
-Los cinco se pintan en los bocetos de marco de **Cartas › Diseño de cartas**
+Dos columnas y no una, porque son **dos cosas distintas** y hay que poder
+mirarlas por separado: el **lienzo** (la proporción del archivo) y el
+**encuadre** (dónde cae la figura dentro de él). Hasta el 26 de agosto de 2026
+solo se miraba el primero.
+
+| Archivo | Sujeto | Medida | Lienzo | Encuadre (pies) |
+|---|---|---|---|---|
+| `races/humanos/guerrero.png` | ⚔️ Guerrero | 1060×1484 | ✅ 5:7 | ⚠️ ~86% |
+| `races/humanos/mago.png` | 🔮 Mago | 1060×1484 | ✅ 5:7 | ⚠️ ~89% |
+| `races/humanos/sacerdote.png` | ✝️ Sacerdote | 1477×1065 | ⚠️ Apaisado | ✅ ~72% |
+| `races/humanos/arquero.png` | 🏹 Arquero | 1484×1060 | ⚠️ Apaisado | ⚠️ ~78% |
+| `races/humanos/units/miliciano.png` | 🗡️ Miliciano (tier 1) | 1484×1060 | ⚠️ Apaisado | ⚠️ ~79% |
+| `races/humanos/units/arquero.png` | 🏹 Arquero (tier 2) | 1060×1484 | ✅ 5:7 | ⚠️ ~86% |
+| `races/humanos/units/caballero.png` | 🛡️ Caballero (tier 3) | 1060×1484 | ✅ 5:7 | ⚠️ ~86% |
+| `races/humanos/units/mago.png` | 🔮 Mago (tier 4) | 1060×1484 | ✅ 5:7 | ⚠️ ~85% |
+
+*(«Pies» = dónde acaba la figura, medido sobre el alto del lienzo. La norma de
+§"Encuadre" dice **72%**, para que el cuarto de abajo quede libre. Los
+porcentajes están medidos a ojo sobre una hoja de guías, así que valen para
+decidir, no para citar al píxel.)*
+
+Los ocho se pintan en los bocetos de marco de **Cartas › Diseño de cartas**
 (`/docs/v3/cards/design`), que es lo único que hay montado que los use.
 
-**Ya no faltan héroes**: el 🏹 Arquero llegó el 25 de agosto de 2026 y con él la
-clase de héroe se juzga entera. El Miliciano abre `units/` y con él el caso que
-ningún héroe enseñaba: un tier 1, raíl común y cero Características encima de
-una ilustración de verdad.
+**Ya no faltan héroes** —el 🏹 Arquero llegó el 25 de agosto de 2026 y con él la
+clase se juzga entera— y desde el 26 hay **media progresión de unidades**:
+Miliciano, Arquero, Caballero y Mago, los cuatro en el mismo camino, con la
+misma cerca y el mismo castillo al fondo. Esa continuidad de escenario entre
+unidades no estaba pedida en ningún sitio y conviene decidir si se queda: hace
+que las ocho se lean como un ejército y no como ocho retratos sueltos, pero
+también significa que la progresión de tier no cambia de sitio.
 
-> **Dos cosas siguen sin cuadrar con lo que dice este mismo documento**, y hay
-> que cerrarlas antes de que lleguen las 127 restantes y se copie el criterio:
+Con esa tanda pasaron dos cosas en el laboratorio: **se retiró el último relleno
+prestado de v2** (el Arquero y el Mago unidad tiraban de las cartas de clase del
+juego anterior; ya no queda ninguna imagen de v2 en un lab de V3), y las
+unidades sin arte bajaron de siete a cuatro.
+
+> **Dos cosas siguen sin cuadrar con lo que dice este mismo documento.** Con el
+> arte en provisional (aviso de arriba) ninguna es urgente, pero hay que
+> cerrarlas antes de que lleguen las 127 restantes y se copie el criterio:
 >
 > 1. ~~**La ruta.**~~ **Cerrada** el 21 de agosto de 2026: estaban en
 >    `human/heroes/` con nombre en inglés y ya están en `races/humanos/` con el
 >    slug español que manda §"Nombre de archivo". Se cerró con tres archivos
 >    dentro porque con 132 cuesta 44 veces más.
-> 2. **El formato sigue abierto.** §"Nombre de archivo" pide `.webp` y estos son
->    `.png` de ~2,5 MB cada uno. A ese peso importa: son la ilustración de una
->    carta, no un fondo de pantalla. **No se convierten** mientras al archivo le
->    quede una vuelta, así que el `.webp` entra con la generación buena y no con
->    una conversión que se tira. Con Guerrero y Mago ya fijos, esos dos son los
->    primeros candidatos a convertirse.
-> 3. **Al apaisado le queda otra vuelta, y solo por el encuadre.** Los otros dos
->    motivos por los que había que regenerar están **resueltos**: el reparto de
->    cuerpos (el Sacerdote nuevo ya es un hombre mayor y grueso, no un joven
->    esbelto) y la jerarquía de fondo. Lo que no se ha corregido es la
->    proporción: **1484×1060 es el lienzo bueno girado**, no un lienzo distinto,
->    y en un marco vertical obliga a tirar media anchura. Las normas están
->    escritas en §"Lienzo y formato" y §"Encuadre" aquí, el reparto en
+> 2. **El formato sigue abierto, y ya pesa.** §"Nombre de archivo" pide `.webp` y
+>    estos son `.png` de ~2,5 MB cada uno: con ocho archivos son **~20 MB** en el
+>    repo para la primera media raza de once. A ese ritmo, las 132 no caben.
+>    **No se convierten** mientras al archivo le quede una vuelta —el `.webp`
+>    entra con la generación buena, no con una conversión que se tira—, pero
+>    conviene ver que el argumento se está gastando: si a los ocho les queda
+>    vuelta por el encuadre (punto 3), a los ocho les queda también la conversión,
+>    y entonces esto no es un pendiente, es parte de la próxima tanda.
+> 3. **El ENCUADRE es el pendiente de verdad, y es de casi todos** *(medido el 26
+>    de agosto de 2026, tabla arriba)*. Hasta esa fecha aquí solo se hablaba del
+>    lienzo, y por eso parecía un problema de tres archivos. Con las guías puestas
+>    encima resulta que **siete de los ocho** ponen los pies por debajo del 72%
+>    que manda §"Encuadre" —entre el 78% y el 89%—, así que la figura invade el
+>    cuarto reservado al rótulo y el panel de la carta le come las piernas. Y con
+>    una vuelta de tuerca desagradable: **los cinco de lienzo correcto son los
+>    cinco peores de encuadre**. El único que cumple es el ✝️ Sacerdote, y cumple
+>    de rebote, porque su lienzo apaisado no da de sí para una figura más alta.
+>    Lo que sí está **resuelto** de las vueltas anteriores: el reparto de cuerpos
+>    (el Sacerdote ya es un hombre mayor y grueso, no un joven esbelto) y la
+>    jerarquía de fondo. Las normas están en §"Lienzo y formato" y §"Encuadre"
+>    aquí, el reparto en
 >    [`sujetos.md`](../../../knowledge/v3/races-concept/sujetos.md#identidad-de-raza)
 >    y el fondo en
 >    [`style-guide.md`](../../../knowledge/v3/art-direction/style-guide.md#16-fondos)
 >    §16.
+>
+>    **Y hay una pista de por qué falla siempre por el mismo lado.** El aviso de
+>    §"Encuadre" ya lo decía: un modelo de imagen no mide porcentajes, así que el
+>    aire se pide con anclas visuales. Las cuatro filas de aire están en el
+>    prompt, pero la de **aire abajo** dice «suelo visible por delante y por
+>    detrás de los pies», y eso se cumple —hay suelo— sin que la figura suba: el
+>    ancla no controla CUÁNTO suelo. La que falta es una que fije el pie, del
+>    tipo «el suelo por delante de los pies ocupa la cuarta parte de abajo de la
+>    imagen». Cambiar esa línea es más barato que volver a tirar ocho veces.
 >
 > **No se recortan a mano.** Recortar un apaisado a 5:7 tira justo el aire
 > lateral que pide §"Encuadre", y dejarlos como están tiene un uso: en el lab,
@@ -62,19 +131,37 @@ una ilustración de verdad.
 > la H se come más ilustración que la placa de la E, y en un apaisado la
 > diferencia se nota a simple vista.
 >
-> ⚠️ **Y esa misma tarde apareció un motivo para NO regenerarlas todavía.** El
-> boceto **I · Retablo** —la mezcla con una carta de Magic— no pinta el arte a
-> sangre: lo mete en una **ventana de 252×220**, o sea apaisada. Ahí las cuentas
-> se invierten enteras: un vertical 5:7 pierde el **38% del alto** —cabeza o
-> piernas— y un apaisado 7:5 solo el **18% del ancho**. Con ese boceto en la
-> mesa, **los tres archivos «mal encuadrados» serían los tres bien encuadrados** y
-> el Guerrero y el Mago los que habría que rehacer. No cambia la norma —hoy son
-> tres bocetos a sangre contra uno en ventana, y §"Lienzo y formato" sigue
-> pidiendo 5:7 vertical— pero sí cambia el **orden de trabajo**: primero se elige
-> marco y después se regenera, porque en la mitad de los desenlaces regenerar
-> ahora es tirar cinco ilustraciones en vez de tres. Se ve sin medir nada en
-> `/docs/v3/cards/design`: el 🗡️ Miliciano sale cortado por el muslo en la H y
-> entero, con su paisaje, en la I.
+> ⚠️ **Y esa misma tarde apareció un motivo aparente para NO regenerarlas
+> todavía, que al día siguiente resultó ser falso. Se deja escrito con la
+> corrección detrás, porque el error es instructivo.** Lo que se anotó fue: el
+> boceto **I · Retablo** mete el arte en una **ventana de 252×220**, o sea
+> apaisada, y ahí un vertical 5:7 pierde el **38% del alto** contra el **18% del
+> ancho** que pierde un apaisado — luego, si ganaba ese boceto, los tres archivos
+> «mal encuadrados» pasaban a ser los buenos y había que esperar a elegir marco
+> antes de regenerar.
+>
+> **El 38% es correcto; la conclusión no.** Lo que faltaba era mirar QUÉ 38% se
+> tira. Echada la cuenta, la ventana de la I enseña la banda que va del **9,8% al
+> 72,1%** del alto de la fuente — y eso es, punto por punto, la banda que
+> §"Encuadre" reserva para la figura (12% → 72%). **La ventana de la I no pelea
+> con la norma: la ventana de la I ES la norma.** Con un archivo que la cumpla, la
+> I enseña la figura entera con un dedo de aire y la H la enseña con aire de
+> sobra: **el mismo 5:7 vertical vale para los dos bocetos**.
+>
+> Si el Guerrero y el Mago salen cortados en la I no es por el boceto, es porque
+> **esos dos archivos tampoco cumplen la norma**: ponen los pies al 86% y al 89%
+> cuando el tope son 72. La tabla de arriba lo dice de los ocho, y el resultado
+> incómodo es que **los cinco «buenos» de lienzo son los peores de encuadre** —
+> los apaisados aciertan más porque un lienzo más bajo no da para meter una
+> figura tan alta, o sea por accidente y no por criterio.
+>
+> **Lo que queda entonces:** regenerar no está bloqueado por la decisión de
+> marco, y tampoco es una tarea pendiente — es lo que pasará solo cuando el
+> generador empiece a obedecer. El dato que se guarda de todo esto es el
+> diagnóstico: el problema no era el lienzo de tres archivos, es el **encuadre de
+> siete de ocho**, y el único que cae dentro de la norma es el ✝️ Sacerdote,
+> que encima es apaisado. Cuando llegue la tanda buena se arreglan las dos cosas
+> —lienzo y encuadre— en la misma vuelta, y con ella entra el `.webp`.
 
 Qué generar y con qué especificación (sujetos, encuadre, plantilla de prompt):
 [`../../../knowledge/v3/art-direction/illustrations.md`](../../../knowledge/v3/art-direction/illustrations.md),

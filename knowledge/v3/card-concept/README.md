@@ -1039,15 +1039,37 @@ más sus tres huecos suman exactamente eso. **El presupuesto es la decisión**: 
 única que puede ceder es la ventana, porque es la única sin un contenido que la
 empuje.
 
-**1. La ventana cuesta el 48% del interior, y ese número lo cambia todo.** La
-ilustración pasa de ocupar 300×420 a ocupar 252×220. En una fuente vertical 5:7
-—la que manda la norma de arte— eso obliga a tirar **~38% del alto**, o sea la
-cabeza o las piernas; se ve en el ⚔️ Guerrero y el 🔮 Mago, que se quedan en
-plano medio. Pero al revés la cuenta se da la vuelta: **un apaisado 7:5 solo
-pierde el 18% del ancho**, y el 🗡️ Miliciano y el ✝️ Sacerdote entran aquí mejor
-que en ningún otro boceto. Eso deja un cabo que hay que atar antes de mandar a
-regenerar nada: **si gana este boceto, las tres ilustraciones que hoy están mal
-son las tres que están bien**, y la norma de encuadre cambia de signo.
+**1. La ventana cuesta el 48% del interior, y hay que entender bien qué tira.**
+La ilustración pasa de ocupar 300×420 a ocupar 252×220, o sea que en una fuente
+vertical 5:7 se va **~38% del alto**.
+
+> **Aquí se sacó una conclusión falsa el 25 de agosto y se corrigió el 26. Queda
+> escrita porque el error es del tipo que se vuelve a cometer.** Lo que se dijo
+> fue: como un apaisado 7:5 solo pierde el 18% del ancho, con este boceto en la
+> mesa las tres ilustraciones «mal encuadradas» pasan a ser las buenas y la
+> norma de encuadre cambia de signo. El 38% era correcto; faltaba mirar **qué**
+> 38%.
+
+Echada la cuenta —está en el parcial, junto al `object-position`—, la ventana
+enseña la banda que va del **9,8% al 72,1%** del alto de la fuente. Y esa es,
+punto por punto, la banda que §"Encuadre" reserva para la figura: 12% de aire
+arriba, pies al 72%. **Lo que la ventana tira es AIRE, no sujeto.** Con un
+archivo que cumpla la norma, la I enseña la figura entera con un dedo de margen
+y la H la enseña con margen de sobra: **el mismo 5:7 vertical sirve para los
+cuatro bocetos**, y este boceto deja de tener nada que decir sobre el lienzo.
+
+Lo que sí destapó, y es lo útil: **el arte no cumple la norma, y no son tres
+archivos sino siete de ocho**. Los pies caen entre el 78% y el 89% cuando el
+tope son 72, así que la figura se mete en el cuarto reservado al rótulo y el
+panel de cualquier boceto le come las piernas. Con la vuelta de tuerca de que
+**los cinco de lienzo correcto son los peores de encuadre** —el único que cumple
+es el ✝️ Sacerdote, y de rebote, porque su lienzo apaisado no da de sí para una
+figura más alta—. La auditoría de los ocho está en
+[`public/assets/v3/README.md`](../../../public/assets/v3/README.md).
+
+Moraleja de método, que es lo que aquí vale: **una medida de pérdida no dice
+nada hasta que se sabe qué hay en la parte que se pierde.** El 38% parecía un
+argumento contra el boceto y era un diagnóstico del arte.
 
 **2. La vitela funciona, y de paso contesta el hilo del emoji.** Las ocho cifras
 en tinta negra sobre papel se leen mejor que en ninguna de las otras tres cartas
@@ -1252,17 +1274,20 @@ montados.
 
 Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 
-> **Y el 25 de agosto de 2026 esto volvió a quedar colgando de una decisión, que
-> es justo lo que se había dado por cerrado.** La frase de arriba —«los cinco
-> comparten proporción y los cinco van a sangre»— era verdad de los nueve
-> bocetos hasta que dejó de serlo: la **I · Retablo** mete el arte en una
-> ventana **apaisada** de 252×220. Con ella en la mesa, el 5:7 vertical deja de
-> ser una consecuencia de la carta y pasa a ser una consecuencia del **boceto**:
-> a sangre pide vertical, en ventana pide apaisado, y las cuentas de pérdida se
-> invierten (38% del alto contra 18% del ancho). No se cambia la norma —hoy hay
-> tres bocetos a sangre contra uno en ventana— pero **queda dicho que las tres
-> ilustraciones apaisadas no se regeneran hasta que el marco esté elegido**: sería
-> tirar trabajo en la mitad de los desenlaces.
+> **El 25 de agosto de 2026 esto pareció volver a quedar colgando de una
+> decisión, y el 26 resultó que no.** La I · Retablo mete el arte en una ventana
+> **apaisada** de 252×220, así que por un día se dio por hecho que el lienzo
+> pasaba a depender del boceto —a sangre pide vertical, en ventana pide
+> apaisado— y que no se podía regenerar nada hasta elegir marco.
+>
+> **Es falso, y la cuenta lo deshace.** La ventana de la I enseña la banda del
+> 9,8% al 72,1% del alto de la fuente, que es exactamente la que §"Encuadre"
+> reserva para la figura: tira **aire**, no sujeto. El 5:7 vertical vale para los
+> cuatro bocetos y sigue siendo consecuencia de la carta, no del marco. Lo que
+> este episodio dejó no es una decisión abierta, es un **diagnóstico del arte**:
+> siete de los ocho archivos ponen los pies por debajo del 72% que manda la
+> norma, así que regenerar no está bloqueado por nada — está pendiente por el
+> encuadre, y de casi todos.
 
 ## Qué falta decidir (cerrado: J · Orla, 25-ago-2026)
 

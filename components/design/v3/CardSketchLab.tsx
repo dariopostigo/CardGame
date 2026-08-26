@@ -199,11 +199,12 @@ export default function CardSketchLab() {
         <b>Nada de esto está decidido.</b> Lo único inventado son los números de las Habilidades
         (los reales siguen pendientes en razas.md); ahí solo importa su forma, si tienen una, dos
         o tres cifras. La Rareza de las unidades va por tier a falta de una regla; los héroes no
-        entran en esa escala y tienen <b>raíl propio</b>, en rojo sangre. De las ocho unidades
-        solo tres tienen imagen: el 🗡️ Miliciano ya lleva <b>arte propio de V3</b> —la primera
-        unidad dibujada, y el caso que faltaba: tier, raíl común y cero Características encima de
-        una ilustración de verdad— y las otras dos van con relleno prestado de las cartas de clase
-        de v2. El resto cae al emoji, que sigue siendo lo normal y también hay que verlo.
+        entran en esa escala y tienen <b>raíl propio</b>, en rojo sangre. De las ocho unidades{" "}
+        <b>cuatro tienen ya arte propio de V3</b> —🗡️ Miliciano, 🏹 Arquero, 🛡️ Caballero y
+        🔮 Mago, media progresión y los cuatro en el mismo camino con el mismo castillo al
+        fondo—, así que el relleno prestado de las cartas de clase de v2 <b>ya no está</b>: no
+        queda una sola imagen del juego anterior en esta página. Las otras cuatro caen al emoji,
+        que sigue siendo lo normal y también hay que verlo.
       </p>
 
       {/* Controles. Los sujetos van en tres grupos y no en una lista porque la
@@ -300,13 +301,15 @@ export default function CardSketchLab() {
             <b>sin un solo dato encima</b>—. Y no es una preferencia: el 25 de agosto se midió que
             el panel de la H le corta las piernas al 🗡️ Miliciano, y ese problema{" "}
             <b>no tiene arreglo mientras el arte sea el fondo</b>, porque siempre habrá algo
-            encima. El precio también está medido y es alto: la ventana se queda con el{" "}
-            <b>52%</b> del interior, así que una ilustración vertical 5:7 —la que manda la norma—
-            pierde alrededor del <b>38% del alto</b>. Míralo en el ⚔️ Guerrero y el 🔮 Mago, que
-            son verticales y se quedan sin piernas, contra el 🗡️ Miliciano y el ✝️ Sacerdote, que
-            son apaisados y aquí entran <i>mejor</i> que en ningún otro boceto. Ahí está el
-            corolario incómodo: <b>si gana la I, las tres ilustraciones que hoy están mal pasan a
-            estar bien</b> y la norma de encuadre cambia de signo.
+            encima. El precio también está medido: la ventana se queda con el <b>52%</b> del
+            interior, así que una ilustración vertical 5:7 pierde alrededor del{" "}
+            <b>38% del alto</b>. Y aquí conviene saber <i>qué</i> 38%, porque de no mirarlo salió
+            una conclusión equivocada que estuvo un día en pie: la ventana enseña la banda que va
+            del <b>9,8% al 72,1%</b> del alto de la fuente, que es <b>exactamente</b> la que la
+            norma de encuadre reserva para la figura. <b>Lo que tira es aire, no sujeto</b>, y el
+            mismo archivo vertical vale para los cuatro bocetos. Así que si una carta sale cortada
+            por el muslo aquí, el que no cumple la norma es el archivo — y hoy no la cumplen siete
+            de los ocho.
           </li>
           <li>
             <b>Si la carta aguanta un bloque de papel dentro.</b> Ocho bocetos de oscuro sobre
@@ -599,25 +602,38 @@ export default function CardSketchLab() {
             quedaron <b>vacíos</b> al salir de ahí los dos rasgos que eran este campo disfrazado.
           </li>
           <li>
-            <b>El lienzo de la ilustración</b>, resuelto y ahora comprobable a un clic: el ⚔️
-            Guerrero y el 🔮 Mago ya están regenerados en <b>vertical 5:7</b> y entran a sangre,
-            mientras que ✝️ Sacerdote, 🏹 Arquero y 🗡️ Miliciano siguen <b>apaisados</b> y hay que
-            tirarles media anchura, así que el personaje sale enorme y descentrado. Cambia de
-            sujeto y la diferencia se ve sola — que es la razón de que estos tres se dejen así de
-            momento en vez de recortarlos. La medida está escrita en{" "}
-            <code>public/assets/v3/README.md</code>: <b>vertical 5:7 (1080×1512), plano general con aire y
-            figura centrada</b>, con el cuarto inferior reservado a la banda del nombre. No depende
-            del marco —la carta es 300×420 con el arte a sangre—, así que a los tres apaisados les
-            queda otra vuelta igual. Ojo: este marco se come <b>15px por cada lado</b>.
+            <b>El lienzo de la ilustración</b>, resuelto y comprobable a un clic. Cinco de los
+            ocho archivos están ya en <b>vertical 5:7</b> y entran a sangre —⚔️ Guerrero, 🔮 Mago
+            héroe y las unidades 🏹 Arquero, 🛡️ Caballero y 🔮 Mago—, mientras que ✝️ Sacerdote,
+            🏹 Arquero héroe y 🗡️ Miliciano siguen <b>apaisados</b> y hay que tirarles media
+            anchura, así que el personaje sale enorme y descentrado. Cambia de sujeto y la
+            diferencia se ve sola. La medida está en <code>public/assets/v3/README.md</code>:{" "}
+            <b>vertical 5:7 (1080×1512)</b>. Y <b>no depende del marco</b>, ni siquiera con la I
+            en la mesa: su ventana enseña justo la banda que la norma reserva a la figura, así que
+            el mismo archivo sirve para los cuatro bocetos.
             <br />
-            <b>Y ahora sí depende del marco, que es lo que ha cambiado.</b> La <b>I</b> no pinta el
-            arte a sangre: lo mete en una ventana de <b>252×220</b>, o sea apaisada. Ahí las
-            cuentas se dan la vuelta enteras — un vertical 5:7 pierde el <b>38% del alto</b> y un
-            apaisado 7:5 solo el <b>18% del ancho</b>—, así que las tres ilustraciones que hoy
-            están «mal» serían las tres que están bien. Se ve sin medir nada: pon «Todo junto» y
-            compara el 🗡️ Miliciano en la <b>H</b> —cortado por el muslo— con el mismo en la{" "}
-            <b>I</b>, entero y con su paisaje. Antes de mandar a regenerar las tres hay que decidir
-            este boceto, porque una de las dos decisiones manda sobre la otra.
+            <b>Donde de verdad falla el arte es en el ENCUADRE.</b> La norma pide{" "}
+            <b>plano general con aire</b>, la figura entre el 12% y el <b>72%</b> del alto, con el
+            cuarto de abajo libre para la banda del nombre. Puestas las guías, <b>siete de los
+            ocho</b> ponen los pies entre el 78% y el 89%, así que la figura invade ese cuarto y
+            el panel le come las piernas — en cualquier boceto. Y con la vuelta de tuerca
+            incómoda: <b>los cinco de lienzo correcto son los cinco peores de encuadre</b>. El
+            único que cumple es el ✝️ Sacerdote, y de rebote, porque su lienzo apaisado no da de
+            sí para meter una figura más alta. Míralo en el 🛡️ Caballero, que está en 5:7 exacto:
+            en la <b>H</b> el panel le tapa las botas y en la <b>I</b> la ventana lo corta por el
+            muslo, y en los dos casos el que se sale de la norma es el archivo, no el marco. Ojo
+            también: este marco se come <b>15px por cada lado</b>.
+            <br />
+            <b>Y las ocho ilustraciones son PROVISIONALES</b> <i>(26-ago-2026)</i>: el generador
+            no está respetando la especificación, así que se van metiendo las que salen para que
+            las cartas dejen de ser emojis y se puedan mirar de verdad. Nada de esto es{" "}
+            <b>deuda que arreglar</b> —ni el lienzo de tres archivos ni el encuadre de siete—, y
+            no hay que cuadrar nada a mano: ni recortes, ni <code>object-position</code> por
+            sujeto. La tabla del README es la <b>lista de comprobación de la tanda buena</b>, no
+            una lista de tareas. Con el marco ya decidido, lo único que hay que mirar aquí es que
+            lo que se mete <i>no engañe</i>: si una carta se ve mal, saber si es del archivo o de
+            la <b>J · Orla</b> — y con los pies al 86% cuando el tope son 72, hoy casi siempre es
+            del archivo.
           </li>
         </ul>
       </section>

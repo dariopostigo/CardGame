@@ -72,11 +72,16 @@
 // Las cinco cotas de settings/_card.scss suman exactamente el alto útil, y ahí
 // se ve el precio de esta anatomía: la ventana se queda con 220 de los 372, o
 // sea el 52% del interior contra el 100% de los otros bocetos. En una fuente
-// vertical 5:7 —la que manda public/assets/v3/README.md— eso obliga a tirar
-// alrededor del 38% del alto. Y el corolario, que es lo más útil que ha salido
-// de montar esto: las tres ilustraciones APAISADAS que hoy están mal
-// (1484×1060) encajarían aquí perdiendo un 18% del ancho en vez del 49% que
-// pierden en la H. Si gana este boceto, la norma de encuadre cambia de signo.
+// vertical 5:7 eso obliga a tirar alrededor del 38% del alto.
+//
+// AVISO SOBRE ESE 38%, porque el 25 de agosto se sacó de él la conclusión
+// equivocada. Aquí ponía que las ilustraciones apaisadas encajarían mejor y que
+// «si gana este boceto, la norma de encuadre cambia de signo». Es falso, y lo
+// que faltaba era mirar QUÉ 38% se tira: la ventana enseña la banda del 9,8% al
+// 72,1% del alto de la fuente, que es exactamente la que §"Encuadre" reserva
+// para la figura. Lo que se tira es AIRE, no sujeto. Con un archivo que cumpla
+// la norma, el mismo 5:7 vertical vale para este boceto y para los otros tres.
+// La cuenta está abajo, junto al object-position.
 // =========================================================================
 
 // El aire de la página, medido desde el CANTO DE LA CARTA y no desde el filete:
@@ -212,11 +217,24 @@ $page-pad: $sketch-band + $sketch-page-pad;
     overflow: hidden;
   }
 
-  // La ventana es apaisada (252 × 220) y las fuentes buenas son verticales 5:7,
-  // así que `cover` recorta por arriba y por abajo. Centrado se comería la
-  // cabeza y los pies a partes iguales, y de los dos la cabeza no se negocia:
-  // el encuadre se sube. 26% es donde el 🗡️ Miliciano conserva la cara entera y
-  // el ⚔️ Guerrero no pierde el escudo.
+  // NO TOCAR ESTE 26% SIN LEER ESTO. La ventana es apaisada (252 × 220) y las
+  // fuentes son verticales 5:7, así que `cover` recorta por arriba y por abajo:
+  // sobran 132,75px de los 352,75 que mide la imagen escalada. Se eligió a ojo
+  // —26% es donde el 🗡️ Miliciano conserva la cara y el ⚔️ Guerrero el escudo—
+  // y al echar la cuenta después resultó caer donde no se esperaba:
+  //
+  //   arriba   132,75 × 0,26 = 34,5px  →   34,5 / 0,23774 / 1484 =  9,8%
+  //   abajo    34,5 + 220    = 254,5px →  254,5 / 0,23774 / 1484 = 72,1%
+  //
+  // O sea que la ventana enseña la banda del 9,8% al 72,1% del alto de la
+  // fuente, y eso es punto por punto lo que §"Encuadre" de
+  // public/assets/v3/README.md reserva para la figura: 12% arriba, 72% abajo.
+  // **La ventana no pelea con la norma de arte, la ventana ES la norma.** Con un
+  // archivo que la cumpla, aquí se ve la figura entera con un dedo de aire.
+  //
+  // Y de ahí sale el diagnóstico del arte que hay hoy: si el Guerrero o el
+  // Caballero salen cortados por el muslo en esta carta, no es de este boceto —
+  // es que esos archivos ponen los pies al 86% cuando el tope son 72.
   .sketch__art-img {
     object-position: 50% 26%;
   }

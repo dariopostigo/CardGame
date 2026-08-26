@@ -97,7 +97,7 @@ export const SKETCHES: readonly {
     id: "retablo",
     label: "I · Retablo",
     source: "La H · Recinto cruzada con una carta de Magic: The Gathering",
-    bet: "Contradice lo único que los ocho bocetos anteriores nunca discutieron: que la carta ES su ilustración. Aquí la carta es una PÁGINA de franjas apiladas y el arte va METIDO EN UNA VENTANA, hundida y enmarcada, sin un solo dato encima. De la referencia (imgs/magic-the-gathering-fading-hope-mid.webp) se queda la anatomía entera: barra de título con el rótulo solo y el Tier en el bisel donde va el coste de maná; ventana de arte; línea de tipo que ESCRIBE «Unidad — Humanos» y remata con un sello de Rareza de 12px —en Magic el símbolo de colección es literalmente lo que dice la rareza, por color—; y una caja de datos sobre VITELA, el primer sitio claro de una carta de V3, con los ocho números arriba y las Características debajo del filete que la referencia usa para separar su texto de ambientación. De la H se queda el octógono con su roblón, el filete de metal con la veta, la aleación única y las ocho Habilidades juntas en una fila. Tres cosas contesta que ningún otro podía: si la ilustración puede dejar de cargar con los datos —el panel de la H le corta las piernas al Miliciano y eso no tiene arreglo mientras el arte sea el fondo—, si la carta aguanta un bloque de papel dentro (y qué le pasa a un 💀 o un 🧊 sobre vitela), y si la Rareza necesita ser una pieza tallada o le basta un glifo en un renglón. El precio está medido: la ventana se queda con el 52% del interior, así que una fuente vertical 5:7 pierde ~38% del alto — pero las tres ilustraciones apaisadas que hoy están mal solo perderían el 18% del ancho, o sea que si gana este boceto la norma de encuadre cambia de signo. Y la tensión que la mezcla no resuelve: Magic TAMBIÉN saca fuerza y resistencia del grupo, en su ficha de esquina, así que las dos referencias votan lo contrario que la H en la jerarquía de los ocho.",
+    bet: "Contradice lo único que los ocho bocetos anteriores nunca discutieron: que la carta ES su ilustración. Aquí la carta es una PÁGINA de franjas apiladas y el arte va METIDO EN UNA VENTANA, hundida y enmarcada, sin un solo dato encima. De la referencia (imgs/magic-the-gathering-fading-hope-mid.webp) se queda la anatomía entera: barra de título con el rótulo solo y el Tier en el bisel donde va el coste de maná; ventana de arte; línea de tipo que ESCRIBE «Unidad — Humanos» y remata con un sello de Rareza de 12px —en Magic el símbolo de colección es literalmente lo que dice la rareza, por color—; y una caja de datos sobre VITELA, el primer sitio claro de una carta de V3, con los ocho números arriba y las Características debajo del filete que la referencia usa para separar su texto de ambientación. De la H se queda el octógono con su roblón, el filete de metal con la veta, la aleación única y las ocho Habilidades juntas en una fila. Tres cosas contesta que ningún otro podía: si la ilustración puede dejar de cargar con los datos —el panel de la H le corta las piernas al Miliciano y eso no tiene arreglo mientras el arte sea el fondo—, si la carta aguanta un bloque de papel dentro (y qué le pasa a un 💀 o un 🧊 sobre vitela), y si la Rareza necesita ser una pieza tallada o le basta un glifo en un renglón. El precio está medido: la ventana se queda con el 52% del interior, así que una fuente vertical 5:7 pierde ~38% del alto. De ahí se sacó al montarlo una conclusión falsa —que entonces convenían las ilustraciones apaisadas— y al día siguiente salió la buena: la ventana enseña la banda del 9,8% al 72,1% del alto de la fuente, o sea EXACTAMENTE la que la norma de encuadre reserva para la figura. Lo que se tira es aire, no sujeto, y el mismo 5:7 vertical vale para este boceto y para los otros tres. Si una carta sale cortada por el muslo aquí, el que no cumple la norma es el archivo. Y la tensión que la mezcla no resuelve: Magic TAMBIÉN saca fuerza y resistencia del grupo, en su ficha de esquina, así que las dos referencias votan lo contrario que la H en la jerarquía de los ocho.",
   },
   {
     id: "orla",
@@ -152,10 +152,17 @@ const RECINTO_SKILLS: readonly SkillKey[] = [...PIN_SKILLS, ...PANEL_SKILLS];
 /**
  * El hueco de arte, a sangre.
  *
- * Cae al emoji cuando el sujeto no tiene ilustración, que hoy es lo normal:
- * public/assets/v3/ está vacío y lo único dibujado son las cuatro cartas de
- * clase de v2. <img> plano y no next/image por el mismo motivo que en
+ * Cae al emoji cuando el sujeto no tiene ilustración, que va dejando de ser lo
+ * normal: desde el 26 de agosto de 2026 hay ocho archivos de V3 —los cuatro
+ * héroes de Humanos y las cuatro primeras unidades— y solo cuatro unidades
+ * siguen sin dibujar. <img> plano y no next/image por el mismo motivo que en
  * SpriteLab: es imagen de laboratorio, no arte de partida.
+ *
+ * Dónde acaba este <div> depende del boceto, y es lo único de esta pieza que hay
+ * que tener presente: en la E, la G y la H es el fondo de la carta (`inset: 0`
+ * contra .sketch), y en la I es el contenido de la ventana — el mismo `inset: 0`
+ * medido contra .sketch__window, que el SCSS hace `position: relative`. Ni una
+ * prop de diferencia.
  */
 function Art({ subject }: { subject: Subject }) {
   return (

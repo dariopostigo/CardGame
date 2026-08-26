@@ -104,21 +104,34 @@ export type Subject = {
   /** Emoji de la unidad o del héroe: hace de ilustración cuando no hay imagen. */
   readonly icon: string;
   /**
-   * Ilustración. Hay de dos clases y no se mezclan:
+   * Ilustración. Desde el 26 de agosto de 2026 **toda la que hay es de V3**
+   * (`public/assets/v3/races/humanos/`): son OCHO archivos, los cuatro héroes y
+   * las cuatro primeras unidades de la progresión (Miliciano, Arquero,
+   * Caballero y Mago). El relleno prestado de las cartas de clase de v2 se
+   * retiró con esa tanda, porque ya no cubría ningún hueco — y con él se fue la
+   * última imagen del juego anterior que quedaba en un lab de V3.
    *
-   * - **Los cuatro héroes y el Miliciano llevan arte de V3**
-   *   (`public/assets/v3/races/humanos/`). Es el arte propio del juego y manda
-   *   para juzgar el marco: si uno no funciona con estas cinco, no funciona.
-   *   Pero **no está cerrado**: Guerrero y Mago ya están en el 5:7 vertical
-   *   bueno, y Sacerdote, Arquero y Miliciano entraron apaisados.
-   * - **Dos unidades llevan relleno de v2** (`public/assets/v2/cards/class/`),
-   *   prestado de las cartas de clase cuyo papel coincide. Es provisional.
+   * Las otras cuatro unidades caen al emoji, que sigue siendo lo normal y
+   * también hay que verlo.
    *
-   * Las demás caen al emoji, que sigue siendo lo normal —siete de las ocho
-   * unidades no tienen arte— y también hay que verlo. Que convivan las dos
-   * proporciones no es un descuido y conviene mirarlo así: las verticales
-   * entran a sangre, y las apaisadas se recortan por los lados, que es
-   * exactamente lo que enseña por qué el lienzo tenía que ser 5:7.
+   * **Y las ocho son PROVISIONALES**, por decisión de Dario del 26 de agosto de
+   * 2026: el generador no está respetando la especificación de
+   * `public/assets/v3/README.md`, así que se va metiendo lo que sale para que
+   * las cartas dejen de ser emojis y se puedan mirar de verdad. Ninguna es
+   * definitiva, y por eso aquí no hay que cuadrar nada a mano — ni recortes, ni
+   * `object-position` por sujeto, ni casos especiales. **Si una carta se ve mal
+   * por su ilustración, se anota y se sigue.**
+   *
+   * De ahí salen dos cosas que conviene no confundir. Cinco archivos están en el
+   * 5:7 vertical bueno (Guerrero, Mago héroe, Arquero, Caballero y Mago unidad)
+   * y tres entraron apaisados —1484×1060, el mismo lienzo girado— (Sacerdote,
+   * Arquero héroe y Miliciano), así que al pasar de uno a otro se ve por qué el
+   * lienzo tenía que ser 5:7. Pero el desajuste que de verdad se nota en la carta
+   * no es ese: es el ENCUADRE, que se sale de la norma en siete de los ocho —la
+   * figura acaba entre el 78% y el 89% del alto cuando el tope es el 72%—, así
+   * que el panel de cualquier boceto le come las piernas. Los dos están medidos
+   * en ese README y ninguno es tarea: son la lista de comprobación de cuando
+   * llegue la generación buena.
    */
   readonly art?: string;
   readonly skills: Record<SkillKey, number>;
@@ -127,26 +140,29 @@ export type Subject = {
   readonly traits: readonly Trait[];
 };
 
-/** Relleno prestado de v2: las cuatro cartas de clase del juego anterior. */
-const ART_V2 = (slug: string) => `/assets/v2/cards/class/${slug}/cards_class_${slug}.png`;
-
 /**
- * Arte de V3. Desde el 25-ago-2026 son CINCO archivos: los CUATRO héroes de
- * Humanos —ya está el 🏹 Arquero, que era el que faltaba— y la primera unidad
- * dibujada del juego, el 🗡️ Miliciano.
+ * Arte de V3. Desde el 26-ago-2026 son OCHO archivos: los CUATRO héroes de
+ * Humanos y las CUATRO primeras unidades de su progresión —Miliciano, Arquero,
+ * Caballero y Mago—, o sea media raza piloto dibujada.
+ *
+ * Con esa tanda desapareció `ART_V2`, que prestaba las cartas de clase del juego
+ * anterior a las unidades sin arte. No hacía falta borrarlo a mano: al quedarse
+ * sin ninguna llamada dejó de compilar limpio, que es la manera de que un
+ * apaño provisional avise de que ya sobra.
  *
  * La ruta y el nombre son los que manda `public/assets/v3/README.md`, que es la
  * fuente única: `races/<raza>/` para los héroes y `races/<raza>/units/` para las
  * unidades, con el slug del nombre español. De ahí las dos funciones: la carpeta
  * es lo que separa a un héroe de una unidad, y no el nombre —👤 Humanos tiene un
- * 🏹 Arquero de cada clase, y los dos se llaman `arquero`—.
+ * 🏹 Arquero y un 🔮 Mago de cada clase, y cada par se llama igual—. Es el mismo
+ * choque de nombres que status.md tiene abierto como «los 25 nombres duplicados»,
+ * y aquí ya está resuelto por carpeta.
  *
  * Siguen siendo `.png` de ~2,5 MB donde ese documento pide `.webp`, y el motivo
- * de no convertirlos no ha cambiado de forma: el arte todavía se está tirando y
- * volviendo a tirar. Guerrero y Mago ya están regenerados en el 5:7 vertical
- * bueno; Sacerdote, Arquero y Miliciano entraron APAISADOS (1484×1060, que es el
- * lienzo correcto girado), así que a estos tres les queda otra vuelta y el
- * `.webp` entrará con ella.
+ * de no convertirlos no ha cambiado: el arte todavía se está tirando y volviendo
+ * a tirar. Ocho archivos son ya ~20 MB, así que la conversión empieza a pesar de
+ * verdad — pero sigue esperando a que el marco esté elegido, porque de eso
+ * depende qué proporción es la buena.
  */
 const ART_V3 = (slug: string) => `/assets/v3/races/humanos/${slug}.png`;
 
@@ -231,7 +247,7 @@ export const UNITS: readonly Subject[] = [
     tier: 2,
     rarity: rarityForTier(2),
     icon: "🏹",
-    art: ART_V2("picaro"),
+    art: ART_V3_UNIT("arquero"),
     skills: {
       vida: 15,
       ataque: 7,
@@ -258,6 +274,7 @@ export const UNITS: readonly Subject[] = [
     tier: 3,
     rarity: rarityForTier(3),
     icon: "🛡️",
+    art: ART_V3_UNIT("caballero"),
     skills: {
       vida: 34,
       ataque: 10,
@@ -280,7 +297,7 @@ export const UNITS: readonly Subject[] = [
     tier: 4,
     rarity: rarityForTier(4),
     icon: "🔮",
-    art: ART_V2("mago"),
+    art: ART_V3_UNIT("mago"),
     skills: {
       vida: 24,
       ataque: 5,
