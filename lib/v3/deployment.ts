@@ -2,8 +2,15 @@
 // El despliegue — V3
 //
 // docs/v3/board/battle.md §3: "colocación libre dentro de tu banda, antes de la
-// ronda 1". Cinco fichas —el héroe y cuatro unidades (§2)— cada una en un
-// hexágono de tus dos columnas, y ninguna compartiendo casilla (§5).
+// ronda 1". Cada una en un hexágono de las dos columnas del bando, y ninguna
+// compartiendo casilla (§5).
+//
+// EL BANDO ES DE UNO A TRES JUGADORES *(decidido el 27 de agosto de 2026)*, cada
+// uno con su héroe y hasta cuatro unidades (§2): cinco fichas por jugador, hasta
+// quince. Y **la banda es del bando, no del jugador** —los tres comparten las
+// dos columnas—, así que con quince fichas en veinticuatro hexágonos el
+// despliegue deja de ser cosa de cada uno. Aquí eso no cuesta ni una regla: el
+// dueño de la ficha es un dato, y las casillas se piden por orden de llegada.
 //
 // Es lo único del tablero que se puede escribir HOY completo, y por eso va
 // antes que la iniciativa o el ataque: no necesita ni un valor de las 8
@@ -37,6 +44,8 @@ export type FigureRole = "heroe" | "unidad";
 
 export type Figure = {
   readonly id: string;
+  /** Qué jugador la trae, empezando en 1. El bando es de uno a tres (§2). */
+  readonly owner: number;
   readonly role: FigureRole;
   /** Cómo se llama en la pantalla mientras no haya catálogo. */
   readonly label: string;
@@ -45,23 +54,48 @@ export type Figure = {
 
 export type Roster = readonly Figure[];
 
+/** Cómo se nombra una ficha cuando hay más de un jugador en la mesa. */
+export function figureName(figure: Figure): string {
+  return `${figure.label} (J${figure.owner})`;
+}
+
 /**
- * Un bando de muestra: el héroe y cuatro unidades. La composición se puede
- * cambiar en la pantalla, así que esto es solo por dónde abre.
+ * El reparto de tipos de daño de un jugador: héroe y cuatro unidades.
  *
  * Tres 🗡️ de cinco no es un capricho: el §5 cuenta que las fichas de cuerpo a
  * cuerpo son 70 de las 132 del catálogo, más de la mitad, así que un bando
  * corriente lleva mayoría de 🗡️. Y el héroe entra como 🗡️ porque es el reparto
  * que más castiga al tablero grande —el que tiene que cruzar el campo entero es
- * justo el que no puede caer—: si el despliegue funciona con esto, funciona.
+ * justo el que más caro se paga perder (§6)—: si el despliegue funciona con
+ * esto, funciona.
  */
-export const SAMPLE_ROSTER: Roster = [
-  { id: "heroe", role: "heroe", label: "Héroe", damage: "cuerpo-a-cuerpo" },
-  { id: "unidad-1", role: "unidad", label: "Unidad 1", damage: "cuerpo-a-cuerpo" },
-  { id: "unidad-2", role: "unidad", label: "Unidad 2", damage: "cuerpo-a-cuerpo" },
-  { id: "unidad-3", role: "unidad", label: "Unidad 3", damage: "magico" },
-  { id: "unidad-4", role: "unidad", label: "Unidad 4", damage: "a-distancia" },
+const PLAYER_DAMAGE: readonly DamageTypeId[] = [
+  "cuerpo-a-cuerpo", // el héroe
+  "cuerpo-a-cuerpo",
+  "cuerpo-a-cuerpo",
+  "magico",
+  "a-distancia",
 ];
+
+/**
+ * El bando de `players` jugadores, cinco fichas cada uno. La composición se
+ * puede cambiar en la pantalla, así que esto es solo por dónde abre.
+ */
+export function buildRoster(players: number): Roster {
+  const out: Figure[] = [];
+  for (let p = 1; p <= players; p++) {
+    PLAYER_DAMAGE.forEach((damage, i) => {
+      out.push({
+        id: `j${p}-${i === 0 ? "heroe" : `unidad-${i}`}`,
+        owner: p,
+        role: i === 0 ? "heroe" : "unidad",
+        label: i === 0 ? "Héroe" : `Unidad ${i}`,
+        damage,
+      });
+    });
+  }
+  return out;
+}
 
 /** Una ficha colocada. El despliegue es la lista de las que ya están. */
 export type Placement = { readonly figureId: string; readonly hex: HexCoord };
@@ -106,7 +140,8 @@ export function placementProblem(
 
   const occupant = figureAt(deployment, hex);
   if (occupant && occupant !== figureId) {
-    const name = roster.find((f) => f.id === occupant)?.label ?? "otra ficha";
+    const other = roster.find((f) => f.id === occupant);
+    const name = other ? figureName(other) : "otra ficha";
     return `Ahí está ${name}, y dos fichas nunca comparten hexágono (§5).`;
   }
 
@@ -146,10 +181,12 @@ function rowsFromMiddle(rows: number): number[] {
 }
 
 /**
- * Cinco fichas puestas como las pondría alguien: el cuerpo a cuerpo en la
- * columna del frente haciendo pantalla, y detrás el alcance y el héroe —que es
- * el que no puede caer (§6)—. Si una columna se llena, se sigue por la de
- * detrás.
+ * El bando puesto como lo pondría alguien: el cuerpo a cuerpo en la columna del
+ * frente haciendo pantalla, y detrás el alcance y los héroes —que son las fichas
+ * que más caro se pagan (§6)—. Si una columna se llena, se sigue por la de
+ * detrás, y con tres jugadores eso pasa: son quince fichas para veinticuatro
+ * hexágonos, así que el reparto real es una conversación entre aliados y esto
+ * solo ahorra los quince clics.
  */
 export function autoDeploy(arena: Arena, roster: Roster, side: Side): Deployment {
   const cols = bandColumns(arena, side);

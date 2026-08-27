@@ -100,12 +100,12 @@ export const DEV_MODULES: readonly DevModule[] = [
     slug: "tablero",
     label: "Tableros",
     summary:
-      "Los dos tableros separados de V3. Construida la ARENA de batalla, en cuatro tamaños desde el mínimo de 14×12: suelo como lámina continua y rejilla en trazo encima, siguiendo la dirección de arte, con las bandas y los alcances marcados con contorno. Encima ya está el DESPLIEGUE del §3 —cinco fichas colocadas libremente en tu banda— y el ritmo de la ronda del §1.1 recalculado. El de exploración sigue siendo un esqueleto.",
+      "Los dos tableros separados de V3. Construida la ARENA de batalla, en cuatro tamaños desde el mínimo de 14×12: suelo como lámina continua y rejilla en trazo encima, siguiendo la dirección de arte, con las bandas y los alcances marcados con contorno. Encima está el FORMATO del §2 —co-op de uno a tres jugadores, cinco fichas cada uno—, el DESPLIEGUE libre del §3 en la banda compartida, y el RITMO DE LA APROXIMACIÓN con el 👢 Movimiento repartido por tipo de daño y la persecución del arquero medida. El de exploración sigue siendo un esqueleto.",
     icon: "pi pi-map",
     status: "en-curso",
     doc: { href: "/docs/v3/board/battle", label: "Tablero de batalla" },
     blocker:
-      "Con 14×12 los frentes quedan a 11 hexágonos y no a 4, así que los tres alcances del §1.1 dejan de estar validados: medido en pantalla, con el 👢 Movimiento 2 que el §1.1 llevaba dentro la batalla no empieza hasta la ronda 4. Hay que decidir si sube 👢 Movimiento, suben los alcances o se acercan las bandas. Falta además la ilustración del campo, el bando enemigo de verdad (§2) y, ya con valores, iniciativa y turno.",
+      "Ninguno de geometría: el 27 de agosto se cerró que el tablero es grande, que la aproximación larga es la intención y que lo que se adapta es 👢 Movimiento (🗡️ alto, 🏹 bajo), no los alcances. Lo que falta: el movimiento en código (lib/v3/movement.ts), la ilustración del campo, y el bando enemigo de verdad —que espera una decisión, cuántas fichas y cuántos héroes trae la máquina contra uno, dos o tres jugadores—. Iniciativa y turno siguen esperando los valores de las 8 Habilidades.",
   },
 ];
 

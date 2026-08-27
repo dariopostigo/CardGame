@@ -10,12 +10,19 @@
 // (lib/v3/hex.ts `distance`); quien decide si un ataque llega es esto. Cuando
 // exista la ficha de personaje, será ella la que importe este módulo.
 //
-// Los tres números dejaron de ser provisionales el 24 de agosto de 2026, y por
-// una razón que toca directamente a este código: estaban calculados sobre la
-// geometría 7×5 con frentes a 4, y ese tablero se confirmó
-// (docs/v3/board/battle.md §1.1). Si algún día se mueve el ancho de la arena
-// —sigue siendo el dial abierto del §10—, estos tres valores son lo primero
-// que hay que volver a mirar.
+// LOS TRES NÚMEROS NO SE MUEVEN, y esto ya está probado en la práctica: el 24 de
+// agosto de 2026 dejaron de ser provisionales sobre la geometría 7×5, el 27 el
+// tablero creció a 14×12 —frentes a 11 en vez de a 4— y **siguieron igual**
+// (docs/v3/board/battle.md §1.1). El motivo es de catálogo y no de tablero:
+// 🗡️ es 1 por definición —el hexágono contiguo— y las fichas 🗡️ son 70 de las
+// 132, así que escalar el alcance con el ancho del campo solo escala a quien ya
+// llegaba y deja a más de la mitad del catálogo exactamente igual de lejos.
+//
+// Lo que se adapta al tablero es 👢 MOVIMIENTO, y por eso aquí aparece
+// `movementBand`: el reparto está decidido (🗡️ el más alto, 🏹 el más bajo), los
+// valores no —son insumo de Dario, como el resto de la escala—. De ahí sale el
+// cambio de carácter del 🏹, que en un tablero grande ya no abre la batalla sino
+// que la espera: avanzar para disparar es ponerse a tiro del que corre.
 //
 // El alcance es un MÁXIMO, no un mínimo: se puede disparar o lanzar magia
 // contra un enemigo pegado, sin penalización. En v2 sí penalizaba, con
@@ -23,6 +30,13 @@
 // =========================================================================
 
 export type DamageTypeId = "cuerpo-a-cuerpo" | "a-distancia" | "magico";
+
+/**
+ * En qué banda de 👢 Movimiento va ese tipo de daño (battle.md §1.1 y §1.2).
+ * El reparto está decidido; los números, no. Es lo que rompe el bucle del
+ * arquero que dispara y retrocede: el alcance se paga con los pies.
+ */
+export type MovementBand = "alto" | "medio" | "bajo";
 
 export type DamageType = {
   readonly id: DamageTypeId;
@@ -33,8 +47,9 @@ export type DamageType = {
   readonly range: number;
   /** Qué Habilidad lo reduce (game-design.md §4.3). */
   readonly mitigatedBy: "defensa" | "resistencia-magica";
-  /** Qué hace en la ronda 1 sobre la arena confirmada (battle.md §1.1). */
-  readonly openingRound: string;
+  readonly movementBand: MovementBand;
+  /** Su trabajo mientras los dos bandos se acercan (battle.md §1.1). */
+  readonly approachRole: string;
 };
 
 export const DAMAGE_TYPES: Record<DamageTypeId, DamageType> = {
@@ -44,7 +59,8 @@ export const DAMAGE_TYPES: Record<DamageTypeId, DamageType> = {
     icon: "🗡️",
     range: 1,
     mitigatedBy: "defensa",
-    openingRound: "Avanza; contacta y golpea en la ronda 2",
+    movementBand: "alto",
+    approachRole: "Cruza el campo entero: paga la aproximación, y por eso corre",
   },
   "a-distancia": {
     id: "a-distancia",
@@ -52,7 +68,8 @@ export const DAMAGE_TYPES: Record<DamageTypeId, DamageType> = {
     icon: "🏹",
     range: 4,
     mitigatedBy: "defensa",
-    openingRound: "Dispara sin moverse: el frente está justo a tiro",
+    movementBand: "bajo",
+    approachRole: "No avanza: espera y castiga a quien cruce",
   },
   magico: {
     id: "magico",
@@ -60,7 +77,8 @@ export const DAMAGE_TYPES: Record<DamageTypeId, DamageType> = {
     icon: "✨",
     range: 2,
     mitigatedBy: "resistencia-magica",
-    openingRound: "Tiene que avanzar; tira en la ronda 2",
+    movementBand: "medio",
+    approachRole: "Avanza a media rienda y entra detrás del 🗡️",
   },
 };
 

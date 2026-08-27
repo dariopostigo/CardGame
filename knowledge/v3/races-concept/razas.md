@@ -120,7 +120,17 @@ umbrales o porcentajes que el motor ya acota, y solo dos son cantidades libres.
 | 🎯 **Precisión** | Umbral de acierto sobre 1..100 | **65 – 95** |
 | 🍀 **Suerte** | Umbral de crítico sobre 1..100 | 0 – **25**, y nunca por encima de 🎯 Precisión |
 | ⚡ **Iniciativa** | Orden de actuación | Sin escala propia: solo se compara |
-| 👢 **Movimiento** | Hexágonos por turno | Entero pequeño |
+| 👢 **Movimiento** | Hexágonos por turno | Entero pequeño, **en tres bandas según el tipo de daño**: 🗡️ la más alta, ✨ media, 🏹 la más baja |
+
+**Las tres bandas de 👢 Movimiento son un requisito, no una preferencia**
+*(27 de agosto de 2026)*, y vienen del tablero grande
+(`docs/v3/board/battle.md` §1.2). Con el mismo 👢 Movimiento para todos, el 🏹
+dispara y retrocede indefinidamente y el 🗡️ **no contacta nunca**: en un tablero
+pequeño lo acorralaba el borde, y en 168 hexágonos no hay borde al que llegar.
+Que el alcance se pague con los pies es lo que rompe ese bucle, así que al
+repartir los valores de las 132 fichas **ninguna 🏹 puede tener el 👢 Movimiento
+de una 🗡️ de su mismo tier**. Los números concretos de cada banda siguen siendo
+insumo de Dario, como el resto de la escala.
 
 **Solo ❤️ Vida y ⚔️ Ataque crecen con el tier**, y crecen **×10 de tier 1 a
 tier 8** — unos **×1,4 por escalón**:
@@ -170,8 +180,13 @@ combate está en
 **Y los tres números ya no son provisionales** *(24 de agosto de 2026)*: estaban
 puestos sobre la geometría heredada, a la espera de que el
 [tablero de batalla](../../../docs/v3/board/battle.md) la confirmara o la
-moviera, y la ha **confirmado** — hexagonal 7×5, frentes a 4 hexágonos. El 🏹
-dispara en la ronda 1, el ✨ avanza y tira en la 2, el 🗡️ contacta en la 2.
+moviera. **La movió, y aguantaron** *(27 de agosto de 2026)*: el tablero pasó a
+ser grande —mínimo 14×12, frentes a 11 hexágonos en vez de a 4— y los tres
+alcances **se quedaron igual**, porque 🗡️ es 1 por definición y son 70 de las 132
+fichas: escalar el alcance solo escala a quien ya llegaba. Lo que se adaptó es
+**👢 Movimiento**, en tres bandas por tipo de daño (ver la escala). Y con el campo
+grande el 🏹 cambia de trabajo: ya no abre la batalla en la ronda 1, la espera
+quieto.
 
 **No es una Característica, es un campo.** Las Características son la excepción
 —lo que hace rara a esta ficha— y en la carta se dibujan como una fila de glifos

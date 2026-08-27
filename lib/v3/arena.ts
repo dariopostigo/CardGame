@@ -13,31 +13,32 @@
 // mientras esto sea así.
 //
 // EL TAMAÑO MÍNIMO ES 14×12 *(decisión de Dario, 27 de agosto de 2026)*, y son
-// las medidas del tablero que el código de v2 jugó de verdad. Sustituye a la
-// 7×5 que battle.md §1 daba por decidida, y hay que decir en voz alta lo que
-// eso arrastra: con bandas de 2 columnas los frentes quedan a **11**
-// hexágonos, no a 4, así que **los tres alcances del §1.1 dejan de estar
-// validados** —el 🏹 con alcance 4 ya no tiene el frente enemigo a tiro en la
-// ronda 1— y el ritmo de ronda que el §4.3 daba por hecho no se cumple. No se
-// arregla aquí: es diseño, y hasta que se decida, `frontDistance` lo dice a la
-// cara en vez de dejarlo pasar.
+// las medidas del tablero que el código de v2 jugó de verdad — la 7×5 que
+// battle.md §1 daba por decidida nunca se jugó. Ese mismo día se reescribió el
+// diseño para que el código y el documento digan lo mismo, y de ahí salen dos
+// cosas que este archivo da por sentadas:
+//
+//   · EL TABLERO ES GRANDE Y NO SE ATA AL FORMATO. Se juega igual de grande con
+//     un jugador que con tres (§1), porque la aproximación larga es la
+//     intención y no un defecto: con frentes a 11 hexágonos hacen falta varias
+//     rondas de maniobra antes del primer golpe, y ahí es donde el §1.1 quiere
+//     que viva la estrategia.
+//   · LOS TRES ALCANCES NO SE TOCAN, y lo que se adapta al tablero es
+//     👢 Movimiento, repartido por tipo de daño (lib/v3/damage.ts
+//     `movementBand`). `frontDistance` se sigue calculando, pero ya no para
+//     delatar una contradicción: es la distancia que mide la aproximación.
 //
 // El tablero se construye en coordenadas de FILA Y COLUMNA y se traduce a
 // axiales, no al contrario. Es el idioma del documento —"7 columnas × 5
 // filas", "bandas de 2 columnas", "col 1 ↔ col 5"— y así el código se puede
 // comparar con su diseño sin hacer cuentas de cabeza.
 //
-// Las medidas son un DIAL, no constantes cableadas, y es a propósito. Dos
-// motivos, los dos escritos:
-//   - battle.md §10 deja el ANCHO como la palanca de balance: "si la pelea
-//     resulta ser siempre el mismo choque frontal, el dial es el ancho del
-//     tablero (7×7 mantiene los alcances intactos porque no cambia la
-//     distancia entre frentes), no el alcance".
-//   - la 7×5 se hereda de v2 §2 por decisión explícita, pero el código de v2
-//     que de verdad se jugó corría sobre 14×12 (BATTLEFIELD_COLS/ROWS en
-//     lib/v2/rules/combat.ts). Así que la geometría confirmada nunca se probó
-//     a este tamaño: darla por buena sin poder moverla sería confiar en una
-//     medida que no tiene partidas detrás.
+// Las medidas siguen siendo un DIAL, no constantes cableadas, y ahora la
+// palanca es OTRA: battle.md §10 señala el ALTO —"si la pelea resulta ser
+// siempre el mismo choque, el dial es el alto del tablero: más filas, más sitio
+// por donde rodear"—, porque el ancho ya no cambia el ritmo. Al ritmo lo cambia
+// 👢 Movimiento (§1.1), así que estirar el campo a lo largo solo alarga la
+// caminata, y eso ya se decidió que está bien.
 //
 // Puro: sin React, sin azar, sin estado.
 // =========================================================================
@@ -68,21 +69,22 @@ export const ARENA: ArenaSpec = { cols: 14, rows: 12, bandDepth: 2 };
 
 /**
  * Los cuatro tamaños. El primero es el MÍNIMO y los otros tres crecen poco a
- * poco: el mayor no llega al doble del menor, que es lo que se pidió.
+ * poco: el mayor no llega al doble del menor en hexágonos (168 → 320), que es
+ * lo que se pidió.
  *
- * Crecen más de ancho que de alto a propósito, y no por gusto: battle.md §10
- * señala el ANCHO como la palanca —"el dial es el ancho del tablero, no el
- * alcance"—, así que la escalera va estrechando la proporción vuelta a vuelta
- * (1,17 → 1,33 de ancho por alto) en vez de agrandar la misma forma.
+ * Crecen de ancho Y de alto, y el alto es el que importa: es la palanca que
+ * battle.md §10 señala ahora, porque con la pantalla convertida en peaje (§5)
+ * cada fila de más es sitio por donde rodear. El ancho solo alarga la
+ * aproximación, y la aproximación larga ya es la intención.
  *
  * El nombre de cada uno es sus medidas y nada más: no hay tamaño "pequeño" ni
- * "grande", hay 14×12 y hay 20×15.
+ * "grande", hay 14×12 y hay 20×16.
  */
 export const ARENA_SIZES: readonly ArenaSpec[] = [
   { cols: 14, rows: 12, bandDepth: 2 },
-  { cols: 16, rows: 13, bandDepth: 2 },
-  { cols: 18, rows: 14, bandDepth: 2 },
-  { cols: 20, rows: 15, bandDepth: 2 },
+  { cols: 16, rows: 14, bandDepth: 2 },
+  { cols: 18, rows: 15, bandDepth: 2 },
+  { cols: 20, rows: 16, bandDepth: 2 },
 ];
 
 /** Cómo se llama un tamaño: sus medidas. */
@@ -91,19 +93,26 @@ export function sizeLabel(spec: ArenaSpec): string {
 }
 
 /**
- * Los frentes que battle.md §1 dio por buenos, y contra los que se compara
- * cualquier medida nueva. Vive aquí para que el módulo no lo lleve escrito a
- * mano: la comparación es parte de la arena, no de su pantalla.
+ * Cinco fichas POR JUGADOR: su héroe y hasta cuatro unidades (battle.md §2).
+ * La regla no cambió con el co-op, se multiplicó.
  */
-export const DESIGNED_FRONT_DISTANCE = 4;
+export const FIGURES_PER_PLAYER = 5;
 
 /**
- * Cinco fichas por bando: el héroe y cuatro unidades (battle.md §2). Vive aquí
- * porque es lo que hace que la banda tenga sentido —diez hexágonos para cinco
- * fichas es lo que convierte colocar delante o detrás en una elección y no en
- * un acomodo— y es contra este número contra el que se mide si una banda cabe.
+ * El juego es co-op de uno a tres jugadores *(decidido el 27 de agosto de
+ * 2026)*, y jugar en solitario es el mismo juego con un jugador: no hay dos
+ * modos, hay un número.
+ *
+ * El tope es 3 porque es el formato que nombró Dario. v2 llegaba a 4 y de sitio
+ * cabrían (40 fichas en 168 hexágonos), pero la lista de Iniciativa pasaría de
+ * 30 entradas y eso hay que jugarlo antes de prometerlo (battle.md §8).
  */
-export const FIGURES_PER_SIDE = 5;
+export const PLAYERS_MAX = 3;
+
+/** Cuántas fichas pone un bando de `players` jugadores. */
+export function figuresPerSide(players: number): number {
+  return players * FIGURES_PER_PLAYER;
+}
 
 export type Arena = {
   readonly spec: ArenaSpec;
@@ -129,14 +138,14 @@ export type Arena = {
  * `IllegalReason` (ARCHITECTURE.md §5): quien ofrezca el dial tiene que poder
  * explicar el "no", no solo apagar el botón.
  */
-export function specProblem(spec: ArenaSpec): string | null {
+export function specProblem(spec: ArenaSpec, figures = FIGURES_PER_PLAYER): string | null {
   if (spec.cols < 1 || spec.rows < 1) return "El tablero tiene que tener al menos una fila y una columna.";
   if (spec.bandDepth < 1) return "Una banda de despliegue necesita al menos una columna.";
   if (spec.bandDepth * 2 > spec.cols) {
     return `Las dos bandas de ${spec.bandDepth} columnas no caben en ${spec.cols}: se solaparían.`;
   }
-  if (spec.bandDepth * spec.rows < FIGURES_PER_SIDE) {
-    return `Una banda de ${spec.bandDepth}×${spec.rows} son ${spec.bandDepth * spec.rows} hexágonos, y hacen falta ${FIGURES_PER_SIDE} para desplegar.`;
+  if (spec.bandDepth * spec.rows < figures) {
+    return `Una banda de ${spec.bandDepth}×${spec.rows} son ${spec.bandDepth * spec.rows} hexágonos, y hacen falta ${figures} para desplegar.`;
   }
   return null;
 }

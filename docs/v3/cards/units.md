@@ -10,7 +10,7 @@ Las unidades tienen **dos caras**: reclutable (esta carta) y hostil (ver [charac
 
 ## Las ocho son la reserva, no el ejército *(24 de agosto de 2026)*
 
-El [tablero de batalla](../board/battle.md) §2 decidió que un bando son **cinco fichas: el héroe y hasta 4 unidades**. Las ocho de la progresión son de dónde **eliges**, y elegir cuatro antes de la batalla es una decisión de juego —¿el tier alto que pega, o dos baratas que hacen pantalla?—. Cuatro es el tope, no un requisito: si solo has reclutado dos, entras con dos.
+El [tablero de batalla](../board/battle.md) §2 decidió que cada jugador pone **cinco fichas: su héroe y hasta 4 unidades** —y el bando es de uno a tres jugadores, así que llega a quince—. Las ocho de la progresión son de dónde **eliges**, y elegir cuatro antes de la batalla es una decisión de juego —¿el tier alto que pega, o dos baratas que hacen pantalla?—. Cuatro es el tope, no un requisito: si solo has reclutado dos, entras con dos.
 
 **Una carta pone una ficha, una criatura**, no una pila de figuras: ❤️ Vida de 2–3 cifras es un cuerpo, el crítico dobla el daño y los estados se aplican a un cuerpo.
 

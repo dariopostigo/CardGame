@@ -1,53 +1,67 @@
 // =========================================================================
-// El ritmo de la ronda — V3
+// El ritmo de la aproximación — V3
 //
-// Una sola pregunta, y es la que el diseño dejó apoyada en la geometría de la
-// arena: EN QUÉ RONDA PEGA POR PRIMERA VEZ una ficha, dado lo que hay delante,
-// su alcance y su 👢 Movimiento.
+// Dos preguntas, y las dos son las que el diseño dejó apoyadas en la geometría
+// de la arena:
 //
-// Vive aparte de arena.ts porque no es el escenario —necesita 👢 Movimiento,
-// que es de la ficha— y aparte de damage.ts porque no es el tipo de daño: es
-// lo que sale de cruzar los dos sobre un tablero concreto.
+//   1. EN QUÉ RONDA PEGA POR PRIMERA VEZ una ficha, dado lo que hay delante, su
+//      alcance y su 👢 Movimiento.
+//   2. SI EL QUE CORRE ALCANZA AL QUE DISPARA, y cuántos disparos come mientras
+//      lo hace. Es el §1.2 de battle.md, y es la que decide si un tablero
+//      grande se puede jugar.
 //
-// El modelo es el §5 literal: en su turno una ficha "mueve hasta 👢 Movimiento
-// hexágonos y hace su ataque, en cualquier orden". Así que para pegar solo
-// tiene que terminar el movimiento a distancia ≤ alcance:
+// Vive aparte de arena.ts porque no es el escenario —necesita 👢 Movimiento, que
+// es de la ficha— y aparte de damage.ts porque no es el tipo de daño: es lo que
+// sale de cruzar los dos sobre un tablero concreto.
+//
+// LO QUE CAMBIÓ EL 27 DE AGOSTO DE 2026, y por qué este archivo se rehizo:
+//
+//   · La tabla del §1.1 ya no es el objetivo. Decía que el 🏹 abría en la ronda
+//     1 y los otros dos entraban en la 2, y eso solo pasaba sobre 7×5 con
+//     frentes a 4. Con el tablero grande **la aproximación larga es la
+//     intención** —tres a cinco rondas de maniobra— así que aquí ya no se
+//     comprueba si sale una tabla vieja: se mide qué sale.
+//   · 👢 Movimiento dejó de ser un número para todos y pasó a depender del TIPO
+//     DE DAÑO (damage.ts `movementBand`): 🗡️ el más alto, 🏹 el más bajo. Por eso
+//     todo lo de aquí toma un valor por tipo y no uno solo.
+//
+// El modelo del §5 sigue siendo literal: en su turno una ficha "mueve hasta
+// 👢 Movimiento hexágonos y hace su ataque, en cualquier orden". Así que para
+// pegar solo tiene que terminar el movimiento a distancia ≤ alcance:
 //
 //     avance = max(0, distancia − alcance)
 //     ronda  = avance === 0 ? 1 : ceil(avance / 👢 Movimiento)
 //
-// Avanza SOLO ella: el rival aguanta. Es el caso lento, y es el que usa el
-// §1.1 al escribir "tiene que avanzar; tira en la ronda 2" —si los dos
-// caminaran, el acercamiento iría al doble y ninguna de esas frases sería
-// cierta—.
-//
-// LO QUE ESTO DESTAPA, y es el motivo de que el archivo exista: la tabla del
-// §1.1 no cuadra con ningún 👢 Movimiento si se mide todo desde el frente…
-// hasta que se cuenta que el despliegue es libre dentro de la banda (§3). Con
-// 👢 Movimiento 2 y las fichas puestas donde uno las pondría —🗡️ y 🏹 en la
-// columna del frente, el ✨ detrás— la tabla sale exacta sobre 7×5:
-//
-//   🏹 alcance 4, a 4 → avance 0 → ronda 1    "dispara sin moverse"
-//   🗡️ alcance 1, a 4 → avance 3 → ronda 2    "contacta y golpea en la ronda 2"
-//   ✨ alcance 2, a 5 → avance 3 → ronda 2    "tiene que avanzar; tira en la 2"
-//
-// Con 👢 Movimiento 1 el 🗡️ tardaría 3 rondas; con 3, el ✨ pegaría en la 1. Los
-// dos rompen la tabla, así que el 7×5 llevaba dentro un 👢 Movimiento y era 2.
-// No es un valor decidido —las 8 Habilidades siguen sin números— es el valor
-// que hace verdadera la única tabla de ritmo que el diseño ha escrito, y por
-// eso es por donde abre el mando de /dev.
+// Avanza SOLO ella: el rival aguanta. Es el caso lento, y es el que hace falta
+// para leer el tablero — si los dos caminaran, el acercamiento iría al doble y
+// ninguna cuenta sería la del peor caso. Para el 🏹 esa lectura se da la vuelta y
+// sigue valiendo la misma función: el arquero no avanza, así que su primer
+// disparo llega cuando el rival cruza, y basta con darle el 👢 Movimiento del que
+// se acerca.
 //
 // Puro: sin React, sin azar, sin estado.
 // =========================================================================
 
 import { DAMAGE_TYPES, DAMAGE_TYPE_IDS, type DamageTypeId } from "./damage";
 
+/** 👢 Movimiento repartido por tipo de daño (battle.md §1.1). */
+export type MovementByType = Readonly<Record<DamageTypeId, number>>;
+
 /**
- * El 👢 Movimiento que el §1.1 llevaba dentro sin escribirlo (ver cabecera).
- * Es una reconstrucción, no una decisión: el día que las 8 Habilidades tengan
- * valores, este número se compara con el que salga y se tira.
+ * Los tres valores con los que abre el laboratorio. **No son una decisión**: el
+ * REPARTO sí está decidido (damage.ts `movementBand`), los números son insumo
+ * de Dario como el resto de la escala.
+ *
+ * Estos tres son el juego más pequeño que hace dos cosas a la vez: rompe el
+ * bucle del §1.2 —el 🗡️ alcanza al 🏹 en una ronda— y deja las tres bandas
+ * separadas, que es lo que hay que poder ver moviéndose. El día que la escala
+ * tenga números, se comparan con los que salgan y esto se tira.
  */
-export const IMPLIED_MOVEMENT = 2;
+export const LAB_MOVEMENT: MovementByType = {
+  "cuerpo-a-cuerpo": 4,
+  magico: 3,
+  "a-distancia": 1,
+};
 
 /** Cuántos hexágonos hay que recorrer para tener el objetivo a tiro. */
 export function advanceNeeded(distance: number, range: number): number {
@@ -60,7 +74,7 @@ export function advanceNeeded(distance: number, range: number): number {
  *
  * @param {number} distance - Hexágonos hasta el objetivo al empezar.
  * @param {number} range - Alcance fijo de su tipo de daño.
- * @param {number} movement - 👢 Movimiento, en hexágonos por turno.
+ * @param {number} movement - Hexágonos por turno de quien cierra la distancia.
  */
 export function firstAttackRound(
   distance: number,
@@ -76,69 +90,134 @@ export function firstAttackRound(
 export type TempoRow = {
   readonly id: DamageTypeId;
   readonly range: number;
+  readonly movement: number;
   readonly distance: number;
   readonly advance: number;
   readonly round: number | null;
 };
 
 /**
- * El ritmo de los tres tipos de daño desde una misma distancia. Es la tabla del
- * §1.1 recalculada: mismo formato, números medidos.
+ * El ritmo de los tres tipos de daño desde una misma distancia, cada uno con su
+ * 👢 Movimiento. Es la tabla del §1.1, medida en vez de recordada.
  */
-export function openingTempo(distance: number, movement: number): TempoRow[] {
+export function openingTempo(distance: number, movement: MovementByType): TempoRow[] {
   return DAMAGE_TYPE_IDS.map((id) => {
     const range = DAMAGE_TYPES[id].range;
     return {
       id,
       range,
+      movement: movement[id],
       distance,
       advance: advanceNeeded(distance, range),
-      round: firstAttackRound(distance, range, movement),
+      round: firstAttackRound(distance, range, movement[id]),
     };
   });
 }
 
 /**
- * Qué le pasa al ritmo del §1.1 sobre una distancia dada:
+ * Qué forma tiene el ritmo que sale:
  *
- *   · identico   — sale la tabla tal cual: 🏹 en la 1, ✨ y 🗡️ en la 2.
- *   · escalonado — el 🏹 abre SOLO y los otros entran después. La tabla llega
- *     más tarde pero conserva su forma, que es lo que el §4.3 compra con el
- *     alcance: el arquero tiene rondas que los demás no tienen.
- *   · aplanado   — los tres pegan a la vez, o el 🏹 no es el primero. Aquí el
- *     alcance deja de comprar ritmo, y es lo que pasa en cuanto 👢 Movimiento
- *     sube lo bastante para tragarse la diferencia entre 1, 2 y 4.
- *   · nunca      — alguno no llega (👢 Movimiento 0).
+ *   · escalonado  — el 🏹 pega antes que los otros dos, así que el alcance
+ *     compra rondas. Es lo que el §4.3 le pide, y lo que la tabla del §1.1
+ *     describía cuando el tablero era pequeño.
+ *   · simultaneo  — los tres entran a la vez, o el 🏹 no es el primero. Aquí el
+ *     alcance deja de comprar ritmo. Con 👢 Movimiento repartido por tipo de
+ *     daño esto es lo NORMAL en un tablero grande, y no es un fallo: el 🏹 bajó
+ *     de pies a cambio de que nadie pueda quedarse fuera de su alcance, y su
+ *     trabajo pasó a ser esperar (§1.1).
+ *   · nunca       — alguno no llega (👢 Movimiento 0).
  *
  * Es un veredicto CALCULADO y por eso vive aquí: la pantalla no tiene que saber
- * qué forma tenía la tabla original.
+ * qué forma se buscaba.
  */
-export type TempoVerdict = "identico" | "escalonado" | "aplanado" | "nunca";
+export type TempoVerdict = "escalonado" | "simultaneo" | "nunca";
 
 export function tempoVerdict(rows: readonly TempoRow[]): TempoVerdict {
   if (rows.some((r) => r.round === null)) return "nunca";
-  const round = (id: DamageTypeId) => rows.find((r) => r.id === id)!.round!;
-  const ranged = round("a-distancia");
+  const ranged = rows.find((r) => r.id === "a-distancia")!.round!;
   const others = rows.filter((r) => r.id !== "a-distancia").map((r) => r.round!);
-  if (ranged === 1 && others.every((r) => r === 2)) return "identico";
-  return others.every((r) => r > ranged) ? "escalonado" : "aplanado";
+  return others.every((r) => r > ranged) ? "escalonado" : "simultaneo";
+}
+
+// --- La persecución (battle.md §1.2) --------------------------------------
+// El bucle del arquero que dispara y retrocede. Es la comprobación que decide
+// si el tablero grande se sostiene, y no se puede hacer con firstAttackRound
+// porque ahí el objetivo aguanta quieto — aquí huye.
+
+export type Pursuer = {
+  /** Hexágonos por turno. */
+  readonly movement: number;
+  /** A qué distancia puede atacar. */
+  readonly range: number;
+};
+
+export type ChaseResult = {
+  /** Si el perseguidor llega a tenerlo a tiro. */
+  readonly contact: boolean;
+  /** En qué ronda, si llega. */
+  readonly round: number | null;
+  /** Disparos que mete el que huye antes de eso. Es el precio de la caza. */
+  readonly shots: number;
+  /** Hexágonos que gana el perseguidor por ronda: negativo o 0 es no llegar. */
+  readonly closingPerRound: number;
+};
+
+/**
+ * Persigue a un tirador que huye. El que huye juega el kiting puro: si tiene al
+ * perseguidor a tiro dispara, y retroceda siempre lo que le da 👢 Movimiento.
+ *
+ * Se le da el turno ANTES que al perseguidor a propósito: es el peor caso para
+ * quien caza —dispara y ya se ha ido cuando el otro mueve— y el peor caso es lo
+ * que hay que poder ver. La ⚡ Iniciativa real decidirá el orden ficha a ficha.
+ *
+ * @param {number} distance - Separación al empezar, en hexágonos.
+ * @param {Pursuer} chaser - El que cierra la distancia (el 🗡️, normalmente).
+ * @param {Pursuer} runner - El que dispara y retrocede (el 🏹).
+ * @param {number} maxRounds - Tope de simulación: más allá, no llega y punto.
+ */
+export function chase(
+  distance: number,
+  chaser: Pursuer,
+  runner: Pursuer,
+  maxRounds = 30,
+): ChaseResult {
+  const closingPerRound = chaser.movement - runner.movement;
+  let d = distance;
+  let shots = 0;
+
+  for (let round = 1; round <= maxRounds; round++) {
+    if (d <= runner.range) shots++;
+    d += runner.movement;
+    d -= chaser.movement;
+    if (d <= chaser.range) {
+      return { contact: true, round, shots, closingPerRound };
+    }
+  }
+
+  return { contact: false, round: null, shots, closingPerRound };
 }
 
 /**
- * Con qué valores de 👢 Movimiento el ritmo conserva la forma del §1.1 sobre una
- * distancia dada: los que dan "identico" o "escalonado".
- *
- * NO es un intervalo, y por eso devuelve la lista y no un mínimo y un máximo:
- * los redondeos hacia arriba de los tres alcances no van al mismo paso, así que
- * la lista sale con agujeros —sobre 11 hexágonos, por ejemplo, 3 aplana y 4
- * vuelve a escalonar—. Enseñarla como un intervalo sería mentir sobre el número
- * de en medio.
+ * La persecución de los tres tipos de daño detrás de un 🏹 que huye: quién lo
+ * caza y a cuántos disparos por cabeza. El 🏹 contra sí mismo se deja fuera —dos
+ * tiradores no se persiguen, se disparan— así que solo salen 🗡️ y ✨.
  */
-export function shapeWindow(distance: number, maxMovement = 12): number[] {
-  const out: number[] = [];
-  for (let m = 1; m <= maxMovement; m++) {
-    const verdict = tempoVerdict(openingTempo(distance, m));
-    if (verdict === "identico" || verdict === "escalonado") out.push(m);
-  }
-  return out;
+export function chaseAgainstArcher(
+  distance: number,
+  movement: MovementByType,
+  maxRounds = 30,
+): { readonly id: DamageTypeId; readonly result: ChaseResult }[] {
+  const runner: Pursuer = {
+    movement: movement["a-distancia"],
+    range: DAMAGE_TYPES["a-distancia"].range,
+  };
+  return DAMAGE_TYPE_IDS.filter((id) => id !== "a-distancia").map((id) => ({
+    id,
+    result: chase(
+      distance,
+      { movement: movement[id], range: DAMAGE_TYPES[id].range },
+      runner,
+      maxRounds,
+    ),
+  }));
 }

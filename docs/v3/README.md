@@ -15,7 +15,7 @@ Rediseño del juego alrededor de **razas**, con referencias declaradas en Heroes
 | [ideas.md](ideas.md) | Ideas aparcadas | Esqueleto |
 | [effects.md](effects.md) | Estados y efectos temporales | **Escrito** — 9 estados; diales sin balancear |
 | [board/board-map.md](board/board-map.md) | Tablero de exploración | Esqueleto |
-| [board/battle.md](board/battle.md) | Tablero de batalla | **Escrito** — terreno y retirada aplazados con motivo |
+| [board/battle.md](board/battle.md) | Tablero de batalla | **Escrito y rehecho** *(27-ago)* — arena grande y co-op de 1 a 3 jugadores; terreno y retirada aplazados con motivo |
 | [characters/heroes.md](characters/heroes.md) | Héroes jugables y su progresión | Esqueleto |
 | [characters/enemies.md](characters/enemies.md) | Las razas en su cara hostil | Esqueleto |
 | [characters/npcs.md](characters/npcs.md) | NPCs | Esqueleto |
