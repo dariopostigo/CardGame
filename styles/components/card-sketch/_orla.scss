@@ -148,15 +148,24 @@ $orla-height: $sketch-height + $orla-border * 2;
   //   · 0,976 — las cuatro puntas en cruz, que llegan casi al filo del lienzo.
   //     Son las que piden que la CAJA sea más grande que el disco de antes.
   //
-  // De ahí sale el tamaño: 60px de caja dejan el anillo en 47px —el mismo
-  // círculo que dibujaba el CSS, 46px— y el hueco en 43px, tres más que los 40
-  // de antes, así que el número no solo cabe, respira. Lo que crece es lo que
-  // sobresale, que es justo lo que la pieza añade.
-  $orla-disc: 60px;
+  // De ahí sale el tamaño, y sale DIVIDIDO y no escrito: la caja es el disco
+  // de siempre partido por la fracción del anillo, así que el anillo del PNG
+  // mide exactamente $sketch-disc y lo único que la caja añade son las puntas.
+  // La primera vez fue un 60 clavado —46 / 0,782 = 58,8, redondeado hacia
+  // arriba— y eso aguantó mientras el disco no se movió; al subir a 54 el 27 de
+  // agosto de 2026, un 60 fijo habría dejado el anillo del PNG 8px por debajo
+  // del círculo que la G y la H siguen dibujando en CSS, o sea la J con un
+  // medallón de otro tamaño que sus dos hermanas. Es el mismo error que ya
+  // cometieron aquí el rombo y el raíl: heredar una cuenta como número.
+  //
+  // A 54 son 69px de caja, con el anillo en 54 y el hueco de la diagonal en 50
+  // —siete más que los 43 de antes—, que es lo que le deja sitio al número para
+  // subir con él (sketch-font("disc"), 1.45 → 1.7rem).
+  $orla-disc: math.div($sketch-disc, 0.782);
 
   // Centrado sobre donde caía el disco de CSS, no alineado con su esquina: el
   // eje del medallón es el que sujeta el estandarte y el que la composición de
-  // la H medía contra el chaflán. Con eso las puntas se comen los 7px de más
+  // la H medía contra el chaflán. Con eso las puntas se comen los 7,5px de más
   // por los cuatro lados, y la de arriba a la izquierda acaba montada sobre el
   // anillo de OrlaFrame — que es exactamente lo que _estandarte.scss pedía del
   // disco: "la única pieza de la carta que se sale del contorno, y es
@@ -190,6 +199,26 @@ $orla-height: $sketch-height + $orla-border * 2;
   .sketch__banner {
     top: $disc-in + $sketch-disc - 10px;
     left: $disc-in + math.div($sketch-disc - $sketch-banner, 2);
+
+    // Pero el emblema se sienta más abajo que en la G y la H, y esta sí es una
+    // cuenta propia de la J: aquí el disco NO acaba donde dice $sketch-disc.
+    // El PNG mide $orla-disc y sus cuatro puntas caen
+    // ($orla-disc − $sketch-disc) / 2 ≈ 7,5px por fuera del círculo nominal,
+    // una de ellas justo por el eje de la bandera. Con el acolchado de la G el
+    // emblema quedaría a 4px de esa punta —rozado por el medallón, que es
+    // exactamente lo que el acolchado existe para evitar (_estandarte.scss)—.
+    //
+    // Y es un CUARTO del saliente, no la mitad, porque el acolchado de la G ya
+    // es un centrado: el asiento del emblema empieza 7,5px más abajo, pero su
+    // punto medio solo baja la mitad de eso. Sumar el saliente entero pondría
+    // el emblema 4px por debajo del centro de la tela que le queda.
+    padding-top: 26px + math.div($orla-disc - $sketch-disc, 4);
+
+    // Y lo mismo sobre el acolchado de la bandera DIBUJADA, que parte de 32 en
+    // vez de 26 porque su caja empieza más arriba (_estandarte.scss).
+    &[data-art] {
+      padding-top: 32px + math.div($orla-disc - $sketch-disc, 4);
+    }
   }
 
   // El raíl, pegado al anillo real y no a uno 7px más grueso del que hay.

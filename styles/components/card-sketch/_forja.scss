@@ -229,13 +229,20 @@ $rail-top: $sketch-band + 12px;
     margin-left: -$boss-half;
     border: 3px solid var(--m);
     border-radius: 50%;
-    // Cara de PELTRE y no la piedra oscura del boceto D, y el motivo es el
-    // emblema: un emoji trae sus propios tonos y no acepta color, así que lo
-    // que hay detrás tiene que hacerle de papel. La raza de Humanos (👤) es una
-    // silueta oscura, y sobre el disco negro del D se leía como una mancha. Es
-    // la misma lección que las fichas del tablero ($piece: oro claro bajo el
-    // cofre, violeta bajo la montaña).
-    background: radial-gradient(circle at 38% 28%, var(--m-hi), var(--m) 52%, var(--m-lo) 100%);
+    // VUELVE LA PIEDRA OSCURA DEL BOCETO D, el 27 de agosto de 2026, y con ella
+    // la misma receta que el disco del Tier de la G: cara oscura y aro de metal.
+    //
+    // Aquí vivió una cara de PELTRE, y su motivo era el emoji: 👤 Humanos es una
+    // silueta oscura y sobre el disco negro del D se leía como una mancha, así
+    // que el papel se aclaró para hacerle contraste. Ese motivo se cayó con el
+    // emoji: desde esta fecha el medallón lleva el PICTOGRAMA de la raza —oro
+    // monocromo, knowledge/v3/icon-concept/icons.md §4— y el papel claro pasó de
+    // salvarlo a matarlo, porque la cara era del MISMO latón que el glifo. Con la
+    // aleación por defecto de la página, que es justo el latón medido de los
+    // pictogramas, el emblema se veía como un relieve sin dibujo.
+    //
+    // Y no es un gusto, lo manda §5: «sobre metal oscuro el glifo va claro».
+    background: radial-gradient(circle at 38% 28%, game("surface-2"), card-sketch("void") 74%);
     box-shadow:
       0 0 0 1px var(--m-edge),
       inset 0 0 0 1px var(--seam-hi),

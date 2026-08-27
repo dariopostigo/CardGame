@@ -63,6 +63,29 @@ $sketch-medal: 30px;               // medallón de Característica, en el raíl
 // ocho, no el número.
 $sketch-stat-art: 1.7;
 
+// Lo mismo para el EMBLEMA DE RAZA (styles/components/_card-sketch.scss,
+// .sketch__race-art), y también un factor por el mismo motivo: el emblema cae
+// en tres huecos de tamaños distintos —el medallón de 42px de la E, el
+// estandarte de 34px de la G/H/J y el renglón de la línea de tipo de la I— y
+// cada uno ya tiene su escalón de tipografía medido contra su hueco
+// ("boss-icon", "banner-icon", "typeline").
+//
+// Va MÁS BAJO que el de la fila de ocho, y no es una incoherencia: allí el
+// pictograma tenía columna de sobra —30px de dibujo en 32 de columna— y aquí no.
+// El medallón de la E deja 36px de hueco útil (42 menos 3 de borde por lado) y
+// el estandarte de la G medía 28 de ancho, así que 1.7 desbordaba los dos.
+//
+// Y no se toca al crecer la bandera, a propósito: el que sube es el escalón de
+// tipografía del sitio que creció ("banner-icon", 1.12 → 1.36rem). Es la razón
+// de que esto sea un factor compartido y no una medida — si el tamaño del
+// emblema se subiera desde aquí, la bandera de la G arrastraría con ella al
+// medallón de la E y al renglón de la I, que no han cambiado de hueco.
+//
+// 1.25 deja el emblema en ~30px dentro del medallón de 36 y en 27,2 dentro de la
+// bandera de 34. Es la medida que pide icons.md §4 —los once emblemas se
+// distinguen a 42px— aplicada al hueco que hay, no al que se querría.
+$sketch-race-art: 1.25;
+
 // El marco no es un filete sino una BANDA de metal, y de ahí estas dos.
 // $sketch-band es espejo del último anillo de SEAM en
 // components/design/v3/sketch-frames.tsx: si allí crece el filete y aquí no,
@@ -87,7 +110,14 @@ $sketch-boss: 42px;                // medallón montado en la placa
 // forma.
 $sketch-chamfer: 18px;
 
-$sketch-disc: 46px;                // disco de Tier, montado en la esquina
+// Subió de 46 a 54px el 27 de agosto de 2026, y arrastró consigo al estandarte
+// y al emblema que va dentro. Las tres piezas de la esquina se dibujaron cuando
+// el emblema de raza era un EMOJI, que solo tiene que enseñar una silueta; con
+// el PICTOGRAMA de metal (icons.md §4) hay que enseñar un dibujo con relieve,
+// canto biselado y —en los feéricos— calados, y esa es la medida que icons.md
+// da a 42px. La bandera no podía crecer sin que creciera él primero, porque su
+// anchura sale de este número.
+$sketch-disc: 54px;                // disco de Tier, montado en la esquina
 // El rombo de Rareza, a caballo del canto de arriba. En la réplica era una cara
 // plana de 15px y aquí va tallado: engaste, cuatro facetas y tabla.
 //
@@ -104,11 +134,21 @@ $sketch-gem: 16px;
 // escribir en ella.
 //
 // La anchura no es libre: va centrada en el eje del disco, así que sale de él
-// —(46 − 28) / 2 = 9px a cada lado— y es a propósito MÁS ANCHA que el filete
+// —(54 − 38) / 2 = 8px a cada lado— y es a propósito MÁS ANCHA que el filete
 // (15px), para que se lea como una bandera clavada sobre el marco y no como un
 // trozo de marco pintado de otro color. Su alto es dos veces y pico el ancho:
 // menos que eso deja de ser bandera y es una segunda ficha colgada.
-$sketch-banner: 28px;
+//
+// Dos subidas seguidas, las dos mirando la carta. De 28 a 34 con el disco, para
+// que el emblema tuviera dónde crecer; y de **34 a 38 el 27 de agosto de 2026**,
+// al ver montado el primer estandarte dibujado (Humanos): con el paño de CSS la
+// proporción se aguantaba, con una bandera de verdad se veía estrecha.
+//
+// Y aquí se acaba el margen, esta vez de verdad. En la G la bandera arranca en
+// (54 − 38) / 2 − 7 = **1px**, o sea pegada al raíl exterior del filete. Con 40
+// arrancaría en 0 y mordería el canto de la carta. Si alguna vez hace falta más
+// gruesa, lo que tiene que crecer primero es el disco.
+$sketch-banner: 38px;
 
 // --- Boceto I · Retablo ---------------------------------------------------
 // El único boceto donde la carta NO es una ilustración con cosas encima: es una

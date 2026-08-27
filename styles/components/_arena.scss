@@ -1,0 +1,414 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// La arena de batalla de V3 — ver components/dev/ArenaBoard.tsx
+//
+// El SVG solo aporta geometría (centros, vértices y aristas los calcula
+// lib/v3/hex.ts); todo el color vive aquí, pedido por nombre.
+//
+// La dirección de arte es `public/concepts/oldenEra/3.png`, y lo que impone es
+// una inversión respecto al tablero de v2: allí el hexágono ES la pieza y su
+// relleno lo dice todo; aquí el suelo es una LÁMINA continua y el hexágono es
+// TRAZO ENCIMA. De ahí que este parcial casi no tenga rellenos y sí bastantes
+// `stroke`, y que el bando se diga con un contorno y no con un color de fondo.
+//
+// Hermana de _board.scss (el tablero de v2) y a propósito NO derivada de ella:
+// las dos pintan una rejilla hexagonal, pero una pinta losetas de cartón con
+// terreno impreso y la otra trazo sobre una ilustración. Compartir un parcial
+// obligaría a parametrizar por lo que difieren, que es casi todo.
+// -------------------------------------------------------------------------
+
+.arena {
+  display: grid;
+  gap: 0.75rem;
+}
+
+// --- Marco navegable ------------------------------------------------------
+
+// La ventana por la que se mira la arena, de alto fijo: lo que cambia al
+// acercar es el tablero, no la caja. Mismo criterio que .board__viewport.
+.arena__viewport {
+  position: relative;
+  overflow: hidden;
+  height: 66vh;
+  min-height: 20rem;
+  border-radius: radius("md");
+
+  // LA MESA, con su viñeta. Los mismos dos tonos que el tablero de v2 —es la
+  // misma mesa, aunque el tablero de encima sea otro— y por eso tampoco
+  // dependen del skin.
+  background:
+    radial-gradient(
+      125% 95% at 50% 45%,
+      rgba($board-table-edge, 0) 30%,
+      $board-table-edge 100%
+    ),
+    $board-table;
+
+  // El arrastre lo lleva el puntero (use-board-view.ts): sin esto, en pantalla
+  // táctil el gesto lo capturaría el scroll de la página.
+  touch-action: none;
+  // Arrastrar sobre el SVG seleccionaría los rótulos de los hexágonos.
+  user-select: none;
+  cursor: grab;
+
+  &[data-panning="true"] {
+    cursor: grabbing;
+
+    .arena__mark {
+      cursor: grabbing;
+    }
+  }
+
+  // Se puede enfocar para recorrerlo con las flechas, así que tiene que verse.
+  &:focus-visible {
+    outline: 2px solid skin("accent");
+    outline-offset: 2px;
+  }
+}
+
+.arena__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// --- Capa 1. Base: silueta y sombra ---------------------------------------
+
+// La capa que hace que la arena sea un objeto encima de una mesa y no un
+// dibujo. Va entera bajo un solo `drop-shadow` porque el filtro trabaja sobre
+// la silueta de lo que contiene: así la sombra sale del contorno del tablero
+// completo y no hexágono a hexágono (que se sombrearían entre ellos, estando
+// todos a la misma altura). Y un filtro se rasteriza una vez, no trescientas.
+//
+// Aquí no hay CANTO, al contrario que en el tablero de v2: el canto es el
+// grosor del cartón de una loseta, y la arena no tiene losetas.
+.arena__base {
+  pointer-events: none;
+  filter: drop-shadow(0 7px 8px $board-shadow);
+}
+
+.arena__base-hex {
+  fill: $board-base;
+  // Un filete del mismo color cierra las juntas: los polígonos se tocan exacto,
+  // pero el suavizado de bordes deja una hebra de un píxel entre vecinos y por
+  // ahí se vería la mesa.
+  stroke: $board-base;
+  stroke-width: 1;
+}
+
+// --- Capa 2. El suelo ------------------------------------------------------
+
+// La lámina. El degradado lo comparten todos los hexágonos en coordenadas de
+// usuario (ver ArenaBoard), así que la unión se lee como una superficie sola.
+//
+// Sin trazo propio: lo que tiene que leerse aquí es terreno continuo, y un
+// filete convertiría la lámina otra vez en celdas. Las juntas ya las cierra la
+// capa 1 por debajo.
+.arena__ground {
+  pointer-events: none;
+
+  polygon {
+    stroke: none;
+  }
+}
+
+// Las tres paradas del degradado. Van como clases del <stop> y no como
+// atributos para que el color siga viviendo en settings.
+.arena__ground-far {
+  stop-color: $arena-ground-far;
+}
+
+.arena__ground-mid {
+  stop-color: $arena-ground-mid;
+}
+
+.arena__ground-near {
+  stop-color: $arena-ground-near;
+}
+
+// --- Capa 3. La malla ------------------------------------------------------
+
+// La rejilla, en trazo fino. SIN halo, y eso es una corrección: se le puso el
+// resplandor de la referencia y el resultado fue un suelo amarillo — son
+// quinientas y pico aristas en un tablero de 14×12, y el halo de cada una se
+// suma sobre la lámina hasta teñirla entera.
+//
+// Y mirando la referencia otra vez, el halo tampoco le corresponde: allí no hay
+// rejilla de tablero completo. El resplandor es del ÁREA marcada, y solo ella
+// lo lleva (capa 4). La malla de aquí es la cuadrícula de trabajo, así que va
+// discreta y plana.
+.arena__mesh {
+  pointer-events: none;
+
+  line {
+    stroke: $arena-grid;
+    stroke-width: 1;
+    stroke-linecap: round;
+    opacity: 0.3;
+  }
+}
+
+// --- Capa 4. Contornos de región -------------------------------------------
+
+// Un área se marca con su contorno, no con un tinte de relleno: es lo que hace
+// la referencia y es lo que deja que el suelo siga siendo una ilustración.
+//
+// Más gruesos que la malla y con más halo, porque son lo que hay que ver.
+.arena__region {
+  pointer-events: none;
+  filter: drop-shadow(0 0 3px $arena-grid-glow);
+
+  line {
+    fill: none;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+  }
+
+  // La banda propia y la enemiga, en el rojo y el azul de las peanas de la
+  // referencia. Es la única forma que queda de decir el bando ahora que el
+  // suelo no puede llevar color.
+  &[data-kind="propio"] line {
+    stroke: $arena-side-own;
+  }
+
+  &[data-kind="enemigo"] line {
+    stroke: $arena-side-enemy;
+  }
+
+  // El alcance, en oro claro y algo más gordo: de las tres regiones es la que
+  // cambia al pulsar, así que es la que se está mirando.
+  &[data-kind="alcance"] line {
+    stroke: $arena-reach;
+    stroke-width: 3;
+  }
+}
+
+// --- Capa 5. Las fichas ----------------------------------------------------
+
+// Un disco tumbado en la casilla, con el aro del color de su bando. La regla es
+// la misma que en el tablero de v2 (_piece.scss): TODA ficha va tumbada y todas
+// son el mismo disco; lo que las separa es el glifo y el color, no la forma. Y
+// aquí la referencia lo respalda —sus criaturas van sobre peanas redondas con
+// el aro de su bando—, así que no hay nada que reinventar.
+//
+// Un solo `drop-shadow` para la capa entera, por lo mismo que en .arena__base:
+// todas las fichas están a la misma altura sobre el suelo, así que la luz les
+// cae igual y el filtro se rasteriza una vez en vez de diez. La sombra es corta
+// y apretada porque una ficha se levanta milímetros del campo, no centímetros.
+//
+// Sin ratón: los clics los recoge .arena__mark, que está por encima. Si la
+// ficha los cogiera, pulsar sobre una criatura no sería pulsar en su casilla.
+.arena__pieces {
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px $board-shadow);
+}
+
+.arena__piece-base {
+  fill: $arena-piece;
+  stroke-width: 2.2;
+}
+
+// El aro de más del héroe: mismo color, más fino y sin relleno. No es adorno —es
+// la única ficha cuya caída pierde la batalla (§6), así que tiene que
+// encontrarse de un vistazo entre diez discos iguales.
+.arena__piece-ring {
+  fill: none;
+  stroke-width: 1.8;
+  opacity: 0.9;
+}
+
+.arena__piece {
+  &[data-side="propio"] {
+    .arena__piece-base,
+    .arena__piece-ring {
+      stroke: $arena-side-own;
+    }
+  }
+
+  &[data-side="enemigo"] {
+    .arena__piece-base,
+    .arena__piece-ring {
+      stroke: $arena-side-enemy;
+    }
+  }
+
+  // La elegida: el aro pasa al casi blanco del origen, que es el color que este
+  // tablero reserva para "esto es lo que estás mirando ahora". Así la ficha
+  // seleccionada y el hexágono desde el que se mide se leen como lo mismo,
+  // porque cuando hay ficha elegida lo son.
+  &[data-selected="true"] {
+    .arena__piece-base {
+      stroke: $arena-origin;
+      stroke-width: 3;
+    }
+
+    .arena__piece-ring {
+      stroke: $arena-origin;
+      opacity: 1;
+    }
+  }
+}
+
+// El glifo de dentro. El tamaño lo pone el SVG porque sale del hexágono
+// (geometría), no de aquí.
+.arena__piece-icon {
+  text-anchor: middle;
+  dominant-baseline: central;
+  user-select: none;
+}
+
+// --- Capa 6. Interacción ---------------------------------------------------
+
+// El hexágono bajo el ratón, el elegido y el de origen. Son polígonos y no
+// aristas porque marcan UNA casilla, no un área, y van por encima de la malla y
+// de los contornos: es lo que se está señalando ahora mismo.
+.arena__mark {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 0;
+  transition:
+    stroke $duration-fast $ease,
+    stroke-width $duration-fast $ease,
+    fill $duration-fast $ease;
+
+  &[data-interactive="true"] {
+    cursor: pointer;
+  }
+
+  &[data-hover="true"] {
+    stroke: $arena-label;
+    stroke-width: 2;
+  }
+
+  // Elegido gana al hover si coinciden: más grueso, para que se lea como un
+  // estado distinto del simple "el ratón está aquí".
+  &[data-selected="true"] {
+    stroke: $arena-label;
+    stroke-width: 3;
+  }
+
+  // El origen va el ÚLTIMO de la cascada a propósito: está casi siempre bajo el
+  // ratón y de los tres estados es el que hay que poder encontrar sin buscarlo.
+  // Lleva un relleno tenue además del trazo, que es la única excepción a la
+  // regla de "el suelo no se tiñe": es una casilla sola, no un área.
+  &[data-origin="true"] {
+    fill: rgba($arena-origin, 0.22);
+    stroke: $arena-origin;
+    stroke-width: 3;
+  }
+}
+
+// --- Capa 7. Rótulos pintados en el suelo ----------------------------------
+
+.arena__labels {
+  pointer-events: none;
+}
+
+.arena__label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-size: 0.62rem;
+  // Tabular para que los números no bailen de un hexágono al de al lado.
+  font-variant-numeric: tabular-nums;
+  fill: $arena-label;
+  // El suelo es una lámina con luz desigual y encima puede llevar contornos, así
+  // que el rótulo se apoya en su propio halo y no en el color de debajo.
+  paint-order: stroke;
+  stroke: $arena-label-halo;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  user-select: none;
+}
+
+// --- Mando de la cámara ---------------------------------------------------
+
+// Sobre el tablero y en la esquina de siempre de un mapa. No necesita z-index:
+// va después del SVG dentro del mismo contexto de apilamiento.
+.arena__nav {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid skin("border");
+  border-radius: radius("lg");
+  background: skin("surface");
+  cursor: default;
+}
+
+// La escala en tanto por ciento. Tabular para que el número no baile al pasar
+// de 100 a 99 mientras se gira la rueda.
+.arena__zoom {
+  min-width: 3.25rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: skin("muted");
+  user-select: none;
+}
+
+// --- Leyenda ---------------------------------------------------------------
+
+.arena__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  align-items: center;
+  font-size: 0.8rem;
+  color: skin("muted");
+}
+
+.arena__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+// La muestra de la leyenda es un TRAZO y no un cuadrado de color, porque lo que
+// hay en el tablero son trazos: un taco relleno prometería un relleno.
+.arena__swatch {
+  width: 1.1rem;
+  height: 0;
+  border-top: 3px solid $arena-grid;
+  border-radius: radius("xs");
+
+  &[data-kind="propio"] {
+    border-top-color: $arena-side-own;
+  }
+
+  &[data-kind="enemigo"] {
+    border-top-color: $arena-side-enemy;
+  }
+
+  &[data-kind="alcance"] {
+    border-top-color: $arena-reach;
+  }
+
+  &[data-kind="origen"] {
+    border-top-color: $arena-origin;
+  }
+
+  // El suelo sí es una superficie, así que su muestra sí es un taco.
+  &[data-kind="suelo"] {
+    height: 0.85rem;
+    border: 1px solid $arena-grid;
+    background: $arena-ground-mid;
+  }
+
+  // Y una ficha es un disco con su aro, porque es lo que hay en el tablero.
+  &[data-kind="ficha-propia"],
+  &[data-kind="ficha-enemiga"] {
+    width: 0.85rem;
+    height: 0.85rem;
+    border: 2px solid $arena-side-own;
+    border-radius: 50%;
+    background: $arena-piece;
+  }
+
+  &[data-kind="ficha-enemiga"] {
+    border-color: $arena-side-enemy;
+  }
+}

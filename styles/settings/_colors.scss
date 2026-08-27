@@ -265,6 +265,73 @@ $board-table-edge: #0d0908;
 // cálida de la mesa. Blanco puro sobre el marrón oscuro se lee como escarcha.
 $board-fog: #d8d2c4;
 
+// --- La arena de batalla de V3 (docs/v3/board/battle.md §1) ----------------
+// La paleta sale MEDIDA de la dirección de arte, `public/concepts/oldenEra/3.png`:
+// se muestrearon el suelo, el trazo de la rejilla y las peanas de los dos
+// bandos de la propia captura, en vez de elegir tonos a ojo. Por eso son
+// oscuros y desaturados — el campo de esa referencia es tierra en penumbra, no
+// un tablero de colores.
+//
+// No dependen del skin, igual que el resto del tablero: la arena de una partida
+// no se aclara porque la wiki esté en modo claro.
+
+// EL SUELO, en tres paradas de arriba abajo. Es una LÁMINA continua, no un
+// color por casilla: en la referencia el terreno está pintado de lado a lado y
+// los hexágonos son trazo encima. Tres paradas y no una porque la captura tiene
+// el fondo en penumbra y el primer plano más caliente, que es lo que hace que
+// el campo se lea tumbado y no de frente.
+//
+// Esto es un SUSTITUTO con fecha de caducidad: es el hueco donde entra la
+// ilustración del campo (`groundImage` en ArenaBoard). Cuando exista, estos
+// tres tonos dejan de verse.
+$arena-ground-far: #2c2924;
+$arena-ground-mid: #453f36;
+$arena-ground-near: #605645;
+
+// LA REJILLA. Oro apagado, del muestreo del trazo de la referencia (#a89a63 de
+// media en su núcleo claro). No es amarillo saturado: sobre tierra oscura el
+// amarillo puro se lee como neón y la referencia no hace eso.
+$arena-grid: #a89a63;
+
+// El halo del trazo. La referencia no dibuja una línea limpia: la línea lleva
+// un resplandor ancho y suave alrededor, y es lo que hace que la rejilla se
+// vea encima del suelo en vez de grabada en él.
+$arena-grid-glow: rgba(216, 199, 116, 0.55);
+
+// LOS DOS BANDOS. Rojo y azul, del muestreo de las peanas de la referencia:
+// allí el bando no está en el suelo —no puede, el suelo es ilustración— sino en
+// la peana de cada criatura. Se usan en dos sitios, y a propósito los mismos
+// dos tonos: el CONTORNO de cada banda de despliegue y el ARO de cada ficha. Que
+// el aro de la ficha y el contorno de su banda sean el mismo color es lo que
+// dice, sin una sola palabra, de quién es esa criatura.
+$arena-side-own: #b8544a;
+$arena-side-enemy: #6b86c4;
+
+// LA PEANA de una ficha. Casi negra, y eso es cuestión de trabajo, no de gusto:
+// la peana es el fondo sobre el que se lee el glifo, y encima de ella el aro de
+// bando tiene que separarse tanto del suelo claro como del oscuro. En la
+// referencia las peanas son también un disco oscuro con el aro de color.
+$arena-piece: #17140f;
+
+// El contorno del alcance que se está enseñando. Oro CLARO: es el mismo idioma
+// que la rejilla —que también es oro— pero un escalón más brillante, porque en
+// la referencia el área alcanzable es precisamente la rejilla encendida. Que
+// sean familia no es descuido: es lo que dice que el alcance se mide en las
+// mismas casillas.
+$arena-reach: #ffe27a;
+
+// El hexágono desde el que se está midiendo. Casi blanco, que no lo usa ni la
+// rejilla ni las bandas ni el alcance: es un punto único en el tablero y tiene
+// que encontrarse sin buscarlo.
+$arena-origin: #f2ede2;
+
+// El rótulo pintado en el suelo (coordenadas o distancias) y su halo. Son un
+// par de contraste y hay que moverlos juntos: el suelo es una lámina con luz
+// desigual, así que el rótulo no se puede apoyar en el color de debajo — se
+// apoya en su propio halo.
+$arena-label: rgba(255, 255, 255, 0.88);
+$arena-label-halo: rgba(16, 12, 8, 0.7);
+
 // Ancla, en el lienzo de losetas (/dev/losetas): la flecha que marca por dónde
 // se une una loseta a otra. Va rellena oscura con filete claro porque se pinta
 // sobre cualquier terreno, y sobre el Bosque una flecha sin filete

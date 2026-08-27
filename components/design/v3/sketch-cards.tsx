@@ -50,7 +50,17 @@
 // su parcial solo escribe las diferencias.
 // =========================================================================
 
-import { DAMAGE, LONG_NAME, rankOf, SKILLS, type SkillKey, type Subject } from "./sample";
+import type { CSSProperties } from "react";
+import {
+  DAMAGE,
+  LONG_NAME,
+  raceArtFor,
+  raceBannerFor,
+  rankOf,
+  SKILLS,
+  type SkillKey,
+  type Subject,
+} from "./sample";
 import { EstandarteFrame, ForjaFrame, OrlaFrame } from "./sketch-frames";
 
 export type SketchId = "forja" | "estandarte" | "recinto" | "retablo" | "orla";
@@ -284,6 +294,59 @@ function Stat({ subject, skill, base }: { subject: Subject; skill: SkillKey; bas
   );
 }
 
+/**
+ * El emblema de la raza. Mismo trato que la fila de ocho: **el pictograma manda
+ * cuando existe el archivo y el emoji es el respaldo**, sin caso especial — si
+ * una raza entra en races.ts antes que su emblema, la carta enseña el hueco.
+ *
+ * Los once existen desde el 27 de agosto de 2026, así que hoy el respaldo no se
+ * ve en ninguna carta. No se borra por eso: es lo que sostiene la raza nueva y
+ * los sitios sin CSS que dimensione una imagen (el `title` de aquí al lado no
+ * lleva glifo, pero la baraja sí lo usa en sus filtros).
+ *
+ * Va como componente y no repetido cinco veces porque el emblema cae en cuatro
+ * bocetos —el medallón de la E y el estandarte de la G, la H y la J— más la
+ * línea de tipo de la I, y son los cinco el mismo par imagen/emoji con distinta
+ * clase encima.
+ */
+function RaceEmblem({ subject, className }: { subject: Subject; className: string }) {
+  const art = raceArtFor(subject.race);
+  return (
+    <b className={className} aria-hidden="true">
+      {art ? <img className="sketch__race-art" src={art} alt="" /> : subject.raceIcon}
+    </b>
+  );
+}
+
+/**
+ * El ESTANDARTE de raza: el paño, con el emblema dentro. Lo pintan la G, la H y
+ * la J, y hasta el 27 de agosto de 2026 era CSS puro.
+ *
+ * La raza que tiene archivo lo trae como imagen y las demás siguen con el paño
+ * de CSS, así que la carta no se rompe mientras el set se dibuja — y de paso se
+ * puede mirar una dibujada al lado de tres pintadas, que es lo que hace falta
+ * para juzgar la primera.
+ *
+ * El archivo va por custom property y no por `<img>`, al revés que el emblema, y
+ * es la misma razón que da _orla.scss para el disco del Tier: **esto no es un
+ * dato, es moldura**, así que lo pinta el CSS con `background-image`. Y tiene
+ * que ir por variable porque la ruta cambia con la raza, que es lo que un
+ * parcial de SCSS no puede saber.
+ */
+function RaceBanner({ subject }: { subject: Subject }) {
+  const art = raceBannerFor(subject.race);
+  return (
+    <span
+      className="sketch__banner"
+      data-art={art ? "" : undefined}
+      style={art ? ({ "--banner-img": `url("${art}")` } as CSSProperties) : undefined}
+      title={`Raza: ${subject.race}`}
+    >
+      <RaceEmblem subject={subject} className="sketch__banner-icon" />
+    </span>
+  );
+}
+
 // --- E · Forja ------------------------------------------------------------
 // El boceto que gana, y la base de todo lo que venga. Nació de la D —la mezcla
 // que teñía la carta entera del color de su rareza— y acabó diciendo lo
@@ -339,7 +402,7 @@ function ForjaCard({ subject }: { subject: Subject }) {
               veta, de qué clase de tier —o si es un héroe—. El rango sigue en
               el title para poder comprobarlo. */}
           <span className="sketch__boss" title={`${subject.race} · ${rankOf(subject)}`}>
-            <b className="sketch__boss-value">{subject.raceIcon}</b>
+            <RaceEmblem subject={subject} className="sketch__boss-value" />
           </span>
         </Plate>
       </div>
@@ -406,9 +469,7 @@ function EstandarteCard({ subject }: { subject: Subject }) {
           del disco en vez de taparle el canto. Con un z-index menor se habría
           metido debajo del marco, que es la capa siguiente hacia abajo, y
           entonces dejaría de montar sobre el filete. */}
-      <span className="sketch__banner" title={`Raza: ${subject.race}`}>
-        <b className="sketch__banner-icon">{subject.raceIcon}</b>
-      </span>
+      <RaceBanner subject={subject} />
 
       {/* El disco del Tier, montado sobre el chaflán y desbordándolo. Un héroe
           no tiene tier y aquí NO se le deja el hueco vacío: lleva corona, que
@@ -482,9 +543,7 @@ function RecintoCard({ subject }: { subject: Subject }) {
 
       <span className="sketch__gem" title={`Rareza: ${subject.rarity}`} />
 
-      <span className="sketch__banner" title={`Raza: ${subject.race}`}>
-        <b className="sketch__banner-icon">{subject.raceIcon}</b>
-      </span>
+      <RaceBanner subject={subject} />
 
       <span className="sketch__disc" title={rankOf(subject)}>
         <b className="sketch__disc-value">{subject.tier ?? "👑"}</b>
@@ -569,7 +628,7 @@ function RetabloCard({ subject }: { subject: Subject }) {
             en texto, como la G: puestas las dos se puede decidir cuál sobra. */}
         <p className="sketch__typeline">
           <span className="sketch__typeline-text">
-            <b aria-hidden="true">{subject.raceIcon}</b>{" "}
+            <RaceEmblem subject={subject} className="sketch__typeline-emblem" />{" "}
             {subject.kind === "heroe" ? "Héroe" : "Unidad"} — {subject.race}
           </span>
           {/* El sello, en el sitio del símbolo de colección: en Magic ese glifo
@@ -651,9 +710,7 @@ function OrlaCard({ subject }: { subject: Subject }) {
 
       <span className="sketch__gem" title={`Rareza: ${subject.rarity}`} />
 
-      <span className="sketch__banner" title={`Raza: ${subject.race}`}>
-        <b className="sketch__banner-icon">{subject.raceIcon}</b>
-      </span>
+      <RaceBanner subject={subject} />
 
       <span className="sketch__disc" title={rankOf(subject)}>
         <b className="sketch__disc-value">{subject.tier ?? "👑"}</b>

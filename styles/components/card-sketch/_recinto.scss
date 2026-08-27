@@ -65,16 +65,23 @@ $frame-clear: $sketch-band + 6px;
 //
 // Y cabe con sitio de sobra, aunque la esquina esté cortada: el chaflán visto
 // desde dentro mide 18 − 15(2 − √2) ≈ 9,2px, o sea que el corte interior es la
-// recta x + y = 24,2 + 15. El centro del disco cae en (42, 42) y queda a
-// (84 − 39,2) / √2 ≈ 31,7px de esa recta, contra un radio de 23. Ocho píxeles y
-// pico de holgura, y por el mismo eje del chaflán — que es lo que hace que la
-// esquina cortada acabe siendo el sitio del disco en vez de un estorbo.
+// recta x + y = 24,2 + 15. El centro del disco cae en (46, 46) y queda a
+// (92 − 39,2) / √2 ≈ 37,3px de esa recta, contra un radio de 27. Diez píxeles de
+// holgura, y por el mismo eje del chaflán — que es lo que hace que la esquina
+// cortada acabe siendo el sitio del disco en vez de un estorbo.
+//
+// La holgura AUMENTÓ al crecer el disco (46 → 54px el 27 de agosto de 2026), que
+// es lo contrario de lo que se teme al agrandar una pieza metida en una esquina:
+// el centro se aleja del corte 4px por cada eje —5,7 medidos contra la recta—
+// mientras el radio solo gana 4. Por aquí el disco tiene sitio para crecer
+// bastante más de lo que le hace falta; lo que topa antes es la bandera contra
+// el canto (settings/_card.scss, $sketch-banner).
 $disc-in: $sketch-band + 4px;
 
 // El estandarte sigue colgando del disco, así que sus dos medidas salen de
-// dónde está el disco y no de la carta: centrado en su eje —(46 − 28) / 2 = 9px
+// dónde está el disco y no de la carta: centrado en su eje —(54 − 34) / 2 = 10px
 // a cada lado— y arrancando 10px por encima de su canto de abajo, el mismo
-// solape que en la G. Aquí el resultado son 28 y 55px, o sea que la bandera
+// solape que en la G. Aquí el resultado son 29 y 63px, o sea que la bandera
 // entera cae por dentro del filete: es el segundo cambio de este boceto y no
 // hay que escribirlo dos veces, sale de mover el disco.
 $banner-left: $disc-in + math.div($sketch-disc - $sketch-banner, 2);
