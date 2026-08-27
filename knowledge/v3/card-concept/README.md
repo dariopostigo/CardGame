@@ -21,6 +21,14 @@ tablero), aquí la que se está analizando para tomar una decisión de diseño.
 `imgs/olden-era.png` es copia de `public/concepts/oldenEra/2.png`, que se queda
 también en su moodboard.
 
+**Y desde el 27 de agosto de 2026 la carpeta tiene un segundo archivo**, porque
+una pieza del marco elegido se abrió por su cuenta:
+[`banners.md`](banners.md) es el concepto del **estandarte de raza** —el paño que
+cuelga del disco del Tier y sostiene el emblema—, con los once tintes propuestos,
+las seis materias y lo que cuesta meter un segundo eje de color en la carta. Este
+README es la base de datos de referencias que llevó a elegir la J; aquel es el
+diseño de una pieza suya, ya elegido el marco.
+
 ## Contra qué se juzgan
 
 La carta de unidad de V3 tiene que sostener **13 datos** y ningún párrafo de
@@ -1399,6 +1407,13 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   cuál es decidir también qué pasa con el hueco: si sobra el estandarte, la carta
   se queda sin la ficha que la referencia dedica a la facción, que es un eje que
   V3 no tiene.
+
+  **Y es la única de esta lista que se ha movido desde que se cerró la J**
+  (27-ago-2026). Estaba empatada porque el emblema solo y el texto solo dicen lo
+  mismo con la misma fuerza; [`banners.md`](banners.md) propone teñir el paño por
+  raza, y un campo de color rompe el empate — tinte más emblema se leen a
+  distancia de mesa y la versalita al pie no, así que la que pasa a sobrar es el
+  texto. Sigue sin decidirse, pero ya no está empatada.
 - **Cuánto detalle aguanta una pieza pequeña.** *(Abierto desde el 24-ago-2026.)*
   El rombo de la Rareza se dibujó de dos maneras: **cara plana** de 15px (F) y
   **piedra tallada** con engaste, cuatro facetas y tabla (G), que primero tuvo

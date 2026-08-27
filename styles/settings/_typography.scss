@@ -123,15 +123,28 @@ $sketch-font: (
   "pin-icon": 0.72rem,
   // El Tier dentro del disco de la esquina. Es el número más grande de la
   // carta a propósito: en la referencia ese disco es lo primero que se lee.
-  "disc": 1.45rem,
+  //
+  // Subió de 1.45 a 1.7rem al crecer el disco (46 → 54px, settings/_card.scss).
+  // No es un ajuste automático: el hueco de la J pasa de 43 a 50px y el de la
+  // G/H de 40 a 48, así que con el cuerpo de antes el número se quedaba nadando
+  // en un marco más grande — la pieza habría crecido y el dato, no.
+  "disc": 1.7rem,
   // La raza en versalitas al pie, entre los dos pines. Diminuta y muy
   // espaciada: es una etiqueta de catálogo, no un dato que se consulte.
   "type": 0.6rem,
   // El emblema de la raza dentro del estandarte que cuelga del disco. Es el
   // mismo problema que el medallón de la E —un emoji no llena su caja, trae su
-  // propio aire— pero en una bandera de 28px de ancho, así que va justo por
-  // debajo del ancho útil y no puede crecer más.
-  "banner-icon": 1.12rem,
+  // propio aire— y va siempre justo por debajo del ancho útil de la bandera,
+  // que es lo que le pone el tope.
+  //
+  // Subió de 1.12 a 1.36rem al ensanchar la bandera (28 → 34px), y el escalón
+  // sale de esa cuenta y no del gusto: con el factor de
+  // $sketch-race-art (1.25) son 27,2px de dibujo en 34 de tela, el mismo 80%
+  // que tenía a 22,4 en 28. Lo que cambia no es la proporción, es que 27px es
+  // donde el pictograma empieza a enseñar el motivo y no solo el metal —a 22 se
+  // veía que era oro, no QUÉ era—, y es la medida que icons.md §4 defiende a
+  // 42px.
+  "banner-icon": 1.36rem,
   // Los glifos del raíl, que aquí van DESNUDOS: sin disco detrás, el escalón
   // compartido "medal" ya no vale porque estaba medido contra el hueco que
   // dejaba el aro. Sin pieza que lo contenga el tope lo pone la casilla del

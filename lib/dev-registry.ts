@@ -6,13 +6,19 @@
 // y añadir un módulo son dos pasos —una entrada aquí y su página en
 // app/dev/<slug>/.
 //
-// Hoy está entero en "planificado" a propósito: `lib/v3/` está vacío. El
-// motor SÍ está escrito ya en la wiki (docs/v3/game-design.md §4, con sus
-// diales fijados el 23-ago-2026), así que lo que frena ahora no es el diseño
-// del motor sino los datos: sin los valores de las 8 Habilidades no hay ficha
-// que ejecutar. El hub hace de hoja de ruta visible mientras tanto, igual que
-// ya hacía /lab con sus entradas apagadas — así lo que falta por construir se
-// ve en la propia aplicación y no hay que mantener la lista en otro sitio.
+// Casi todo sigue en "planificado", y por un motivo que no es el diseño sino
+// los datos: el motor SÍ está escrito en la wiki (docs/v3/game-design.md §4,
+// con sus diales fijados el 23-ago-2026), pero sin los valores de las 8
+// Habilidades no hay ficha que ejecutar. El hub hace de hoja de ruta visible
+// mientras tanto, igual que ya hacía /lab con sus entradas apagadas — así lo
+// que falta por construir se ve en la propia aplicación y no hay que mantener
+// la lista en otro sitio.
+//
+// El primero que arrancó fue el TABLERO, el 27 de agosto de 2026, y por ser el
+// único que no espera datos: la arena de battle.md §1 es geometría, así que se
+// puede construir y medir sin una sola ficha. Rompe el orden de dependencia de
+// la lista a propósito — no es que se haya adelantado, es que no depende de
+// nadie.
 //
 // El ORDEN es el de dependencia, no el de importancia: cada módulo necesita
 // que el anterior esté resuelto. Sale de docs/v3/status.md §2.
@@ -94,12 +100,12 @@ export const DEV_MODULES: readonly DevModule[] = [
     slug: "tablero",
     label: "Tableros",
     summary:
-      "Los dos tableros separados de V3. El de batalla ya está escrito: rejilla hexagonal 7×5 heredada de v2, cinco fichas por bando —héroe + 4 unidades—, una sola lista de ⚡ Iniciativa entrelazada y derrota si cae el héroe. El de exploración sigue siendo un esqueleto.",
+      "Los dos tableros separados de V3. Construida la ARENA de batalla, en cuatro tamaños desde el mínimo de 14×12: suelo como lámina continua y rejilla en trazo encima, siguiendo la dirección de arte, con las bandas y los alcances marcados con contorno. Encima ya está el DESPLIEGUE del §3 —cinco fichas colocadas libremente en tu banda— y el ritmo de la ronda del §1.1 recalculado. El de exploración sigue siendo un esqueleto.",
     icon: "pi pi-map",
-    status: "planificado",
+    status: "en-curso",
     doc: { href: "/docs/v3/board/battle", label: "Tablero de batalla" },
     blocker:
-      "El de batalla ya no bloquea de diseño; su primer prototipo va a campo abierto a propósito, sin obstáculos. Lo que falta es el de exploración, y de él cuelgan el terreno del campo y la retirada.",
+      "Con 14×12 los frentes quedan a 11 hexágonos y no a 4, así que los tres alcances del §1.1 dejan de estar validados: medido en pantalla, con el 👢 Movimiento 2 que el §1.1 llevaba dentro la batalla no empieza hasta la ronda 4. Hay que decidir si sube 👢 Movimiento, suben los alcances o se acercan las bandas. Falta además la ilustración del campo, el bando enemigo de verdad (§2) y, ya con valores, iniciativa y turno.",
   },
 ];
 

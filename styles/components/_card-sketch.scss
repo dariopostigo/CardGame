@@ -272,6 +272,29 @@
   object-fit: contain;
 }
 
+// El EMBLEMA DE RAZA, con la misma cuenta y su propio factor ($sketch-race-art,
+// en settings/_card.scss): entró el 27 de agosto de 2026, cuando llegaron los
+// once archivos, y sustituye al emoji en el medallón de la E, en el estandarte
+// de la G/H/J y en la línea de tipo de la I.
+//
+// `inline-block` y no `block`, que es la única diferencia con la fila de ocho, y
+// la manda la I: allí el emblema va DENTRO de un renglón de texto, así que tiene
+// que sentarse en la línea como se sentaba el emoji. En el medallón y en la
+// bandera da igual —los dos centran con grid—, y una clase que valga en los tres
+// sitios evita el modificador.
+//
+// `object-fit: contain` por lo de siempre y ahora con más motivo: las cajas alfa
+// de los once emblemas ocupan del 84% al 98% de su lienzo
+// (knowledge/v3/icon-concept/icons.md §4), un margen más ancho que el de la
+// primera tanda. Con `cover` los del 98% se recortarían y los del 84% no.
+.sketch__race-art {
+  display: inline-block;
+  width: #{$sketch-race-art}em;
+  height: #{$sketch-race-art}em;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
 .sketch__pod-value {
   font-family: $font-game-display;
   line-height: 1;

@@ -209,7 +209,9 @@ vez, en la misma cuadrícula visual.
 | 🤖 | Constructos |
 | 🧜 | Abisales |
 
-**Dos problemas ya detectados, sin resolver:**
+**Dos problemas que tenía el emoji provisional** —los dos **resueltos** por el
+dibujo que entró el 27 de agosto, ver abajo—, y conviene dejarlos escritos porque
+son el motivo de que los emblemas no se dibujen como figuras:
 
 - **👤 Humanos es una silueta genérica.** Es literalmente "persona", y a 42px
   no dice "Humanos" más que cualquier otro emblema con figura humanoide —
@@ -226,6 +228,89 @@ vez, en la misma cuadrícula visual.
   definido: es un pendiente de catálogo, no solo de dibujo.
 - Igual pasa, en menor medida, con 😈 (Demonios infernales como raza, Demonio
   como Característica).
+
+### Los once, entregados *(27 de agosto de 2026)*
+
+**Y los dos problemas de arriba se resuelven por dibujo, no por catálogo.** El
+dibujo de cada emblema no estaba decidido —este apartado solo tenía el emoji—; se
+propuso en [`prompts/razas.md`](prompts/razas.md), derivado de los ejes
+*Motivos* y *Silueta* de
+[`sujetos.md`](../races-concept/sujetos.md#identidad-de-raza), y se generó el
+mismo día. Los once archivos están en `public/assets/v3/icons/races/`.
+
+| Raza | Archivo | Dibujo |
+|---|---|---|
+| 👤 Humanos | `humanos` | Gonfalón de dos picos con **sol de ocho rayos** |
+| ⛏️ Enanos | `enanos` | **Yunque** de perfil, nudo angular y remaches |
+| 💀 No-muertos | `no-muertos` | **Costillar** con dos costillas partidas y venda |
+| 🔥 Demonios infernales | `demonios-infernales` | **Par de cuernos**, el derecho partido, sello agrietado |
+| 🧝 Elfos | `elfos` | **Hoja** con nervio central entre dos hojas curvas |
+| 🧟 Orkos | `orkos` | **Mandíbula** con colmillo atado con cuerda |
+| 🧚 Feéricos | `feericos` | Cuatro **alas de insecto** caladas y dos espirales |
+| 🐉 Dracónidos | `draconidos` | **Cabeza de perfil** con cresta hacia atrás |
+| 🐀 Hombres rata | `hombres-rata` | **Vial** remendado con la cola enroscada |
+| 🤖 Constructos | `constructos` | **Placa hexagonal** remachada con runa recta |
+| 🧜 Abisales | `abisales` | **Concha en espiral** con tentáculo y percebes |
+
+- **👤 Humanos deja de ser una figura**, que era el pendiente: pasa a ser **su
+  heráldica**, lo único de sus ocho ejes que no comparte con ninguna otra raza.
+  Y de paso ninguno de los once es un humanoide, que a 42px habrían sido siete
+  siluetas iguales.
+- **Ni 💀 ni 😈 se dibujan.** No-muertos es un costillar y Demonios un par de
+  cuernos, así que la colisión triple del 💀 y la doble del 😈 **desaparecen sin
+  tocar el catálogo** — no hacía falta renombrar ni la Característica ni la clase.
+
+**Tres cosas medidas sobre los archivos**, y las tres son de producción:
+ninguno está recortado en el filo; el encuadre va **peor** que en la primera
+tanda —del 84 % al 98 % del lienzo, y cinco de los once pasan del 95 % de alto—;
+y **dos se salen del «un solo metal»** de §5, la venda de `no-muertos` en hueso
+pálido y la cola de `hombres-rata` en cobre rosado. Esa excepción está **sin
+decidir**. Pesan 15 MB los once. Detalle en
+[`public/assets/v3/README.md`](../../../public/assets/v3/README.md).
+
+**Y una que no se ve en el archivo: `feericos` es el único calado del set** —
+nervadura fina sobre hueco, mientras los otros diez son masa—, así que es el
+candidato a empastarse en la cuadrícula de once a 42px. **Esa cuadrícula sigue
+sin montarse**, y es la única prueba que cuenta para este inventario.
+
+**Montarlos en la carta destapó un fallo que no era del icono sino del marco, y
+la lección vale para las 41 Características que faltan.** Las tres piezas que
+llevan el emblema —el medallón de la E, el estandarte de la G/H/J y la línea de
+tipo de la I— tenían la cara **clara**, y la tenían **por el emoji**: 👤 Humanos
+es una silueta oscura y necesitaba papel claro detrás, escrito así en sus dos
+parciales de `styles/components/card-sketch/`. Con el pictograma de oro el parche
+se volvió en contra —la cara era del **mismo latón** que el glifo— y el emblema
+se veía como un relieve sin dibujo. Las tres pasan a cara oscura el mismo día.
+
+Lo que hay que llevarse de ahí: **el papel de un glifo no se hereda del boceto,
+se comprueba al cambiarlo**. Cualquier pieza cuya cara se aclarara para salvar un
+emoji está hoy preparada para el emoji que va a dejar de estar — y el raíl de
+Características, que es el que viene, tiene seis medallones por carta.
+
+### El segundo fallo del montaje era de TAMAÑO *(27 de agosto de 2026)*
+
+Y sale de la misma raíz: las tres piezas de la esquina de la G/H/J —disco de
+Tier, estandarte y emblema— se dimensionaron con un emoji dentro, y un emoji solo
+tiene que enseñar una silueta. Con el pictograma el emblema caía a **22,4px** y
+ahí se veía **que era oro, pero no QUÉ era**: el costillar de `no-muertos` era
+una mancha con brillos y el nudo del yunque de `enanos` no existía.
+
+Suben las tres a la vez, porque ninguna puede crecer sola —la anchura de la
+bandera sale del disco y el emblema sale de la bandera—: el disco de 46 a
+**54px**, la bandera de 28 a **34** y el emblema a **27,2**. Ahí topa, y lo dice
+la carta y no el gusto: con 40px de bandera la tela empezaría a morder el canto.
+Las medidas viven en `styles/settings/_card.scss` (`$sketch-disc`,
+`$sketch-banner`) y en `_typography.scss` (`"disc"`, `"banner-icon"`), cada una
+con la cuenta escrita al lado.
+
+**Y eso corrige un dato que este apartado daba por bueno.** Los «42px» de arriba
+son el diámetro del **medallón** de la E, o sea la PIEZA; el dibujo de dentro
+nunca los midió —en la E son 30px y en la bandera de la J, 27,2—, porque un
+medallón necesita aro, borde y aire alrededor del glifo. Así que el sitio real
+que la carta le da a un emblema son **27–30px**, y la cuadrícula que sigue
+pendiente hay que mirarla ahí y no a 42: a 42 se juzga si la pieza cabe, a 27 si
+el motivo se lee. El fallo no era del número, era de haberlo leído como si el
+glifo llenara la pieza.
 
 ## 5. La dirección elegida
 
@@ -412,9 +497,12 @@ falló o funcionó al poner un glifo real en una carta real.
 
 ## 7. Qué falta
 
-Diez archivos entregados de los 47 que cuentan §3 y §4 (36 siluetas base más 11
+**21 archivos entregados** de los 47 que cuentan §3 y §4 (36 siluetas base más 11
 emblemas; los tres Tipos de daño de §2 no estaban en esa cuenta y habrá que
-sumarlos al revisarla). Lo que queda, por orden de lo que bloquea a lo que no:
+sumarlos al revisarla): las 8 Habilidades y 2 Tipos de daño el 26 de agosto de
+2026, y **los 11 emblemas de raza el 27**. Lo que queda son **las 41
+Características**, que es donde estaba el grueso desde el principio, más la
+normalización de lo ya entregado. Por orden de lo que bloquea a lo que no:
 
 - **Quién dibuja el aro del medallón**, el archivo o el marco (§5, *lo que la
   elección cuesta*). **Bloquea la entrega de cualquier Característica**, que es
@@ -431,17 +519,33 @@ sumarlos al revisarla). Lo que queda, por orden de lo que bloquea a lo que no:
   eso no se juzga con dos. **Lleva suplente en pantalla** —el genérico
   `abilities/ataque.png`, decisión de Dario, ver el aviso de §2— y por eso este
   pendiente es de los que se olvidan: la carta ya no enseña ningún hueco.
-- **La normalización de encuadre** de lo ya entregado (§5): recorte y relleno a
-  caja común. Es mecánica, no vuelve a pedirle nada al generador, y conviene
-  resolverla **antes** de las 41 Características, no después — la receta que
-  salga se aplica a las 47.
-- **La colisión del 💀 y el 😈** entre emblema de raza, Característica e icono
-  de clase (§4) — es un pendiente de catálogo que bloquea el emblema de
-  No-muertos y el de Demonios infernales.
-- **Un atributo propio para 👤 Humanos** que lo distinga de cualquier otro
-  emblema humanoide (§4).
+- **La normalización de encuadre** de lo ya entregado, que ahora son **21
+  archivos** (§5 y §4): recorte y relleno a caja común. Es mecánica, no vuelve a
+  pedirle nada al generador, y conviene resolverla **antes** de las 41
+  Características, no después — la receta que salga se aplica a las 47. Con los
+  emblemas el margen se ha estrechado: hay glifos al 98 % del lienzo.
+- **Si se acepta la excepción al «un solo metal»** de dos emblemas: la venda de
+  `no-muertos` en hueso pálido y la cola de `hombres-rata` en cobre rosado (§4).
+  Es la primera grieta en el rasgo 1 de §5, y decidirla marca si el resto del set
+  puede meter un segundo tono o no.
+
+  **Y desde el 27 de agosto tiene un caso de uso, que es lo que le faltaba.**
+  [`card-concept/banners.md`](../card-concept/banners.md) propone teñir el
+  estandarte por raza, y Feéricos es la única raza de valores claros: su emblema
+  de oro sobre un campo lila pálido vuelve a ser oro sobre casi-metal, o sea el
+  fallo del §4 otra vez. Con **plata** ahí, el segundo metal deja de ser una
+  grieta y pasa a ser la otra mitad de la ley del esmalte —oro sobre color
+  oscuro, plata sobre color claro—. Eso convierte esta pregunta de «se acepta una
+  excepción» en «hay dos metales y cada uno tiene su campo», que no es lo mismo.
+- **Montar los once emblemas en una cuadrícula y mirarlos juntos.** Es el
+  requisito con el que se escribió §4 y **no se ha hecho**: los once están
+  juzgados de uno en uno, que es exactamente lo que el apartado decía que no
+  bastaba. `feericos`, el único calado, es el sospechoso. Y va **a 27px, no a
+  42**: los 42 son el medallón y 27 es el dibujo que la carta enseña de verdad
+  (§4, «el segundo fallo del montaje»).
 - **La extensión y el peso.** Entran como `.png` de 1254px porque no había norma
-  y se decidió no inventarla con diez archivos en la mano; se decide en
+  y se decidió no inventarla con diez archivos en la mano; con **21 archivos y 26
+  MB** el argumento de esperar ya no aguanta mucho más. Se decide en
   [`public/assets/v3/README.md`](../../../public/assets/v3/README.md), que es la
   fuente única, y su `.webp` de la tabla de lienzo **no vale tal cual**: es la
   norma de una ilustración a sangre y sin transparencia.

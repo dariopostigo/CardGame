@@ -553,17 +553,20 @@ export default function CardSketchLab() {
             clara para que la fila se recorra como una escala: del carbón al marfil, pasando por
             el peltre de ahora. Las tres cosas que hay que mirar al pasarlas no son el marco, son
             lo que se apoya en él: el <b>oro del rótulo</b> sobre la placa (el latón casi se lo
-            traga, y el oro es la prueba de fuego), el <b>emblema</b> sobre el medallón, que
-            necesita cara clara, y la <b>veta</b> de rareza, que se apaga cuando el metal ya es de
+            traga, y el oro es la prueba de fuego), el <b>emblema</b> sobre el medallón, que ya
+            no pide cara clara —desde el 27 de agosto la cara es oscura y el emblema un
+            pictograma de oro, así que lo que se mira es si el medallón oscuro se sigue leyendo
+            como pieza cuando el marco es carbón—, y la <b>veta</b> de rareza, que se apaga cuando el metal ya es de
             su tono — compara la legendaria del 🐉 Dragón dorado en peltre y en latón. Los
             oscuros hacen lo contrario: apagan el marco y suben todo lo demás. Dos están fuera de
             la familia a propósito: el <b>cardenillo</b> (verde de pátina, el único que no es gris
             ni dorado) y el <b>marfil</b>, que ya no parece metal — están para ver si el marco
             tiene que ser metálico siquiera. El selector mueve <b>los cinco bocetos a la vez</b>:
             comparten aleación para que lo que se compare sea el marco y no el color. En la G hay
-            una cosa más que mirar, el <b>estandarte</b>, que necesita cara clara para que el
-            emblema se lea — en carbón o pavonado el 👤 se pierde, y es el mismo reparo que el
-            medallón de la E. Y la <b>I</b> es la que más pone en juego con este selector, porque
+            una cosa más que mirar, el <b>estandarte</b>: la tela va oscura y el emblema en oro,
+            el mismo reparo que el medallón de la E pero al revés desde que el pictograma sustituyó
+            al 👤, así que la pregunta ya no es si el emblema se lee sino si la bandera se distingue
+            del marco en las aleaciones oscuras. Y la <b>I</b> es la que más pone en juego con este selector, porque
             allí el metal no es un filete: es la <b>página entera</b>, la mitad de la superficie de
             la carta. Un marfil o una plata la convierten en una lámina clara con una foto pegada,
             y un carbón la acercan a las otras tres. Si hay una aleación que solo funciona en la I,

@@ -260,6 +260,31 @@ $page-pad: $sketch-band + $sketch-page-pad;
     min-width: 0;
   }
 
+  // El emblema, dentro del renglón, y CON SU PROPIO ASIENTO OSCURO. El tamaño lo
+  // saca de la línea —hereda "typeline" y lo escala $sketch-race-art— así que de
+  // eso no hay que ocuparse; lo que hay que darle es papel.
+  //
+  // Y se le da a la pieza pequeña, no a la barra. La barra de tipo es del mismo
+  // latón que las otras dos horizontales de este boceto —el rótulo y el panel de
+  // ocho— y oscurecerla entera para salvar un glifo de 14px rompería esa familia
+  // por el sitio equivocado. Un asiento hundido detrás del emblema es además lo
+  // que icons.md §5 ya decide para las Características: «la cara hundida del
+  // medallón ES el papel».
+  //
+  // `line-height: 1` para que la imagen, más alta que el texto, no empuje la caja
+  // de línea y descuadre la barra, que tiene altura fija.
+  .sketch__typeline-emblem {
+    display: inline-grid;
+    place-items: center;
+    padding: 1.5px;
+    border-radius: radius("xs");
+    background: card-sketch("glass");
+    box-shadow:
+      0 0 0 0.5px var(--m-edge),
+      inset 0 0.5px 0 card-sketch("glass-hi");
+    line-height: 1;
+  }
+
   // El sello de Rareza. Rombo, como la piedra de la G, pero PLANO y diminuto: no
   // es una joya montada en el canto, es un símbolo dentro de un renglón. Esa es
   // la pregunta que trae —si la Rareza necesita ser una pieza o le basta con un

@@ -18,6 +18,10 @@
 @use "specimen";
 @use "tile";
 @use "board";
+// La arena de batalla de V3. Va junto a su hermana y no derivada de ella:
+// misma rejilla hexagonal, pero sin losetas, sin terreno y sin canto (ver la
+// cabecera de _arena.scss).
+@use "arena";
 @use "piece";
 @use "sprite-lab";
 @use "combatant-drawer";

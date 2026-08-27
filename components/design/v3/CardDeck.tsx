@@ -5,6 +5,7 @@ import { gameFontVars } from "@/components/game/ui/game-fonts";
 import { sketchFontVars } from "./sketch-fonts";
 import SketchCard from "./sketch-cards";
 import { DECK_RACES } from "./races";
+import { raceArtFor } from "./sample";
 
 // =========================================================================
 // Diseño baraja — el marco YA elegido, sobre el roster real
@@ -97,11 +98,25 @@ export default function CardDeck() {
         <button className={btn(race === ALL_RACES)} onClick={() => setRace(ALL_RACES)}>
           Todas
         </button>
-        {DECK_RACES.map((r) => (
-          <button key={r.name} className={btn(race === r.name)} onClick={() => setRace(r.name)}>
-            {r.icon} {r.name}
-          </button>
-        ))}
+        {/* El emblema del filtro es el mismo PNG que lleva la carta desde el 27
+            de agosto de 2026, no el emoji. Aquí sí hace falta dimensionarlo a
+            mano —no hay escalón de tipografía que heredar, es cromo de
+            laboratorio— y de ahí el tamaño en clase de Tailwind en vez del
+            factor en `em` que usa la carta. El emoji sigue en DECK_RACES de
+            respaldo: si una raza entra sin archivo, este botón lo enseña. */}
+        {DECK_RACES.map((r) => {
+          const art = raceArtFor(r.name);
+          return (
+            <button key={r.name} className={btn(race === r.name)} onClick={() => setRace(r.name)}>
+              {art ? (
+                <img src={art} alt="" aria-hidden="true" className="mr-1 inline-block h-4 w-4 align-[-0.2em] object-contain" />
+              ) : (
+                `${r.icon} `
+              )}
+              {r.name}
+            </button>
+          );
+        })}
       </div>
 
       {/* Escenario. Mismo objeto que el laboratorio de bocetos

@@ -71,6 +71,7 @@
  * sustituirse.
  */
 const ICONS = "/assets/v3/icons";
+const BANNERS = "/assets/v3/banners";
 
 /**
  * Las 8 Habilidades, en el orden de docs/v3/razas.md §"Habilidades".
@@ -175,6 +176,81 @@ export const DAMAGE = {
 } as const;
 
 export type DamageKey = keyof typeof DAMAGE;
+
+/**
+ * Los 11 emblemas de raza (knowledge/v3/icon-concept/icons.md §4), entrados el
+ * 27 de agosto de 2026 con la segunda tanda de pictogramas. Mismo relieve de
+ * oro monocromo que las ocho Habilidades y, como ellas, **desnudos**: el aro
+ * del medallón lo dibuja el marco de cada boceto, no el archivo.
+ *
+ * VA EN UN MAPA POR RAZA Y NO EN UN CAMPO DE CADA FICHA, al contrario que la
+ * ilustración. El emblema es de la RAZA: las doce fichas de Humanos comparten
+ * archivo, así que un campo por ficha serían 132 copias de once rutas y once
+ * regeneraciones a doce manos. `raceIcon` sí es campo de ficha, y se queda.
+ *
+ * Y están LOS ONCE aunque la baraja solo pinte cuatro razas. Los archivos
+ * existen los once (public/assets/v3/icons/races/), así que la raza que entre en
+ * races.ts trae su emblema sin tocar este archivo — que es lo contrario de lo
+ * que pasa con la ilustración, donde cada ficha nueva trae su ruta.
+ *
+ * Las claves son el `race` de la ficha, literal. Si no coincide, raceArtFor()
+ * devuelve undefined y la carta cae al emoji: se ve el hueco, no se rompe.
+ */
+const RACE_ART: Record<string, string> = {
+  Humanos: `${ICONS}/races/humanos.png`,
+  Enanos: `${ICONS}/races/enanos.png`,
+  "No-muertos": `${ICONS}/races/no-muertos.png`,
+  "Demonios infernales": `${ICONS}/races/demonios-infernales.png`,
+  Elfos: `${ICONS}/races/elfos.png`,
+  Orkos: `${ICONS}/races/orkos.png`,
+  "Feéricos": `${ICONS}/races/feericos.png`,
+  "Dracónidos": `${ICONS}/races/draconidos.png`,
+  "Hombres rata": `${ICONS}/races/hombres-rata.png`,
+  Constructos: `${ICONS}/races/constructos.png`,
+  Abisales: `${ICONS}/races/abisales.png`,
+};
+
+/** El emblema de una raza, o `undefined` si esa raza no tiene archivo. */
+export function raceArtFor(race: string): string | undefined {
+  return RACE_ART[race];
+}
+
+/**
+ * El ESTANDARTE de cada raza: el paño teñido del que cuelga el emblema, y que
+ * hasta ahora dibujaba el CSS (`styles/components/card-sketch/_estandarte.scss`).
+ * Es la otra mitad de la pieza, y va aparte a propósito — el archivo es la
+ * bandera VACÍA y el emblema se pone encima, que es como la heráldica reparte
+ * campo y carga (knowledge/v3/card-concept/banners.md §4).
+ *
+ * Desde el 27 de agosto de 2026 están las ONCE, y salieron de una tacada con
+ * los prompts corregidos (knowledge/v3/card-concept/prompts/banners.md): mismo
+ * lienzo, mismo asta, mismo filete, y lo único que cambia de una a otra es el
+ * TINTE y el CORTE del pie — que es justo el reparto que pedía el concepto.
+ *
+ * El paño de CSS que había antes NO se borra aunque ya no lo use ninguna de las
+ * once. Es la red: una raza que entre mañana sin estandarte dibujado cae a un
+ * paño teñido en vez de a un hueco. Vive en su parcial
+ * (`styles/components/card-sketch/_estandarte.scss`), y el selector que decide
+ * es `[data-art]` — con archivo, la imagen; sin él, la tela pintada.
+ */
+const RACE_BANNERS: Record<string, string> = {
+  Humanos: `${BANNERS}/humanos.png`,
+  Enanos: `${BANNERS}/enanos.png`,
+  "No-muertos": `${BANNERS}/no-muertos.png`,
+  "Demonios infernales": `${BANNERS}/demonios-infernales.png`,
+  Elfos: `${BANNERS}/elfos.png`,
+  Orkos: `${BANNERS}/orkos.png`,
+  "Feéricos": `${BANNERS}/feericos.png`,
+  "Dracónidos": `${BANNERS}/draconidos.png`,
+  "Hombres rata": `${BANNERS}/hombres-rata.png`,
+  Constructos: `${BANNERS}/constructos.png`,
+  Abisales: `${BANNERS}/abisales.png`,
+};
+
+/** El estandarte de una raza, o `undefined` si todavía no está dibujado. */
+export function raceBannerFor(race: string): string | undefined {
+  return RACE_BANNERS[race];
+}
 
 export type Trait = { icon: string; label: string };
 

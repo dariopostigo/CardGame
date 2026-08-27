@@ -410,15 +410,17 @@ Los 47 pictogramas —36 siluetas base de Habilidad y Característica, más 11
 emblemas de raza— tienen desde el **26 de agosto de 2026** dirección de dibujo
 cerrada (relieve de metal dorado, monocromo:
 [`knowledge/v3/icon-concept/icons.md`](../../../knowledge/v3/icon-concept/icons.md)
-§5) y **los diez primeros archivos entregados**, que es lo que abre esta
-carpeta.
+§5) y **21 de los 47 entregados** en dos tandas: los diez primeros el mismo 26
+de agosto —las ocho Habilidades y dos Tipos de daño—, y **los once emblemas de
+raza el 27 de agosto de 2026**. Lo que falta es el grueso de Características,
+que sigue bloqueado por el aro del medallón.
 
 | Carpeta | Qué lleva | Hoy |
 |---|---|---|
 | `icons/abilities/` | Las 8 Habilidades | **Las 8** — `vida`, `ataque`, `defensa`, `resistencia-magica`, `precision`, `suerte`, `iniciativa`, `movimiento` |
 | `icons/damage/` | Los 3 Tipos de daño, que ocupan el sitio del icono de Ataque | **2 de 3** — `a-distancia` y `magico`. **Falta `cuerpo-a-cuerpo`**, y mientras tanto el laboratorio pinta `abilities/ataque.png` en su hueco (suplente, ver abajo) |
 | `icons/traits/` | Las 41 Características | Vacía, sin crear |
-| `icons/races/` | Los 11 emblemas de raza | Vacía, sin crear |
+| `icons/races/` | Los 11 emblemas de raza | **Los 11** — `humanos`, `enanos`, `no-muertos`, `demonios-infernales`, `elfos`, `orkos`, `feericos`, `draconidos`, `hombres-rata`, `constructos`, `abisales`. Entregados el 27 de agosto de 2026, con dos avisos abajo |
 
 **Van en subcarpeta y no sueltos por el mismo motivo que `races/<raza>/units/`:
 hay colisiones de nombre.** `defensa` es una Habilidad *y* —como *Resistente al
@@ -463,6 +465,26 @@ arreglar antes de que estos archivos entren en una carta:
    dos fondos, y **lo que los salva en el fondo claro es el contorno oscuro, no
    el relleno** — que es justo lo que la regla pedía por construcción.
 
+**Y lo medido de la segunda tanda, los once emblemas de raza del 27 de agosto.**
+Los tres problemas de arriba se repiten y aparece uno nuevo:
+
+1. **Pesan 15 MB los once**, así que la carpeta `icons/` entera va por **26 MB en
+   21 archivos**. La cuenta a 47 ya no es una molestia teórica, y sigue sin haber
+   norma de extensión.
+2. **Tampoco están recortados en el filo, pero el encuadre va peor.** La caja del
+   glifo se mueve entre el **84 % y el 98 %** del lienzo —antes 84–97— y en cinco
+   de los once el alto pasa del 95 %, o sea que casi no queda aire arriba y abajo.
+   La pasada de recorte y relleno a caja común es ahora de 21 archivos, y es la
+   receta que se aplicará a las 41 Características: conviene fijarla ya.
+3. **Dos se salen del «un solo metal»** que manda `icons.md` §5: la venda de
+   `no-muertos` salió en hueso pálido y la cola de `hombres-rata` en cobre
+   rosado. Es una excepción a una regla cerrada del set, y está **sin decidir**
+   —aceptarla o regenerar los dos.
+4. **`feericos` es el único calado del set.** Sus alas son nervadura fina sobre
+   hueco mientras los otros diez son masa, así que es el candidato a empastarse a
+   los 42px de la cuadrícula de once. Se juzga montando los once juntos a ese
+   tamaño, no mirando el archivo.
+
 ### `frames/` — las piezas del marco, que no son ni ilustración ni pictograma
 
 Trozos de **moldura de carta** dibujados como archivo en vez de con CSS. No son
@@ -499,6 +521,98 @@ CSS— y el hueco en 43, así que lo único que crece es lo que sobresale.
 
 Extensión `.png` por lo mismo que los pictogramas: transparencia y aristas
 limpias, que es lo contrario de lo que pide la tabla de *Lienzo y formato*.
+
+### `banners/` — los estandartes de raza, uno por raza
+
+**Las once, entregadas el 27 de agosto de 2026** y de una sola tacada, que es lo
+que las hace comparables. El concepto está en
+[`knowledge/v3/card-concept/banners.md`](../../../knowledge/v3/card-concept/banners.md)
+y los prompts en [`prompts/banners.md`](../../../knowledge/v3/card-concept/prompts/banners.md).
+Las medidas del archivo se fijan aquí y se fijan **antes de dibujar**, que es lo
+que la primera versión del concepto hizo mal: dimensionó la pieza contra los
+34 × 78 px que ocupa en la carta, y esa es su lectura más pequeña, no su tamaño.
+
+**Se tratan igual que los pictogramas de `icons/`**: un archivo por raza,
+dibujado grande, usado al tamaño que cada sitio pida. Un emblema de 1254 px se ve
+a 27 en la carta; un estandarte de 1254 se ve a 34 × 78. Lo que hace que la pieza
+valga fuera de la carta —una cabecera de raza, una pantalla de reclutamiento— es
+justamente que el archivo no está dibujado para el hueco donde se ve más pequeña.
+
+**Y son la bandera vacía, no la bandera con su emblema.** Esta ficha decía lo
+contrario el 27 de agosto y hubo que corregirlo el mismo día, después de que una
+IA generara la primera tanda con el logotipo horneado dentro: el emblema ya
+existe en `icons/races/`, ya está aprobado y ya se usa en otros tres sitios, así
+que hornearlo aquí serían dos dibujos del mismo objeto que pueden separarse. El
+campo es un archivo y la carga es otro. Los prompts, corregidos, están en
+[`knowledge/v3/card-concept/prompts/banners.md`](../../../knowledge/v3/card-concept/prompts/banners.md).
+
+**Carpeta aparte, y por una regla y no por gusto.** No van en `icons/` porque esa
+carpeta es **monocroma dorada** por norma (`icon-concept/icons.md` §5) y un
+estandarte lleva el color de su raza; no van en `frames/` porque ahí solo entra
+lo que *no dice nada*, y un estandarte dice la raza. Es la tercera clase de
+archivo del catálogo, así que tiene la suya.
+
+| | Norma |
+|---|---|
+| **Cuántos** | **11**, uno por raza, con el slug de siempre (`humanos`, `no-muertos`, `hombres-rata`…) |
+| **Lienzo** | **1000 × 1760 px** |
+| **Paño** | **700 px de ancho, centrado** (x 150 → 850), del **y 105 al y 1715**. Son 1610 de alto: **el PAÑO es 1 : 2,3**, no el lienzo |
+| **Corte** | Arranca en **y 1393** — el 80 % del paño, no del lienzo |
+| **Asta** | Sobresale por los lados del paño y cabe dentro del lienzo, en el 6 % superior. Es lo que obliga a que el lienzo sea más ancho que la tela |
+| **Registro** | **Plano y gráfico**, tipo emblema de interfaz: un panel de color liso. **No** una tela pintada con realismo — sin pliegues, sin trama, sin costuras, sin desgaste |
+| **Contenido** | La bandera **VACÍA**: color liso y el corte del pie, nada más. **Sin emblema, sin sello, sin símbolo, sin logotipo dentro** — el emblema se pone encima y sale de `icons/races/` |
+| **Color** | **Un solo tono** por raza (la tabla del §5 del concepto), con un oscurecimiento muy suave hacia los bordes. Ningún otro color dentro del paño, y ahí **nada de oro**: es el material del emblema que va encima |
+| **Filete y asta** | El **contorno de oro** y el **travesaño con remates** sí van, y son lo único dorado. En la carta el travesaño queda entero tapado por el disco del Tier — están por los tamaños grandes, que es para lo que existe el archivo |
+| **Fondo** | Transparente. Sin sombra horneada: la pone el CSS con `drop-shadow`, que sigue la silueta |
+| **Extensión** | `.png`, por lo mismo que los pictogramas: transparencia y aristas limpias |
+
+**La proporción es del PAÑO y no del lienzo, y eso hubo que aprenderlo montando
+la primera** *(27-ago-2026)*. Esta ficha decía «1 : 2,3» a secas, el generador lo
+aplicó al **lienzo**, y como el asta se lleva el 30 % del ancho la tela salió a
+**1 : 3,0**: en la carta se veía un estandarte demasiado largo. De ahí las cinco
+cotas de la tabla en vez de una — el paño en píxeles y no en proporción, para que
+no se pueda volver a interpretar sobre otra cosa.
+
+Y de paso subió el ancho de la pieza en la carta: `$sketch-banner` pasó de 34 a
+**38 px**, porque con el paño de CSS la proporción se aguantaba y con una bandera
+de verdad se veía estrecha. Ahí se acabó el margen: en el boceto G la bandera
+arranca ya a 1 px del raíl del filete.
+
+**Y una exigencia que un pictograma no tiene: las once tienen que ser
+intercambiables.** Esta pieza **cuelga de un punto** —en la carta se mete en un
+hueco fijo debajo del disco del Tier— así que el paño tiene que ocupar lo mismo
+en los once archivos: mismo ancho, mismo canto de arriba, mismo sitio del
+emblema. Lo que varía es lo que hay dentro, no dónde está.
+
+Es el mismo problema que `icons/` tiene abierto desde la segunda tanda, con la
+caja del glifo entre el 84 % y el 98 % del lienzo — **pero aquí no se dio**, y
+conviene saber por qué antes de meter los estandartes en esa pasada. Medidos los
+once al entregarlos, el paño cae siempre en el mismo sitio:
+
+| | Medido sobre los once | Norma |
+|---|---|---|
+| Lienzo | **945 × 1663** en los once (1 : 1,760) | 1000 × 1760 (1 : 1,760) ✔ |
+| Paño, canto izquierdo | x 132 … 135 — **3 px de dispersión** | x 150 |
+| Paño, ancho | 677 … 680 — **3 px** | 700 |
+| Paño, canto de arriba | y 101 … 104 — **3 px** | y 105 |
+| Paño, proporción | **1 : 2,12 … 1 : 2,28** | 1 : 2,3 |
+
+Tres píxeles de dispersión sobre 945 es medio punto porcentual: son
+intercambiables tal cual, y **no hace falta reencuadrarlos**. La diferencia con
+`icons/` es que los once salieron de una tacada con el mismo prompt, y los
+pictogramas no.
+
+Los ~18 px de más en el ancho (677 medidos contra los 661 que serían 700 de
+1000) son el **filete de oro**, que se dibuja por fuera de la tela. Por eso el
+CSS usa 717/1000 y no 700: la norma le habla al generador del paño, y el CSS
+necesita la pieza visible. Están explicados en
+`styles/components/card-sketch/_estandarte.scss`, y **no son un error que haya
+que arreglar igualando una cifra a la otra**.
+
+Lo que sí queda pendiente es el **peso**: 17 MB entre los once, de 1,3 a 1,8 MB
+cada uno, para una pieza que en la carta se pinta a 38 × 87 px. Es el mismo
+pendiente que tiene `icons/` (14 MB más) y la misma receta que ya se aplicó en
+`frames/`, donde `tier.png` vive a 256 px y 93 KB.
 
 ## La estructura, cuando toque
 

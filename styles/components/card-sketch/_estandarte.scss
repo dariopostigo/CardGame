@@ -92,9 +92,11 @@ $gem-bezel: math.div($sketch-gem, 8);
 $gem-table: math.div($sketch-gem * 3, 10);
 
 // El estandarte, centrado en el eje del disco: el disco se sale $disc-inset por
-// la esquina, así que su centro cae en −7 + 46/2 = 16px y la bandera arranca
-// media anchura antes. Sale 4px, o sea justo por dentro del raíl exterior del
+// la esquina, así que su centro cae en −7 + 54/2 = 20px y la bandera arranca
+// media anchura antes. Sale 3px, o sea justo por dentro del raíl exterior del
 // filete — la bandera tapa el canal de la veta pero no el canto de la carta.
+// Al crecer las dos piezas juntas (46 → 54 y 28 → 34) esta cuenta da lo mismo
+// que daba antes, que es la razón de que las dos crecieran a la vez.
 $banner-left: math.div($sketch-disc - $sketch-banner, 2) - $disc-inset;
 // Y arranca 10px por encima del canto de abajo del disco, para que se lea
 // colgando de él y no apoyada debajo. Lo que se mete por debajo es tela sin
@@ -523,15 +525,23 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     // El emblema baja hasta librar el disco entero, no solo su caja: el disco
     // es un círculo y por el eje de la bandera su canto de abajo cae más
     // abajo que en los lados. Con menos acolchado el 👤 se lee rozado por él.
-    padding-top: 19px;
+    //
+    // Y no es aire suelto, es una cuenta de tres términos: 10px de solape con
+    // el disco (los que $banner-top mete por debajo de él) más la mitad de lo
+    // que sobra de tela por delante de la punta. Con la bandera de 38 el cuerpo
+    // recto mide 38 × 2,3 × 0,8 = 69,9px, así que descontado el solape quedan
+    // 59,9 para un emblema de 27,2 y el emblema se sienta centrado en ellos:
+    // 10 + (59,9 − 27,2) / 2 ≈ 26.
+    padding-top: 26px;
     filter: drop-shadow(0 3px 4px card-sketch("shadow"));
 
-    // Cara CLARA, al revés que el medallón del raíl. Es la lección del medallón
-    // de la E y del emblema de las fichas del tablero: un emoji trae sus propios
-    // tonos y no acepta color, así que lo que hay detrás tiene que hacerle de
-    // papel — y el de Humanos (👤) es una silueta oscura que sobre metal oscuro
-    // se lee como una mancha. Los del raíl van al contrario porque allí los
-    // glifos son claros (💀, 🐾).
+    // Cara OSCURA, y desde el 27 de agosto de 2026 — antes era clara y por el
+    // emoji. El razonamiento de entonces era el del medallón de la E: 👤 Humanos
+    // es una silueta oscura y necesitaba papel claro detrás. Con el PICTOGRAMA
+    // de oro (icons.md §4) el argumento se invierte entero, y aquí se veía peor
+    // que en ningún otro sitio: la tela era del mismo latón que el glifo, así que
+    // la bandera enseñaba un relieve y no un dibujo. Misma cara que el disco del
+    // Tier de aquí al lado, que es la pieza oscura ya probada de este boceto.
     //
     // La punta de abajo es la del pin de Ataque a otra escala: la bandera es
     // "más larga" y por eso el corte empieza al 80% y no al 60%.
@@ -540,9 +550,11 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
       position: absolute;
       inset: 0;
       clip-path: polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%);
-      // La tela se mantiene clara hasta bien pasado el emblema y solo se apaga
-      // hacia la punta: un degradado repartido dejaba al 👤 sobre metal medio y
-      // ahí se pierde.
+      // La tela va oscura de arriba abajo y se apaga hacia la punta, que es la
+      // caída del disco del Tier a lo largo: el emblema se sienta en la parte
+      // alta, donde la piedra está más clara, y la punta se hunde. Lo que había
+      // antes era esto mismo al revés —clara hasta pasado el emblema— y era lo
+      // que pedía el emoji.
       //
       // Sin cordón ni remate arriba: los 10px que asomarían están detrás del
       // disco, así que sería tinta que no ve nadie. Lo que sujeta la bandera es
@@ -550,10 +562,81 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
       // arriba se viera, la bandera se leería apoyada y no colgada.
       background: linear-gradient(
         to bottom,
-        var(--m-hi) 0,
-        var(--m) 62%,
-        var(--m-lo) 100%
+        game("surface-2") 0,
+        card-sketch("void") 78%
       );
+    }
+  }
+
+  // --- El estandarte DIBUJADO, cuando la raza tiene archivo ---------------
+  // Mismo trato que el disco del Tier de la J: la moldura deja de pintarse con
+  // CSS y pasa a ser un PNG (public/assets/v3/banners/), con la diferencia de
+  // que aquí la ruta cambia con la raza, así que la trae una custom property
+  // desde el TSX en vez de una url() escrita en el parcial.
+  //
+  // Las razas SIN archivo se quedan con el paño de arriba y no se rompen: es lo
+  // que permite ver la primera bandera dibujada al lado de tres pintadas.
+  //
+  // Las fracciones hacen falta porque el archivo NO es solo el paño: trae el asta
+  // con sus remates, que sobresale por los lados, así que el lienzo es más ancho
+  // que la tela. Misma disciplina que las de tier.png en _orla.scss.
+  //
+  // Nacieron como las de la NORMA (public/assets/v3/README.md, `banners/`) porque
+  // solo había un archivo y venía mal proporcionado. Desde que están las ONCE
+  // (27-ago-2026) son MEDIDAS: la media de las once, que se pueden medir porque
+  // salieron de una tacada y no se separan más de 5px de 945 unas de otras.
+  //
+  // Y NO coinciden con la norma, a propósito: la norma le habla al generador del
+  // PAÑO (700 de 1000), y aquí hace falta la pieza VISIBLE, que trae además el
+  // filete de oro por fuera de la tela — unos 9px por lado, de ahí 717 en vez de
+  // 700. Son dos medidas distintas de dos cosas distintas: si alguna vez no
+  // cuadran, no es un error que haya que "arreglar" igualando una a la otra.
+  $banner-art-x: math.div(141, 1000);      // 0,141 — dónde empieza la pieza
+  $banner-art-w: math.div(717, 1000);      // 0,717 — cuánto ocupa, filete incluido
+  $banner-art-y: math.div(109, 1760);      // 0,062 — el canto de arriba del paño
+
+  // El CORTE del pie NO entra aquí, y esa es la gracia del concepto: es la
+  // variable de raza (banners.md §6), así que no hay un número, hay un abanico.
+  // Medido sobre las once va del 65% del paño (Elfos, que es una punta larga en
+  // V) al 100% (Constructos, cortado a escuadra). Lo único que importa desde el
+  // CSS es que el emblema quede POR ENCIMA del más alto de todos, y el peor caso
+  // es Elfos: le sobra ~1px. Si algún día entra un corte más profundo que ese,
+  // lo que hay que bajar es el padding de abajo, no el tamaño del emblema.
+
+  // De ahí sale la caja: se dimensiona para que EL PAÑO mida $sketch-banner, no
+  // el lienzo. Si se pusiera el lienzo a 34px, la tela se quedaría en 24 y el
+  // emblema de 27 no cabría dentro.
+  $banner-box-w: math.div($sketch-banner, $banner-art-w);
+  $banner-box-h: $banner-box-w * math.div(1760, 1000);
+
+  .sketch__banner[data-art] {
+    width: $banner-box-w;
+    height: $banner-box-h;
+
+    // Y se recoloca para que el paño caiga EXACTAMENTE donde caía el de CSS:
+    // los márgenes negativos descuentan el aire que el lienzo trae por fuera de
+    // la tela. Así $banner-left y $banner-top siguen valiendo para las dos, y la
+    // bandera dibujada y la pintada se pueden comparar sin moverse una respecto
+    // de la otra.
+    margin-left: -($banner-box-w * $banner-art-x);
+    margin-top: -($banner-box-h * $banner-art-y);
+
+    // El emblema baja un poco respecto al paño de CSS, y no es un ajuste a ojo:
+    // aquí la caja empieza más arriba (el lienzo trae aire por encima del paño),
+    // así que el solape con el disco medido desde el borde de la caja es mayor.
+    // Misma cuenta de siempre: 5,8 de aire + 10 de solape = 15,8; la parte recta
+    // acaba, en la raza mediana, sobre los 71; (71 − 15,8 − 27,2) / 2 = 14. Total
+    // 30 — se deja en 32 porque es el valor con el que se juzgaron las once y
+    // dos píxeles arriba dejan al emblema despegado del disco.
+    padding-top: 32px;
+
+    // La punta y el degradado ya vienen dibujados en el archivo, así que aquí
+    // sobran los dos: el clip-path recortaría por donde el PNG ya está cortado
+    // —y a un píxel de distancia, que es peor que no recortar— y el degradado
+    // taparía la tela.
+    &::before {
+      background: var(--banner-img) center / 100% 100% no-repeat;
+      clip-path: none;
     }
   }
 
