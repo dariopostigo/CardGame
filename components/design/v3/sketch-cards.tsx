@@ -152,12 +152,14 @@ const RECINTO_SKILLS: readonly SkillKey[] = [...PIN_SKILLS, ...PANEL_SKILLS];
 /**
  * El hueco de arte, a sangre.
  *
- * Cae al emoji cuando el sujeto no tiene ilustración, y eso ya es la excepción:
- * el 26 de agosto de 2026 el arte de V3 pasó a **veinte archivos** —los ocho de
- * 👤 Humanos (sus cuatro héroes y las cuatro primeras unidades) y los doce de
- * ⛏️ Enanos, que es la raza entera—, así que de los veinticuatro sujetos que se
- * pintan entre las dos páginas solo siguen sin dibujar las cuatro unidades altas
- * de Humanos. Ojo con el reparto, porque esta pieza la comparten las dos: el
+ * Cae al emoji cuando el sujeto no tiene ilustración, y eso ya es la excepción en
+ * las dos razas dibujadas: el arte de V3 va por **veintidós archivos** —los diez
+ * de 👤 Humanos (sus cuatro héroes y las seis primeras unidades, las dos últimas
+ * del 27 de agosto de 2026) y los doce de ⛏️ Enanos, que es la raza entera—, así
+ * que de esas dos progresiones solo siguen sin dibujar las **dos** unidades altas
+ * de Humanos, ✝️ Paladín y 🐉 Dragón dorado. En la baraja quedan muchas más, pero
+ * son de otras razas: 💀 No-muertos y 🔥 Demonios entraron enteras en emoji. Ojo
+ * con el reparto, porque esta pieza la comparten las dos páginas: el
  * laboratorio de bocetos pinta solo la raza piloto, así que **las doce de Enanos
  * únicamente se ven en Diseño baraja**. <img> plano y no next/image por el mismo
  * motivo que en SpriteLab: es imagen de laboratorio, no arte de partida.

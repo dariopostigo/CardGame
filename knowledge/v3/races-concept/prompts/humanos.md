@@ -22,6 +22,33 @@
 > la herramienta**, que se elige antes de pegar el prompt y no viaja en él.
 > Antes de la siguiente tirada, fija el formato vertical en la interfaz.
 
+> **Al 27 de agosto de 2026 van diez de doce, y el lienzo ya no falla.** Entraron
+> los tiers 1 a 4 el día 26 y **🐎 Caballería y 🦅 Grifo el 27**, los dos en
+> **1060×1484**, o sea que fijar la proporción en la interfaz funcionó y ese
+> pendiente se cierra para esta raza. Faltan ✝️ Paladín y 🐉 Dragón dorado.
+>
+> **Lo que sí falló son dos líneas de estos dos bloques, y conviene leerlas juntas
+> porque dicen lo mismo dos veces.** La 🐎 Caballería pedía **lanza en carga y
+> galope** («DEBE VERSE: que la lanza está en carga, no en reposo») y salió **al
+> paso, con la lanza vertical y un estandarte atado**; el resto del bloque sí se
+> cumplió, incluida la parte difícil —caballo y jinete completos, que era el
+> primer sujeto ancho de la raza—. El 🦅 Grifo pedía **las dos alas completas
+> hasta la punta** y avisaba en su propia línea de que «un ala cortada por el
+> borde arruina la lectura»: salió con **la derecha cortada por arriba y la
+> izquierda por el lado**, sin aire lateral ninguno. O sea que la instrucción de
+> **alejar la cámara** la obedeció el sujeto que la tenía escrita una vez y no el
+> que la tenía escrita dos. Para la siguiente tirada de un sujeto con envergadura,
+> el ancla no puede ser «aléjate lo que haga falta» —eso es un porcentaje
+> disfrazado—: tiene que decir **qué se ve alrededor de la punta del ala**.
+>
+> **Y el Grifo deja una pista buena para [`preambulo.md`](preambulo.md), que es
+> donde hay que arreglar el encuadre de las once razas.** Es el archivo mejor
+> encuadrado de los veintidós (garra más baja al 77%, cuando la banda de los demás
+> va del 78 al 89) y no por su bloque de POSE sino por su **ESCENARIO**: «cielo
+> abierto sobre piedra clara de castillo **abajo**» ocupa el cuarto inferior con
+> algo que no es el sujeto. Es exactamente la forma que le falta al ancla de aire
+> abajo del preámbulo, que hoy pide que **haya** suelo y no dice **cuánto**.
+
 > **Corregido también el reparto de cuerpos (misma fecha).** La misma tirada
 > salió con los tres personajes **jóvenes, esbeltos, musculosos y guapos**, que en
 > el Mago y el Sacerdote no tiene ningún sentido. La causa era estructural: el

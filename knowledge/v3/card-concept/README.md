@@ -1070,11 +1070,17 @@ más alta.
 > primera raza dibujada entera: doce lienzos verticales correctos y los doce
 > fallan igual, en la misma banda del 82 al 89%, con 5:7 y con 2:3 sin diferencia.
 > No había ninguna relación entre las dos cosas — el lienzo ya se pide bien y el
-> encuadre no, y de los **veinte** archivos que hay hoy acierta **uno**. Lo que
+> encuadre no, y de los **veintidós** archivos que hay hoy acierta **uno**. Lo que
 > gana el concepto con eso es que el diagnóstico deja de depender de una tirada:
 > es la línea del prompt que pide el aire de abajo, no el lote.
+>
+> **Y el 27 de agosto de 2026 entró la confirmación por el otro lado.** El
+> 🦅 Grifo de Humanos se queda al **77%**, el mejor de los veintiuno que fallan y
+> el único cuyo cuarto de abajo lo llena el fondo y no el sujeto — porque vuela, o
+> sea porque su prompt dice **qué ocupa** ese cuarto en vez de pedir que se vea
+> suelo. La línea que le falta al preámbulo tiene esa forma.
 
-La auditoría, ya de los veinte, está en
+La auditoría, ya de los veintidós, está en
 [`public/assets/v3/README.md`](../../../public/assets/v3/README.md).
 
 Moraleja de método, que es lo que aquí vale: **una medida de pérdida no dice
@@ -1298,8 +1304,9 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 > siete de los ocho archivos ponen los pies por debajo del 72% que manda la
 > norma, así que regenerar no está bloqueado por nada — está pendiente por el
 > encuadre, y de casi todos. *(Esa misma noche entraron doce archivos más, la raza
-> ⛏️ Enanos entera, y fallan los doce: diecinueve de veinte. El diagnóstico no
-> cambia, se confirma.)*
+> ⛏️ Enanos entera, y fallan los doce: diecinueve de veinte. Al día siguiente, dos
+> más de Humanos —🐎 Caballería y 🦅 Grifo—: veintiuno de veintidós. El
+> diagnóstico no cambia, se confirma.)*
 
 ## Qué falta decidir (cerrado: J · Orla, 25-ago-2026)
 

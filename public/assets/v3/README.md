@@ -12,7 +12,7 @@
 > todo lo que sigue:
 >
 > - **Los desajustes de la tabla NO son deuda que arreglar.** Ni el lienzo
->   apaisado de tres archivos, ni el encuadre de diecinueve de veinte. Nadie tiene
+>   apaisado de tres archivos, ni el encuadre de veintiuno de veintidós. Nadie tiene
 >   que regenerarlos, y sobre todo nadie tiene que *recortarlos a mano* para
 >   cuadrarlos. La tabla se mantiene porque es la **lista de comprobación para
 >   cuando llegue la generación buena**, no una lista de tareas.
@@ -30,9 +30,9 @@
 >   panel le va a comer las piernas y eso no lo arregla ningún ajuste de CSS.
 >   Sirve para saber qué esperar; no es un fallo de la carta.
 
-**Ya hay arte, y ya no es de una sola raza.** Veinte archivos: los **ocho de
-👤 Humanos** —sus cuatro héroes y las cuatro primeras unidades de su progresión—
-y los **doce de ⛏️ Enanos**, que entraron la noche del 26 de agosto de 2026 y son
+**Ya hay arte, y ya no es de una sola raza.** Veintidós archivos: los **diez de
+👤 Humanos** —sus cuatro héroes y las seis primeras unidades de su progresión— y
+los **doce de ⛏️ Enanos**, que entraron la noche del 26 de agosto de 2026 y son
 la **raza entera**: cuatro héroes y las ocho unidades.
 
 **Con eso el orden previsto queda invertido, y hay que dejar de citarlo.**
@@ -43,9 +43,12 @@ antes y llegó completa, así que **la vara de medir la pone ahora Enanos**: es 
 única raza con una progresión de ocho tiers a la vista, de ⛏️ Minero a ⛰️ Coloso,
 y es contra ella contra la que se juzga si un salto de tier se lee. A cambio,
 Humanos se queda con lo único que Enanos ya no puede enseñar: **el hueco sin
-dibujar**. Sus cuatro unidades altas —🐎 Caballería, 🦅 Grifo, ✝️ Paladín y
-🐉 Dragón dorado— caen todavía al emoji, y son las cuatro últimas cartas que
-sirven para ver si el marco aguanta una sin ilustración.
+dibujar**. Con la tanda del **27 de agosto de 2026** —🐎 Caballería y 🦅 Grifo,
+los tiers 5 y 6— ese hueco baja de cuatro cartas a **dos**: ✝️ Paladín y
+🐉 Dragón dorado, los dos tiers de arriba, que son las dos últimas cartas de las
+dos razas dibujadas donde se puede ver si el marco aguanta una sin ilustración.
+Y quedan en el peor sitio para perderlas: son la cima de la progresión, o sea
+justo donde hay que juzgar si un salto de tier se lee.
 
 Dos columnas y no una, porque son **dos cosas distintas** y hay que poder
 mirarlas por separado: el **lienzo** (la proporción del archivo) y el
@@ -62,6 +65,8 @@ solo se miraba el primero.
 | `races/humanos/units/arquero.png` | 🏹 Arquero (tier 2) | 1060×1484 | ✅ 5:7 | ⚠️ ~86% |
 | `races/humanos/units/caballero.png` | 🛡️ Caballero (tier 3) | 1060×1484 | ✅ 5:7 | ⚠️ ~86% |
 | `races/humanos/units/mago.png` | 🔮 Mago (tier 4) | 1060×1484 | ✅ 5:7 | ⚠️ ~85% |
+| `races/humanos/units/caballeria.png` | 🐎 Caballería (tier 5) | 1060×1484 | ✅ 5:7 | ⚠️ ~88% |
+| `races/humanos/units/grifo.png` | 🦅 Grifo (tier 6) | 1060×1484 | ✅ 5:7 | ⚠️ ~77% |
 | `races/enanos/guerrero.png` | ⚔️ Guerrero | 1060×1484 | ✅ 5:7 | ⚠️ ~84% |
 | `races/enanos/ingeniero.png` | ⚙️ Ingeniero | 1060×1484 | ✅ 5:7 | ⚠️ ~83% |
 | `races/enanos/berserker.png` | 🪓 Berserker | 1060×1484 | ✅ 5:7 | ⚠️ ~86% |
@@ -80,28 +85,35 @@ solo se miraba el primero.
 porcentajes están medidos a ojo sobre una hoja de guías, así que valen para
 decidir, no para citar al píxel.)*
 
+*(En el 🦅 Grifo «pies» son **las garras**, porque vuela: no hay figura apoyada
+en el suelo, así que lo medido es el punto más bajo de la criatura —una zarpa
+trasera— y lo que ocupa el cuarto de abajo es el castillo del fondo. Es la
+primera fila de la tabla donde el número no habla de una figura de pie, y por eso
+mismo es la más informativa: ver §"Lo que sigue sin cuadrar" punto 3.)*
+
 *(**\*** El `2:3` va en verde y no en ámbar porque **no es un desajuste**:
 §"Lienzo y formato" lo da como el sustituto válido cuando la herramienta no
 ofrece 5:7 —«coge el ratio vertical más alto que tenga»—, y recortar de 2:3 a 5:7
 es la operación barata que esa misma norma autoriza. El `1023×1537` del ⚙️
 Ingeniero unidad es el mismo 2:3 con un píxel de menos, no otro lienzo.)*
 
-**Los ocho de Humanos** se pintan en dos sitios: los bocetos de marco de
+**Los diez de Humanos** se pintan en dos sitios: los bocetos de marco de
 **Cartas › Diseño de cartas** (`/docs/v3/cards/design`) y el marco elegido de
 **Cartas › Diseño baraja** (`/docs/v3/cards/deck`). **Los doce de Enanos, solo en
 la baraja**, y a propósito: el laboratorio de bocetos se queda con la raza piloto
 porque nueve marcos × veinticuatro cartas no se comparan, se hojean. Así que la
-página donde se ven las veinte juntas es la baraja.
+página donde se ven las veintidós juntas es la baraja.
 
-## 👤 Humanos — las ocho de la piloto
+## 👤 Humanos — las diez de la piloto
 
 **Ya no faltan héroes** —el 🏹 Arquero llegó el 25 de agosto de 2026 y con él la
-clase se juzga entera— y desde el 26 hay **media progresión de unidades**:
-Miliciano, Arquero, Caballero y Mago, los cuatro en el mismo camino, con la
-misma cerca y el mismo castillo al fondo. Esa continuidad de escenario entre
-unidades no estaba pedida en ningún sitio y conviene decidir si se queda: hace
-que las ocho se lean como un ejército y no como ocho retratos sueltos, pero
-también significa que la progresión de tier no cambia de sitio.
+clase se juzga entera— y desde el 27 hay **seis de las ocho unidades**:
+Miliciano, Arquero, Caballero y Mago del día 26, y 🐎 Caballería y 🦅 Grifo del
+27. Los cuatro primeros van en el mismo camino, con la misma cerca y el mismo
+castillo al fondo. Esa continuidad de escenario entre unidades no estaba pedida
+en ningún sitio y conviene decidir si se queda: hace que las diez se lean como un
+ejército y no como diez retratos sueltos, pero también significa que la
+progresión de tier no cambia de sitio.
 
 **Y Enanos contesta a esa duda, en parte.** Sus doce comparten también el
 escenario —galería de mina, forja, arco de piedra tallada—, pero ahí sí estaba
@@ -112,10 +124,66 @@ dentro de la mina —el 🔨 Herrero está en la forja, el 🔫 Mosquetero en un
 el 🗿 Gólem en una sala de columnas— y aun así las doce se leen como un ejército.
 La cerca y el castillo de Humanos son más literales que eso.
 
-Con esa tanda pasaron dos cosas en el laboratorio: **se retiró el último relleno
-prestado de v2** (el Arquero y el Mago unidad tiraban de las cartas de clase del
-juego anterior; ya no queda ninguna imagen de v2 en un lab de V3), y las
-unidades sin arte bajaron de siete a cuatro.
+**Y la tanda del 27 aprieta esa duda en vez de aflojarla, justo por donde Enanos
+la había dejado.** La 🐎 Caballería va por el mismo camino de tierra, con la misma
+cerca de madera a la izquierda y el mismo castillo a la derecha: es el quinto
+sujeto en el mismo sitio. Y el 🦅 Grifo —que por prompt tenía que estar en el
+cielo— sale **sobre ese mismo castillo, visto desde arriba**, con sus estandartes
+azul y oro. O sea que la continuidad de Humanos ya no es un fondo repetido: es
+**un lugar**, y la progresión lo recorre (el jinete sube el camino, el grifo
+sobrevuela las almenas). Es más continuidad que la de Enanos, no menos — y sigue
+sin estar pedida en ninguna línea del prompt, que es lo que hay que resolver:
+Enanos la tiene porque su ficha de raza la pide, y Humanos la tiene porque el
+generador la repite solo.
+
+Con la tanda del 26 pasaron dos cosas en el laboratorio: **se retiró el último
+relleno prestado de v2** (el Arquero y el Mago unidad tiraban de las cartas de
+clase del juego anterior; ya no queda ninguna imagen de v2 en un lab de V3), y
+las unidades sin arte bajaron de siete a cuatro. Con la del 27 bajan a **dos**.
+
+### Lo que trae la tanda del 27, y son dos casos nuevos
+
+Las dos son **1060×1484**, el 5:7 exacto, así que el lienzo vuelve a no fallar
+—van cuatro tandas seguidas pidiéndose bien—. Lo que traen es otra cosa: son los
+**dos primeros sujetos que no son un humano de pie**, y cada uno destapa una cara
+distinta de la norma de encuadre.
+
+1. **La 🐎 Caballería es el primer sujeto ANCHO, y ahí la norma funcionó.**
+   §"Encuadre" dice que un sujeto que ocupa más ancho que alto se resuelve
+   **alejando la cámara, no recortando**, y es lo que hizo: caballo y jinete
+   entran completos, las cuatro patas dentro, y la figura sale más pequeña que
+   los sujetos a pie — que es el precio que esa norma acepta por escrito. Es la
+   primera vez que una línea del encuadre se pide y se cumple.
+
+   Falla en dos sitios, y ninguno es el ancho. **Los cascos caen al 88%**, la
+   peor cifra de Humanos, así que el panel de la J le come las patas — el mismo
+   fallo de siempre. Y **la punta de la lanza acaba al 1% del alto**, pegada al
+   filo: no está cortada, pero §"Encuadre" pide que nada importante toque el
+   borde porque el marco tapa los bordes, y aquí el remate del arma se apoya
+   justo ahí. Al lado de eso, un desvío del prompt que conviene anotar aunque no
+   sea del encuadre: pedía **lanza en carga y galope**, y salió al paso con la
+   lanza vertical y un estandarte atado — «DEBE VERSE: que la lanza está en
+   carga, no en reposo» es la línea que no se cumplió.
+
+2. **El 🦅 Grifo es el primer sujeto VOLADOR, y es el que mejor encuadre tiene de
+   los veintidós después del ✝️ Sacerdote — pero no por mérito del prompt.** Su
+   punto más bajo es una zarpa trasera al **77%**, cuando los otros veintiuno
+   están entre el 78 y el 89, y el cuarto de abajo lo llena el castillo, o sea
+   **fondo**, que es exactamente lo que §"Encuadre" reserva ahí. El motivo es que
+   **vuela**: su prompt no pide «suelo por delante y por detrás de los pies» sino
+   «cielo abierto sobre piedra clara de castillo abajo», así que el ancla pone
+   algo **en** el cuarto de abajo y el sujeto queda por encima. Es la mejor pista
+   que hay del arreglo que pide el punto 3 de §"Lo que sigue sin cuadrar": una
+   línea que diga **qué ocupa el cuarto inferior** sí mueve la figura; una que
+   pida que haya suelo, no.
+
+   Y a cambio falla por donde su propio prompt avisaba en mayúsculas. **Las alas
+   se salen del cuadro** —la derecha por arriba, la izquierda por el lado— y las
+   alas eran su rasgo obligatorio: «las dos alas completas hasta la punta;
+   aléjate lo que haga falta; un ala cortada por el borde arruina la lectura». O
+   sea que en la misma tanda la instrucción de alejar la cámara la obedeció el
+   sujeto ancho de tierra y **no** el que la tenía escrita dos veces. No hay aire
+   lateral ninguno: la envergadura ocupa los 1060 px de lado a lado.
 
 ## ⛏️ Enanos — la primera raza dibujada entera
 
@@ -175,15 +243,16 @@ primera es la buena:
    quita el motivo por el que la colisión se veía en el marco. Conviene tenerlo
    claro antes de gastar diseño de marco en un problema que era de relleno.
 
-Lo que **no** trae esta tanda: ni un `.webp` y ni un recorte. Los doce son `.png`
-de ~2,7 MB, así que el arte provisional del repo pasa de ~20 MB a **~52 MB**.
+Lo que **no** trae esa tanda: ni un `.webp` y ni un recorte. Los doce son `.png`
+de ~2,7 MB, así que el arte provisional del repo pasó de ~20 MB a **~52 MB** —y
+con los dos del 27 de agosto va por **~55 MB**.
 
-## Lo que sigue sin cuadrar, de las veinte
+## Lo que sigue sin cuadrar, de las veintidós
 
 > **Dos cosas siguen sin cuadrar con lo que dice este mismo documento**, y con
 > Enanos dentro una de ellas cambió de tamaño y la otra de naturaleza. Con el arte
 > en provisional (aviso de arriba) ninguna es urgente, pero hay que cerrarlas
-> antes de que lleguen las 112 restantes y se copie el criterio:
+> antes de que lleguen las 110 restantes y se copie el criterio:
 >
 > 1. ~~**La ruta.**~~ **Cerrada** el 21 de agosto de 2026: estaban en
 >    `human/heroes/` con nombre en inglés y ya están en `races/humanos/` con el
@@ -192,29 +261,41 @@ de ~2,7 MB, así que el arte provisional del repo pasa de ~20 MB a **~52 MB**.
 >    tocar nada: `races/enanos/` y `races/enanos/units/` con el slug español, que
 >    es lo que el archivo de prompts pedía. La norma funciona cuando se escribe
 >    antes de generar.
-> 2. **El formato sigue abierto, y ya no es una advertencia: son ~52 MB.**
->    §"Nombre de archivo" pide `.webp` y los veinte son `.png` de ~2,5–2,7 MB. Con
->    ocho eran ~20 MB y el argumento de «no convertir lo que se va a tirar» salía
->    gratis; con veinte, y a **~32 MB por raza completa**, las once razas
->    proyectan **~350 MB de arte provisional** en el repo. El argumento sigue
->    siendo válido —al archivo le queda vuelta por el encuadre (punto 3), así que
->    le queda también la conversión— pero la cuenta ya no es cómoda: **la decisión
->    que hay que tomar es en la tercera raza, no en la undécima**, y es si el
->    provisional entra en `.webp` desde ya aunque se tire.
+> 2. **El formato sigue abierto, y ya no es una advertencia: son ~55 MB.**
+>    §"Nombre de archivo" pide `.webp` y los veintidós son `.png` de ~2,4–2,7 MB.
+>    Con ocho eran ~20 MB y el argumento de «no convertir lo que se va a tirar»
+>    salía gratis; con veintidós, y a **~30 MB por raza completa** (Enanos, la
+>    única entera, pesa 30,2), las once razas proyectan **~330 MB de arte
+>    provisional** en el repo. El argumento sigue siendo válido —al archivo le
+>    queda vuelta por el encuadre (punto 3), así que le queda también la
+>    conversión— pero la cuenta ya no es cómoda: **la decisión que hay que tomar es
+>    en la tercera raza, no en la undécima**, y es si el provisional entra en
+>    `.webp` desde ya aunque se tire.
 > 3. **El ENCUADRE es el pendiente de verdad, y con Enanos pasó de ser «de casi
 >    todos» a ser el patrón** *(medido el 26 de agosto de 2026, tabla arriba)*.
 >    Hasta esa fecha aquí solo se hablaba del lienzo, y por eso parecía un problema
->    de tres archivos. Con las guías puestas encima resulta que **diecinueve de los
->    veinte** ponen los pies por debajo del 72% que manda §"Encuadre" —entre el 78%
->    y el 89%—, así que la figura invade el cuarto reservado al rótulo y el panel
->    de la carta le come las piernas. **El único que cumple sigue siendo el
+>    de tres archivos. Con las guías puestas encima resulta que **veintiuno de los
+>    veintidós** ponen los pies por debajo del 72% que manda §"Encuadre" —entre el
+>    77% y el 89%—, así que la figura invade el cuarto reservado al rótulo y el
+>    panel de la carta le come las piernas. **El único que cumple sigue siendo el
 >    ✝️ Sacerdote**, y cumple de rebote, porque su lienzo apaisado no da de sí para
->    una figura más alta: o sea que en veinte archivos **no hay ni uno que acierte
->    el encuadre a propósito**.
+>    una figura más alta: o sea que en veintidós archivos **no hay ni uno que
+>    acierte el encuadre a propósito**.
+>
+>    **Y el 27 de agosto de 2026 apareció el primero que casi acierta, y dice por
+>    qué.** El 🦅 Grifo se queda en el **77%** —el mejor de los veintiuno que
+>    fallan, y el único cuyo cuarto de abajo es fondo y no cuerpo— porque **vuela**:
+>    su prompt cambia el ancla de suelo por «cielo abierto sobre piedra clara de
+>    castillo **abajo**», o sea que en vez de pedir que haya suelo, dice **qué
+>    ocupa el cuarto inferior**. Eso es, casi con las mismas palabras, la línea que
+>    aquí abajo se propone para `preambulo.md`, y ahora hay una imagen que enseña
+>    que funciona. No sirve tal cual —un sujeto de tierra no puede flotar— pero sí
+>    confirma la forma del arreglo: **el ancla tiene que reclamar el cuarto de
+>    abajo para otra cosa, no pedir que se vea suelo**.
 >
 >    Y con Enanos se cae la lectura que se hacía de esto. Con ocho archivos parecía
 >    haber una relación perversa —«los cinco de lienzo correcto son los cinco
->    peores de encuadre»—, y con veinte se ve que **no hay ninguna relación**:
+>    peores de encuadre»—, y con veintidós se ve que **no hay ninguna relación**:
 >    Enanos tiene doce lienzos correctos y los doce fallan igual, en la misma banda
 >    del 82 al 89%, con lienzo 5:7 y con lienzo 2:3 sin diferencia. El lienzo y el
 >    encuadre no se compensan; simplemente uno ya se pide bien y el otro no.
@@ -241,8 +322,10 @@ de ~2,7 MB, así que el arte provisional del repo pasa de ~20 MB a **~52 MB**.
 >    de la imagen». Cambiar esa línea en
 >    [`preambulo.md`](../../../knowledge/v3/races-concept/prompts/preambulo.md), que
 >    es donde vive el encuadre común a las once razas, es más barato que volver a
->    tirar veinte veces — y sobre todo es lo que hay que hacer **antes** de la
->    tercera raza, no después.
+>    tirar veintidós veces — y sobre todo es lo que hay que hacer **antes** de la
+>    tercera raza, no después. **El 🦅 Grifo es la prueba de que esa línea
+>    funciona**: es la única que ya la tiene, escrita como escenario en vez de como
+>    aire, y es el único archivo cuyo cuarto de abajo no lo ocupa el sujeto.
 >
 > **No se recortan a mano.** Recortar un apaisado a 5:7 tira justo el aire
 > lateral que pide §"Encuadre", y dejarlos como están tiene un uso: en el lab,
@@ -281,7 +364,7 @@ de ~2,7 MB, así que el arte provisional del repo pasa de ~20 MB a **~52 MB**.
 >
 > Si el Guerrero y el Mago salen cortados en la I no es por el boceto, es porque
 > **esos dos archivos tampoco cumplen la norma**: ponen los pies al 86% y al 89%
-> cuando el tope son 72. La tabla de arriba lo dice de los veinte.
+> cuando el tope son 72. La tabla de arriba lo dice de los veintidós.
 >
 > Aquí había además una explicación de consuelo —«los cinco “buenos” de lienzo son
 > los peores de encuadre, los apaisados aciertan más porque un lienzo más bajo no
@@ -294,8 +377,8 @@ de ~2,7 MB, así que el arte provisional del repo pasa de ~20 MB a **~52 MB**.
 > marco, y tampoco es una tarea pendiente — es lo que pasará solo cuando el
 > generador empiece a obedecer. El dato que se guarda de todo esto es el
 > diagnóstico, y Enanos lo ha afinado: el problema **nunca fue el lienzo** —tres
-> apaisados de veinte, y en la tanda nueva ninguno—, es el **encuadre de
-> diecinueve de veinte**, y el único que cae dentro de la norma es el
+> apaisados de veintidós, y en las dos tandas nuevas ninguno—, es el **encuadre de
+> veintiuno de veintidós**, y el único que cae dentro de la norma es el
 > ✝️ Sacerdote, que encima es apaisado y acierta de rebote. Cuando llegue la tanda
 > buena se arreglan las dos cosas —lienzo y encuadre— en la misma vuelta, y con
 > ella entra el `.webp`.

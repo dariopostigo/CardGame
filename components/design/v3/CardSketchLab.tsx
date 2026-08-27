@@ -607,11 +607,11 @@ export default function CardSketchLab() {
             quedaron <b>vacíos</b> al salir de ahí los dos rasgos que eran este campo disfrazado.
           </li>
           <li>
-            <b>El lienzo de la ilustración</b>, resuelto y comprobable a un clic. Cinco de los
-            ocho archivos están ya en <b>vertical 5:7</b> y entran a sangre —⚔️ Guerrero, 🔮 Mago
-            héroe y las unidades 🏹 Arquero, 🛡️ Caballero y 🔮 Mago—, mientras que ✝️ Sacerdote,
-            🏹 Arquero héroe y 🗡️ Miliciano siguen <b>apaisados</b> y hay que tirarles media
-            anchura, así que el personaje sale enorme y descentrado. Cambia de sujeto y la
+            <b>El lienzo de la ilustración</b>, resuelto y comprobable a un clic. Siete de los
+            diez archivos están ya en <b>vertical 5:7</b> y entran a sangre —⚔️ Guerrero, 🔮 Mago
+            héroe y las unidades 🏹 Arquero, 🛡️ Caballero, 🔮 Mago, 🐎 Caballería y 🦅 Grifo—,
+            mientras que ✝️ Sacerdote, 🏹 Arquero héroe y 🗡️ Miliciano siguen <b>apaisados</b> y
+            hay que tirarles media anchura, así que el personaje sale enorme y descentrado. Cambia de sujeto y la
             diferencia se ve sola. La medida está en <code>public/assets/v3/README.md</code>:{" "}
             <b>vertical 5:7 (1080×1512)</b>. Y <b>no depende del marco</b>, ni siquiera con la I
             en la mesa: su ventana enseña justo la banda que la norma reserva a la figura, así que
@@ -619,8 +619,8 @@ export default function CardSketchLab() {
             <br />
             <b>Donde de verdad falla el arte es en el ENCUADRE.</b> La norma pide{" "}
             <b>plano general con aire</b>, la figura entre el 12% y el <b>72%</b> del alto, con el
-            cuarto de abajo libre para la banda del nombre. Puestas las guías, <b>siete de los
-            ocho</b> ponen los pies entre el 78% y el 89%, así que la figura invade ese cuarto y
+            cuarto de abajo libre para la banda del nombre. Puestas las guías, <b>nueve de los
+            diez</b> ponen los pies entre el 77% y el 89%, así que la figura invade ese cuarto y
             el panel le come las piernas — en cualquier boceto. El único que cumple es el
             ✝️ Sacerdote, y de rebote, porque su lienzo apaisado no da de sí para meter una figura
             más alta. Aquí se leyó eso como una <i>vuelta de tuerca</i> —«los de lienzo correcto
@@ -628,17 +628,19 @@ export default function CardSketchLab() {
             noche entraron las doce de ⛏️ Enanos (que solo se ven en <b>Diseño baraja</b>, no en
             este laboratorio), doce lienzos verticales correctos, y las doce fallan igual, con
             5:7 y con 2:3 sin diferencia. El lienzo no tapaba el encuadre: son dos cosas sueltas,
-            y de las veinte que hay hoy solo acierta una. Míralo en el 🛡️ Caballero, que está en
-            5:7 exacto:
+            y de las veintidós que hay hoy solo acierta una. El que más se acerca es el nuevo
+            🦅 Grifo, al 77%, y no por el prompt sino porque <b>vuela</b>: su cuarto de abajo lo
+            llena el castillo del fondo en vez de sus patas. Míralo en el 🛡️ Caballero, que está
+            en 5:7 exacto:
             en la <b>H</b> el panel le tapa las botas y en la <b>I</b> la ventana lo corta por el
             muslo, y en los dos casos el que se sale de la norma es el archivo, no el marco. Ojo
             también: este marco se come <b>15px por cada lado</b>.
             <br />
-            <b>Y las ocho ilustraciones son PROVISIONALES</b> <i>(26-ago-2026)</i>: el generador
+            <b>Y las diez ilustraciones son PROVISIONALES</b> <i>(26-ago-2026)</i>: el generador
             no está respetando la especificación, así que se van metiendo las que salen para que
             las cartas dejen de ser emojis y se puedan mirar de verdad. Nada de esto es{" "}
             <b>deuda que arreglar</b> —ni el lienzo de tres archivos ni el encuadre, que en el
-            recuento de las veinte falla en diecinueve—, y
+            recuento de las veintidós falla en veintiuna—, y
             no hay que cuadrar nada a mano: ni recortes, ni <code>object-position</code> por
             sujeto. La tabla del README es la <b>lista de comprobación de la tanda buena</b>, no
             una lista de tareas. Con el marco ya decidido, lo único que hay que mirar aquí es que
