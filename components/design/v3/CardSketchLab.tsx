@@ -98,13 +98,18 @@ const ALLOYS = [
   ["bronce", "Bronce"],
   ["estano", "Estaño"],
   ["laton", "Latón"],
+  ["laton-icono", "Latón (iconos)"],
   ["plata", "Plata"],
   ["oro", "Oro"],
   ["marfil", "Marfil"],
 ] as const;
 
-/** El metal que hoy está puesto en settings/: con el que abre el lab. */
-const ALLOY_NOW = "peltre";
+/** El metal que hoy está puesto en settings/: con el que abre el lab.
+    Desde el 27 de agosto de 2026 es el latón medido de los pictogramas
+    (public/assets/v3/icons/) y no el peltre, para que marco e iconos sean el
+    mismo metal. El botón sigue en la lista con el resto: la probeta no se toca
+    por haber cambiado el ganador. */
+const ALLOY_NOW = "laton-icono";
 
 export default function CardSketchLab() {
   // Se abre por el ÚLTIMO boceto y con la tabla entera delante, que es el
@@ -616,10 +621,15 @@ export default function CardSketchLab() {
             <b>plano general con aire</b>, la figura entre el 12% y el <b>72%</b> del alto, con el
             cuarto de abajo libre para la banda del nombre. Puestas las guías, <b>siete de los
             ocho</b> ponen los pies entre el 78% y el 89%, así que la figura invade ese cuarto y
-            el panel le come las piernas — en cualquier boceto. Y con la vuelta de tuerca
-            incómoda: <b>los cinco de lienzo correcto son los cinco peores de encuadre</b>. El
-            único que cumple es el ✝️ Sacerdote, y de rebote, porque su lienzo apaisado no da de
-            sí para meter una figura más alta. Míralo en el 🛡️ Caballero, que está en 5:7 exacto:
+            el panel le come las piernas — en cualquier boceto. El único que cumple es el
+            ✝️ Sacerdote, y de rebote, porque su lienzo apaisado no da de sí para meter una figura
+            más alta. Aquí se leyó eso como una <i>vuelta de tuerca</i> —«los de lienzo correcto
+            son los peores de encuadre»— y <b>era una casualidad de ocho archivos</b>: esa misma
+            noche entraron las doce de ⛏️ Enanos (que solo se ven en <b>Diseño baraja</b>, no en
+            este laboratorio), doce lienzos verticales correctos, y las doce fallan igual, con
+            5:7 y con 2:3 sin diferencia. El lienzo no tapaba el encuadre: son dos cosas sueltas,
+            y de las veinte que hay hoy solo acierta una. Míralo en el 🛡️ Caballero, que está en
+            5:7 exacto:
             en la <b>H</b> el panel le tapa las botas y en la <b>I</b> la ventana lo corta por el
             muslo, y en los dos casos el que se sale de la norma es el archivo, no el marco. Ojo
             también: este marco se come <b>15px por cada lado</b>.
@@ -627,7 +637,8 @@ export default function CardSketchLab() {
             <b>Y las ocho ilustraciones son PROVISIONALES</b> <i>(26-ago-2026)</i>: el generador
             no está respetando la especificación, así que se van metiendo las que salen para que
             las cartas dejen de ser emojis y se puedan mirar de verdad. Nada de esto es{" "}
-            <b>deuda que arreglar</b> —ni el lienzo de tres archivos ni el encuadre de siete—, y
+            <b>deuda que arreglar</b> —ni el lienzo de tres archivos ni el encuadre, que en el
+            recuento de las veinte falla en diecinueve—, y
             no hay que cuadrar nada a mano: ni recortes, ni <code>object-position</code> por
             sujeto. La tabla del README es la <b>lista de comprobación de la tanda buena</b>, no
             una lista de tareas. Con el marco ya decidido, lo único que hay que mirar aquí es que

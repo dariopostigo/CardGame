@@ -63,6 +63,15 @@ tabla de arriba no llega a aparecer en ninguna carta
 | 🏹 | A distancia | 4 hexágonos |
 | ✨ | Mágico | 2 hexágonos |
 
+> **Excepción viva, y temporal** (26 de agosto de 2026): 🗡️ Cuerpo a cuerpo es
+> el único de los tres sin archivo, así que por decisión de Dario el laboratorio
+> pinta el genérico `abilities/ataque.png` en su hueco — la fila de ocho se ve
+> entera de oro, que es lo que hay que juzgar, en vez de con un emoji suelto en
+> 70 de las 132 fichas. Mientras dure, la frase de arriba deja de ser cierta en
+> pantalla: el genérico **sí** aparece en la carta, diciendo "Ataque" donde toca
+> decir "Cuerpo a cuerpo". Es un suplente, no una respuesta, y §7 lo sigue
+> contando como pendiente.
+
 Estos tres tienen que dibujarse **a la misma escala y con el mismo peso**
 entre sí — es el mismo hueco de la carta rellenado con uno de los tres —, y
 distinguirse con claridad de 🗡️ *Perforante* y de ✨ *Ataque mágico* (que ya
@@ -218,7 +227,146 @@ vez, en la misma cuadrícula visual.
 - Igual pasa, en menor medida, con 😈 (Demonios infernales como raza, Demonio
   como Característica).
 
-## 5. Cómo se dibujan
+## 5. La dirección elegida
+
+**Cerrada el 26 de agosto de 2026.** Dos láminas generadas y comparadas, cada
+una montada sobre los **dos fondos** que la regla 2 de §6 exigía —metal oscuro
+y vitela clara—, que es lo que hace que esto sea una elección y no un gusto
+sobre un fondo. Gana [`imgs/chosen-direction.png`](imgs/chosen-direction.png).
+
+### Qué es
+
+**Relieve de metal dorado, monocromo.** No es ninguna de las dos opciones que
+este documento tenía escritas —ni mono-línea grabada ni icono a color con
+contorno propio—: es una tercera. El glifo es una **silueta maciza tallada en
+metal**, con el canto biselado, encendido por arriba a la izquierda y en
+sombra por el lado opuesto.
+
+Cinco rasgos, y los cinco valen para los 36 glifos base a la vez:
+
+1. **Un solo metal.** Oro pálido / latón, y nada más. **No hay color por
+   concepto**: 🔥 Fuego y 🧊 Frío salen del mismo dorado.
+2. **Silueta maciza, no trazo.** Forma rellena con canto biselado. A 27px una
+   línea de un píxel se pierde; un canto encendido contra una masa, no.
+3. **El valor se invierte con el fondo; el dibujo no.** Sobre metal oscuro el
+   glifo va claro; sobre vitela va bronce con el canto encendido. Es el
+   **mismo dibujo** las dos veces — un archivo por glifo, no dos.
+4. **Dibujo de una sola pieza y sin escena.** Corazón, espada, escudo, copo,
+   trébol, rayo, bota, calavera.
+5. **Luz desde arriba a la izquierda, siempre** — la misma que manda el prompt
+   base de las ilustraciones en
+   [`prompts/preambulo.md`](../races-concept/prompts/preambulo.md). Icono e
+   ilustración se iluminan igual, y eso no estaba garantizado.
+
+### El envase dice de qué tipo es el icono
+
+Esto es lo que la lámina decide y no estaba escrito en ninguna parte:
+
+| | Envase | Dónde vive |
+|---|---|---|
+| **Habilidad** | **Ninguno.** El glifo va desnudo | La fila de ocho, en el pie de la carta |
+| **Característica** | **Medallón redondo**: doble aro de oro y cara hundida | El raíl |
+
+Con eso **se resuelve solo el grupo 🛡️ Defensa** de §3, que era el peor de los
+cinco porque no cruzaba dos Características sino una Característica con una
+Habilidad: mismo escudo, y lo que dice cuál es cuál es que uno lleva medallón
+y el otro no. La lámina lo enseña a propósito — el escudo sale dos veces.
+
+Y de paso cae la regla 3 de §6, *«un glifo sin papel detrás no se lee»*: **la
+cara hundida del medallón ES el papel**, y ahora viene con el icono en vez de
+pedírselo a la pieza que lo monta.
+
+### Lo que la elección cuesta
+
+**El color deja de estar disponible como código.** Con emoji, 🔥 era rojo y 🧊
+azul y medio trabajo lo hacía el color; en oro monocromo lo hace **solo el
+dibujo**. Sube el listón de las 36 siluetas, y confirma la regla 5 de §6 por
+un camino nuevo: el papel de los cinco grupos compartidos **no puede** marcarse
+con color aunque se quisiera, tiene que ser aro o contorno.
+
+**Y hay un choque con el marco, que hay que resolver al implementar.** La carta
+ya dibuja su propio medallón de Característica —redondo, aro de ~1,6px, cara de
+27px, un solo token para la E y la G
+([`docs/v3/status.md`](../../../docs/v3/status.md), ajuste del 25 de agosto)—
+y el icono elegido trae el suyo, más rico. **No caben los dos.** O el marco
+deja de dibujar el aro y lo trae el archivo, o el archivo se entrega sin aro y
+el aro sigue siendo del marco — y esta segunda opción pierde justo lo que la
+lámina compra, la cara hundida como papel propio. Se decide en
+[`card-concept/`](../card-concept/README.md), pero sale de aquí.
+
+### La primera tanda, entregada y medida
+
+**Diez archivos, la misma noche del 26 de agosto de 2026**, y son la prueba de
+que la dirección se puede producir y no solo dibujar en una lámina: PNG sueltos
+con transparencia, un glifo por archivo, en
+[`public/assets/v3/icons/`](../../../public/assets/v3/README.md). Son **las 8
+Habilidades enteras** (`abilities/`) y **dos de los tres Tipos de daño**
+(`damage/`, 🏹 *A distancia* y ✨ *Mágico*): **falta 🗡️ *Cuerpo a cuerpo***, y con
+él el trío de §2 no se puede montar todavía — los tres tienen que salir a la
+misma escala y con el mismo peso, y eso solo se juzga con los tres delante.
+
+Ninguna Característica ni ningún emblema de raza, que es donde está el trabajo:
+diez de cuarenta y siete.
+
+**Tres cosas medidas sobre los archivos, no sobre la lámina**, y las tres son de
+producción y no de diseño — la dirección aguanta:
+
+1. **Ninguno está recortado en el filo.** Se comprobó columna a columna: el
+   canto y su sombra caben dentro del lienzo en los diez.
+2. **Pero el encuadre no está normalizado.** Lienzo común, 1254×1254, y ahí se
+   acaba el acuerdo: la caja del glifo ocupa entre el **84 % y el 97 %** del
+   lienzo y **no va centrada** —🏹 *A distancia* deja 150px de aire a un lado y
+   26 al otro; ⚡ *Iniciativa*, 79 arriba y 102 abajo—. A 30px son dos o tres
+   píxeles de salto, y la fila de ocho Habilidades **se mira entera**, así que se
+   nota. Hace falta una pasada de recorte y relleno a caja común, que es
+   mecánica y no vuelve a pedirle nada al generador.
+3. **El contraste va aceptable en los dos fondos y bien en ninguno**, que es
+   exactamente lo que compra un solo dorado medio. Medido sobre la luminancia
+   media del relleno —orientativo, porque un pictograma se lee por el canto y no
+   como texto—, el cuerpo se queda entre **2,4 y 4,6** contra vitela clara y
+   contra metal oscuro, sin fallar en ninguno: ❤️ *Vida* y ⚡ *Iniciativa* son los
+   más claros y flojean sobre vitela, 🔮 *Res. mágica* y 🏹 *A distancia* los más
+   oscuros y flojean sobre metal. **Lo que los salva en el fondo claro es el
+   contorno oscuro, no el relleno** — la regla 2 de §6 pedía justo eso, y se
+   cumple por construcción y no por suerte, que es la diferencia con el emoji.
+
+Y una cuarta que solo apareció al montarlos en la carta, que es donde tenía que
+aparecer: **un pictograma no se puede sustituir por un emoji al mismo cuerpo.**
+Un emoji trae su propio aire y no llena su caja; un PNG con la alfa ajustada sí
+la llena, así que el primer montaje —icono y emoji a la misma medida de letra—
+dejó el oro **más pequeño de lo que se veía el emoji**, 17,6px de dibujo real en
+una columna de 32. Se corrige con un factor
+(`$sketch-stat-art`, en `styles/settings/_card.scss`) y no con un píxel, porque
+los tres sitios donde cae el par —ocho en fila, seis en fila, los dos pines de
+esquina— tienen cada uno su escalón medido contra su anchura de columna. **Es la
+misma lección del glifo del medallón el 25 de agosto**, vista por segunda vez y
+por el otro lado: allí la pieza estaba bien y el dibujo se quedaba corto; aquí la
+medida de letra estaba bien y el dibujo la desbordaba al revés.
+
+Y una que no es medida sino aritmética: **pesan 12 MB los diez**, PNG de 1254px
+para dibujos de 30. La conversión no corre prisa mientras al encuadre le quede
+vuelta —convertir un relleno es trabajo que se tira dos veces, la misma lección
+que las razas—, pero la cuenta a 47 archivos ya no es despreciable.
+
+### Opción 3 — el aro ornamentado, aparcado
+
+La otra lámina, [`imgs/option-3-ornate-ring.png`](imgs/option-3-ornate-ring.png),
+monta los tres Tipos de daño en un **aro con cuatro cúspides y rombos en los
+puntos cardinales**, tipo rosa de los vientos. **La silueta gusta y no se
+implementa.** Queda guardada para dos usos posibles, ninguno decidido:
+
+- cambiar de envase algún día, si el medallón liso se queda corto;
+- **marcar unas Características como más importantes que otras** — un eje que
+  hoy no existe, porque el raíl las pinta todas iguales.
+
+Dos avisos para el día que se saque del cajón. **No es el marcador de papel de
+§3**: importancia y papel (fuente / resistencia / inmunidad) son dos ejes
+distintos, y gastar el aro ornamentado en uno deja al otro sin recurso. Y
+**como envase de Tipo de daño se contradice con §2**: ahí el glifo va pegado al
+número de Ataque, en el sitio del icono de una Habilidad, y las Habilidades van
+desnudas — meterlo en un aro le daría más peso que a las ocho.
+
+## 6. Cómo se dibujan
 
 Reglas recogidas de lo que ya se ha probado y medido en `card-concept/` y
 `status.md` al construir los bocetos de carta — no son gusto, son lo que ya
@@ -237,12 +385,14 @@ falló o funcionó al poner un glifo real en una carta real.
    glifos de Característica se salvan por su contorno negro —💀 y 🧊 son los
    casos malos—"* (`docs/v3/status.md`). Un emoji se salva por casualidad; un
    icono diseñado necesita un contorno que funcione en los dos fondos por
-   construcción, no por suerte.
-3. **Un glifo sin color de fondo detrás no se lee.** Lección repetida en
-   `card-concept/README.md`: un emoji "no toma color ni familia tipográfica...
-   todo lo demás lo decide el fondo", y necesita **papel claro** o se lee
-   como mancha. Un icono propio puede resolver esto con su propio relleno en
-   vez de depender de la pieza que lo monta.
+   construcción. **Es la regla que decidió §5**: las dos láminas se generaron
+   con los dos fondos en la misma imagen, y no se eligió sobre uno solo.
+3. **Un glifo sin papel detrás no se lee — y ya está resuelto.** La lección
+   venía de `card-concept/README.md`: un emoji "no toma color ni familia
+   tipográfica... todo lo demás lo decide el fondo", y necesita papel claro o
+   se lee como mancha. La dirección elegida lo resuelve **para las
+   Características** con la cara hundida de su medallón (§5). Las Habilidades
+   van desnudas y se salvan por el canto biselado, no por papel.
 4. **Tamaños de referencia, no inventados aquí:** ~27–30px para el glifo
    dentro de un medallón de Característica (`docs/v3/status.md`, ajuste del
    25 de agosto), **42px** para que once emblemas de raza se distingan entre
@@ -250,34 +400,48 @@ falló o funcionó al poner un glifo real en una carta real.
    Si el marco de carta cambia estas medidas, este documento hay que
    revisarlo.
 5. **Un papel se marca con contorno o anillo, nunca redibujando el glifo**
-   (§3). Es la única regla que ya está escrita como decisión y no como
-   observación — `docs/v3/status.md` lo deja dicho para los cinco grupos de
-   glifo compartido.
-6. **Mono-línea o a color, pero consistente en todo el set.** No está
-   decidido cuál de las dos — es la primera pregunta abierta de §6 — pero sea
-   cual sea la respuesta, tiene que valer para los 36 glifos base a la vez:
-   mezclar tratamientos entre Habilidades y Características se notaría más
-   que cualquier otra inconsistencia, porque las dos filas conviven en la
-   misma carta.
+   (§3). `docs/v3/status.md` lo dejó dicho para los cinco grupos de glifo
+   compartido, y §5 lo cierra por otro lado: sin color en el set, **no hay
+   ninguna otra vía**.
+6. **Un solo tratamiento para todo el set, y ya está elegido.** Era la
+   pregunta abierta —mono-línea o color— y la respuesta es la tercera opción
+   de §5, relieve de metal monocromo. Sea cual sea, la razón de que tenga que
+   ser una sola sigue en pie: Habilidades y Características **conviven en la
+   misma carta**, y mezclar tratamientos entre las dos filas se notaría más
+   que cualquier otra inconsistencia.
 
-## 6. Qué falta
+## 7. Qué falta
 
-- **Mono-línea grabada en el metal (a juego con los remaches del marco) o
-  icono a color con contorno propio.** Es la decisión de estilo que falta
-  antes de generar nada, y condiciona la regla 6 de arriba.
+Diez archivos entregados de los 47 que cuentan §3 y §4 (36 siluetas base más 11
+emblemas; los tres Tipos de daño de §2 no estaban en esa cuenta y habrá que
+sumarlos al revisarla). Lo que queda, por orden de lo que bloquea a lo que no:
+
+- **Quién dibuja el aro del medallón**, el archivo o el marco (§5, *lo que la
+  elección cuesta*). **Bloquea la entrega de cualquier Característica**, que es
+  la mayor parte de lo que falta. Se decide en
+  [`card-concept/`](../card-concept/README.md).
 - **Cómo se dibuja el "papel"** de los cinco grupos de §3 — qué grosor de
-  anillo, qué color o ausencia de color distingue fuente / resistencia /
-  inmunidad. Hoy solo está escrito que existe, no cómo se ve.
-- **La colisión del 💀 y el 😈** entre emblema de raza, Característica e
-  icono de clase (§4) — es un pendiente de catálogo que bloquea el emblema de
+  anillo, qué contorno distingue fuente / resistencia / inmunidad. La lámina
+  elegida enseña cuatro de los cinco conceptos compartidos (Defensa, Fuego,
+  Veneno, Frío) **con una sola variante cada uno**, así que no lo contesta: sigue
+  escrito que existe, no cómo se ve. Y ahora es más difícil, porque el set no
+  tiene color con el que separarlas (§5).
+- **🗡️ Cuerpo a cuerpo**, el archivo que falta para cerrar los tres Tipos de
+  daño de §2. Los tres tienen que salir a la misma escala y con el mismo peso, y
+  eso no se juzga con dos. **Lleva suplente en pantalla** —el genérico
+  `abilities/ataque.png`, decisión de Dario, ver el aviso de §2— y por eso este
+  pendiente es de los que se olvidan: la carta ya no enseña ningún hueco.
+- **La normalización de encuadre** de lo ya entregado (§5): recorte y relleno a
+  caja común. Es mecánica, no vuelve a pedirle nada al generador, y conviene
+  resolverla **antes** de las 41 Características, no después — la receta que
+  salga se aplica a las 47.
+- **La colisión del 💀 y el 😈** entre emblema de raza, Característica e icono
+  de clase (§4) — es un pendiente de catálogo que bloquea el emblema de
   No-muertos y el de Demonios infernales.
 - **Un atributo propio para 👤 Humanos** que lo distinga de cualquier otro
   emblema humanoide (§4).
-- **No hay plantilla de prompt**, a diferencia de
-  [`art-direction/illustrations.md`](../art-direction/illustrations.md#3-plantilla-de-prompt):
-  no está decidido si estos 36+11 glifos se generan con IA, se dibujan a mano
-  en vectorial, o una mezcla — line art e iconografía pequeña son justo el
-  tipo de imagen donde un generador de ilustraciones suele fallar más.
-- **No hay carpeta reservada en `public/assets/v3/`** para los archivos
-  finales, a diferencia de `public/assets/v3/races/`, que ya existe y sirve
-  arte de razas.
+- **La extensión y el peso.** Entran como `.png` de 1254px porque no había norma
+  y se decidió no inventarla con diez archivos en la mano; se decide en
+  [`public/assets/v3/README.md`](../../../public/assets/v3/README.md), que es la
+  fuente única, y su `.webp` de la tabla de lienzo **no vale tal cual**: es la
+  norma de una ilustración a sangre y sin transparencia.

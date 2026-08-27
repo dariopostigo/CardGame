@@ -361,6 +361,24 @@ $sketch-alloy: (
   // Latón: el bronce subido de brillo, ya cerca del oro sin llegar a serlo.
   // Ojo con la legendaria, que es dorada y puede fundirse con el marco.
   "laton": #a08347,
+  // El latón de los PICTOGRAMAS, y por eso es el que manda hoy: no es un tono
+  // elegido mirando el marco, es el que ya está pintado en los diez PNG de
+  // public/assets/v3/icons/ (las ocho Habilidades y los dos Tipos de daño).
+  // Sale de medirlos, no de aproximarlos: es la MEDIANA de los diez archivos
+  // juntos, descartando la alfa y el contorno casi negro.
+  //
+  // Se mide la mediana y no el pixel más brillante porque armor-vars() quiere
+  // el TONO MEDIO del material —de ahí saca luz, sombra y filo—, y ese reparto
+  // cae encima del histograma de los iconos casi por sí solo: la luz (#d5c2a4)
+  // aterriza entre el percentil 85 y el 95 de los PNG, la sombra (#614a26) en
+  // el 30 y el filo (#322614) en el 5. O sea que un solo color basta: no hace
+  // falta escribirle una rampa a mano como al dorso de v2 ($back-metal-*).
+  //
+  // Está a un pelo de "laton" (#a08347) y se queda aparte a propósito. Aquel es
+  // un candidato de la probeta, elegido a ojo en la escala; este es una MEDIDA
+  // de un archivo que existe, y si los iconos se regeneran, este número se
+  // vuelve a sacar de ellos y aquel no se toca.
+  "laton-icono": #a77f42,
   // Plata sucia, casi níquel. Mucho contraste con el arte y con los números,
   // poco con el oro del rótulo.
   "plata": #a8a29a,
@@ -428,7 +446,21 @@ $card-sketch: (
   //
   // Mientras dure la probeta de arriba, el valor por defecto es una de sus
   // entradas y no un literal repetido: si se cambia la lista, este va detrás.
-  "alloy": map.get($sketch-alloy, "peltre"),
+  //
+  // Desde el 27 de agosto de 2026 es el LATÓN DE LOS ICONOS y no el peltre. El
+  // motivo no es que el peltre se viera mal, es que dejó de estar solo: con los
+  // diez pictogramas puestos, la carta tenía dos metales —el latón dibujado de
+  // las Habilidades y el peltre gris del marco— y ninguna razón para tener dos.
+  // Igualarlos convierte el marco en el mismo objeto que los iconos en vez de
+  // en el fondo sobre el que están pegados.
+  //
+  // LO QUE HAY QUE MIRAR AHORA, porque este cambio lo pone en riesgo y está
+  // avisado desde antes de hacerlo (card-concept/README.md §Réplica H): «el
+  // hilo de oro desaparece con los metales claros — en latón y en oro se funde
+  // con el cuerpo del marco y el marco pierde la mitad de su relieve». El hilo
+  // sigue escrito contra el peltre; si en el lab ya no se ve, lo que hay que
+  // cambiar es el hilo, no volver el metal atrás.
+  "alloy": map.get($sketch-alloy, "laton-icono"),
 );
 
 // --- Selección "en juego" (Baraja y Oteo) ---------------------------------

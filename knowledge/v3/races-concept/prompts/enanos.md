@@ -4,11 +4,23 @@
 > de la cola de [`../sujetos.md`](../sujetos.md): allí está *quién* es cada uno y
 > por qué; aquí está *lo que se pega en la IA*.
 
-> **Fase 2: entra cuando Humanos esté cerrado.** Sin las 12 imágenes de la raza
-> piloto no hay vara de medir para juzgar cuánta masa es un tier 8 ni cuánto
-> acento es «acento». Y los ejes **Edad** y **Belleza** de esta ficha son
-> derivación de lo que ya decía su identidad, no diseño aprobado: confírmalos
-> antes de tirar las doce.
+> ✅ **GENERADA, las doce, la noche del 26 de agosto de 2026.** Están en
+> `public/assets/v3/races/enanos/` y `enanos/units/` con los slugs de §"Al
+> terminar", y cableadas en `components/design/v3/races.ts`, así que se ven en
+> **Cartas › Diseño baraja** (`/docs/v3/cards/deck`). Son **provisionales**, como
+> todo el arte de V3 (`public/assets/v3/README.md`): el lienzo salió bien —las
+> doce verticales, siete en 5:7 y cinco en el 2:3 que la norma autoriza— y el
+> **encuadre no**, con los pies entre el 82% y el 89% cuando el tope son 72.
+>
+> **Se generó saltándose el orden que decía este mismo aviso**, y el aviso queda
+> aquí porque su premisa se invirtió: decía «Fase 2: entra cuando Humanos esté
+> cerrado» porque sin las 12 imágenes de la raza piloto no habría vara de medir
+> cuánta masa es un tier 8 ni cuánto acento es «acento». Humanos sigue en 8 de 12
+> y Enanos está entera, así que **la vara de medir es esta raza**: es la única con
+> la progresión de ocho tiers a la vista. Los ejes **Edad** y **Belleza** de esta
+> ficha eran derivación de su identidad y no diseño aprobado — se tiraron sin
+> confirmar, y el resultado (doce enanos que leen mayores, anchos y sin una cara
+> agraciada) es lo que hay que dar por bueno o corregir en la próxima vuelta.
 
 ## Antes de este archivo, el preámbulo
 

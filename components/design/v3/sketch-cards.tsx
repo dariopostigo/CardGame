@@ -152,11 +152,15 @@ const RECINTO_SKILLS: readonly SkillKey[] = [...PIN_SKILLS, ...PANEL_SKILLS];
 /**
  * El hueco de arte, a sangre.
  *
- * Cae al emoji cuando el sujeto no tiene ilustración, que va dejando de ser lo
- * normal: desde el 26 de agosto de 2026 hay ocho archivos de V3 —los cuatro
- * héroes de Humanos y las cuatro primeras unidades— y solo cuatro unidades
- * siguen sin dibujar. <img> plano y no next/image por el mismo motivo que en
- * SpriteLab: es imagen de laboratorio, no arte de partida.
+ * Cae al emoji cuando el sujeto no tiene ilustración, y eso ya es la excepción:
+ * el 26 de agosto de 2026 el arte de V3 pasó a **veinte archivos** —los ocho de
+ * 👤 Humanos (sus cuatro héroes y las cuatro primeras unidades) y los doce de
+ * ⛏️ Enanos, que es la raza entera—, así que de los veinticuatro sujetos que se
+ * pintan entre las dos páginas solo siguen sin dibujar las cuatro unidades altas
+ * de Humanos. Ojo con el reparto, porque esta pieza la comparten las dos: el
+ * laboratorio de bocetos pinta solo la raza piloto, así que **las doce de Enanos
+ * únicamente se ven en Diseño baraja**. <img> plano y no next/image por el mismo
+ * motivo que en SpriteLab: es imagen de laboratorio, no arte de partida.
  *
  * Dónde acaba este <div> depende del boceto, y es lo único de esta pieza que hay
  * que tener presente: en la E, la G y la H es el fondo de la carta (`inset: 0`
@@ -258,10 +262,22 @@ function Stat({ subject, skill, base }: { subject: Subject; skill: SkillKey; bas
   const s = skillOf(skill);
   const d = skill === "ataque" ? DAMAGE[subject.damage] : null;
   const label = d ? `${s.label} ${d.label.toLowerCase()}` : s.label;
+
+  // El pictograma manda cuando existe; si no hay archivo —hoy solo 🗡️ Cuerpo a
+  // cuerpo— cae al emoji sin caso especial, que es justo lo que se quiere ver:
+  // el hueco a la vista dentro de la fila.
+  //
+  // Ya no hay forma de pedir el emoji a propósito: el conmutador
+  // pictograma / emoji que envolvía la baraja en un contexto se borró el 27 de
+  // agosto de 2026, al empezar a fijar el resultado final de la carta. El
+  // `icon` de SKILLS y de DAMAGE sigue existiendo, y no como resto: es este
+  // respaldo, lo único que se ve mientras falten archivos.
+  const art = d ? d.art : s.art;
+
   return (
     <li className={`sketch__${base}`} title={`${label}: ${subject.skills[skill]}`}>
       <span className={`sketch__${base}-icon`} aria-hidden="true">
-        {d ? d.icon : s.icon}
+        {art ? <img className="sketch__stat-art" src={art} alt="" /> : d ? d.icon : s.icon}
       </span>
       <b className={`sketch__${base}-value`}>{subject.skills[skill]}</b>
     </li>

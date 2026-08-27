@@ -243,6 +243,35 @@
   line-height: 1;
 }
 
+// El pictograma propio, cuando la ficha tiene archivo
+// (components/design/v3/sample.ts, `art`). Sustituye al emoji dentro del mismo
+// hueco: la casilla, el apilado y la cifra no se enteran.
+//
+// **Se mide en `em` y no en píxeles a propósito.** El tamaño del par lo decide
+// cada boceto con su token —"stat-icon-xl" con ocho en fila, "stat-icon-lg" con
+// seis, "pin-icon" en las esquinas— y esos escalones están medidos contra la
+// anchura de columna de cada uno. Clavar aquí un píxel obligaría a repetir esa
+// cuenta una segunda vez y a mantener las dos a la vez; en `em` la imagen hereda
+// la que ya existe, y un boceto nuevo que ajuste su token mueve las dos piezas
+// de golpe.
+//
+// El factor ($sketch-stat-art, en settings/_card.scss) es lo que corrige que un
+// emoji no llene su caja y un PNG sí: al mismo cuerpo, el pictograma se veía
+// MÁS PEQUEÑO que el emoji al que venía a sustituir.
+//
+// `object-fit: contain` es lo que sostiene el encuadre desigual de la primera
+// tanda: las cajas alfa de los diez archivos ocupan del 84% al 97% de su lienzo
+// y ninguna va centrada (knowledge/v3/icon-concept/icons.md §5), así que un
+// `cover` recortaría a unos y a otros no. Con `contain` cada glifo entra entero
+// y lo que se ve es el salto real de tamaño — que es lo que hay que mirar antes
+// de normalizarlos, no lo que hay que disimular.
+.sketch__stat-art {
+  display: block;
+  width: #{$sketch-stat-art}em;
+  height: #{$sketch-stat-art}em;
+  object-fit: contain;
+}
+
 .sketch__pod-value {
   font-family: $font-game-display;
   line-height: 1;

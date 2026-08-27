@@ -27,9 +27,17 @@
 // encima de una ilustración de verdad—.
 //
 // El 🐉 Dragón esquelético no es de Humanos y se queda de todas formas: es el
-// peor caso del catálogo entero (cinco Características y dieciocho caracteres
-// de nombre) y sin él ningún boceto pasa de cuatro chips. Va en su propia
-// lista, etiquetado como caso límite, para no ensuciar la plantilla de la raza.
+// peor caso que este laboratorio puede enseñar (cinco Características y
+// dieciocho caracteres de nombre) y sin él ningún boceto pasa de cuatro chips.
+// Va en su propia lista, etiquetado como caso límite, para no ensuciar la
+// plantilla de la raza.
+//
+// Ojo con "peor caso": lo es AQUÍ, no en el catálogo. Desde que la baraja
+// (races.ts) tiene cuatro razas, el ⛰️ Coloso de adamantita de ⛏️ Enanos le
+// saca dos caracteres de nombre y el 👹 Balor de 🔥 Demonios le empata a cinco
+// Características con un raíl más sucio. Este laboratorio no las pinta a
+// propósito —compara nueve marcos, y con veinticuatro cartas por marco deja de
+// comparar—, así que el Dragón sigue siendo su techo.
 //
 // LOS NÚMEROS DE LAS HABILIDADES SON INVENTADOS. docs/v3/razas.md avisa de que
 // los valores siguen pendientes; aquí solo importa su FORMA (una, dos o tres
@@ -48,16 +56,80 @@
 // Dragón dorado hay ×8 de Ataque y ×13 de Vida, que es la curva ×10 por tier.
 // =========================================================================
 
-/** Las 8 Habilidades, en el orden de docs/v3/razas.md §"Habilidades". */
+/**
+ * La raíz de los pictogramas propios, servidos en `/assets/v3/icons/…`.
+ *
+ * El emoji de cada ficha NO se borra al llegar su archivo: se queda de reserva.
+ * Sirve para las tres cosas que el PNG todavía no puede hacer — el conmutador
+ * del laboratorio, el hueco que aún no tiene archivo (🗡️ Cuerpo a cuerpo) y
+ * cualquier sitio fuera de la carta donde no haya CSS que dimensione una
+ * imagen—. Por eso `icon` y `art` conviven en la misma ficha en vez de
+ * sustituirse.
+ */
+const ICONS = "/assets/v3/icons";
+
+/**
+ * Las 8 Habilidades, en el orden de docs/v3/razas.md §"Habilidades".
+ *
+ * `art` entró el 26 de agosto de 2026 con la primera tanda de pictogramas
+ * (knowledge/v3/icon-concept/icons.md §5): relieve de metal dorado, monocromo,
+ * y **la Habilidad va desnuda** —sin medallón, que es lo que la distingue de
+ * una Característica—. Las ocho están.
+ *
+ * Ojo con `ataque`: el glifo que acompaña al número de Ataque en una carta es el
+ * del TIPO DE DAÑO, no este (ver DAMAGE más abajo). El genérico es de la wiki y
+ * las tablas — salvo que ahora mismo hace además de suplente del 🗡️ Cuerpo a
+ * cuerpo, que no tiene archivo; está explicado ahí y es temporal.
+ */
 export const SKILLS = [
-  { key: "vida", label: "Vida", icon: "❤️" },
-  { key: "ataque", label: "Ataque", icon: "⚔️" },
-  { key: "defensa", label: "Defensa", icon: "🛡️" },
-  { key: "resistencia", label: "Resistencia mágica", icon: "🔮" },
-  { key: "precision", label: "Precisión", icon: "🎯" },
-  { key: "suerte", label: "Suerte", icon: "🍀" },
-  { key: "iniciativa", label: "Iniciativa", icon: "⚡" },
-  { key: "movimiento", label: "Movimiento", icon: "👢" },
+  {
+    key: "vida",
+    label: "Vida",
+    icon: "❤️",
+    art: `${ICONS}/abilities/vida.png`,
+  },
+  {
+    key: "ataque",
+    label: "Ataque",
+    icon: "⚔️",
+    art: `${ICONS}/abilities/ataque.png`,
+  },
+  {
+    key: "defensa",
+    label: "Defensa",
+    icon: "🛡️",
+    art: `${ICONS}/abilities/defensa.png`,
+  },
+  {
+    key: "resistencia",
+    label: "Resistencia mágica",
+    icon: "🔮",
+    art: `${ICONS}/abilities/resistencia-magica.png`,
+  },
+  {
+    key: "precision",
+    label: "Precisión",
+    icon: "🎯",
+    art: `${ICONS}/abilities/precision.png`,
+  },
+  {
+    key: "suerte",
+    label: "Suerte",
+    icon: "🍀",
+    art: `${ICONS}/abilities/suerte.png`,
+  },
+  {
+    key: "iniciativa",
+    label: "Iniciativa",
+    icon: "⚡",
+    art: `${ICONS}/abilities/iniciativa.png`,
+  },
+  {
+    key: "movimiento",
+    label: "Movimiento",
+    icon: "👢",
+    art: `${ICONS}/abilities/movimiento.png`,
+  },
 ] as const;
 
 export type SkillKey = (typeof SKILLS)[number]["key"];
@@ -71,10 +143,31 @@ export type SkillKey = (typeof SKILLS)[number]["key"];
  * al número es el del tipo, así que la carta dice cuánto pega y de qué manera
  * en el mismo hueco y sin gastar ni un pixel más de marco.
  */
+/**
+ * 🗡️ Cuerpo a cuerpo usa `abilities/ataque.png` **de suplente, por decisión de
+ * Dario** (26 de agosto de 2026), y conviene que quede escrito porque es la
+ * única ficha del archivo cuyo `art` no es el suyo.
+ *
+ * Su archivo propio NO existe: la tanda de esa noche trajo dos de los tres
+ * tipos. Dejarlo en emoji hacía que 70 de las 132 fichas —es el tipo de daño más
+ * repetido con diferencia— enseñaran siete piezas de oro y un emoji suelto en la
+ * misma fila, y con la fila entera de oro se ve mejor lo que se está juzgando.
+ *
+ * El precio, que es real y no se disimula: el genérico ⚔️ es **otro dibujo**
+ * —espada ancha contra la daga que pedía el concepto— y `icons.md` §2 dice que
+ * en una carta no se pinta nunca. Mientras esté aquí, la carta enseña "Ataque"
+ * donde tiene que decir "Cuerpo a cuerpo". Se cae solo el día que llegue
+ * `damage/cuerpo-a-cuerpo.png`, y hasta entonces sigue contado como pendiente en
+ * `icons.md` §7 — el suplente tapa el hueco en la pantalla, no en la lista.
+ */
 export const DAMAGE = {
-  cuerpo: { icon: "🗡️", label: "Cuerpo a cuerpo" },
-  distancia: { icon: "🏹", label: "A distancia" },
-  magico: { icon: "✨", label: "Mágico" },
+  cuerpo: { icon: "🗡️", label: "Cuerpo a cuerpo", art: `${ICONS}/abilities/ataque.png` },
+  distancia: {
+    icon: "🏹",
+    label: "A distancia",
+    art: `${ICONS}/damage/a-distancia.png`,
+  },
+  magico: { icon: "✨", label: "Mágico", art: `${ICONS}/damage/magico.png` },
 } as const;
 
 export type DamageKey = keyof typeof DAMAGE;
@@ -104,15 +197,18 @@ export type Subject = {
   /** Emoji de la unidad o del héroe: hace de ilustración cuando no hay imagen. */
   readonly icon: string;
   /**
-   * Ilustración. Desde el 26 de agosto de 2026 **toda la que hay es de V3**
-   * (`public/assets/v3/races/humanos/`): son OCHO archivos, los cuatro héroes y
-   * las cuatro primeras unidades de la progresión (Miliciano, Arquero,
-   * Caballero y Mago). El relleno prestado de las cartas de clase de v2 se
-   * retiró con esa tanda, porque ya no cubría ningún hueco — y con él se fue la
-   * última imagen del juego anterior que quedaba en un lab de V3.
+   * Ilustración. Desde el 26 de agosto de 2026 **toda la que hay es de V3**, y ya
+   * no es solo de esta raza: son VEINTE archivos, los ocho de 👤 Humanos que
+   * cuelgan de aquí (`public/assets/v3/races/humanos/`: los cuatro héroes y las
+   * cuatro primeras unidades de la progresión —Miliciano, Arquero, Caballero y
+   * Mago—) y los doce de ⛏️ Enanos, que son la raza entera y se cablean en
+   * `races.ts`, que es donde vive esa raza. El relleno prestado de las cartas de
+   * clase de v2 se retiró con esa tanda, porque ya no cubría ningún hueco — y con
+   * él se fue la última imagen del juego anterior que quedaba en un lab de V3.
    *
-   * Las otras cuatro unidades caen al emoji, que sigue siendo lo normal y
-   * también hay que verlo.
+   * Las otras cuatro unidades de Humanos caen al emoji, y con Enanos dibujada
+   * entera son **las únicas cuatro cartas sin ilustración que quedan**: pasaron de
+   * ser lo normal a ser el caso de prueba de si el marco aguanta un hueco vacío.
    *
    * **Y las ocho son PROVISIONALES**, por decisión de Dario del 26 de agosto de
    * 2026: el generador no está respetando la especificación de
@@ -129,9 +225,11 @@ export type Subject = {
    * lienzo tenía que ser 5:7. Pero el desajuste que de verdad se nota en la carta
    * no es ese: es el ENCUADRE, que se sale de la norma en siete de los ocho —la
    * figura acaba entre el 78% y el 89% del alto cuando el tope es el 72%—, así
-   * que el panel de cualquier boceto le come las piernas. Los dos están medidos
-   * en ese README y ninguno es tarea: son la lista de comprobación de cuando
-   * llegue la generación buena.
+   * que el panel de cualquier boceto le come las piernas. Y con ⛏️ Enanos dentro
+   * eso dejó de ser cosa de esta tirada: sus doce fallan igual, en la misma banda,
+   * así que de los veinte archivos **solo el ✝️ Sacerdote cumple** y cumple de
+   * rebote. Los dos están medidos en ese README y ninguno es tarea: son la lista
+   * de comprobación de cuando llegue la generación buena.
    */
   readonly art?: string;
   readonly skills: Record<SkillKey, number>;
@@ -141,9 +239,11 @@ export type Subject = {
 };
 
 /**
- * Arte de V3. Desde el 26-ago-2026 son OCHO archivos: los CUATRO héroes de
+ * Arte de V3 **de la raza piloto**. Son OCHO archivos: los CUATRO héroes de
  * Humanos y las CUATRO primeras unidades de su progresión —Miliciano, Arquero,
- * Caballero y Mago—, o sea media raza piloto dibujada.
+ * Caballero y Mago—, o sea media raza piloto dibujada. Las otras doce del juego
+ * son de ⛏️ Enanos y tienen sus propias funciones en `races.ts`: el arte sigue al
+ * dato, y el dato de cada raza vive en su archivo.
  *
  * Con esa tanda desapareció `ART_V2`, que prestaba las cartas de clase del juego
  * anterior a las unidades sin arte. No hacía falta borrarlo a mano: al quedarse
@@ -545,40 +645,57 @@ export const HEROES: readonly Subject[] = [
 ];
 
 // --- Fuera de la raza piloto ----------------------------------------------
-// Humanos llega a cuatro Características y a trece caracteres de nombre. El
-// catálogo llega a cinco y a dieciocho, y esa diferencia es justo la que
-// revienta un raíl o una cenefa que iba justa. Va aparte para que se vea que
-// no forma parte de la plantilla de la raza.
-export const STRESS: readonly Subject[] = [
-  {
-    id: "dragon-esqueletico",
-    name: "Dragón esquelético",
-    kind: "unidad",
-    race: "No-muertos",
-    raceIcon: "💀",
-    tier: 8,
-    rarity: rarityForTier(8),
-    icon: "🐉",
-    skills: {
-      vida: 210,
-      ataque: 44,
-      defensa: 26,
-      resistencia: 32,
-      precision: 86,
-      suerte: 4,
-      iniciativa: 11,
-      movimiento: 9,
-    },
-    damage: "cuerpo",
-    traits: [
-      { icon: "💀", label: "No-muerto" },
-      { icon: "🦅", label: "Volador" },
-      { icon: "🧊", label: "Hielo" },
-      { icon: "😱", label: "Inmune al miedo" },
-      { icon: "🧪", label: "Inmune a estados alterados" },
-    ],
+// Humanos llega a cuatro Características y a trece caracteres de nombre, y el
+// catálogo llega a cinco y a veinte. Esa diferencia es justo la que revienta un
+// raíl o una cenefa que iba justa, así que la muestra necesita al menos un
+// sujeto que la toque. Va aparte para que se vea que no forma parte de la
+// plantilla de la raza.
+/**
+ * El 🐉 Dragón esquelético, con nombre propio y no solo dentro de STRESS.
+ *
+ * Nunca fue un sujeto inventado para forzar un marco: es la **unidad de tier 8
+ * de 💀 No-muertos**, tal cual la escribe razas.md, y aquí entró antes que su
+ * raza solo porque era el único sitio donde se podía mirar un raíl de cinco
+ * Características. Desde el 26 de agosto de 2026 su raza está en la baraja
+ * (races.ts), así que **la misma ficha hace los dos papeles** —caso límite del
+ * laboratorio y último escalón de la progresión de su raza— en vez de haber dos
+ * copias que puedan desalinearse. Que es la misma razón por la que la baraja
+ * importa 👤 Humanos de aquí en vez de copiarlo.
+ *
+ * Por eso su `id` no lleva el prefijo de raza que llevan los sujetos escritos en
+ * races.ts: es más antiguo que esa norma y el id es el valor del selector de
+ * este laboratorio, así que renombrarlo sería mover un control por estética.
+ */
+export const SKELETAL_DRAGON: Subject = {
+  id: "dragon-esqueletico",
+  name: "Dragón esquelético",
+  kind: "unidad",
+  race: "No-muertos",
+  raceIcon: "💀",
+  tier: 8,
+  rarity: rarityForTier(8),
+  icon: "🐉",
+  skills: {
+    vida: 210,
+    ataque: 44,
+    defensa: 26,
+    resistencia: 32,
+    precision: 86,
+    suerte: 4,
+    iniciativa: 11,
+    movimiento: 9,
   },
-];
+  damage: "cuerpo",
+  traits: [
+    { icon: "💀", label: "No-muerto" },
+    { icon: "🦅", label: "Volador" },
+    { icon: "🧊", label: "Hielo" },
+    { icon: "😱", label: "Inmune al miedo" },
+    { icon: "🧪", label: "Inmune a estados alterados" },
+  ],
+};
+
+export const STRESS: readonly Subject[] = [SKELETAL_DRAGON];
 
 export const SUBJECTS: readonly Subject[] = [...UNITS, ...HEROES, ...STRESS];
 

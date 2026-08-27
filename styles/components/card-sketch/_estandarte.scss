@@ -162,12 +162,12 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   // En VERSALITAS, que es como titula la referencia, y ahí está el matiz que
   // hay que mirar: el peso 300 que se eligió para la E no aguanta la caja alta.
   // Una versal fina y pequeña no tiene trazo con el que sostenerse, así que
-  // aquí sube a 500 — el eje variable de Platypi lo da sin descargar nada. Es
+  // aquí sube a 800 — el eje variable de Platypi lo da sin descargar nada. Es
   // una decisión abierta: o la carta titula en fino y en caja mixta (E), o
   // titula en versalitas y necesita peso (G). Las dos a la vez, no.
   .sketch__name {
     font-size: sketch-font("name-caps");
-    font-weight: 500;
+    font-weight: 800;
     letter-spacing: 0.07em;
     text-transform: uppercase;
     // El espaciado se aplica también al último carácter, así que un texto

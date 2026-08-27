@@ -356,7 +356,7 @@ motivo de que los dos convivan:
 
 | | Boceto D | Boceto E |
 |---|---|---|
-| El metal | **es** la rareza: una legendaria es una carta dorada entera | es siempre el mismo peltre (`card-sketch("alloy")`), material de carta y no dato |
+| El metal | **es** la rareza: una legendaria es una carta dorada entera | es siempre el mismo (`card-sketch("alloy")`), material de carta y no dato |
 | La rareza | tiñe la pieza | se reduce a una **veta de luz** entre los dos raíles del filete |
 | La lectura | la carta está pintada de su rareza | la carta está **encendida** |
 
@@ -385,7 +385,7 @@ el arte queda dentro de un farol y el color se reconoce sin mirar el borde. Va
 por debajo del pie, así que la placa la tapa: la luz viene de detrás de ella,
 que es lo que corresponde.
 
-**3. Todo el blindaje es del mismo peltre**: cantoneras, placa, medallón, el
+**3. Todo el blindaje es de la misma aleación**: cantoneras, placa, medallón, el
 canal de la fila de ocho y los remaches del raíl. Los medallones de
 Característica pasan de pastilla con aro de color a **remache**, del mismo
 metal que las cantoneras.
@@ -438,7 +438,7 @@ El medallón cambia de cara para poder hacerlo. En el D es un disco de piedra
 casi negro, que va bien detrás de una cifra dorada y fatal detrás de un emoji: un
 emoji trae sus propios tonos y no acepta color, así que necesita **papel claro**
 detrás o se lee como una mancha —👤 sobre el disco negro era exactamente eso—. Va
-de peltre claro, misma lección que las fichas del tablero (`$piece`: oro claro
+de aleación clara, misma lección que las fichas del tablero (`$piece`: oro claro
 bajo el cofre).
 
 Y va **desnudo**: el D le pone dos remaches a los lados y aquí no están, porque
@@ -1061,10 +1061,20 @@ cuatro bocetos**, y este boceto deja de tener nada que decir sobre el lienzo.
 Lo que sí destapó, y es lo útil: **el arte no cumple la norma, y no son tres
 archivos sino siete de ocho**. Los pies caen entre el 78% y el 89% cuando el
 tope son 72, así que la figura se mete en el cuarto reservado al rótulo y el
-panel de cualquier boceto le come las piernas. Con la vuelta de tuerca de que
-**los cinco de lienzo correcto son los peores de encuadre** —el único que cumple
-es el ✝️ Sacerdote, y de rebote, porque su lienzo apaisado no da de sí para una
-figura más alta—. La auditoría de los ocho está en
+panel de cualquier boceto le come las piernas. El único que cumple es el
+✝️ Sacerdote, y de rebote, porque su lienzo apaisado no da de sí para una figura
+más alta.
+
+> **Aquí se anotó una vuelta de tuerca —«los cinco de lienzo correcto son los
+> peores de encuadre»— y esa noche se cayó.** Entraron las doce de ⛏️ Enanos, la
+> primera raza dibujada entera: doce lienzos verticales correctos y los doce
+> fallan igual, en la misma banda del 82 al 89%, con 5:7 y con 2:3 sin diferencia.
+> No había ninguna relación entre las dos cosas — el lienzo ya se pide bien y el
+> encuadre no, y de los **veinte** archivos que hay hoy acierta **uno**. Lo que
+> gana el concepto con eso es que el diagnóstico deja de depender de una tirada:
+> es la línea del prompt que pide el aire de abajo, no el lote.
+
+La auditoría, ya de los veinte, está en
 [`public/assets/v3/README.md`](../../../public/assets/v3/README.md).
 
 Moraleja de método, que es lo que aquí vale: **una medida de pérdida no dice
@@ -1287,7 +1297,9 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 > este episodio dejó no es una decisión abierta, es un **diagnóstico del arte**:
 > siete de los ocho archivos ponen los pies por debajo del 72% que manda la
 > norma, así que regenerar no está bloqueado por nada — está pendiente por el
-> encuadre, y de casi todos.
+> encuadre, y de casi todos. *(Esa misma noche entraron doce archivos más, la raza
+> ⛏️ Enanos entera, y fallan los doce: diecinueve de veinte. El diagnóstico no
+> cambia, se confirma.)*
 
 ## Qué falta decidir (cerrado: J · Orla, 25-ago-2026)
 
@@ -1442,10 +1454,10 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   el metal no lleva ningún dato —en el D *es* la rareza— y por tanto el
   tono es una decisión libre. Está montada una **probeta** en el
   lab (`$sketch-alloy` en `styles/settings/_colors.scss`, selector "Aleación" en
-  la página) con **catorce** candidatos ordenados de oscuro a claro, para que la
+  la página) con **quince** candidatos ordenados de oscuro a claro, para que la
   fila se lea como una escala: carbón, pavonado, hierro, cardenillo, óxido,
-  acero, **peltre** —el de ahora—, cobre, bronce, estaño, latón, plata, oro y
-  marfil. Dos se salen de la familia a propósito, y son los que contestan una
+  acero, peltre, cobre, bronce, estaño, latón, **latón (iconos)** —el de ahora—,
+  plata, oro y marfil. Dos se salen de la familia a propósito, y son los que contestan una
   pregunta más grande que el tono: el **cardenillo** (verde de pátina, el único
   que no es gris ni dorado) y el **marfil**, que ya no parece metal sino hueso —
   están para ver si el marco tiene que ser metálico siquiera.
@@ -1459,6 +1471,31 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   marcos a la vez, a propósito: comparten aleación para que lo que se compare sea
   el marco y no el color. Cuando se decida, el ganador pasa a `"alloy"` y la
   probeta se borra entera.
+
+  **Y desde el 27 de agosto de 2026 ya no la contesta la escala, la contesta un
+  archivo.** El metal por defecto pasa de peltre a **latón (iconos)**: `#a77f42`,
+  que es la **mediana medida** de los diez pictogramas de
+  `public/assets/v3/icons/` —las ocho Habilidades y los dos Tipos de daño—
+  descartando la alfa y el contorno casi negro. El argumento no es de tono sino
+  de *cuenta*: con los pictogramas puestos, la carta tenía **dos metales** —el
+  latón dibujado de los iconos y el peltre gris del marco— y ninguna razón para
+  tener dos; igualarlos hace que el marco y los iconos sean el mismo objeto en
+  vez de uno pegado sobre el otro. Y sigue siendo **un solo color**, sin rampa a
+  mano: el reparto de `armor-vars()` cae encima del histograma de los PNG casi
+  por sí solo —la luz (`#d5c2a4`) entre el percentil 85 y el 95, la sombra
+  (`#614a26`) en el 30, el filo (`#322614`) en el 5—, que es la comprobación de
+  que el material es de verdad ese y no uno parecido.
+
+  **Lo que este cambio pone en riesgo, y estaba avisado antes de hacerlo**: «el
+  hilo de oro desaparece con los metales claros — en latón y en oro se funde con
+  el cuerpo del marco y el marco pierde la mitad de su relieve» (§Réplica H). Ese
+  hilo se calibró contra el peltre y ahora el metal ES latón, así que hay que
+  mirarlo en el lab. Si no se ve, lo que se cambia es el hilo — no se vuelve el
+  metal atrás, porque el metal ya no es una preferencia, es el de los iconos.
+
+  La probeta **no se borra** con esto: el ganador de hoy sale de una medida y no
+  de la escala, y la escala sigue haciendo falta para lo que nunca contestó — si
+  el marco tiene que ser metálico siquiera (cardenillo, marfil).
 - **Qué tipografía titula la carta.** Hasta ahora el nombre iba en **Cormorant**
   (`$font-serif-display`), la serif de libro que se heredó de las cartas de v2 sin
   discutirla: correcta y neutra, dice "documento" antes que "objeto de juego".

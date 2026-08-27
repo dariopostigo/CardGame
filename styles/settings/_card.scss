@@ -42,6 +42,27 @@ $sketch-radius: 14px;
 
 $sketch-medal: 30px;               // medallón de Característica, en el raíl
 
+// Cuánto más grande va el PICTOGRAMA que el emoji al que sustituye, en la fila
+// de ocho (styles/components/_card-sketch.scss, .sketch__stat-art).
+//
+// Es un factor y no una medida a propósito: el tamaño del par icono-número lo
+// fija cada boceto con su token de tipografía —"stat-icon-xl" con ocho en fila,
+// "stat-icon-lg" con seis, "pin-icon" en las esquinas—, y esos escalones están
+// medidos contra la anchura de columna de cada uno. Un factor los respeta todos;
+// un píxel obligaría a escribir tres.
+//
+// Y hace falta porque un emoji NO llena su caja —trae su propio aire, la misma
+// lección que ya se aprendió con el glifo del medallón el 25 de agosto— mientras
+// que un PNG con la alfa ajustada sí la llena. Al sustituirlo pieza por pieza y
+// al mismo cuerpo, el pictograma salía MÁS PEQUEÑO de lo que se veía el emoji:
+// 17,6px de dibujo real contra los ~30 de columna que hay para gastar.
+//
+// 1.7 deja el icono en ~30px dentro de la columna de ~32 que reparte la J·Orla
+// (300 de inlay − 28 de acolchado − 14 de huecos, entre 8). Es el TOPE de esta
+// disposición: por encima, los vecinos se tocan y hay que cambiar la fila de
+// ocho, no el número.
+$sketch-stat-art: 1.7;
+
 // El marco no es un filete sino una BANDA de metal, y de ahí estas dos.
 // $sketch-band es espejo del último anillo de SEAM en
 // components/design/v3/sketch-frames.tsx: si allí crece el filete y aquí no,

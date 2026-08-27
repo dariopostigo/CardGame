@@ -122,9 +122,67 @@ $orla-height: $sketch-height + $orla-border * 2;
   // de la G/H — la misma cuenta que hacía la H, con el anillo que le toca.
   $disc-in: $orla-ring + 4px;
 
+  // --- El disco del Tier, ahora una pieza DIBUJADA ------------------------
+  // Hasta el 26 de agosto de 2026 el disco era CSS puro: un círculo de 46px
+  // con borde de metal, aro de oro en box-shadow y un radial-gradient de cara
+  // oscura (_estandarte.scss §"El disco del Tier"). Aquí lo sustituye un
+  // archivo —/assets/v3/frames/tier.png, el medallón generado esa noche—, y el
+  // cambio vive SOLO en la J: la G y la H se quedan con su círculo de CSS
+  // porque son bocetos ya juzgados, y cambiarles una pieza por debajo
+  // reescribiría la comparación que decidió el marco.
+  //
+  // Es la primera url() de asset de todo styles/, y por eso queda dicho el
+  // porqué de que sea background y no un <img> como los pictogramas de la fila
+  // de ocho: esto no es un dato de la carta, es moldura. El dato es el número,
+  // que sigue siendo el ÚNICO hijo del span, centrado por el mismo
+  // `place-items: center` que ya heredaba.
+  //
+  // Las tres medidas del archivo, sacadas de él y no a ojo — el lienzo es
+  // cuadrado y centrado en la pieza, así que todas van en fracción del lado:
+  //   · 0,782 — el anillo de oro, medido en la diagonal, que es donde el
+  //     medallón es un círculo limpio.
+  //   · 0,726 — el hueco oscuro de dentro, medido también en la diagonal, que
+  //     es donde el anillo entra MÁS: por los ejes el hueco se ensancha hasta
+  //     0,80. La diagonal es la que manda porque es el círculo inscrito, o
+  //     sea lo que de verdad le queda al número.
+  //   · 0,976 — las cuatro puntas en cruz, que llegan casi al filo del lienzo.
+  //     Son las que piden que la CAJA sea más grande que el disco de antes.
+  //
+  // De ahí sale el tamaño: 60px de caja dejan el anillo en 47px —el mismo
+  // círculo que dibujaba el CSS, 46px— y el hueco en 43px, tres más que los 40
+  // de antes, así que el número no solo cabe, respira. Lo que crece es lo que
+  // sobresale, que es justo lo que la pieza añade.
+  $orla-disc: 60px;
+
+  // Centrado sobre donde caía el disco de CSS, no alineado con su esquina: el
+  // eje del medallón es el que sujeta el estandarte y el que la composición de
+  // la H medía contra el chaflán. Con eso las puntas se comen los 7px de más
+  // por los cuatro lados, y la de arriba a la izquierda acaba montada sobre el
+  // anillo de OrlaFrame — que es exactamente lo que _estandarte.scss pedía del
+  // disco: "la única pieza de la carta que se sale del contorno, y es
+  // deliberado".
+  $orla-disc-in: $disc-in - math.div($orla-disc - $sketch-disc, 2);
+
   .sketch__disc {
-    top: $disc-in;
-    left: $disc-in;
+    top: $orla-disc-in;
+    left: $orla-disc-in;
+    width: $orla-disc;
+    height: $orla-disc;
+
+    // Los tres se apagan a mano y no se heredan a medias: el borde y el aro
+    // dibujaban el metal que ahora trae el PNG, y el radial-gradient su cara
+    // oscura. Dejar cualquiera de los tres pondría un segundo canto alrededor
+    // de la pieza.
+    border: 0;
+    border-radius: 0;
+    background: url("/assets/v3/frames/tier.png") center / contain no-repeat;
+    box-shadow: none;
+
+    // Y la sombra pasa de box-shadow a filter por el mismo motivo que la del
+    // raíl (_estandarte.scss): sin caja que proyectar, un box-shadow dibujaría
+    // el rectángulo fantasma de los 60px; el drop-shadow sigue la silueta
+    // recortada, puntas incluidas.
+    filter: drop-shadow(0 3px 5px card-sketch("shadow"));
   }
 
   // El estandarte sigue colgando del disco, así que se mueve solo con él: las
