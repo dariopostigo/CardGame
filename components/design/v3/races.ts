@@ -57,16 +57,17 @@ import {
 // slugs que ya pedía knowledge/v3/races-concept/prompts/enanos.md §"Al terminar".
 //
 // Y con eso ⛏️ ENANOS ES LA PRIMERA RAZA DIBUJADA ENTERA — antes que la piloto,
-// que va por diez de doce. Conviene tenerlo escrito porque invierte la premisa de
+// que va por once de doce. Conviene tenerlo escrito porque invierte la premisa de
 // ese archivo de prompts («Fase 2: entra cuando Humanos esté cerrado»,
 // «sin las 12 imágenes de la raza piloto no hay vara de medir»): la vara de medir
 // ya no la pone Humanos, la pone esta raza, que es la única donde se ve una
 // progresión de ocho tiers completa y cuatro héroes al lado. Lo que Humanos
 // seguía enseñando y aquí no —el hueco del emoji en una carta de verdad— se ve
 // todavía en sus unidades sin arte, que el 27 de agosto de 2026 bajaron de cuatro
-// a DOS: ✝️ Paladín y 🐉 Dragón dorado, los tiers 7 y 8 (entraron 🐎 Caballería y
-// 🦅 Grifo). O sea que el caso del hueco vacío ya solo se puede mirar en el
-// extremo caro de una progresión, y se está quedando sin sitio.
+// a dos (entraron 🐎 Caballería y 🦅 Grifo) y el 28 a UNA: el 🐉 Dragón dorado del
+// tier 8, con el ✝️ Paladín ya dibujado. O sea que el caso del hueco vacío se mira
+// hoy en una sola carta de todo el laboratorio, y en el extremo más caro de una
+// progresión: cuando llegue ese dragón, esa comparación se queda sin sitio.
 //
 // SON PROVISIONALES, igual que las de Humanos y por la misma decisión de Dario
 // (public/assets/v3/README.md): se mete lo que sale para que las cartas dejen de
@@ -75,7 +76,7 @@ import {
 // anota y se sigue.
 //
 // De la tanda salen dos datos, y el primero es una MEJORA: las doce son
-// VERTICALES. Ni una apaisada, que es lo que estropeaba tres de las diez de
+// VERTICALES. Ni una apaisada, que es lo que estropeaba tres de las once de
 // Humanos. Siete están en el 5:7 bueno (1060×1484) y cinco en 2:3 (1024×1536:
 // Minero, Guerrero enano, Herrero de guerra, Ingeniero unidad y Mosquetero), que
 // no es un fallo — el README lo da como el sustituto válido cuando la herramienta
@@ -103,8 +104,8 @@ import {
  * eso ya lo dejaba escrito el archivo de prompts.
  *
  * `.png` de ~2,7 MB, donde el README pide `.webp`. Con estas doce el repo pasó de
- * ~20 MB a ~52 MB de arte provisional —y con las dos de Humanos del 27 de agosto
- * va por ~55 MB—, así que el argumento de «no convertir lo que se va a tirar» ya
+ * ~20 MB a ~52 MB de arte provisional —y con las tres de Humanos del 27 y el 28 de
+ * agosto va por ~58 MB—, así que el argumento de «no convertir lo que se va a tirar» ya
  * no sale gratis: sigue en pie, pero es el dato que hay que mirar cuando llegue la
  * tercera raza.
  */
