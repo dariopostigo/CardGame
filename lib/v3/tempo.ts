@@ -25,6 +25,28 @@
 //     DE DAÑO (damage.ts `movementBand`): 🗡️ el más alto, 🏹 el más bajo. Por eso
 //     todo lo de aquí toma un valor por tipo y no uno solo.
 //
+// EL BORDE CUENTA, y es la corrección del 28 de agosto de 2026. `chase` le daba
+// al que huye campo infinito, así que contestaba "no lo alcanza nunca" en cuanto
+// los dos 👢 Movimiento empataban. Pero el §1 clava las bandas al borde, y eso
+// deja a quien espera con el borde a la espalda: lo que tiene para retroceder es
+// la profundidad de su banda menos uno —UN hexágono con bandas de 2, y da igual
+// el tamaño del tablero (arena.ts `retreatRoom`)—. Medido con el borde puesto,
+// sobre 14×12 y con los dos 👢 a 2, el 🗡️ contacta en la ronda 6 comiendo 2
+// disparos, donde el modelo sin borde decía que no llegaba jamás.
+//
+// Lo que eso arrastra para el §1.2, y hay que decirlo aunque no toque al motor:
+// **el bucle del arquero no se sostiene solo en esta arena**. La banda de
+// 👢 Movimiento por tipo de daño puede seguir valiendo la pena por el carácter de
+// cada tipo —el 🏹 que espera, el 🗡️ que corre—, pero el kiting no la exige. Y
+// como es un requisito para las 132 fichas, conviene que el argumento sea el
+// bueno.
+//
+// SIGUE SIENDO 1D: mide el retroceso hacia atrás y nada más. En 2D el que huye
+// tiene las filas del tablero para escapar de lado, y además un 🏹 que avanza en
+// la ronda 1 se compra sitio para retroceder al precio de acortar la distancia.
+// Las dos cosas piden una persecución sobre la arena de verdad, que es trabajo
+// aparte. Pasando `Infinity` como `retreatRoom` se recupera el modelo del papel.
+//
 // El modelo del §5 sigue siendo literal: en su turno una ficha "mueve hasta
 // 👢 Movimiento hexágonos y hace su ataque, en cualquier orden". Así que para
 // pegar solo tiene que terminar el movimiento a distancia ≤ alcance:
@@ -158,13 +180,21 @@ export type ChaseResult = {
   readonly round: number | null;
   /** Disparos que mete el que huye antes de eso. Es el precio de la caza. */
   readonly shots: number;
-  /** Hexágonos que gana el perseguidor por ronda: negativo o 0 es no llegar. */
+  /**
+   * Hexágonos que gana el perseguidor por ronda **mientras al otro le quede
+   * sitio**. Negativo o 0 ya no significa "no llega": significa que no llegaría
+   * en campo abierto. En cuanto el que huye se queda sin borde detrás, el ritmo
+   * de cierre pasa a ser el 👢 Movimiento entero del perseguidor.
+   */
   readonly closingPerRound: number;
+  /** Si el que huye se ha quedado sin sitio para retroceder. */
+  readonly cornered: boolean;
 };
 
 /**
  * Persigue a un tirador que huye. El que huye juega el kiting puro: si tiene al
- * perseguidor a tiro dispara, y retroceda siempre lo que le da 👢 Movimiento.
+ * perseguidor a tiro dispara, y retrocede lo que le da 👢 Movimiento **hasta que
+ * se le acaba el sitio**.
  *
  * Se le da el turno ANTES que al perseguidor a propósito: es el peor caso para
  * quien caza —dispara y ya se ha ido cuando el otro mueve— y el peor caso es lo
@@ -173,28 +203,39 @@ export type ChaseResult = {
  * @param {number} distance - Separación al empezar, en hexágonos.
  * @param {Pursuer} chaser - El que cierra la distancia (el 🗡️, normalmente).
  * @param {Pursuer} runner - El que dispara y retrocede (el 🏹).
+ * @param {number} retreatRoom - Hexágonos que tiene detrás antes del borde
+ *   (arena.ts `retreatRoom`). `Infinity` da el campo abierto del papel, que es
+ *   el que concluye que al arquero no se le alcanza.
  * @param {number} maxRounds - Tope de simulación: más allá, no llega y punto.
  */
 export function chase(
   distance: number,
   chaser: Pursuer,
   runner: Pursuer,
+  retreatRoom: number,
   maxRounds = 30,
 ): ChaseResult {
   const closingPerRound = chaser.movement - runner.movement;
   let d = distance;
+  let room = Math.max(0, retreatRoom);
+  let cornered = room === 0;
   let shots = 0;
 
   for (let round = 1; round <= maxRounds; round++) {
     if (d <= runner.range) shots++;
-    d += runner.movement;
+    // Retrocede lo que le dan los pies y lo que le deja el tablero, en ese
+    // orden: el borde manda sobre la Habilidad.
+    const back = Math.min(runner.movement, room);
+    room -= back;
+    if (room <= 0) cornered = true;
+    d += back;
     d -= chaser.movement;
     if (d <= chaser.range) {
-      return { contact: true, round, shots, closingPerRound };
+      return { contact: true, round, shots, closingPerRound, cornered };
     }
   }
 
-  return { contact: false, round: null, shots, closingPerRound };
+  return { contact: false, round: null, shots, closingPerRound, cornered };
 }
 
 /**
@@ -205,6 +246,7 @@ export function chase(
 export function chaseAgainstArcher(
   distance: number,
   movement: MovementByType,
+  retreatRoom: number,
   maxRounds = 30,
 ): { readonly id: DamageTypeId; readonly result: ChaseResult }[] {
   const runner: Pursuer = {
@@ -217,6 +259,7 @@ export function chaseAgainstArcher(
       distance,
       { movement: movement[id], range: DAMAGE_TYPES[id].range },
       runner,
+      retreatRoom,
       maxRounds,
     ),
   }));

@@ -25,7 +25,7 @@
 // =========================================================================
 
 import { Slider, type SliderChangeEvent } from "primereact/slider";
-import type { Arena } from "@/lib/v3/arena";
+import { retreatRoom, type Arena } from "@/lib/v3/arena";
 import { DAMAGE_TYPES, DAMAGE_TYPE_IDS, type DamageTypeId } from "@/lib/v3/damage";
 import {
   LAB_MOVEMENT,
@@ -60,7 +60,10 @@ export default function ArenaTempo({
 }: ArenaTempoProps) {
   const rows = openingTempo(arena.frontDistance, movement);
   const verdict = tempoVerdict(rows);
-  const chases = chaseAgainstArcher(arena.frontDistance, movement);
+  // El sitio que tiene el 🏹 para retroceder sale de la arena, no del papel: sus
+  // bandas van pegadas al borde (§1), así que espera con el borde a la espalda.
+  const room = retreatRoom(arena.spec);
+  const chases = chaseAgainstArcher(arena.frontDistance, movement, room);
 
   // Rondas de maniobra: las que hay antes del primer ataque de cualquiera. Ya
   // no es un precio, es la duración de la aproximación.
@@ -147,9 +150,19 @@ export default function ArenaTempo({
       <div className="mt-3 border-t border-[var(--wiki-border)] pt-2 text-sm">
         <div className={`mb-1 font-semibold ${strong}`}>El arquero que retrocede (§1.2)</div>
         <p className={`mb-2 text-xs ${muted}`}>
-          El 🏹 juega el kiting puro: dispara si te tiene a tiro y retrocede siempre lo que le dan
-          los pies, y le toca antes que a ti. Si no se le alcanza, no es un desequilibrio: es una
-          partida que no se puede ganar.
+          El 🏹 juega el kiting puro: dispara si te tiene a tiro y retrocede lo que le dan los pies,
+          y le toca antes que a ti. Si no se le alcanza, no es un desequilibrio: es una partida que
+          no se puede ganar.
+        </p>
+        <p className={`mb-2 text-xs ${muted}`}>
+          Pero <b className={strong}>el borde cuenta</b>: sus bandas van pegadas al borde (§1), así
+          que solo tiene{" "}
+          <b className={strong}>
+            {room} {room === 1 ? "hexágono" : "hexágonos"}
+          </b>{" "}
+          para retroceder —la profundidad de su banda menos uno, y eso no cambia con el tamaño del
+          tablero—. El bucle del §1.2 está escrito sin borde, y sin borde dice que al arquero no se
+          le alcanza jamás.
         </p>
         <ul className="grid gap-1">
           {chases.map(({ id, result }) => {
@@ -164,15 +177,25 @@ export default function ArenaTempo({
                     lo alcanza en la <b className={strong}>ronda {result.round}</b> y come{" "}
                     <b className={strong}>{result.shots}</b>{" "}
                     {result.shots === 1 ? "disparo" : "disparos"} por el camino
+                    {result.closingPerRound <= 0 && (
+                      <>
+                        {" "}
+                        —y solo porque{" "}
+                        <b className={strong}>lo acorrala el borde</b>: a campo abierto no gana
+                        terreno ({result.closingPerRound} hexágonos por ronda) y no lo alcanzaría—
+                      </>
+                    )}
                   </span>
                 ) : (
                   <span className="text-[var(--wiki-danger)]">
                     <i className="pi pi-exclamation-triangle mr-1.5" />
-                    no lo alcanza nunca
+                    no lo alcanza
                     <span className={muted}>
                       {" "}
-                      — no gana terreno ({result.closingPerRound} hexágonos por ronda), así que el
-                      bucle es estable y en un tablero grande no hay borde que lo acorrale
+                      —{" "}
+                      {movement[id] === 0
+                        ? "con 👢 0 no se mueve, así que se queda en su columna mirando"
+                        : `no gana terreno (${result.closingPerRound} hexágonos por ronda) y ni acorralado llega a tiempo`}
                     </span>
                   </span>
                 )}
@@ -198,7 +221,35 @@ function Shape({
   const muted = "text-[var(--wiki-muted)]";
   const strong = "text-[var(--wiki-text)]";
   const ranged = rows.find((r) => r.id === "a-distancia")?.round;
-  const rest = rows.filter((r) => r.id !== "a-distancia").map((r) => r.round);
+  const crossing = rows
+    .filter((r) => r.id !== "a-distancia")
+    .slice()
+    .sort((a, b) => (a.round ?? 99) - (b.round ?? 99));
+  const rest = crossing.map((r) => r.round);
+  const soonest = Math.min(...(rest as number[]));
+
+  /**
+   * Los dos que cruzan, con su ronda. Se enumeran en vez de resumirse con el
+   * mínimo: cuando no coinciden, "los dos entran en la 3" es falso para uno de
+   * ellos, y la tabla de arriba lo delata.
+   */
+  const whoCrosses =
+    crossing.length === 2 && crossing[0].round === crossing[1].round ? (
+      <>
+        el {DAMAGE_TYPES[crossing[0].id].icon} y el {DAMAGE_TYPES[crossing[1].id].icon} entran
+        juntos en la ronda <b className={strong}>{crossing[0].round}</b>
+      </>
+    ) : (
+      <>
+        {crossing.map((r, i) => (
+          <span key={r.id}>
+            {i === 0 ? "el " : " y el "}
+            {DAMAGE_TYPES[r.id].icon} {i === 0 ? "entra en la ronda " : "en la "}
+            <b className={strong}>{r.round}</b>
+          </span>
+        ))}
+      </>
+    );
 
   if (verdict === "nunca") {
     return (
@@ -222,19 +273,34 @@ function Shape({
   if (verdict === "escalonado") {
     return (
       <p className={muted}>
-        <b className={strong}>El 🏹 abre solo</b> en la ronda {ranged} y el resto entra en la{" "}
-        {Math.min(...(rest as number[]))}: el alcance compra rondas, que es lo que el §4.3 le pide.
+        <b className={strong}>El 🏹 abre solo</b> en la ronda {ranged}, y detrás {whoCrosses}: el
+        alcance compra rondas, que es lo que el §4.3 le pide.
         {maniobra}
       </p>
     );
   }
 
+  // Sin escalón no significa "todos a la vez": con el reparto del §1.1 lo normal
+  // es que el 🗡️ y el ✨ entren juntos y el 🏹 llegue mucho después, porque es el
+  // que tiene los pies cortos. Se dice con los números en la mano y no con una
+  // frase hecha: la caja de al lado enseña la tabla, y las dos tienen que
+  // contar lo mismo.
+  const late = ranged !== null && ranged !== undefined && ranged > soonest;
+
   return (
     <p className={muted}>
-      <b className={strong}>Los tres entran casi a la vez</b>, así que el alcance ya no compra
-      rondas — es lo normal en cuanto 👢 Movimiento se reparte por tipo de daño, y no es un fallo:
-      el 🏹 bajó de pies a cambio de que nadie pueda quedarse fuera de su alcance, y su trabajo pasó
-      a ser esperar quieto (§1.1).
+      <b className={strong}>El 🏹 ya no abre</b>: {whoCrosses}
+      {late ? (
+        <>
+          {" "}
+          y él no llegaría hasta la <b className={strong}>{ranged}</b> si tuviera que cruzar
+        </>
+      ) : (
+        <> , a la vez que él</>
+      )}
+      . No es un fallo: bajó de pies a cambio de que nadie se quede fuera de su alcance, y su
+      trabajo pasó a ser <b className={strong}>esperar quieto</b> y castigar a quien cruce (§1.1) —
+      así que esa ronda suya es la cuenta pesimista, la de un arquero que insiste en avanzar.
       {maniobra}
     </p>
   );

@@ -49,6 +49,7 @@ import type { HexCoord } from "@/lib/v3/hex";
 import {
   ARENA,
   ARENA_SIZES,
+  SIDES,
   FIGURES_PER_PLAYER,
   PLAYERS_MAX,
   buildArena,
@@ -59,6 +60,7 @@ import {
   specProblem,
   within,
   type ArenaSpec,
+  type Side,
 } from "@/lib/v3/arena";
 import { DAMAGE_TYPES, DAMAGE_TYPE_IDS, type DamageTypeId } from "@/lib/v3/damage";
 import {
@@ -67,7 +69,6 @@ import {
   clear,
   figureName,
   hexOf,
-  mirror,
   place,
   placementProblem,
   type Deployment,
@@ -92,6 +93,12 @@ const LABEL_MODES: { value: LabelMode; label: string }[] = [
 
 type GridMode = "completa" | "regiones" | "ninguna";
 
+/** Los dos bandos como pestaña. Sin `readonly`, que es lo que pide PrimeReact. */
+const SIDE_TABS: { value: Side; label: string }[] = [
+  { value: "propio", label: "Tu bando" },
+  { value: "enemigo", label: "Enemigo" },
+];
+
 const GRID_MODES: { value: GridMode; label: string }[] = [
   { value: "completa", label: "Completa" },
   { value: "regiones", label: "Solo regiones" },
@@ -110,7 +117,6 @@ export default function ArenaModule() {
   const [labelMode, setLabelMode] = useState<LabelMode>("distancia");
   const [gridMode, setGridMode] = useState<GridMode>("completa");
   const [showBands, setShowBands] = useState(true);
-  const [showEnemy, setShowEnemy] = useState(true);
   const [reachType, setReachType] = useState<DamageTypeId | null>("a-distancia");
   const [pinned, setPinned] = useState<HexCoord | null>(null);
 
@@ -124,16 +130,32 @@ export default function ArenaModule() {
   // colocarla sea una decisión (§3)— y el NÚMERO DE JUGADORES se elige, así que
   // el bando entero se reconstruye al cambiarlo (`buildRoster`). Nada más de la
   // ficha existe todavía.
-  const [roster, setRoster] = useState<Roster>(() => buildRoster(1));
-  const [stored, setStored] = useState<Deployment>([]);
+  //
+  // Y hay DOS, uno por bando, desde que el presupuesto enemigo se decidió: la
+  // máquina trae lo mismo que la mesa (deployment.ts `buildRoster`), así que
+  // enfrente ya no hay un espejo de tu despliegue sino un bando con sus propias
+  // fichas y su propia colocación. El mando «Bando» dice cuál se está tocando.
+  const [rosters, setRosters] = useState<Record<Side, Roster>>(() => ({
+    propio: buildRoster(1, "propio"),
+    enemigo: buildRoster(1, "enemigo"),
+  }));
+  const [storedBySide, setStoredBySide] = useState<Record<Side, Deployment>>({
+    propio: [],
+    enemigo: [],
+  });
+  const [side, setSide] = useState<Side>("propio");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [refusal, setRefusal] = useState<string | null>(null);
 
-  const players = useMemo(() => new Set(roster.map((f) => f.owner)).size, [roster]);
+  const roster = rosters[side];
+  const players = useMemo(
+    () => new Set(rosters.propio.map((f) => f.owner)).size,
+    [rosters.propio],
+  );
 
   // La banda tiene que dar para el bando entero, así que el problema de medidas
   // depende de cuántas fichas hay: con tres jugadores son quince.
-  const problem = specProblem(spec, roster.length);
+  const problem = specProblem(spec, rosters.propio.length);
   const arena = useMemo(() => (problem ? null : buildArena(spec)), [spec, problem]);
 
   // Se DERIVA en vez de restablecerse desde un efecto, igual que el origen: al
@@ -141,18 +163,20 @@ export default function ArenaModule() {
   // deja de estar desplegada sin más. Si el tablero vuelve a crecer, vuelve —lo
   // que se guarda es la intención, y esto solo enseña lo que hoy es legal—. Al
   // bajar de jugadores pasa lo mismo con las fichas que ya no existen.
-  const deployment = useMemo<Deployment>(
-    () =>
+  const deployments = useMemo<Record<Side, Deployment>>(() => {
+    const legal = (s: Side) =>
       arena
-        ? stored.filter(
+        ? storedBySide[s].filter(
             (p) =>
               contains(arena, p.hex) &&
-              sideOf(spec, p.hex) === "propio" &&
-              roster.some((f) => f.id === p.figureId),
+              sideOf(spec, p.hex) === s &&
+              rosters[s].some((f) => f.id === p.figureId),
           )
-        : [],
-    [arena, spec, stored, roster],
-  );
+        : [];
+    return { propio: legal("propio"), enemigo: legal("enemigo") };
+  }, [arena, spec, storedBySide, rosters]);
+
+  const deployment = deployments[side];
 
   const selected = selectedId ? (roster.find((f) => f.id === selectedId) ?? null) : null;
   const selectedHex = selectedId ? hexOf(deployment, selectedId) : null;
@@ -160,13 +184,15 @@ export default function ArenaModule() {
   // El origen por defecto: el frente de tu propia banda, en la fila de en medio.
   // Es desde donde el §1.1 mide los tres alcances, así que el módulo abre
   // enseñando la afirmación del documento en vez de un tablero mudo.
+  // Sigue al bando que se está tocando: si estás colocando al enemigo, se mide
+  // desde su frente, porque la aproximación se mira desde quien la hace.
   const defaultOrigin = useMemo(
     () =>
       Hex.offsetToAxial({
-        col: frontColumn(spec, "propio"),
+        col: frontColumn(spec, side),
         row: Math.floor(spec.rows / 2),
       }),
-    [spec],
+    [spec, side],
   );
 
   // Con una ficha elegida y puesta, se mide DESDE ELLA: lo que interesa
@@ -184,74 +210,60 @@ export default function ArenaModule() {
 
   // La columna del frente enemigo, fila a fila: es contra ella contra la que se
   // mide el ritmo, porque es donde el rival puede estar esperando (§1.1).
-  const enemyFront = useMemo(
-    () =>
-      Array.from({ length: spec.rows }, (_, row) =>
-        Hex.offsetToAxial({ col: frontColumn(spec, "enemigo"), row }),
-      ),
-    [spec],
-  );
+  // Contra qué se mide el ritmo: contra las fichas de enfrente si hay alguna
+  // puesta, y contra su columna del frente si el bando está vacío. Lo segundo es
+  // lo que hacía este módulo cuando enfrente no había nadie; lo primero es mejor
+  // porque una ficha colocada al fondo de su banda está más lejos que su frente,
+  // y esa diferencia es justo la decisión del §3.
+  const targets = useMemo<HexCoord[]>(() => {
+    const other: Side = side === "propio" ? "enemigo" : "propio";
+    if (deployments[other].length) return deployments[other].map((p) => p.hex);
+    return Array.from({ length: spec.rows }, (_, row) =>
+      Hex.offsetToAxial({ col: frontColumn(spec, other), row }),
+    );
+  }, [deployments, side, spec]);
 
   const roundOf = useCallback(
     (figureId: string): number | null => {
       const hex = hexOf(deployment, figureId);
       const figure = roster.find((f) => f.id === figureId);
       if (!hex || !figure) return null;
-      const distance = Math.min(...enemyFront.map((h) => Hex.distance(hex, h)));
+      const distance = Math.min(...targets.map((h) => Hex.distance(hex, h)));
       return firstAttackRound(
         distance,
         DAMAGE_TYPES[figure.damage].range,
         movement[figure.damage],
       );
     },
-    [deployment, roster, enemyFront, movement],
+    [deployment, roster, targets, movement],
   );
 
   const pieces = useMemo<ArenaPiece[]>(() => {
     if (!arena) return [];
-    const describe = (id: string) => {
-      const f = roster.find((x) => x.id === id);
-      if (!f) return null;
-      const t = DAMAGE_TYPES[f.damage];
-      // Con más de un jugador el nombre solo se distingue por el dueño: hay tres
-      // fichas que se llaman «Héroe».
-      const name = players > 1 ? figureName(f) : f.label;
-      return { figure: f, icon: t.icon, text: `${name} · ${t.icon} ${t.label} ${t.range}` };
-    };
-
-    const own: ArenaPiece[] = [];
-    for (const p of deployment) {
-      const d = describe(p.figureId);
-      if (!d) continue;
-      own.push({
-        id: `propio-${p.figureId}`,
-        hex: p.hex,
-        side: "propio",
-        role: d.figure.role,
-        icon: d.icon,
-        label: d.text,
-        selected: selectedId === p.figureId,
-      });
+    const out: ArenaPiece[] = [];
+    for (const s of SIDES) {
+      for (const p of deployments[s]) {
+        const f = rosters[s].find((x) => x.id === p.figureId);
+        if (!f) continue;
+        const t = DAMAGE_TYPES[f.damage];
+        // Con más de un grupo el nombre solo se distingue por el dueño: hay tres
+        // fichas que se llaman «Héroe» en cada lado del campo.
+        const name = players > 1 ? figureName(f) : f.label;
+        out.push({
+          id: `${s}-${p.figureId}`,
+          hex: p.hex,
+          side: s,
+          role: f.role,
+          icon: t.icon,
+          label: `${s === "propio" ? "" : "Enemigo · "}${name} · ${t.icon} ${t.label} ${t.range}`,
+          // Solo se marca la elegida del bando que se está tocando: es la que va
+          // a moverse con el próximo clic.
+          selected: s === side && selectedId === p.figureId,
+        });
+      }
     }
-    if (!showEnemy) return own;
-
-    // Enfrente, el mismo bando reflejado: es con lo que se mide, y es la
-    // situación con la que el §1.1 calculó los alcances (dos frentes mirándose).
-    const foes: ArenaPiece[] = [];
-    for (const p of mirror(arena, deployment)) {
-      const d = describe(p.figureId);
-      if (!d) continue;
-      foes.push({
-        id: `enemigo-${p.figureId}`,
-        hex: p.hex,
-        side: "enemigo",
-        role: d.figure.role,
-        icon: d.icon,
-        label: `Enfrente · ${d.text}`,
-      });
-    }
-    return [...own, ...foes];
-  }, [arena, deployment, roster, players, selectedId, showEnemy]);
+    return out;
+  }, [arena, deployments, rosters, players, selectedId, side]);
 
   const regions = useMemo<ArenaRegion[]>(() => {
     if (!arena) return [];
@@ -279,13 +291,13 @@ export default function ArenaModule() {
       setRefusal(null);
       return;
     }
-    const why = placementProblem(arena, "propio", roster, deployment, selectedId, hex);
+    const why = placementProblem(arena, side, roster, deployment, selectedId, hex);
     if (why) {
       setRefusal(why);
       return;
     }
     const next = place(deployment, selectedId, hex);
-    setStored(next);
+    setStoredBySide((prev) => ({ ...prev, [side]: next }));
     setRefusal(null);
     // Y se pasa sola a la siguiente sin colocar: desplegar son cinco clics, no
     // cinco parejas de clics.
@@ -351,9 +363,14 @@ export default function ArenaModule() {
               <button
                 key={n}
                 className={buttonClass({ active: players === n })}
-                title={`${n} ${n === 1 ? "jugador" : "jugadores"} · ${n * FIGURES_PER_PLAYER} fichas por bando`}
+                title={`${n} ${n === 1 ? "jugador" : "jugadores"} · ${n * FIGURES_PER_PLAYER} fichas por bando, ${2 * n * FIGURES_PER_PLAYER} en el campo`}
                 onClick={() => {
-                  setRoster(buildRoster(n));
+                  // Los dos: la máquina trae lo mismo que la mesa (§2). Y se
+                  // vacía el despliegue enemigo porque sus fichas eran otras.
+                  setRosters({
+                    propio: buildRoster(n, "propio"),
+                    enemigo: buildRoster(n, "enemigo"),
+                  });
                   setSelectedId(null);
                   setRefusal(null);
                 }}
@@ -447,6 +464,26 @@ export default function ArenaModule() {
 
         <div
           className="flex flex-col gap-1"
+          title="Qué bando estás componiendo y desplegando. Los dos traen lo mismo —un héroe y hasta 4 unidades por jugador (§2)— y cada uno se coloca en su banda."
+        >
+          <span className={label}>Bando</span>
+          <SelectButton
+            value={side}
+            onChange={(e) => {
+              if (!e.value) return;
+              setSide(e.value as Side);
+              setSelectedId(null);
+              setRefusal(null);
+            }}
+            options={SIDE_TABS}
+            optionLabel="label"
+            optionValue="value"
+            allowEmpty={false}
+          />
+        </div>
+
+        <div
+          className="flex flex-col gap-1"
           title="En la referencia la rejilla NO está siempre: aparece solo sobre el área que la ficha activa puede pisar, y el resto del campo es ilustración limpia. «Completa» es la vista de trabajo."
         >
           <span className={label}>Rejilla</span>
@@ -476,13 +513,6 @@ export default function ArenaModule() {
           <label className="flex items-center gap-2 text-sm text-[var(--wiki-text)]">
             <InputSwitch checked={showBands} onChange={(e) => setShowBands(Boolean(e.value))} />
             Bandas
-          </label>
-          <label
-            className="flex items-center gap-2 text-sm text-[var(--wiki-text)]"
-            title="Pone enfrente tu mismo bando reflejado, para tener contra qué medir. No es un enemigo de verdad: el bando enemigo se compone aparte (§2)."
-          >
-            <InputSwitch checked={showEnemy} onChange={(e) => setShowEnemy(Boolean(e.value))} />
-            Bando enemigo
           </label>
           <label
             className="flex items-center gap-2 text-sm text-[var(--wiki-text)]"
@@ -538,6 +568,7 @@ export default function ArenaModule() {
 
           {/* --- El bando --- */}
           <ArenaRoster
+            side={side}
             roster={roster}
             deployment={deployment}
             selectedId={selectedId}
@@ -549,19 +580,22 @@ export default function ArenaModule() {
               setRefusal(null);
             }}
             onDamage={(id, damage) =>
-              setRoster((r) => r.map((f) => (f.id === id ? { ...f, damage } : f)))
+              setRosters((prev) => ({
+                ...prev,
+                [side]: prev[side].map((f) => (f.id === id ? { ...f, damage } : f)),
+              }))
             }
             onLift={(id) => {
-              setStored((d) => clear(d, id));
+              setStoredBySide((prev) => ({ ...prev, [side]: clear(prev[side], id) }));
               setRefusal(null);
             }}
             onAuto={() => {
-              setStored(autoDeploy(arena, roster, "propio"));
+              setStoredBySide((prev) => ({ ...prev, [side]: autoDeploy(arena, roster, side) }));
               setSelectedId(null);
               setRefusal(null);
             }}
             onEmpty={() => {
-              setStored([]);
+              setStoredBySide((prev) => ({ ...prev, [side]: [] }));
               setRefusal(null);
             }}
           />
@@ -600,16 +634,16 @@ export default function ArenaModule() {
                   </span>
                 </>
               )}
-              {deployment.length > 0 && (
+              {deployments.propio.length > 0 && (
                 <span className="arena__legend-item">
                   <span className="arena__swatch" data-kind="ficha-propia" />
-                  El bando ({deployment.length}) · ★ {players > 1 ? "los héroes" : "el héroe"}
+                  Tu bando ({deployments.propio.length}) · ★ {players > 1 ? "los héroes" : "el héroe"}
                 </span>
               )}
-              {showEnemy && deployment.length > 0 && (
+              {deployments.enemigo.length > 0 && (
                 <span className="arena__legend-item">
                   <span className="arena__swatch" data-kind="ficha-enemiga" />
-                  Enfrente, reflejadas
+                  El enemigo ({deployments.enemigo.length})
                 </span>
               )}
               {shownReach && (
@@ -630,7 +664,8 @@ export default function ArenaModule() {
             {selected ? (
               <>
                 <b className="text-[var(--wiki-text)]">{selected.label}</b> elegida: pulsa un
-                hexágono de tu banda para {selectedHex ? "moverla" : "colocarla"}. Vuelve a pulsar
+                hexágono de {side === "propio" ? "tu banda" : "la banda enemiga"} para{" "}
+                {selectedHex ? "moverla" : "colocarla"}. Vuelve a pulsar
                 su fila para soltarla y seguir midiendo.
               </>
             ) : (
@@ -663,12 +698,18 @@ export default function ArenaModule() {
             hay terreno.
           </li>
           <li>
-            <b className="text-[var(--wiki-text)]">El bando enemigo de verdad</b>: hoy enfrente hay
-            un reflejo del tuyo, que sirve para medir y para nada más. El §2 le da dos formas
-            —héroe enemigo con sus unidades, o criaturas sin héroe— con dos condiciones de victoria
-            distintas, pero antes hace falta una decisión que no está tomada:{" "}
-            <b className="text-[var(--wiki-text)]">cuántas fichas trae la máquina</b> contra uno,
-            dos o tres jugadores, y cuántos héroes enemigos (§2 y §8).
+            <b className="text-[var(--wiki-text)]">La segunda forma del bando enemigo</b>: enfrente
+            ya hay un bando de verdad —la máquina trae lo mismo que la mesa, un héroe y hasta 4
+            unidades por jugador (decidido el 28 de agosto)— pero el §2 le da{" "}
+            <b className="text-[var(--wiki-text)]">dos</b> formas, y la de{" "}
+            <b className="text-[var(--wiki-text)]">fauna u horda</b> —criaturas sin héroe— todavía
+            no está aquí. Cambia la condición de victoria, así que entra con ella.
+          </li>
+          <li>
+            <b className="text-[var(--wiki-text)]">Una línea del §6 que hay que corregir</b>: dice
+            «cae el héroe enemigo», en singular, y se escribió cuando enfrente había uno. Con el
+            espejo hay un héroe enemigo por jugador y la victoria pasa a ser simétrica —caen todos
+            sus héroes ↔ caen todos los tuyos—, que es justo por lo que se eligió.
           </li>
           <li>
             <b className="text-[var(--wiki-text)]">Iniciativa y turno</b>: hasta 30 fichas en una

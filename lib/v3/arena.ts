@@ -172,6 +172,23 @@ export function frontColumn(spec: ArenaSpec, side: Side): number {
 }
 
 /**
+ * Cuántos hexágonos tiene para retroceder el bando que espera: de su columna del
+ * frente al borde del tablero.
+ *
+ * Es `bandDepth - 1` y **no depende del tamaño del tablero**: con bandas de 2
+ * columnas es UN hexágono en los cuatro tamaños. Sale de que el §1 pega las
+ * bandas al borde —"es lo único que garantiza la distancia inicial"—, así que
+ * quien espera lo hace con el borde a la espalda.
+ *
+ * Vive aquí porque es geometría de la arena, y lo consume lib/v3/tempo.ts
+ * `chase`: sin este número el modelo del §1.2 le da campo infinito al arquero y
+ * concluye que no hay forma de alcanzarlo.
+ */
+export function retreatRoom(spec: ArenaSpec): number {
+  return spec.bandDepth - 1;
+}
+
+/**
  * Construye la arena. `spec` tiene que ser válida (`specProblem`); una medida
  * imposible es un error de programación, no una jugada ilegal, así que aquí sí
  * corta.

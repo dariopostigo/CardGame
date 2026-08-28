@@ -240,15 +240,15 @@ mismo día. Los once archivos están en `public/assets/v3/icons/races/`.
 
 | Raza | Archivo | Dibujo |
 |---|---|---|
-| 👤 Humanos | `humanos` | Gonfalón de dos picos con **sol de ocho rayos** |
+| 👤 Humanos | `humanos` | Gonfalón de dos picos con **sol de ocho rayos** — **rehecho el 28, ver abajo** |
 | ⛏️ Enanos | `enanos` | **Yunque** de perfil, nudo angular y remaches |
-| 💀 No-muertos | `no-muertos` | **Costillar** con dos costillas partidas y venda |
+| 💀 No-muertos | `no-muertos` | **Costillar** con dos costillas partidas y venda — **rehecho el 28, ver abajo** |
 | 🔥 Demonios infernales | `demonios-infernales` | **Par de cuernos**, el derecho partido, sello agrietado |
 | 🧝 Elfos | `elfos` | **Hoja** con nervio central entre dos hojas curvas |
 | 🧟 Orkos | `orkos` | **Mandíbula** con colmillo atado con cuerda |
 | 🧚 Feéricos | `feericos` | Cuatro **alas de insecto** caladas y dos espirales |
 | 🐉 Dracónidos | `draconidos` | **Cabeza de perfil** con cresta hacia atrás |
-| 🐀 Hombres rata | `hombres-rata` | **Vial** remendado con la cola enroscada |
+| 🐀 Hombres rata | `hombres-rata` | **Vial** remendado con la cola enroscada — **rehecho el 28, ver abajo** |
 | 🤖 Constructos | `constructos` | **Placa hexagonal** remachada con runa recta |
 | 🧜 Abisales | `abisales` | **Concha en espiral** con tentáculo y percebes |
 
@@ -259,6 +259,11 @@ mismo día. Los once archivos están en `public/assets/v3/icons/races/`.
 - **Ni 💀 ni 😈 se dibujan.** No-muertos es un costillar y Demonios un par de
   cuernos, así que la colisión triple del 💀 y la doble del 😈 **desaparecen sin
   tocar el catálogo** — no hacía falta renombrar ni la Característica ni la clase.
+
+  > **Esto segundo dejó de ser verdad al día siguiente.** El 28 de agosto
+  > No-muertos pasa a ser una calavera, así que **el 💀 vuelve a dibujarse** y la
+  > colisión triple está abierta otra vez; el 😈 sigue cerrado, porque Demonios
+  > no se toca. Ver el apartado siguiente.
 
 **Tres cosas medidas sobre los archivos**, y las tres son de producción:
 ninguno está recortado en el filo; el encuadre va **peor** que en la primera
@@ -311,6 +316,61 @@ que la carta le da a un emblema son **27–30px**, y la cuadrícula que sigue
 pendiente hay que mirarla ahí y no a 42: a 42 se juzga si la pieza cabe, a 27 si
 el motivo se lee. El fallo no era del número, era de haberlo leído como si el
 glifo llenara la pieza.
+
+### Tres emblemas se rehacen *(28 de agosto de 2026)*
+
+**Decisión de Dario mirando los once entregados.** No es un fallo de producción
+como los dos de arriba: es que tres dibujos no son los que quiere.
+
+| Raza | Era | Pasa a ser | Por qué |
+|---|---|---|---|
+| 👤 Humanos | Gonfalón con el sol dentro | **El sol solo**: ocho rayos rectos, disco remachado | La bandera no la quiere; el sol sí. Y a 27px el paño era la mancha y el sol el detalle interior — al revés de la regla 1 de §6 |
+| 💀 No-muertos | Costillar partido con venda | **Calavera rota**: sin mandíbula, con la sien partida y la venda cruzada | Es lo que pedía su eje *Motivos*. El costillar solo existía para esquivar el 💀 |
+| 🐀 Hombres rata | Vial remendado con la cola | **Cabeza de rata de frente**: dos orejas redondas —una mordida—, incisivos, y la cola subiendo por detrás | La cabeza es lo pedido; la cola se queda porque es el eje *Silueta* de la raza |
+
+Las otras ocho no se tocan. Los prompts corregidos, con la nota de qué cambió en
+cada uno, están en [`prompts/razas.md`](prompts/razas.md); **los tres archivos de
+`public/assets/v3/icons/races/` siguen siendo los viejos** hasta que se
+regeneren, así que ahora mismo la carta enseña el gonfalón, el costillar y el
+vial.
+
+**Lo que esto cuesta, y hay que escribirlo aquí porque este apartado lo daba por
+cerrado: el 💀 vuelve a dibujarse.** La colisión triple de arriba —raza,
+Característica *No-muerto*, clase *Nigromante*— se declaró resuelta «sin tocar el
+catálogo» precisamente porque el emblema no era una calavera. Ya lo es, así que
+**el pendiente está abierto otra vez y ahora son cuatro**, contando el ☠️ del
+grupo Veneno de §3, que es un cráneo con tibias:
+
+| Concepto | Estado |
+|---|---|
+| Raza No-muertos | **Decidido**: calavera **rota y sin mandíbula**. La única incompleta del juego, y eso sale de su eje *Silueta* |
+| Característica *No-muerto* (§3) | Sin dibujar. Le toca la calavera **entera**, lo contrario de la de raza |
+| Clase *Nigromante* ([`docs/v3/razas.md`](../../../docs/v3/razas.md)) | Sin dibujar. No debería ser una calavera a secas: es quien la maneja, no quien la es |
+| Grupo ☠️ Veneno, 3 papeles (§3) | Sin dibujar, y **es el que hay que mover**: es el único de los cuatro que no necesita un cráneo para decir lo que dice |
+
+Las tres filas de abajo se deciden en §3 y en `docs/v3/razas.md`, no aquí; lo que
+sí queda cerrado es que **el emblema de raza llega primero y se lleva la calavera
+rota**, y las otras tres se dibujan contra ella. Está en §7 como pendiente.
+
+Y dos cosas menores que salen del mismo retoque, las dos ya escritas en
+`prompts/razas.md`:
+
+- **Hay que quitar `face, portrait` del negativo** en los tres emblemas que son
+  una cabeza —No-muertos, Hombres rata y Dracónidos—. Con el costillar y el vial
+  no molestaba; con una cara sí, porque pelea contra el propio bloque. Lo que
+  sigue prohibido es `full human figure, humanoid body`, que es lo que de verdad
+  protegía la regla de «ninguno es un humanoide».
+- **La cuadrícula pendiente estrena tres parejas de riesgo**: 💀 No-muertos vs
+  🧟 Orkos (cráneo sin mandíbula contra mandíbula sola), 🐀 Hombres rata vs 🐉
+  Dracónidos (cabeza de frente contra cabeza de perfil) y 👤 Humanos vs 🤖
+  Constructos (los dos únicos simétricos del set: estrellado contra hexagonal).
+
+**Y la pregunta del «un solo metal» se decide con estos tres.** Las dos
+desviaciones medidas el 27 —la venda de `no-muertos` y la cola de
+`hombres-rata`— **siguen las dos dentro de sus dibujos nuevos**, y sus prompts
+ya llevan la línea en positivo que les faltaba («la venda es del mismo latón que
+el hueso»). Si vuelven a salir con un segundo tono con la frase puesta, lo que
+hay que decidir ya no es un prompt: es el rasgo 1 de §5.
 
 ## 5. La dirección elegida
 
@@ -504,6 +564,11 @@ sumarlos al revisarla): las 8 Habilidades y 2 Tipos de daño el 26 de agosto de
 Características**, que es donde estaba el grueso desde el principio, más la
 normalización de lo ya entregado. Por orden de lo que bloquea a lo que no:
 
+- **Regenerar tres emblemas** —👤 Humanos, 💀 No-muertos y 🐀 Hombres rata—,
+  cuyo dibujo cambió el 28 de agosto (§4). Los prompts están corregidos en
+  [`prompts/razas.md`](prompts/razas.md); los archivos en disco son los viejos, y
+  la carta enseña hoy el gonfalón, el costillar y el vial. Al entrar los nuevos
+  se borran los tres antiguos: el dibujo está descartado, no la ejecución.
 - **Quién dibuja el aro del medallón**, el archivo o el marco (§5, *lo que la
   elección cuesta*). **Bloquea la entrega de cualquier Característica**, que es
   la mayor parte de lo que falta. Se decide en
@@ -524,10 +589,24 @@ normalización de lo ya entregado. Por orden de lo que bloquea a lo que no:
   pedirle nada al generador, y conviene resolverla **antes** de las 41
   Características, no después — la receta que salga se aplica a las 47. Con los
   emblemas el margen se ha estrechado: hay glifos al 98 % del lienzo.
+- **Las cuatro calaveras del catálogo**, pendiente **reabierto el 28 de agosto**
+  (§4): el emblema de raza pasa a ser una calavera, y con él el 💀 vuelve a estar
+  tres veces —cuatro con el ☠️ del grupo Veneno de §3—. La parte de raza está
+  decidida (calavera **rota y sin mandíbula**); lo que falta es qué hacen la
+  Característica *No-muerto*, la clase *Nigromante* y el grupo Veneno, y de los
+  tres **el que hay que mover es Veneno**, que es el único que no necesita un
+  cráneo. Se decide en §3 y en [`docs/v3/razas.md`](../../../docs/v3/razas.md),
+  pero **el emblema llega antes** y las otras tres se dibujan contra él.
 - **Si se acepta la excepción al «un solo metal»** de dos emblemas: la venda de
   `no-muertos` en hueso pálido y la cola de `hombres-rata` en cobre rosado (§4).
   Es la primera grieta en el rasgo 1 de §5, y decidirla marca si el resto del set
   puede meter un segundo tono o no.
+
+  **Y desde el 28 de agosto se contesta sola con la regeneración de los tres.**
+  La venda sigue en la calavera nueva y la cola sigue en la cabeza de rata nueva,
+  y los dos prompts ya llevan la línea en positivo que les faltaba. Si vuelven a
+  salir con un segundo tono teniéndola, la respuesta es que el rasgo 1 no se
+  sostiene con prompt.
 
   **Y desde el 27 de agosto tiene un caso de uso, que es lo que le faltaba.**
   [`card-concept/banners.md`](../card-concept/banners.md) propone teñir el

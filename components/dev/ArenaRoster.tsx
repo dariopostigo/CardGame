@@ -25,9 +25,12 @@
 import * as Hex from "@/lib/v3/hex";
 import { DAMAGE_TYPES, DAMAGE_TYPE_IDS, type DamageTypeId } from "@/lib/v3/damage";
 import { figureName, hexOf, type Deployment, type Roster } from "@/lib/v3/deployment";
+import type { Side } from "@/lib/v3/arena";
 import Button, { buttonClass } from "@/components/ui/Button";
 
 export type ArenaRosterProps = {
+  /** Qué bando se está tocando. Los dos se componen igual (§2). */
+  side: Side;
   roster: Roster;
   deployment: Deployment;
   selectedId: string | null;
@@ -44,6 +47,7 @@ export type ArenaRosterProps = {
 };
 
 export default function ArenaRoster({
+  side,
   roster,
   deployment,
   selectedId,
@@ -60,6 +64,7 @@ export default function ArenaRoster({
 
   // Las fichas se agrupan por jugador porque el bando es de uno a tres (§2), y
   // con un solo jugador el grupo no se rotula: no hay nada que distinguir.
+  const own = side === "propio";
   const owners = [...new Set(roster.map((f) => f.owner))];
   const groups = owners.map((owner) => ({
     owner,
@@ -71,7 +76,7 @@ export default function ArenaRoster({
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
           <div className="font-semibold text-[var(--wiki-text)]">
-            El bando · {placed} de {roster.length} desplegadas
+            {own ? "Tu bando" : "El bando enemigo"} · {placed} de {roster.length} desplegadas
           </div>
           <p className="mt-0.5 text-xs text-[var(--wiki-muted)]">
             Elige una ficha y pulsa un hexágono de la banda. Sin ninguna elegida, el tablero vuelve
@@ -96,7 +101,7 @@ export default function ArenaRoster({
         <div key={owner} className={groups.length > 1 ? "mb-3 last:mb-0" : undefined}>
           {groups.length > 1 && (
             <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]">
-              Jugador {owner}
+              {own ? "Jugador" : "Grupo enemigo"} {owner}
             </div>
           )}
           <ul className="grid gap-1.5">

@@ -19,6 +19,17 @@
 > fuera del latón, contra el rasgo 1 de §5, y está sin decidir si se acepta. Si un
 > emblema se regenera, el prompt se corrige aquí.
 
+> **Retocado el 28 de agosto de 2026: tres emblemas se rehacen**, por decisión de
+> Dario sobre lo entregado. **👤 Humanos** deja de ser una bandera y se queda solo
+> con el sol, que era lo que le gustaba de aquel dibujo; **💀 No-muertos** pasa a
+> ser una **calavera**; **🐀 Hombres rata** pasa a ser una **cabeza de rata**. Los
+> tres bloques de abajo ya están corregidos y llevan su nota de qué cambió; los
+> tres archivos de `public/assets/v3/icons/races/` **siguen siendo los viejos**
+> hasta que se regeneren. Las otras ocho no se tocan. Y esto **reabre un
+> pendiente que el 27 se daba por cerrado**: con la calavera dibujada, la colisión
+> triple del 💀 vuelve a estar viva y ya no se resuelve «sin tocar el catálogo»
+> —ver *Las cuatro calaveras*, abajo—.
+
 ## Lo que condiciona los once
 
 Dos restricciones, y las dos salen de decisiones ya cerradas. Mandan sobre
@@ -33,13 +44,33 @@ cualquier idea de emblema:
   en la misma cuadrícula. Por eso **ninguno es una figura humanoide** — lo serían
   siete de las once, y a ese tamaño no se distinguirían entre sí.
 
-Y de paso caen los dos pendientes que §4 dejaba anotados, los dos **por dibujo y
-no por catálogo**:
+De los dos pendientes que §4 dejaba anotados, y que el 27 de agosto se dieron los
+dos por cerrados, **hoy solo cae uno entero**:
 
-| Pendiente de §4 | Cómo se resuelve aquí |
+| Pendiente de §4 | Cómo queda |
 |---|---|
-| 👤 Humanos es una silueta genérica: «persona» no dice Humanos | Deja de ser una figura. Pasa a ser **su heráldica** —gonfalón y sol—, que es lo único de sus ocho ejes que no comparte con ninguna otra raza |
-| 💀 se usa tres veces (raza, Característica *No-muerto*, clase *Nigromante*) y 😈 dos | **Ninguno de los dos se dibuja**: No-muertos es un **costillar**, no una calavera; Demonios son **cuernos partidos**, no una llama ni una cara. La colisión desaparece sin tocar el catálogo |
+| 👤 Humanos es una silueta genérica: «persona» no dice Humanos | **Cerrado.** Deja de ser una figura y pasa a ser **su heráldica**, que es lo único de sus ocho ejes que no comparte con ninguna otra raza. Desde el 28 de agosto es **el sol solo**, sin gonfalón: el paño era el envase, no el símbolo |
+| 💀 se usa tres veces (raza, Característica *No-muerto*, clase *Nigromante*) y 😈 dos | **Cerrado el 😈, abierto el 💀.** Demonios son **cuernos partidos**, no una llama ni una cara, y ahí la colisión desaparece sola. Pero No-muertos **sí es una calavera** desde el 28 de agosto, así que el 💀 vuelve a estar tres veces —cuatro contando el ☠️ del grupo Veneno de §3— y hay que separarlas por dibujo |
+
+### Las cuatro calaveras
+
+Con el 💀 dibujado, el set tiene **cuatro conceptos con cráneo y solo uno hecho**.
+No los puede separar el color —no hay— ni el envase —el medallón solo distingue
+Característica de Habilidad, y un emblema de raza no lleva ninguno—, así que los
+separa la silueta y nada más:
+
+| Concepto | Dónde vive | Qué lo separa |
+|---|---|---|
+| **Raza No-muertos** | Emblema, `races/no-muertos` | **Rota y sin mandíbula**, con venda. Es la única calavera incompleta del juego, y eso no es un adorno: sale de su eje *Silueta*, «siempre falta algo» |
+| **Característica *No-muerto*** | Raíl de la carta, con medallón | Sin dibujar. Le toca la calavera **entera**, con su mandíbula, que es justo lo contrario de la de raza |
+| **Clase *Nigromante*** | [`docs/v3/razas.md`](../../../../docs/v3/razas.md) | Sin dibujar. No debería ser una calavera a secas: la clase es **quien la maneja**, no quien la es |
+| **Grupo ☠️ Veneno**, sus tres papeles (`icons.md` §3) | Raíl de la carta, con medallón | Sin dibujar, y es **el que hay que mover**. Un cráneo con tibias cruzadas a 27 px es la misma mancha que los otros tres, y este es el único de los cuatro que no necesita un cráneo para decir lo que dice |
+
+**Aquí solo se cierra la parte de raza.** Las otras tres filas son catálogo de
+`icons.md` §3 y de `docs/v3/razas.md`, y se deciden allí; queda apuntado como
+pendiente en §4 y §7. Lo que sí manda este documento es que el emblema de raza
+llega primero y se lleva la calavera rota, así que las otras tres se dibujan
+**contra** ella.
 
 ## Cómo se usa
 
@@ -104,10 +135,27 @@ Acero y heráldica; gente corriente de castillo y campo cultivado, oficio milita
 y estandartes.
 
 ```
-EMBLEMA: un gonfalón heráldico colgado de su asta —paño rectangular acabado en
-dos picos abajo— con un SOL de ocho rayos rectos en el centro. La tela cae
-recta, con dos pliegues marcados. Remaches visibles en el asta.
+EMBLEMA: un SOL HERÁLDICO de ocho rayos rectos y puntiagudos que salen de un
+DISCO central macizo. Los rayos son anchos en la base y acaban en punta, todos
+del mismo largo, y ese largo es como mínimo el radio del disco. Alrededor del
+borde del disco, una hilera de REMACHES gruesos; por dentro el disco va liso.
+Forjado como una pieza de armadura, no dibujado como un sol de cielo.
+SIN BANDERA, SIN ASTA Y SIN TELA. SIN CARA DENTRO DEL SOL.
 ```
+
+> **Cambió el 28 de agosto de 2026**: era un gonfalón con el sol dentro y ahora
+> es el sol solo. No se pierde el argumento —la heráldica sigue siendo lo único
+> de sus ocho ejes que no comparte con nadie—, se pierde el envase: a 27 px el
+> paño era la mancha grande y el sol el detalle interior, o sea justo al revés de
+> la regla 1 de §6. Los remaches son suyos, del eje *Motivos* («heráldica simple
+> y legible, remaches visibles»), y son lo que impide que el sol salga celeste en
+> vez de forjado.
+>
+> **Vigilar la pareja nueva con 🤖 Constructos**, que son ya los dos únicos
+> emblemas simétricos del set. Los separa que uno es **estrellado** y el otro **de
+> lados planos**, y por eso el prompt fija el largo mínimo de los rayos: si el sol
+> vuelve con rayos cortos y romos, se parecen, y lo que se corrige es el sol
+> —rayos más largos—, nunca el hexágono.
 
 ### ⛏️ Enanos
 
@@ -124,10 +172,28 @@ flanco. Proporción de trapecio: mucho más ancho que alto.
 Hueso, verdín y cripta; contorno roto al que siempre le falta algo.
 
 ```
-EMBLEMA: una CAJA TORÁCICA de frente, costillas curvas a los lados de la
-columna, con DOS COSTILLAS PARTIDAS en un solo lado para que el contorno quede
-asimétrico e incompleto. Una venda suelta cruza por detrás. SIN CALAVERA.
+EMBLEMA: una CALAVERA DE FRENTE, solo el cráneo, SIN LA MANDÍBULA INFERIOR: las
+cuencas de los ojos hundidas y profundas, la fosa nasal marcada, la fila de
+dientes superiores apenas insinuada. Le FALTA UN TROZO DE HUESO en la sien de un
+SOLO lado, con el borde partido y astillado, para que el contorno quede
+asimétrico e incompleto. Una VENDA ancha cruza la frente en diagonal y cae
+suelta por el lado contrario al roto. La venda es del MISMO LATÓN que el hueso:
+un solo metal en toda la pieza, sin hueso pálido ni tela de otro tono. Silueta
+ancha y redonda arriba, estrechándose abajo. SIN TIBIAS CRUZADAS.
 ```
+
+> **Cambió el 28 de agosto de 2026**: era un costillar, y el costillar existía
+> para esquivar el 💀. Ahora es la calavera que su eje *Motivos* pedía desde el
+> principio, y lo que la hace **suya** —y la separa de las otras tres calaveras
+> del juego, ver *Las cuatro calaveras*— es que **está rota**: sin mandíbula y con
+> la sien partida. Eso no es decoración, es su eje *Silueta* entero: «siempre
+> falta algo».
+>
+> Dos líneas del prompt están ahí a propósito y no se quitan. **«Sin tibias
+> cruzadas»** es lo único que la separa del ☠️ del grupo Veneno de §3, que todavía
+> no está dibujado. Y **«la venda es del mismo latón»** es la corrección de la
+> primera tanda: la venda salió en hueso pálido, fuera del monocromo, porque el
+> material del objeto tira más que la regla del set y hay que decirlo en positivo.
 
 ### 🔥 Demonios infernales
 
@@ -189,10 +255,28 @@ imponente y severo: nada de hocico amable ni ojo grande y expresivo.
 Marrón enfermo y ácido líquido; baja, encorvada, y la cola cierra la lectura.
 
 ```
-EMBLEMA: un VIAL de cuello estrecho, tapón de corcho, con una COLA DE RATA larga
-y desnuda enroscada dos vueltas alrededor del cuerpo del vial y la punta saliendo
-por un lado. El vial va abollado y remendado con un aro de metal desparejado.
+EMBLEMA: una CABEZA DE RATA DE FRENTE, animal y no humanoide. DOS OREJAS
+GRANDES Y REDONDAS, muy separadas, que son lo más ancho de la pieza; la oreja
+de la derecha va MORDIDA, con una muesca abierta en el borde. Hocico estrecho
+que se adelanta hacia el espectador, ojos pequeños y hundidos, y DOS INCISIVOS
+LARGOS asomando por debajo del hocico. Una COLA DESNUDA Y ANILLADA sube por
+detrás de la cabeza y se curva sobre uno de los lados; la cola es del MISMO
+LATÓN que la cabeza, un solo metal en toda la pieza, nada de cobre ni de rosado.
+Solo la cabeza: SIN CUERPO Y SIN HOMBROS.
 ```
+
+> **Cambió el 28 de agosto de 2026**: era un vial remendado con la cola
+> enroscada. La cabeza es lo que pidió Dario; **la cola se queda** porque es el
+> eje *Silueta* de la raza —«la cola cierra la lectura, y es lo que la distingue
+> de un orko pequeño»—, y si al verla sobra, se borran sus dos frases y el resto
+> del bloque sigue en pie.
+>
+> Va **de frente** a propósito: 🐉 Dracónidos es la única cabeza de perfil del
+> set, y de frente contra de perfil no compiten ni a 27 px. Lo que las separa de
+> verdad son **las orejas**, que es la mancha ancha que ninguna otra cabeza del
+> juego tiene —tampoco la tendrá 🐺 *Bestia* de §3, cuya oreja es triangular—. La
+> línea del latón es la corrección de la primera tanda, donde la cola salió en
+> cobre rosado.
 
 ### 🤖 Constructos
 
@@ -244,19 +328,32 @@ razas: **ni `asymmetrical` ni `broken`**. Cuatro emblemas —No-muertos, Demonio
 Orkos, Feéricos— **piden** asimetría o rotura, y prohibirla en bloque los rompe.
 Lo que se pide en positivo va en su bloque.
 
+Y desde el 28 de agosto de 2026, **una retirada por bloque y no general**: en los
+tres emblemas que son una cabeza —💀 No-muertos, 🐀 Hombres rata y 🐉
+Dracónidos— hay que **quitar `face, portrait` del negativo**. Ahí el glifo *es*
+una cara, y prohibirla pelea contra el propio bloque; con el costillar y el vial
+no pasaba, y por eso no se había visto. Lo que sigue prohibido en los tres —y es
+lo que de verdad protegía esa línea— es `full human figure, standing character,
+humanoid body`: ninguno de los once es un humanoide, y una cabeza animal o de
+dracónido no lo es.
+
 ---
 
 ## Al terminar
 
 **Primero los once juntos, que es lo único que no se juzga de uno en uno.**
 Montados en una cuadrícula **a 42 px** y mirados a la vez: es el requisito de §4
-y no se comprueba con el archivo a tamaño completo. Dos parejas son las que
-vigilar, porque comparten motivo de cuerno o de ala:
+y no se comprueba con el archivo a tamaño completo. Las parejas que vigilar eran
+dos, por motivo compartido de cuerno o de ala; **con el retoque del 28 de agosto
+son cinco**, y tres de ellas las estrena ese retoque:
 
 | Pareja de riesgo | Qué las separa |
 |---|---|
 | 🔥 Demonios vs 🐉 Dracónidos | Demonios es **solo el par de cuernos**, curvos hacia arriba y uno partido, sin cabeza. Dracónidos es **una cabeza de perfil** con hocico: hay masa y dirección, no dos puntas |
 | 🧚 Feéricos vs 🐉 Dracónidos | Feéricos es **ala de insecto**, retícula de nervaduras y contorno recortado. En Dracónidos no se dibuja ninguna ala — su ampliación es la cresta |
+| 💀 No-muertos vs 🧟 Orkos *(nueva)* | Las dos son hueso con dientes. No-muertos es el **cráneo sin mandíbula**: alto, redondo arriba, con dos cuencas negras. Orkos es **solo la mandíbula**: baja, ancha, con los colmillos apuntando hacia arriba y la cuerda. Una es la mitad que a la otra le falta, y por eso juntas se leen — pero hay que mirarlas juntas |
+| 🐀 Hombres rata vs 🐉 Dracónidos *(nueva)* | Las dos son ahora una cabeza. Hombres rata va **de frente y con dos orejas redondas** que son lo más ancho de la pieza; Dracónidos va **de perfil**, sin orejas, y su ancho lo pone la cresta hacia atrás |
+| 👤 Humanos vs 🤖 Constructos *(nueva)* | Los dos únicos simétricos del set. Humanos es **estrellado**, de puntas largas; Constructos es **de lados planos**, un hexágono. Si el sol vuelve con rayos cortos, la que se corrige es Humanos |
 
 **Y la cuadrícula sigue sin montarse.** Los once están entregados y juzgados de
 uno en uno, que es exactamente lo que §4 decía que no bastaba. Al mirarlos a 42
@@ -288,3 +385,16 @@ más que la regla del set. Si se decide mantener el monocromo estricto, esos dos
 prompts necesitan la línea en positivo —«la venda es del mismo latón que el
 hueso», «la cola es del mismo latón que el vial»—, no una prohibición en el
 negativo.
+
+> **Esas dos líneas ya están escritas** en sus bloques desde el 28 de agosto, y
+> **caen en la misma pieza que se rehace**: la venda sigue en la calavera y la
+> cola sigue en la cabeza de rata, así que la regeneración de los tres emblemas
+> es también la prueba de si la línea en positivo aguanta el monocromo. Si vuelve
+> a salir un segundo tono con la frase puesta, entonces lo que hay que decidir ya
+> no es un prompt sino el rasgo 1 de §5 — que es exactamente la pregunta abierta
+> de `icons.md` §7.
+
+**Y hay tres archivos viejos que borrar cuando entren los nuevos.**
+`humanos.png`, `no-muertos.png` y `hombres-rata.png` de
+`public/assets/v3/icons/races/` son el gonfalón, el costillar y el vial: no valen
+como respaldo de nada, porque el dibujo está descartado, no la ejecución.

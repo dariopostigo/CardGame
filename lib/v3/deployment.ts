@@ -44,7 +44,13 @@ export type FigureRole = "heroe" | "unidad";
 
 export type Figure = {
   readonly id: string;
-  /** Qué jugador la trae, empezando en 1. El bando es de uno a tres (§2). */
+  /** De qué bando es. Los dos se construyen igual (ver `buildRoster`). */
+  readonly side: Side;
+  /**
+   * Qué jugador la trae, empezando en 1. El bando es de uno a tres (§2). En el
+   * bando enemigo no hay jugadores: es el número de GRUPO, y hay uno por
+   * jugador porque la máquina trae lo mismo que la mesa.
+   */
   readonly owner: number;
   readonly role: FigureRole;
   /** Cómo se llama en la pantalla mientras no haya catálogo. */
@@ -54,9 +60,13 @@ export type Figure = {
 
 export type Roster = readonly Figure[];
 
-/** Cómo se nombra una ficha cuando hay más de un jugador en la mesa. */
+/**
+ * Cómo se nombra una ficha cuando hay más de un grupo en su bando: J para el
+ * jugador, E para el enemigo. Sin esto hay tres fichas que se llaman «Héroe» en
+ * cada lado del campo.
+ */
 export function figureName(figure: Figure): string {
-  return `${figure.label} (J${figure.owner})`;
+  return `${figure.label} (${figure.side === "propio" ? "J" : "E"}${figure.owner})`;
 }
 
 /**
@@ -78,15 +88,35 @@ const PLAYER_DAMAGE: readonly DamageTypeId[] = [
 ];
 
 /**
- * El bando de `players` jugadores, cinco fichas cada uno. La composición se
- * puede cambiar en la pantalla, así que esto es solo por dónde abre.
+ * El bando de `players` grupos, cinco fichas cada uno. La composición se puede
+ * cambiar en la pantalla, así que esto es solo por dónde abre.
+ *
+ * LA MISMA FUNCIÓN CONSTRUYE LOS DOS BANDOS, y eso es una decisión de diseño,
+ * no un atajo: **la máquina trae lo mismo que la mesa** —un héroe y hasta cuatro
+ * unidades por jugador— *(decidido por Dario el 28 de agosto de 2026)*. Cierra
+ * el presupuesto que el §8 dejaba abierto y era su único bloqueo para poner un
+ * bando enemigo de verdad en el tablero.
+ *
+ * Se eligió el espejo entre tres, y por lo que resuelve: es la única forma en la
+ * que la victoria se lee igual por los dos lados —caen todos sus héroes ↔ caen
+ * todos los tuyos (§6)—, así que mata la asimetría que el propio §8 señalaba
+ * (con un solo héroe enemigo, tú ganas tumbando uno y él tiene que tumbar tres).
+ *
+ * > **Lo que arrastra:** el §6 dice "cae el héroe enemigo" en singular, escrito
+ * > cuando enfrente había uno. Con el espejo hay un héroe enemigo por jugador y
+ * > esa línea hay que corregirla en el documento.
+ *
+ * @param {Side} side - De qué lado. Solo cambia los ids y cómo se nombra: la
+ *   composición es idéntica, que es justo la decisión.
  */
-export function buildRoster(players: number): Roster {
+export function buildRoster(players: number, side: Side = "propio"): Roster {
   const out: Figure[] = [];
+  const prefix = side === "propio" ? "j" : "e";
   for (let p = 1; p <= players; p++) {
     PLAYER_DAMAGE.forEach((damage, i) => {
       out.push({
-        id: `j${p}-${i === 0 ? "heroe" : `unidad-${i}`}`,
+        id: `${prefix}${p}-${i === 0 ? "heroe" : `unidad-${i}`}`,
+        side,
         owner: p,
         role: i === 0 ? "heroe" : "unidad",
         label: i === 0 ? "Héroe" : `Unidad ${i}`,
@@ -222,15 +252,10 @@ export function autoDeploy(arena: Arena, roster: Roster, side: Side): Deployment
   return out;
 }
 
-/**
- * El mismo despliegue reflejado en el otro lado del tablero, para tener enfrente
- * un bando con el que medir. Se refleja la COLUMNA y la fila se queda: así las
- * dos líneas de frente se miran de igual a igual, que es la situación con la que
- * el §1.1 calculó los alcances.
- */
-export function mirror(arena: Arena, deployment: Deployment): Deployment {
-  return deployment.map(({ figureId, hex }) => {
-    const { col, row } = Hex.axialToOffset(hex);
-    return { figureId, hex: Hex.offsetToAxial({ col: arena.spec.cols - 1 - col, row }) };
-  });
-}
+// Aquí vivía `mirror`, que reflejaba TU despliegue al otro lado para tener algo
+// enfrente con lo que medir. Se retira el 28 de agosto de 2026 y no por
+// limpieza: con el presupuesto del bando enemigo decidido, enfrente hay un bando
+// de verdad con su propio roster y su propio despliegue, así que el espejo dejó
+// de ser una muleta y pasó a ser código muerto. Y `autoDeploy` lo devuelve
+// gratis cuando las dos composiciones coinciden: el algoritmo es simétrico
+// —mismas filas, columna del frente de cada lado—, así que el espejo sale solo.
