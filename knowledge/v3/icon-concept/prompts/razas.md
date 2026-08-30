@@ -23,12 +23,19 @@
 > Dario sobre lo entregado. **👤 Humanos** deja de ser una bandera y se queda solo
 > con el sol, que era lo que le gustaba de aquel dibujo; **💀 No-muertos** pasa a
 > ser una **calavera**; **🐀 Hombres rata** pasa a ser una **cabeza de rata**. Los
-> tres bloques de abajo ya están corregidos y llevan su nota de qué cambió; los
-> tres archivos de `public/assets/v3/icons/races/` **siguen siendo los viejos**
-> hasta que se regeneren. Las otras ocho no se tocan. Y esto **reabre un
-> pendiente que el 27 se daba por cerrado**: con la calavera dibujada, la colisión
-> triple del 💀 vuelve a estar viva y ya no se resuelve «sin tocar el catálogo»
-> —ver *Las cuatro calaveras*, abajo—.
+> tres bloques de abajo ya están corregidos y llevan su nota de qué cambió. Las
+> otras ocho no se tocan. Y esto **reabre un pendiente que el 27 se daba por
+> cerrado**: con la calavera dibujada, la colisión triple del 💀 vuelve a estar
+> viva y ya no se resuelve «sin tocar el catálogo» —ver *Las cuatro calaveras*,
+> abajo—.
+
+> **Y los tres entraron el 29 de agosto de 2026, tal como los pedían estos
+> bloques**: el sol solo, la calavera rota sin mandíbula con la venda cruzada y
+> la cabeza de rata de frente con una oreja mordida y la cola por detrás. Están
+> en `public/assets/v3/icons/races/` y **los tres viejos se guardan** en
+> `icons/races/old/`. Ningún prompt de abajo hay que corregirlo por lo entregado:
+> los tres salieron a la primera, y de paso cerraron la pregunta del «un solo
+> metal» a favor de la línea en positivo —ver el final de este documento—.
 
 ## Lo que condiciona los once
 
@@ -387,14 +394,23 @@ hueso», «la cola es del mismo latón que el vial»—, no una prohibición en 
 negativo.
 
 > **Esas dos líneas ya están escritas** en sus bloques desde el 28 de agosto, y
-> **caen en la misma pieza que se rehace**: la venda sigue en la calavera y la
+> **cayeron en la misma pieza que se rehizo**: la venda sigue en la calavera y la
 > cola sigue en la cabeza de rata, así que la regeneración de los tres emblemas
-> es también la prueba de si la línea en positivo aguanta el monocromo. Si vuelve
-> a salir un segundo tono con la frase puesta, entonces lo que hay que decidir ya
-> no es un prompt sino el rasgo 1 de §5 — que es exactamente la pregunta abierta
-> de `icons.md` §7.
+> fue también la prueba de si la línea en positivo aguanta el monocromo.
+>
+> **La pasó, el 29 de agosto.** Midiendo qué proporción del glifo se aparta del
+> latón, la venda baja del 31 % al 5 % y la cola del 56 % al 16 %: la calavera
+> nueva es el emblema más monocromo de los once y la rata entra en la banda de
+> los ocho que no se tocaron (13–41 %). Así que el rasgo 1 de §5 **no hay que
+> tocarlo** — faltaba la frase, no sobraba la regla. Es la respuesta a la pregunta
+> abierta de `icons.md` §7.
 
-**Y hay tres archivos viejos que borrar cuando entren los nuevos.**
-`humanos.png`, `no-muertos.png` y `hombres-rata.png` de
-`public/assets/v3/icons/races/` son el gonfalón, el costillar y el vial: no valen
-como respaldo de nada, porque el dibujo está descartado, no la ejecución.
+**Y los tres archivos viejos no se borran, se apartan.** Este documento pedía
+borrarlos —«no valen como respaldo de nada, porque el dibujo está descartado, no
+la ejecución»— y el 29 de agosto Dario decidió lo contrario: `humanos.png`,
+`no-muertos.png` y `hombres-rata.png` con el gonfalón, el costillar y el vial
+viven en `public/assets/v3/icons/races/old/`. El motivo no es el respaldo, que
+efectivamente no sirve: es tener a la vista **bocetos distintos del mismo
+emblema**, que es lo único que este set tiene de eso — los otros ocho se
+generaron una vez y no hay con qué compararlos. La carpeta no la sirve el juego:
+nada la referencia y no entra en las cuentas de peso de `icons/`.

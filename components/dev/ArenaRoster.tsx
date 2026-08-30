@@ -36,6 +36,12 @@ export type ArenaRosterProps = {
   selectedId: string | null;
   /** En qué ronda pega esa ficha desde donde está, o null si no está puesta. */
   roundOf: (figureId: string) => number | null;
+  /**
+   * A cuántos hexágonos llega y a cuántos llegaría con el campo vacío, o null si
+   * no toca enseñarlo. La pareja es el dato, no el primer número: la diferencia
+   * es lo que cobra la pantalla del §5.
+   */
+  reachOf?: (figureId: string) => { reach: number; open: number } | null;
   onSelect: (figureId: string | null) => void;
   onDamage: (figureId: string, damage: DamageTypeId) => void;
   onLift: (figureId: string) => void;
@@ -52,6 +58,7 @@ export default function ArenaRoster({
   deployment,
   selectedId,
   roundOf,
+  reachOf,
   onSelect,
   onDamage,
   onLift,
@@ -109,6 +116,7 @@ export default function ArenaRoster({
               const hex = hexOf(deployment, figure.id);
               const cell = hex ? Hex.axialToOffset(hex) : null;
               const round = roundOf(figure.id);
+              const reach = reachOf?.(figure.id) ?? null;
               const isSelected = selectedId === figure.id;
               return (
                 <li
@@ -153,10 +161,29 @@ export default function ArenaRoster({
                   </span>
 
                   <span className="ml-auto flex items-center gap-2 text-xs text-[var(--wiki-muted)]">
-                    {round !== null && (
-                      <span title="Desde donde está, contra el frente enemigo, con el 👢 Movimiento de su tipo de daño.">
-                        pega en la ronda <b className="text-[var(--wiki-text)]">{round}</b>
+                    {reach ? (
+                      <span
+                        className={reach.reach === 0 ? "text-[var(--wiki-danger)]" : undefined}
+                        title="A cuántos hexágonos llega andando sin atravesar a nadie, y a cuántos llegaría con el campo vacío. La diferencia la cobran los cuerpos que tiene alrededor (§5)."
+                      >
+                        {reach.reach === 0 ? (
+                          <>
+                            <i className="pi pi-ban mr-1" />
+                            sin salida
+                          </>
+                        ) : (
+                          <>
+                            alcanza <b className="text-[var(--wiki-text)]">{reach.reach}</b> de{" "}
+                            {reach.open}
+                          </>
+                        )}
                       </span>
+                    ) : (
+                      round !== null && (
+                        <span title="Desde donde está, contra el frente enemigo, con el 👢 Movimiento de su tipo de daño.">
+                          pega en la ronda <b className="text-[var(--wiki-text)]">{round}</b>
+                        </span>
+                      )
                     )}
                     {cell && (
                       <button

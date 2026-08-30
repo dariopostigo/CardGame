@@ -176,10 +176,17 @@
     stroke: $arena-side-enemy;
   }
 
-  // El alcance, en oro claro y algo más gordo: de las tres regiones es la que
-  // cambia al pulsar, así que es la que se está mirando.
+  // El alcance, en oro claro y algo más gordo: de las regiones es la que cambia
+  // al pulsar, así que es la que se está mirando.
   &[data-kind="alcance"] line {
     stroke: $arena-reach;
+    stroke-width: 3;
+  }
+
+  // A dónde puede ir. Va con el alcance en pantalla —una ficha mueve y ataca en
+  // el mismo turno (§5)— así que tiene que separarse de él a la primera ojeada.
+  &[data-kind="movimiento"] line {
+    stroke: $arena-move;
     stroke-width: 3;
   }
 }
@@ -350,6 +357,84 @@
   user-select: none;
 }
 
+// --- La lista de turnos (§4) -----------------------------------------------
+
+// Hasta 30 entradas con tres jugadores, así que el trabajo de este bloque es que
+// se pueda encontrar la tuya sin leerla entera: dos columnas cuando cabe, un
+// filete del color de tu bando en cada fila, y la que está jugando marcada.
+//
+// El color viene de los mismos dos tonos que las bandas y los aros de las
+// fichas: la lista y el tablero tienen que decir "esta es mía" con lo mismo.
+.arena__turnlist {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.15rem 0.75rem;
+  max-height: 16rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media (min-width: 48rem) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.arena__turn {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.1rem 0.35rem;
+  border-left: 3px solid transparent;
+  border-radius: radius("xs");
+  font-size: 0.78rem;
+  color: skin("muted");
+
+  &[data-side="propio"] {
+    border-left-color: $arena-side-own;
+  }
+
+  &[data-side="enemigo"] {
+    border-left-color: $arena-side-enemy;
+  }
+
+  // La que ya jugó se apaga: lo que queda por delante es lo que importa.
+  &[data-done="true"] {
+    opacity: 0.6;
+  }
+
+  // A la que le toca ahora. Es la única con fondo, y el fondo lo pone el SKIN y
+  // no la paleta del tablero: esta lista vive en la página, no sobre la mesa, y
+  // el casi blanco del tablero desaparecería sobre una superficie clara.
+  &[data-now="true"] {
+    background: skin("surface-2");
+    border-left-width: 5px;
+    color: skin("text");
+    font-weight: 600;
+    opacity: 1;
+  }
+}
+
+.arena__turn-index {
+  min-width: 1.4rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+}
+
+.arena__turn-name {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arena__turn-what {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
 // --- Leyenda ---------------------------------------------------------------
 
 .arena__legend {
@@ -385,6 +470,10 @@
 
   &[data-kind="alcance"] {
     border-top-color: $arena-reach;
+  }
+
+  &[data-kind="movimiento"] {
+    border-top-color: $arena-move;
   }
 
   &[data-kind="origen"] {

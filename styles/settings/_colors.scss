@@ -320,6 +320,13 @@ $arena-piece: #17140f;
 // mismas casillas.
 $arena-reach: #ffe27a;
 
+// LO QUE ALCANZA UNA FICHA AL MOVERSE (§5). Verde agua apagado, y es el único
+// color de familia nueva que se ha metido en esta paleta: hacía falta porque
+// movimiento y alcance se enseñan A LA VEZ —una ficha mueve Y ataca en el mismo
+// turno— y si compartieran el oro no se podría leer cuál es cuál. Desaturado
+// para no salirse de la tierra en penumbra de la referencia.
+$arena-move: #79b8ab;
+
 // El hexágono desde el que se está midiendo. Casi blanco, que no lo usa ni la
 // rejilla ni las bandas ni el alcance: es un punto único en el tablero y tiene
 // que encontrarse sin buscarlo.

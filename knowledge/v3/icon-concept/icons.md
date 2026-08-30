@@ -240,15 +240,15 @@ mismo día. Los once archivos están en `public/assets/v3/icons/races/`.
 
 | Raza | Archivo | Dibujo |
 |---|---|---|
-| 👤 Humanos | `humanos` | Gonfalón de dos picos con **sol de ocho rayos** — **rehecho el 28, ver abajo** |
+| 👤 Humanos | `humanos` | **Sol de ocho rayos** con disco remachado — rehecho el 28, entregado el 29 |
 | ⛏️ Enanos | `enanos` | **Yunque** de perfil, nudo angular y remaches |
-| 💀 No-muertos | `no-muertos` | **Costillar** con dos costillas partidas y venda — **rehecho el 28, ver abajo** |
+| 💀 No-muertos | `no-muertos` | **Calavera** rota, sin mandíbula, con la venda cruzada — rehecho el 28, entregado el 29 |
 | 🔥 Demonios infernales | `demonios-infernales` | **Par de cuernos**, el derecho partido, sello agrietado |
 | 🧝 Elfos | `elfos` | **Hoja** con nervio central entre dos hojas curvas |
 | 🧟 Orkos | `orkos` | **Mandíbula** con colmillo atado con cuerda |
 | 🧚 Feéricos | `feericos` | Cuatro **alas de insecto** caladas y dos espirales |
 | 🐉 Dracónidos | `draconidos` | **Cabeza de perfil** con cresta hacia atrás |
-| 🐀 Hombres rata | `hombres-rata` | **Vial** remendado con la cola enroscada — **rehecho el 28, ver abajo** |
+| 🐀 Hombres rata | `hombres-rata` | **Cabeza de rata** de frente, una oreja mordida, la cola por detrás — rehecho el 28, entregado el 29 |
 | 🤖 Constructos | `constructos` | **Placa hexagonal** remachada con runa recta |
 | 🧜 Abisales | `abisales` | **Concha en espiral** con tentáculo y percebes |
 
@@ -268,9 +268,11 @@ mismo día. Los once archivos están en `public/assets/v3/icons/races/`.
 **Tres cosas medidas sobre los archivos**, y las tres son de producción:
 ninguno está recortado en el filo; el encuadre va **peor** que en la primera
 tanda —del 84 % al 98 % del lienzo, y cinco de los once pasan del 95 % de alto—;
-y **dos se salen del «un solo metal»** de §5, la venda de `no-muertos` en hueso
-pálido y la cola de `hombres-rata` en cobre rosado. Esa excepción está **sin
-decidir**. Pesan 15 MB los once. Detalle en
+y **dos se salían del «un solo metal»** de §5, la venda de `no-muertos` en hueso
+pálido y la cola de `hombres-rata` en cobre rosado. Esa excepción se cerró el 29
+de agosto al regenerar esos dos —ver *Tres emblemas se rehacen*, abajo—: los
+archivos que la tenían están hoy en `icons/races/old/`. Pesan 15 MB los once.
+Detalle en
 [`public/assets/v3/README.md`](../../../public/assets/v3/README.md).
 
 **Y una que no se ve en el archivo: `feericos` es el único calado del set** —
@@ -329,10 +331,15 @@ como los dos de arriba: es que tres dibujos no son los que quiere.
 | 🐀 Hombres rata | Vial remendado con la cola | **Cabeza de rata de frente**: dos orejas redondas —una mordida—, incisivos, y la cola subiendo por detrás | La cabeza es lo pedido; la cola se queda porque es el eje *Silueta* de la raza |
 
 Las otras ocho no se tocan. Los prompts corregidos, con la nota de qué cambió en
-cada uno, están en [`prompts/razas.md`](prompts/razas.md); **los tres archivos de
-`public/assets/v3/icons/races/` siguen siendo los viejos** hasta que se
-regeneren, así que ahora mismo la carta enseña el gonfalón, el costillar y el
-vial.
+cada uno, están en [`prompts/razas.md`](prompts/razas.md).
+
+> **Los tres entraron el 29 de agosto de 2026, y los tres son lo que se pidió.**
+> `public/assets/v3/icons/races/` enseña ya el sol solo, la calavera rota sin
+> mandíbula con la venda cruzada y la cabeza de rata de frente con una oreja
+> mordida y la cola subiendo por detrás. **Los viejos no se borran**: el
+> gonfalón, el costillar y el vial se guardan en
+> `public/assets/v3/icons/races/old/` como referencia de bocetos, y son los
+> únicos tres archivos del set que tienen dos versiones.
 
 **Lo que esto cuesta, y hay que escribirlo aquí porque este apartado lo daba por
 cerrado: el 💀 vuelve a dibujarse.** La colisión triple de arriba —raza,
@@ -365,12 +372,17 @@ Y dos cosas menores que salen del mismo retoque, las dos ya escritas en
   Dracónidos (cabeza de frente contra cabeza de perfil) y 👤 Humanos vs 🤖
   Constructos (los dos únicos simétricos del set: estrellado contra hexagonal).
 
-**Y la pregunta del «un solo metal» se decide con estos tres.** Las dos
-desviaciones medidas el 27 —la venda de `no-muertos` y la cola de
-`hombres-rata`— **siguen las dos dentro de sus dibujos nuevos**, y sus prompts
-ya llevan la línea en positivo que les faltaba («la venda es del mismo latón que
-el hueso»). Si vuelven a salir con un segundo tono con la frase puesta, lo que
-hay que decidir ya no es un prompt: es el rasgo 1 de §5.
+**Y la pregunta del «un solo metal» se decidió con estos tres, a favor del
+prompt.** Las dos desviaciones medidas el 27 —la venda de `no-muertos` y la cola
+de `hombres-rata`— seguían las dos dentro de sus dibujos nuevos, así que la
+prueba era limpia: si volvían a salir con un segundo tono llevando ya la línea en
+positivo («la venda es del mismo latón que el hueso»), había que tocar el rasgo 1
+de §5. **No hizo falta.** Midiendo qué proporción del glifo se aparta del latón,
+la venda de la calavera baja del 31 % al 5 % y la cola de la rata del 56 % al
+16 % — la calavera nueva es el emblema **más monocromo de los once** y la rata
+entra en la banda de los ocho que no se tocaron (13–41 %). El rasgo 1 se queda
+como está: no era una regla que el dibujo no pudiera cumplir, era una línea que
+faltaba en el prompt.
 
 ## 5. La dirección elegida
 
@@ -564,11 +576,15 @@ sumarlos al revisarla): las 8 Habilidades y 2 Tipos de daño el 26 de agosto de
 Características**, que es donde estaba el grueso desde el principio, más la
 normalización de lo ya entregado. Por orden de lo que bloquea a lo que no:
 
-- **Regenerar tres emblemas** —👤 Humanos, 💀 No-muertos y 🐀 Hombres rata—,
-  cuyo dibujo cambió el 28 de agosto (§4). Los prompts están corregidos en
-  [`prompts/razas.md`](prompts/razas.md); los archivos en disco son los viejos, y
-  la carta enseña hoy el gonfalón, el costillar y el vial. Al entrar los nuevos
-  se borran los tres antiguos: el dibujo está descartado, no la ejecución.
+- ~~**Regenerar tres emblemas**~~ —👤 Humanos, 💀 No-muertos y 🐀 Hombres rata—,
+  cuyo dibujo cambió el 28 de agosto (§4). **Hecho el 29 de agosto de 2026**: los
+  tres entraron a la primera con los prompts corregidos de
+  [`prompts/razas.md`](prompts/razas.md), y la carta enseña ya el sol, la
+  calavera y la cabeza de rata. Los tres viejos **no se borraron** —este apartado
+  decía que sí—: están en `public/assets/v3/icons/races/old/` por decisión de
+  Dario, como los únicos dos bocetos que este set tiene del mismo emblema. Con
+  ellos se cierra de paso la excepción del «un solo metal» de §4, a favor de la
+  regla.
 - **Quién dibuja el aro del medallón**, el archivo o el marco (§5, *lo que la
   elección cuesta*). **Bloquea la entrega de cualquier Característica**, que es
   la mayor parte de lo que falta. Se decide en

@@ -99,9 +99,9 @@ que sobrevive hasta 16px. Pero eso **no** significa dibujar un rectángulo de
 color: significa que el dibujo que se le ponga encima tiene que ser lo primero
 que desaparece, no lo que hay que entender.
 
-Es exactamente lo que ya pasa con los pictogramas: el costillar de `no-muertos`
-tiene costillas contadas en el archivo y en la carta es una silueta de costillar.
-Ninguna de las dos lecturas es la equivocada.
+Es exactamente lo que ya pasa con los pictogramas: la calavera de `no-muertos`
+tiene la sien agrietada y la venda contada en el archivo, y en la carta es una
+silueta de calavera. Ninguna de las dos lecturas es la equivocada.
 
 ## 4. El modelo es la heráldica, y eso no es una metáfora
 

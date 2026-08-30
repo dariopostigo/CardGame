@@ -24,11 +24,15 @@
 //
 // Y ya no son lo único dibujado: el 🗡️ Miliciano es la primera UNIDAD con arte
 // propio, que es el caso que faltaba —tier, raíl común y cero Características
-// encima de una ilustración de verdad—. Desde el 27 de agosto de 2026 la
-// progresión llega dibujada hasta el tier 6 (🐎 Caballería y 🦅 Grifo), así que
-// el hueco del emoji se queda solo en los DOS tiers de arriba, ✝️ Paladín y
-// 🐉 Dragón dorado — y ese hueco es justo el caso que la raza tiene que seguir
-// enseñando, porque Enanos ya no lo tiene.
+// encima de una ilustración de verdad—. Desde el 28 de agosto de 2026 la
+// progresión llega dibujada hasta el tier 7 (🐎 Caballería y 🦅 Grifo el 27,
+// ✝️ Paladín el 28), así que el hueco del emoji se queda en UNA sola carta, el
+// 🐉 Dragón dorado del tier 8 — y ese hueco es justo el caso que la raza tiene
+// que seguir enseñando, porque Enanos ya no lo tiene. Con una carta y no dos,
+// conviene saber que **el caso de prueba del hueco vacío se acabó aquí**: si esa
+// ilustración llega, este laboratorio deja de poder enseñar cómo aguanta el
+// marco sin arte, y habrá que dejar un sujeto a emoji a propósito o dejar de
+// juzgarlo.
 //
 // El 🐉 Dragón esquelético no es de Humanos y se queda de todas formas: es el
 // peor caso que este laboratorio puede enseñar (cinco Características y
@@ -183,6 +187,11 @@ export type DamageKey = keyof typeof DAMAGE;
  * oro monocromo que las ocho Habilidades y, como ellas, **desnudos**: el aro
  * del medallón lo dibuja el marco de cada boceto, no el archivo.
  *
+ * Tres se sustituyeron el 29 de agosto de 2026 —Humanos, No-muertos y Hombres
+ * rata cambian de dibujo, no de ruta— y este mapa no se enteró: el archivo se
+ * reemplaza en su sitio. Los tres descartados quedan en `icons/races/old/`, que
+ * nadie referencia.
+ *
  * VA EN UN MAPA POR RAZA Y NO EN UN CAMPO DE CADA FICHA, al contrario que la
  * ilustración. El emblema es de la RAZA: las doce fichas de Humanos comparten
  * archivo, así que un campo por ficha serían 132 copias de once rutas y once
@@ -278,23 +287,23 @@ export type Subject = {
   readonly icon: string;
   /**
    * Ilustración. Desde el 26 de agosto de 2026 **toda la que hay es de V3**, y ya
-   * no es solo de esta raza: son VEINTIDÓS archivos, los diez de 👤 Humanos que
+   * no es solo de esta raza: son VEINTITRÉS archivos, los once de 👤 Humanos que
    * cuelgan de aquí (`public/assets/v3/races/humanos/`: los cuatro héroes y las
-   * seis primeras unidades de la progresión —Miliciano, Arquero, Caballero, Mago,
-   * Caballería y Grifo, las dos últimas del 27 de agosto de 2026—) y los doce de
+   * siete primeras unidades de la progresión —Miliciano, Arquero, Caballero, Mago,
+   * Caballería y Grifo del 27 de agosto de 2026, y ✝️ Paladín del 28—) y los doce de
    * ⛏️ Enanos, que son la raza entera y se cablean en `races.ts`, que es donde vive
    * esa raza. El relleno prestado de las cartas de clase de v2 se retiró con la
    * tanda del 26, porque ya no cubría ningún hueco — y con él se fue la última
    * imagen del juego anterior que quedaba en un lab de V3.
    *
-   * Las otras dos unidades de Humanos —✝️ Paladín y 🐉 Dragón dorado, los dos
-   * tiers de arriba— caen al emoji, y son **las dos únicas sin ilustración de las
-   * dos razas dibujadas**: el caso de prueba de si el marco aguanta un hueco
-   * vacío se queda en dos cartas, y las dos en el extremo caro de la progresión.
-   * (En la baraja hay muchas más, pero no son de aquí: 💀 No-muertos y 🔥 Demonios
-   * entraron enteras sin arte y viven en `races.ts`.)
+   * La única unidad de Humanos que sigue en emoji es el 🐉 Dragón dorado, el tier
+   * 8, y es **la última carta sin ilustración de las dos razas dibujadas**: el
+   * caso de prueba de si el marco aguanta un hueco vacío se ha quedado en UNA, y
+   * en el extremo más caro de la progresión. (En la baraja hay muchas más, pero
+   * no son de aquí: 💀 No-muertos y 🔥 Demonios entraron enteras sin arte y viven
+   * en `races.ts`.)
    *
-   * **Y las diez son PROVISIONALES**, por decisión de Dario del 26 de agosto de
+   * **Y las once son PROVISIONALES**, por decisión de Dario del 26 de agosto de
    * 2026: el generador no está respetando la especificación de
    * `public/assets/v3/README.md`, así que se va metiendo lo que sale para que
    * las cartas dejen de ser emojis y se puedan mirar de verdad. Ninguna es
@@ -302,16 +311,16 @@ export type Subject = {
    * `object-position` por sujeto, ni casos especiales. **Si una carta se ve mal
    * por su ilustración, se anota y se sigue.**
    *
-   * De ahí salen dos cosas que conviene no confundir. Siete archivos están en el
+   * De ahí salen dos cosas que conviene no confundir. Ocho archivos están en el
    * 5:7 vertical bueno (Guerrero, Mago héroe, Arquero, Caballero, Mago unidad,
-   * Caballería y Grifo) y tres entraron apaisados —1484×1060, el mismo lienzo
-   * girado— (Sacerdote, Arquero héroe y Miliciano), así que al pasar de uno a otro
-   * se ve por qué el lienzo tenía que ser 5:7. Pero el desajuste que de verdad se
-   * nota en la carta no es ese: es el ENCUADRE, que se sale de la norma en nueve
-   * de los diez —la figura acaba entre el 77% y el 89% del alto cuando el tope es
-   * el 72%—, así que el panel de cualquier boceto le come las piernas. Y con
-   * ⛏️ Enanos dentro eso dejó de ser cosa de esta tirada: sus doce fallan igual, en
-   * la misma banda, así que de los veintidós archivos **solo el ✝️ Sacerdote
+   * Caballería, Grifo y Paladín) y tres entraron apaisados —1484×1060, el mismo
+   * lienzo girado— (Sacerdote, Arquero héroe y Miliciano), así que al pasar de uno
+   * a otro se ve por qué el lienzo tenía que ser 5:7. Pero el desajuste que de
+   * verdad se nota en la carta no es ese: es el ENCUADRE, que se sale de la norma
+   * en diez de los once —la figura acaba entre el 77% y el 91% del alto cuando el
+   * tope es el 72%—, así que el panel de cualquier boceto le come las piernas. Y
+   * con ⛏️ Enanos dentro eso dejó de ser cosa de esta tirada: sus doce fallan igual,
+   * en la misma banda, así que de los veintitrés archivos **solo el ✝️ Sacerdote
    * cumple** y cumple de rebote. Los dos están medidos en ese README y ninguno es
    * tarea: son la lista de comprobación de cuando llegue la generación buena.
    */
@@ -323,11 +332,11 @@ export type Subject = {
 };
 
 /**
- * Arte de V3 **de la raza piloto**. Son DIEZ archivos: los CUATRO héroes de
- * Humanos y las SEIS primeras unidades de su progresión —Miliciano, Arquero,
- * Caballero, Mago, Caballería y Grifo—, o sea diez de doce. Las otras doce del
- * juego son de ⛏️ Enanos y tienen sus propias funciones en `races.ts`: el arte
- * sigue al dato, y el dato de cada raza vive en su archivo.
+ * Arte de V3 **de la raza piloto**. Son ONCE archivos: los CUATRO héroes de
+ * Humanos y las SIETE primeras unidades de su progresión —Miliciano, Arquero,
+ * Caballero, Mago, Caballería, Grifo y Paladín—, o sea once de doce. Las otras
+ * doce del juego son de ⛏️ Enanos y tienen sus propias funciones en `races.ts`: el
+ * arte sigue al dato, y el dato de cada raza vive en su archivo.
  *
  * Con esa tanda desapareció `ART_V2`, que prestaba las cartas de clase del juego
  * anterior a las unidades sin arte. No hacía falta borrarlo a mano: al quedarse
@@ -344,8 +353,8 @@ export type Subject = {
  *
  * Siguen siendo `.png` de ~2,5 MB donde ese documento pide `.webp`, y el motivo
  * de no convertirlos no ha cambiado: el arte todavía se está tirando y volviendo
- * a tirar. Diez archivos son ya ~25 MB de esta raza sola, y los veintidós del
- * repo ~55 MB, así que la conversión pesa de verdad — pero el marco ya está
+ * a tirar. Once archivos son ya ~27 MB de esta raza sola, y los veintitrés del
+ * repo ~58 MB, así que la conversión pesa de verdad — pero el marco ya está
  * elegido (J · Orla), así que lo que la retiene no es esa decisión: es que a
  * estos archivos les queda otra vuelta por el encuadre. La cuenta y la decisión
  * pendiente están en `public/assets/v3/README.md`.
@@ -537,7 +546,7 @@ export const UNITS: readonly Subject[] = [
     tier: 6,
     rarity: rarityForTier(6),
     icon: "🦅",
-    // El primer sujeto VOLADOR con arte, y el que mejor cae de los veintidós
+    // El primer sujeto VOLADOR con arte, y el que mejor cae de los veintitrés
     // después del ✝️ Sacerdote: la garra más baja queda al 77% y el cuarto de
     // abajo es castillo, o sea fondo, que es lo que la norma pide ahí. No es
     // mérito del prompt sino de que vuela — el ancla de suelo se cambió por
@@ -572,6 +581,15 @@ export const UNITS: readonly Subject[] = [
     tier: 7,
     rarity: rarityForTier(7),
     icon: "✝️",
+    // El PEOR encuadre de los veintitrés, y con diferencia: la bota de delante
+    // cae al 91% del alto (la de detrás al 86%), cuando hasta ahora el suelo lo
+    // marcaban tres archivos al 89%. La figura va del 10% —la punta del penacho—
+    // al 91,5%, o sea que ocupa el 81% del lienzo donde la norma pide un 60%: no
+    // es plano general, es plano entero. El panel del pie de la J no le come las
+    // piernas, le come las botas enteras. Y repite el fallo de borde de la
+    // 🐎 Caballería girado 90°: la cabeza del mazo llega al 2% del ANCHO, pegada
+    // al filo izquierdo que el marco tapa.
+    art: ART_V3_UNIT("paladin"),
     skills: {
       vida: 96,
       ataque: 24,

@@ -43,11 +43,48 @@
 >
 > **Y el Grifo deja una pista buena para [`preambulo.md`](preambulo.md), que es
 > donde hay que arreglar el encuadre de las once razas.** Es el archivo mejor
-> encuadrado de los veintidós (garra más baja al 77%, cuando la banda de los demás
-> va del 78 al 89) y no por su bloque de POSE sino por su **ESCENARIO**: «cielo
+> encuadrado de los veintitrés (garra más baja al 77%, cuando la banda de los demás
+> va del 78 al 91) y no por su bloque de POSE sino por su **ESCENARIO**: «cielo
 > abierto sobre piedra clara de castillo **abajo**» ocupa el cuarto inferior con
 > algo que no es el sujeto. Es exactamente la forma que le falta al ancla de aire
 > abajo del preámbulo, que hoy pide que **haya** suelo y no dice **cuánto**.
+
+> **Al 28 de agosto de 2026 van once de doce: entró el ✝️ Paladín** (1060×1484,
+> el 5:7 bueno) y **solo falta el 🐉 Dragón dorado**. De su bloque se cumplió casi
+> todo lo que este archivo controla —la masa y la edad (cara ancha y curtida,
+> canas, cicatrices, nada de paladín joven y radiante), el ORO PLENO en filos,
+> heráldica y peto, el martillo de guerra, el escudo con la divisa del sol y el
+> castillo con estandartes de fondo, subordinado— y falló lo que controla el
+> **preámbulo**: la figura entera ocupa el **81% del alto** y la bota de delante
+> cae al **91%**, la peor cifra de los veintitrés archivos del repo.
+>
+> **Y este sujeto es la mejor prueba que hay de dónde está el fallo, porque su
+> propio bloque acierta ARRIBA y falla ABAJO.** La línea «el penacho no toca el
+> borde de arriba» está escrita en su POSE, y se cumplió: hay un 10% de aire sobre
+> la coronilla. El aire de abajo no está escrito en ninguna POSE —vive en el
+> preámbulo como «suelo visible por delante y por detrás de los pies»— y se
+> incumple. Un ancla concreta y comprobable se obedece; una que pide que algo
+> *exista* sin decir cuánto, no. Es el argumento del cambio que
+> [`preambulo.md`](preambulo.md) tiene pendiente, y ya no hace falta discutirlo con
+> porcentajes: con dos líneas del mismo prompt basta.
+>
+> **Lo que sí conviene decidir aquí es el ESCENARIO, porque se ha repetido siete
+> veces.** El Paladín sale en el mismo camino de tierra, con el mismo castillo de
+> estandartes azul y oro y el mismo río que la 🐎 Caballería y el 🦅 Grifo: las
+> siete unidades dibujadas están en **un solo lugar**, y ninguna línea de este
+> archivo lo pide —cada bloque escribe su ESCENARIO por separado y el generador lo
+> repite solo—. En ⛏️ Enanos esa continuidad es deliberada y está en el campo
+> `Fondo:` de su ficha de raza. Aquí no está en ningún sitio: o se escribe (y
+> entonces es identidad de Humanos) o se rompe a mano tier a tier, pero dejarla
+> como está significa que depende de la tirada.
+>
+> Y un desvío menor, del mismo tipo que la lanza de la Caballería: la POSE pedía
+> el arma «apoyada en el suelo con las dos manos o alzada en alto» y salió apoyada
+> **con una sola mano**, porque la otra lleva el escudo que pide el EQUIPO. Las dos
+> líneas se contradicen, y la que ganó fue la del equipo. Además la cabeza del
+> martillo acaba **al 2% del ancho**, pegada al filo izquierdo: es la segunda tanda
+> seguida en que el remate del arma se apoya en un borde, y ninguna línea del
+> encuadre habla del arma — solo del cuerpo.
 
 > **Corregido también el reparto de cuerpos (misma fecha).** La misma tirada
 > salió con los tres personajes **jóvenes, esbeltos, musculosos y guapos**, que en

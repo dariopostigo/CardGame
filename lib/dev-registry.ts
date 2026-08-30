@@ -100,12 +100,12 @@ export const DEV_MODULES: readonly DevModule[] = [
     slug: "tablero",
     label: "Tableros",
     summary:
-      "Los dos tableros separados de V3. Construida la ARENA de batalla, en cuatro tamaños desde el mínimo de 14×12: suelo como lámina continua y rejilla en trazo encima, siguiendo la dirección de arte, con las bandas y los alcances marcados con contorno. Encima está el FORMATO del §2 —co-op de uno a tres jugadores, cinco fichas cada uno—, el DESPLIEGUE libre del §3 en la banda compartida, y el RITMO DE LA APROXIMACIÓN con el 👢 Movimiento repartido por tipo de daño y la persecución del arquero medida. El de exploración sigue siendo un esqueleto.",
+      "Los dos tableros separados de V3. Construida la ARENA de batalla, en cuatro tamaños desde el mínimo de 14×12: suelo como lámina continua y rejilla en trazo encima, siguiendo la dirección de arte, con las bandas y los alcances marcados con contorno. Encima está el FORMATO del §2 —co-op de uno a tres jugadores, cinco fichas cada uno—, el DESPLIEGUE libre del §3 en la banda compartida, y el RITMO DE LA APROXIMACIÓN con el 👢 Movimiento repartido por tipo de daño y la persecución del arquero medida. Enfrente hay un BANDO ENEMIGO de verdad —la máquina trae lo mismo que la mesa— y las fichas ya ANDAN: hasta 👢 Movimiento y sin atravesar a nadie (§5). El de exploración sigue siendo un esqueleto.",
     icon: "pi pi-map",
     status: "en-curso",
     doc: { href: "/docs/v3/board/battle", label: "Tablero de batalla" },
     blocker:
-      "Ninguno de geometría: el 27 de agosto se cerró que el tablero es grande, que la aproximación larga es la intención y que lo que se adapta es 👢 Movimiento (🗡️ alto, 🏹 bajo), no los alcances. Lo que falta: el movimiento en código (lib/v3/movement.ts), la ilustración del campo, y el bando enemigo de verdad —que espera una decisión, cuántas fichas y cuántos héroes trae la máquina contra uno, dos o tres jugadores—. Iniciativa y turno siguen esperando los valores de las 8 Habilidades.",
+      "Ninguno de geometría. Dos cosas que el tablero ha medido y son decisión de diseño: el bucle del arquero del §1.2 no se sostiene en esta arena —las bandas van pegadas al borde, así que a quien huye le queda UN hexágono de retroceso—, y la promesa del §5 de que «rodear siempre es legal» es falsa dentro de tu propia banda: con el despliegue natural hay fichas que la ronda 1 las pilla sin salida (una con un jugador, cinco con tres). Falta la ilustración del campo, la segunda forma del bando enemigo (fauna u horda, §2) y una línea del §6 que quedó en singular. Iniciativa y turno siguen esperando los valores de las 8 Habilidades.",
   },
 ];
 

@@ -55,7 +55,6 @@ import {
   buildArena,
   contains,
   frontColumn,
-  sideOf,
   sizeLabel,
   specProblem,
   within,
@@ -75,6 +74,14 @@ import {
   type Roster,
 } from "@/lib/v3/deployment";
 import { LAB_MOVEMENT, firstAttackRound, type MovementByType } from "@/lib/v3/tempo";
+import {
+  moveProblem,
+  openFieldReach,
+  reachable,
+  type Occupied,
+} from "@/lib/v3/movement";
+import { alternatingOrder, takeTurn, type Actor, type TurnLog } from "@/lib/v3/round";
+import ArenaRound, { type RoundEntry } from "./ArenaRound";
 import ArenaBoard, { type ArenaPiece, type ArenaRegion } from "./ArenaBoard";
 import ArenaRoster from "./ArenaRoster";
 import ArenaTempo from "./ArenaTempo";
@@ -89,6 +96,21 @@ const LABEL_MODES: { value: LabelMode; label: string }[] = [
   { value: "columna", label: "Col · fila" },
   { value: "axial", label: "Axial" },
   { value: "distancia", label: "Distancia" },
+];
+
+/**
+ * Las dos cosas que se pueden hacer con una ficha, y son dos REGLAS distintas,
+ * no dos modos de una pantalla: el despliegue coloca libremente dentro de tu
+ * banda antes de la ronda 1 (§3), y el movimiento anda hasta 👢 Movimiento sin
+ * atravesar a nadie (§5). Compartir el clic entre las dos sin decir cuál está
+ * activa sería mezclarlas.
+ */
+type Phase = "despliegue" | "movimiento" | "ronda";
+
+const PHASES: { value: Phase; label: string }[] = [
+  { value: "despliegue", label: "Despliegue" },
+  { value: "movimiento", label: "Movimiento" },
+  { value: "ronda", label: "Ronda" },
 ];
 
 type GridMode = "completa" | "regiones" | "ninguna";
@@ -144,6 +166,19 @@ export default function ArenaModule() {
     enemigo: [],
   });
   const [side, setSide] = useState<Side>("propio");
+  const [phase, setPhase] = useState<Phase>("despliegue");
+
+  // La ronda. El despliegue se guarda al empezar para poder volver a él: una
+  // simulación que no se puede rebobinar no sirve para comparar dos repartos.
+  const [round, setRound] = useState(0);
+  const [opening, setOpening] = useState<Side>("propio");
+  const [logs, setLogs] = useState<TurnLog[]>([]);
+  const [snapshot, setSnapshot] = useState<Record<Side, Deployment> | null>(null);
+  // El orden se fija al empezar la ronda y no se recalcula a mitad: es la regla
+  // del §4 —"el orden se fija al abrir la batalla y no se recalcula"— aplicada
+  // a la ronda, que es hasta donde llega este sustituto.
+  const [order, setOrder] = useState<string[]>([]);
+  const [cursor, setCursor] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [refusal, setRefusal] = useState<string | null>(null);
 
@@ -163,18 +198,20 @@ export default function ArenaModule() {
   // deja de estar desplegada sin más. Si el tablero vuelve a crecer, vuelve —lo
   // que se guarda es la intención, y esto solo enseña lo que hoy es legal—. Al
   // bajar de jugadores pasa lo mismo con las fichas que ya no existen.
+  // Se filtra por lo que sigue existiendo —el hexágono está en el tablero y la
+  // ficha está en el bando— y NO por la banda de despliegue. Estar en tu banda
+  // es una condición de colocar (§3, la comprueba `placementProblem`), no de
+  // estar: en cuanto una ficha anda, sale de su banda y sigue tan puesta como
+  // antes. Filtrar por banda aquí las borraba al primer paso.
   const deployments = useMemo<Record<Side, Deployment>>(() => {
     const legal = (s: Side) =>
       arena
         ? storedBySide[s].filter(
-            (p) =>
-              contains(arena, p.hex) &&
-              sideOf(spec, p.hex) === s &&
-              rosters[s].some((f) => f.id === p.figureId),
+            (p) => contains(arena, p.hex) && rosters[s].some((f) => f.id === p.figureId),
           )
         : [];
     return { propio: legal("propio"), enemigo: legal("enemigo") };
-  }, [arena, spec, storedBySide, rosters]);
+  }, [arena, storedBySide, rosters]);
 
   const deployment = deployments[side];
 
@@ -223,6 +260,24 @@ export default function ArenaModule() {
     );
   }, [deployments, side, spec]);
 
+  // Todo lo que hay puesto en el campo, de los dos bandos. Una ficha no se pisa
+  // y no se atraviesa (§5), así que este conjunto vale para las dos cosas.
+  const occupiedAll = useMemo<Occupied>(
+    () => new Set([...deployments.propio, ...deployments.enemigo].map((p) => Hex.key(p.hex))),
+    [deployments],
+  );
+
+  /** Lo ocupado desde el punto de vista de una ficha: todo menos ella misma. */
+  const occupiedFor = useCallback(
+    (hex: HexCoord | null): Occupied => {
+      if (!hex) return occupiedAll;
+      const out = new Set(occupiedAll);
+      out.delete(Hex.key(hex));
+      return out;
+    },
+    [occupiedAll],
+  );
+
   const roundOf = useCallback(
     (figureId: string): number | null => {
       const hex = hexOf(deployment, figureId);
@@ -237,6 +292,133 @@ export default function ArenaModule() {
     },
     [deployment, roster, targets, movement],
   );
+
+  /**
+   * Lo que alcanza cada ficha andando, contra lo que alcanzaría con el campo
+   * vacío. Solo en la fase de movimiento: en el despliegue no anda nadie.
+   */
+  const reachOf = useCallback(
+    (figureId: string) => {
+      if (!arena || phase !== "movimiento") return null;
+      const hex = hexOf(deployment, figureId);
+      const figure = roster.find((f) => f.id === figureId);
+      if (!hex || !figure) return null;
+      const boots = movement[figure.damage];
+      return {
+        reach: reachable(arena, hex, boots, occupiedFor(hex)).size,
+        open: openFieldReach(arena, hex, boots),
+      };
+    },
+    [arena, phase, deployment, roster, movement, occupiedFor],
+  );
+
+  /** Las fichas del campo como las quiere el motor de la ronda. */
+  const actors = useMemo<Actor[]>(() => {
+    const out: Actor[] = [];
+    for (const s of SIDES) {
+      for (const p of deployments[s]) {
+        const f = rosters[s].find((x) => x.id === p.figureId);
+        if (f) out.push({ id: p.figureId, side: s, damage: f.damage, hex: p.hex });
+      }
+    }
+    return out;
+  }, [deployments, rosters]);
+
+  /**
+   * Avanza `howMany` turnos, empezando una ronda nueva cuando el orden se
+   * acaba. Se calcula todo en local y se escribe el estado una sola vez: si
+   * cada turno fuera un `setState`, ir de treinta en treinta pintaría treinta
+   * veces y el orden podría recalcularse a mitad.
+   */
+  const advance = (howMany: number) => {
+    if (!arena || actors.length === 0) return;
+    if (!snapshot) setSnapshot(deployments);
+
+    let list = order;
+    let idx = cursor;
+    let currentRound = round;
+    let currentLogs = [...logs];
+    let current = actors;
+
+    for (let n = 0; n < howMany; n++) {
+      if (idx >= list.length) {
+        list = [...alternatingOrder(current, opening)];
+        idx = 0;
+        currentRound += 1;
+        currentLogs = [];
+        if (list.length === 0) break;
+      }
+      const id = list[idx];
+      idx += 1;
+      if (!current.some((a) => a.id === id)) continue;
+      const { actor, log } = takeTurn(arena, current, id, movement);
+      current = current.map((a) => (a.id === id ? actor : a));
+      currentLogs.push(log);
+    }
+
+    setStoredBySide({
+      propio: current
+        .filter((a) => a.side === "propio")
+        .map((a) => ({ figureId: a.id, hex: a.hex })),
+      enemigo: current
+        .filter((a) => a.side === "enemigo")
+        .map((a) => ({ figureId: a.id, hex: a.hex })),
+    });
+    setOrder(list);
+    setCursor(idx);
+    setRound(currentRound);
+    setLogs(currentLogs);
+    setRefusal(null);
+  };
+
+  /**
+   * Termina la ronda que esté a medias, y si no hay ninguna a medias juega una
+   * entera. El caso que se escapaba: con la ronda recién acabada, lo que queda
+   * es cero, así que pedir "lo que queda" no avanzaba nada.
+   */
+  const runRound = () => {
+    const remaining = order.length - cursor;
+    advance(remaining > 0 ? remaining : actors.length);
+  };
+
+  const rewind = () => {
+    if (snapshot) setStoredBySide(snapshot);
+    setSnapshot(null);
+    setLogs([]);
+    setRound(0);
+    setOrder([]);
+    setCursor(0);
+    setRefusal(null);
+  };
+
+  /** El orden de la ronda con nombre y color, listo para pintarse. */
+  const entries = useMemo<RoundEntry[]>(() => {
+    const list = order.length ? order : alternatingOrder(actors, opening);
+    return list.flatMap((id) => {
+      const actor = actors.find((a) => a.id === id);
+      if (!actor) return [];
+      const f = rosters[actor.side].find((x) => x.id === id);
+      if (!f) return [];
+      return [
+        {
+          id,
+          side: actor.side,
+          icon: DAMAGE_TYPES[f.damage].icon,
+          name: players > 1 ? figureName(f) : f.label,
+        },
+      ];
+    });
+  }, [order, actors, opening, rosters, players]);
+
+  /** La distancia más corta entre los dos bandos: cuánto queda de aproximación. */
+  const frontGap = useMemo(() => {
+    const mine = actors.filter((a) => a.side === "propio");
+    const foes = actors.filter((a) => a.side === "enemigo");
+    if (!mine.length || !foes.length) return null;
+    return Math.min(
+      ...mine.map((a) => Math.min(...foes.map((b) => Hex.distance(a.hex, b.hex)))),
+    );
+  }, [actors]);
 
   const pieces = useMemo<ArenaPiece[]>(() => {
     if (!arena) return [];
@@ -265,6 +447,23 @@ export default function ArenaModule() {
     return out;
   }, [arena, deployments, rosters, players, selectedId, side]);
 
+  // A dónde puede ir la ficha elegida, contando cuerpos. Solo en la fase de
+  // movimiento: durante el despliegue la ficha no anda, se coloca.
+  const moveArea = useMemo(() => {
+    if (!arena || phase !== "movimiento" || !selected || !selectedHex) return null;
+    const steps = reachable(
+      arena,
+      selectedHex,
+      movement[selected.damage],
+      occupiedFor(selectedHex),
+    );
+    return {
+      hexes: [...steps.keys()].map(Hex.fromKey),
+      steps,
+      open: openFieldReach(arena, selectedHex, movement[selected.damage]),
+    };
+  }, [arena, phase, selected, selectedHex, movement, occupiedFor]);
+
   const regions = useMemo<ArenaRegion[]>(() => {
     if (!arena) return [];
     const out: ArenaRegion[] = [];
@@ -273,8 +472,11 @@ export default function ArenaModule() {
       out.push({ id: "banda-enemiga", kind: "enemigo", hexes: arena.bands.enemigo });
     }
     if (reachHexes.length) out.push({ id: "alcance", kind: "alcance", hexes: reachHexes });
+    if (moveArea?.hexes.length) {
+      out.push({ id: "movimiento", kind: "movimiento", hexes: moveArea.hexes });
+    }
     return out;
-  }, [arena, showBands, reachHexes]);
+  }, [arena, showBands, reachHexes, moveArea]);
 
   const distances = useMemo(
     () => (arena ? new Map(arena.hexes.map((h) => [Hex.key(h), Hex.distance(origin, h)])) : null),
@@ -291,6 +493,29 @@ export default function ArenaModule() {
       setRefusal(null);
       return;
     }
+    // Andar es otra regla que colocar, así que es otra negativa y otro motivo.
+    if (phase === "movimiento") {
+      if (!selected || !selectedHex) {
+        setRefusal("Esa ficha no está en el tablero: colócala antes de moverla (§3).");
+        return;
+      }
+      const why = moveProblem(
+        arena,
+        selectedHex,
+        hex,
+        movement[selected.damage],
+        occupiedFor(selectedHex),
+        (h) => nameAt(h),
+      );
+      if (why) {
+        setRefusal(why);
+        return;
+      }
+      setStoredBySide((prev) => ({ ...prev, [side]: place(prev[side], selectedId, hex) }));
+      setRefusal(null);
+      return;
+    }
+
     const why = placementProblem(arena, side, roster, deployment, selectedId, hex);
     if (why) {
       setRefusal(why);
@@ -304,6 +529,19 @@ export default function ArenaModule() {
     const pending = roster.find((f) => !next.some((p) => p.figureId === f.id));
     setSelectedId(pending?.id ?? null);
   };
+
+  /** Quién ocupa un hexágono, con su nombre, para poder explicar un "no". */
+  function nameAt(hex: HexCoord): string | null {
+    for (const s of SIDES) {
+      const placement = deployments[s].find((p) => Hex.equals(p.hex, hex));
+      if (!placement) continue;
+      const f = rosters[s].find((x) => x.id === placement.figureId);
+      if (!f) return null;
+      const who = players > 1 ? figureName(f) : f.label;
+      return s === side ? who : `${who} (enemigo)`;
+    }
+    return null;
+  }
 
   const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
   const card = "rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3";
@@ -319,6 +557,9 @@ export default function ArenaModule() {
       case "axial":
         return `${hex.q},${hex.r}`;
       case "distancia":
+        // Andando, lo que importa no es la distancia en línea recta sino los
+        // PASOS que cuesta llegar: es otro número en cuanto hay alguien en medio.
+        if (moveArea) return String(moveArea.steps.get(Hex.key(hex)) ?? "");
         return String(distances?.get(Hex.key(hex)) ?? "");
     }
   };
@@ -464,6 +705,25 @@ export default function ArenaModule() {
 
         <div
           className="flex flex-col gap-1"
+          title="Dos reglas distintas, no dos modos: el despliegue coloca libremente dentro de tu banda antes de la ronda 1 (§3); el movimiento anda hasta 👢 Movimiento sin atravesar a nadie (§5)."
+        >
+          <span className={label}>Fase</span>
+          <SelectButton
+            value={phase}
+            onChange={(e) => {
+              if (!e.value) return;
+              setPhase(e.value as Phase);
+              setRefusal(null);
+            }}
+            options={PHASES}
+            optionLabel="label"
+            optionValue="value"
+            allowEmpty={false}
+          />
+        </div>
+
+        <div
+          className="flex flex-col gap-1"
           title="Qué bando estás componiendo y desplegando. Los dos traen lo mismo —un héroe y hasta 4 unidades por jugador (§2)— y cada uno se coloca en su banda."
         >
           <span className={label}>Bando</span>
@@ -573,6 +833,7 @@ export default function ArenaModule() {
             deployment={deployment}
             selectedId={selectedId}
             roundOf={roundOf}
+            reachOf={reachOf}
             refusal={refusal}
             className={`${card} mb-4`}
             onSelect={(id) => {
@@ -599,6 +860,28 @@ export default function ArenaModule() {
               setRefusal(null);
             }}
           />
+
+          {phase === "ronda" && (
+            <ArenaRound
+              className={`${card} mb-4`}
+              round={round}
+              entries={entries}
+              cursor={cursor}
+              logs={logs}
+              frontGap={frontGap}
+              opening={opening}
+              sideOptions={SIDE_TABS}
+              canPlay={actors.length > 0}
+              onOpening={(s) => {
+                setOpening(s);
+                // Cambiar quién abre a mitad de ronda dejaría la lista mintiendo.
+                if (cursor >= order.length) setOrder([]);
+              }}
+              onStep={() => advance(1)}
+              onRound={runRound}
+              onRewind={rewind}
+            />
+          )}
 
           {/* --- El tablero --- */}
           <div className={`arena ${card}`}>
@@ -646,6 +929,12 @@ export default function ArenaModule() {
                   El enemigo ({deployments.enemigo.length})
                 </span>
               )}
+              {moveArea && (
+                <span className="arena__legend-item">
+                  <span className="arena__swatch" data-kind="movimiento" />
+                  A dónde puede ir ({moveArea.hexes.length} de {moveArea.open})
+                </span>
+              )}
               {shownReach && (
                 <span className="arena__legend-item">
                   <span className="arena__swatch" data-kind="alcance" />
@@ -661,12 +950,27 @@ export default function ArenaModule() {
           </div>
 
           <p className="mt-3 text-xs text-[var(--wiki-muted)]">
-            {selected ? (
+            {selected && phase === "movimiento" ? (
+              <>
+                <b className="text-[var(--wiki-text)]">{selected.label}</b> elegida:{" "}
+                {selectedHex ? (
+                  <>
+                    anda hasta <b className="text-[var(--wiki-text)]">{movement[selected.damage]}</b>{" "}
+                    hexágonos, y no atraviesa a nadie (§5). Pulsa dentro de lo marcado para
+                    moverla.
+                  </>
+                ) : (
+                  <>no está en el tablero. Colócala en la fase de despliegue (§3).</>
+                )}{" "}
+                Vuelve a pulsar
+                su fila para soltarla y seguir midiendo.
+              </>
+            ) : selected ? (
               <>
                 <b className="text-[var(--wiki-text)]">{selected.label}</b> elegida: pulsa un
                 hexágono de {side === "propio" ? "tu banda" : "la banda enemiga"} para{" "}
-                {selectedHex ? "moverla" : "colocarla"}. Vuelve a pulsar
-                su fila para soltarla y seguir midiendo.
+                {selectedHex ? "moverla" : "colocarla"}. Vuelve a pulsar su fila para soltarla y
+                seguir midiendo.
               </>
             ) : (
               <>Pulsa cualquier hexágono para medir desde él, o elige una ficha para colocarla.</>
@@ -689,13 +993,16 @@ export default function ArenaModule() {
             hoy aplazado.
           </li>
           <li>
-            <b className="text-[var(--wiki-text)]">El movimiento</b>: falta{" "}
-            <code className="rounded bg-[var(--wiki-code-bg)] px-1 text-[0.85em]">
-              lib/v3/movement.ts
-            </code>{" "}
-            —qué hexágonos alcanza una ficha, sin atravesar a nadie (§5)—. Es lo único del tablero
-            que está especificado al 100 % y no espera ningún dato: coste 1 por casilla, porque no
-            hay terreno.
+            <b className="text-[var(--wiki-text)]">Una promesa del §5 que no se cumple</b>: dice
+            que la pantalla «no es un muro» y que «rodear siempre es legal, y lo que cuesta es
+            tiempo». Medido con la fase de movimiento, eso es cierto en campo abierto y{" "}
+            <b className="text-[var(--wiki-text)]">falso dentro de tu propia banda</b>: con el
+            despliegue de muestra —el natural, pantalla delante y héroes detrás— hay fichas que la
+            ronda 1 las pilla <b className="text-[var(--wiki-text)]">sin salida</b>, cero
+            hexágonos, encerradas entre los suyos y el borde. Una con un jugador, tres con dos,
+            cinco con tres, y no cambia con el tamaño del tablero: la banda son dos columnas
+            siempre. Se puede evitar dejando huecos al desplegar, y eso es una regla táctica que el
+            documento no cuenta.
           </li>
           <li>
             <b className="text-[var(--wiki-text)]">La segunda forma del bando enemigo</b>: enfrente

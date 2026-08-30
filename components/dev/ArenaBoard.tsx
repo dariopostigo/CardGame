@@ -97,7 +97,7 @@ const SHADOW_MARGIN = 14;
  */
 export type ArenaRegion = {
   readonly id: string;
-  readonly kind: Side | "alcance";
+  readonly kind: Side | "alcance" | "movimiento";
   readonly hexes: readonly HexCoord[];
 };
 
