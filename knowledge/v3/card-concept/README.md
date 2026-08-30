@@ -1078,17 +1078,21 @@ más alta.
 > primera raza dibujada entera: doce lienzos verticales correctos y los doce
 > fallan igual, en la misma banda del 82 al 89%, con 5:7 y con 2:3 sin diferencia.
 > No había ninguna relación entre las dos cosas — el lienzo ya se pide bien y el
-> encuadre no, y de los **veintitrés** archivos que hay hoy acierta **uno**. Lo que
+> encuadre no, y de los **veinticuatro** archivos que hay hoy acierta **uno**. Lo que
 > gana el concepto con eso es que el diagnóstico deja de depender de una tirada:
 > es la línea del prompt que pide el aire de abajo, no el lote.
 >
 > **Y el 27 de agosto de 2026 entró la confirmación por el otro lado.** El
-> 🦅 Grifo de Humanos se queda al **77%**, el mejor de los veintiuno que fallan y
+> 🦅 Grifo de Humanos se queda al **77%**, el mejor de los veintitrés que fallan y
 > el único cuyo cuarto de abajo lo llena el fondo y no el sujeto — porque vuela, o
 > sea porque su prompt dice **qué ocupa** ese cuarto en vez de pedir que se vea
-> suelo. La línea que le falta al preámbulo tiene esa forma.
+> suelo. La línea que le falta al preámbulo tiene esa forma. **El 31 lo confirma
+> por segunda vez**: el 🐉 Dragón dorado, con el mismo tipo de ancla —un castillo
+> diminuto abajo—, deja el cuerpo al 81% y es el segundo mejor; lo que le baja al
+> 91% es la cola, que ninguna línea del encuadre menciona porque el preámbulo solo
+> habla del cuerpo.
 
-La auditoría, ya de los veintitrés, está en
+La auditoría, ya de los veinticuatro, está en
 [`public/assets/v3/README.md`](../../../public/assets/v3/README.md).
 
 Moraleja de método, que es lo que aquí vale: **una medida de pérdida no dice
@@ -1315,7 +1319,9 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 > ⛏️ Enanos entera, y fallan los doce: diecinueve de veinte. Al día siguiente, dos
 > más de Humanos —🐎 Caballería y 🦅 Grifo—: veintiuno de veintidós. Y el 28, el
 > ✝️ Paladín, que es el peor de todos con la bota de delante al 91%: veintidós de
-> veintitrés. El diagnóstico no cambia, se confirma.)*
+> veintitrés. Y el 31 el 🐉 Dragón dorado, que cierra 👤 Humanos y empata esa cifra
+> con la cola: **veintitrés de veinticuatro**. El diagnóstico no cambia, se
+> confirma.)*
 
 ## Qué falta decidir (cerrado: J · Orla, 25-ago-2026)
 

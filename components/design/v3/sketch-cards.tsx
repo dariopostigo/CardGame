@@ -162,13 +162,15 @@ const RECINTO_SKILLS: readonly SkillKey[] = [...PIN_SKILLS, ...PANEL_SKILLS];
 /**
  * El hueco de arte, a sangre.
  *
- * Cae al emoji cuando el sujeto no tiene ilustración, y eso ya es la excepción en
- * las dos razas dibujadas: el arte de V3 va por **veintitrés archivos** —los once
- * de 👤 Humanos (sus cuatro héroes y las siete primeras unidades, la última el
- * ✝️ Paladín del 28 de agosto de 2026) y los doce de ⛏️ Enanos, que es la raza
- * entera—, así que de esas dos progresiones solo sigue sin dibujar **una** carta,
- * el 🐉 Dragón dorado del tier 8 de Humanos. En la baraja quedan muchas más, pero
- * son de otras razas: 💀 No-muertos y 🔥 Demonios entraron enteras en emoji. Ojo
+ * Cae al emoji cuando el sujeto no tiene ilustración, y en las dos razas
+ * dibujadas eso **ya no pasa nunca**: el arte de V3 va por **veinticuatro
+ * archivos**, doce y doce —👤 Humanos entera desde el 🐉 Dragón dorado del 31 de
+ * agosto de 2026, y ⛏️ Enanos entera desde el 26—, así que las dos progresiones
+ * están dibujadas de arriba abajo. En la baraja quedan muchas cartas a emoji,
+ * pero son de otras razas: 💀 No-muertos y 🔥 Demonios entraron enteras así; y en
+ * el laboratorio de bocetos queda **una sola**, el 🐉 Dragón esquelético del caso
+ * límite, que es la única carta donde ya se puede ver cómo aguanta un marco sin
+ * ilustración. Ojo
  * con el reparto, porque esta pieza la comparten las dos páginas: el
  * laboratorio de bocetos pinta solo la raza piloto, así que **las doce de Enanos
  * únicamente se ven en Diseño baraja**. <img> plano y no next/image por el mismo

@@ -205,13 +205,15 @@ export default function CardSketchLab() {
         (los reales siguen pendientes en razas.md); ahí solo importa su forma, si tienen una, dos
         o tres cifras. La Rareza de las unidades va por tier a falta de una regla; los héroes no
         entran en esa escala y tienen <b>raíl propio</b>, en rojo sangre. De las ocho unidades{" "}
-        <b>siete tienen ya arte propio de V3</b> —🗡️ Miliciano, 🏹 Arquero, 🛡️ Caballero, 🔮 Mago,
-        🐎 Caballería, 🦅 Grifo y ✝️ Paladín, del tier 1 al 7 y todas en el mismo sitio: el camino,
-        la cerca y el castillo de estandartes azul y oro—, así que el relleno prestado de las
-        cartas de clase de v2 <b>ya no está</b>: no queda una sola imagen del juego anterior en
-        esta página. Falta <b>una</b> de la progresión, el 🐉 Dragón dorado del tier 8, y con el
-        🐉 Dragón esquelético de al lado —que no es de esta raza— son las <b>dos</b> cartas que
-        caen al emoji: sigue siendo lo normal en el resto del catálogo y también hay que verlo.
+        <b>ya están las ocho</b> —del 🗡️ Miliciano al 🐉 Dragón dorado, que entró el 31 de agosto
+        de 2026 y cierra la raza—, así que el relleno prestado de las cartas de clase de v2{" "}
+        <b>ya no está</b>: no queda una sola imagen del juego anterior en esta página. Y todas
+        están en el mismo sitio, las ocho: el camino, la cerca y el castillo de estandartes azul
+        y oro, que en la última sale diminuto abajo porque ahí hace de escala. La que <b>sí</b>{" "}
+        cae al emoji es el 🐉 Dragón esquelético de al lado, que no es de esta raza — y con la
+        piloto dibujada entera es <b>la única carta</b> de esta página donde se puede ver cómo
+        aguanta un marco un hueco de arte vacío, que sigue siendo lo normal en el resto del
+        catálogo.
       </p>
 
       {/* Controles. Los sujetos van en tres grupos y no en una lista porque la
@@ -612,10 +614,10 @@ export default function CardSketchLab() {
             quedaron <b>vacíos</b> al salir de ahí los dos rasgos que eran este campo disfrazado.
           </li>
           <li>
-            <b>El lienzo de la ilustración</b>, resuelto y comprobable a un clic. Ocho de los
-            once archivos están ya en <b>vertical 5:7</b> y entran a sangre —⚔️ Guerrero, 🔮 Mago
-            héroe y las unidades 🏹 Arquero, 🛡️ Caballero, 🔮 Mago, 🐎 Caballería, 🦅 Grifo y
-            ✝️ Paladín—,
+            <b>El lienzo de la ilustración</b>, resuelto y comprobable a un clic. Nueve de los
+            doce archivos están ya en <b>vertical 5:7</b> y entran a sangre —⚔️ Guerrero, 🔮 Mago
+            héroe y las unidades 🏹 Arquero, 🛡️ Caballero, 🔮 Mago, 🐎 Caballería, 🦅 Grifo,
+            ✝️ Paladín y 🐉 Dragón dorado—,
             mientras que ✝️ Sacerdote, 🏹 Arquero héroe y 🗡️ Miliciano siguen <b>apaisados</b> y
             hay que tirarles media anchura, así que el personaje sale enorme y descentrado. Cambia de sujeto y la
             diferencia se ve sola. La medida está en <code>public/assets/v3/README.md</code>:{" "}
@@ -625,8 +627,8 @@ export default function CardSketchLab() {
             <br />
             <b>Donde de verdad falla el arte es en el ENCUADRE.</b> La norma pide{" "}
             <b>plano general con aire</b>, la figura entre el 12% y el <b>72%</b> del alto, con el
-            cuarto de abajo libre para la banda del nombre. Puestas las guías, <b>diez de los
-            once</b> ponen los pies entre el 77% y el 91%, así que la figura invade ese cuarto y
+            cuarto de abajo libre para la banda del nombre. Puestas las guías, <b>once de los
+            doce</b> ponen los pies entre el 77% y el 91%, así que la figura invade ese cuarto y
             el panel le come las piernas — en cualquier boceto. El único que cumple es el
             ✝️ Sacerdote, y de rebote, porque su lienzo apaisado no da de sí para meter una figura
             más alta. Aquí se leyó eso como una <i>vuelta de tuerca</i> —«los de lienzo correcto
@@ -634,22 +636,27 @@ export default function CardSketchLab() {
             noche entraron las doce de ⛏️ Enanos (que solo se ven en <b>Diseño baraja</b>, no en
             este laboratorio), doce lienzos verticales correctos, y las doce fallan igual, con
             5:7 y con 2:3 sin diferencia. El lienzo no tapaba el encuadre: son dos cosas sueltas,
-            y de las veintitrés que hay hoy solo acierta una. El que más se acerca es el
+            y de las veinticuatro que hay hoy solo acierta una. El que más se acerca es el
             🦅 Grifo, al 77%, y no por el prompt sino porque <b>vuela</b>: su cuarto de abajo lo
-            llena el castillo del fondo en vez de sus patas. Y el que más se aleja es el nuevo{" "}
+            llena el castillo del fondo en vez de sus patas. Y el que más se aleja es el{" "}
             <b>✝️ Paladín</b>, con la bota de delante al <b>91%</b> —la peor cifra de las
-            veintitrés— y la figura ocupando el 81% del alto: ahí el panel no le come las
-            piernas, le come las botas. Míralo en el 🛡️ Caballero, que está
+            veinticuatro— y la figura ocupando el 81% del alto: ahí el panel no le come las
+            piernas, le come las botas. El nuevo <b>🐉 Dragón dorado</b> empata esa cifra pero
+            rompe el marco de otra manera, y conviene saber distinguirlo: su cuerpo para
+            <b> antes</b> que el de nadie —las garras al 81%, porque su prompt también reclama el
+            cuarto de abajo para el castillo— y lo que baja al 91% es <b>la cola</b>, con las dos
+            alas cortadas por los filos. Es el primer archivo que se sale por un apéndice y no
+            por el cuerpo. Míralo en el 🛡️ Caballero, que está
             en 5:7 exacto:
             en la <b>H</b> el panel le tapa las botas y en la <b>I</b> la ventana lo corta por el
             muslo, y en los dos casos el que se sale de la norma es el archivo, no el marco. Ojo
             también: este marco se come <b>15px por cada lado</b>.
             <br />
-            <b>Y las once ilustraciones son PROVISIONALES</b> <i>(26-ago-2026)</i>: el generador
+            <b>Y las doce ilustraciones son PROVISIONALES</b> <i>(26-ago-2026)</i>: el generador
             no está respetando la especificación, así que se van metiendo las que salen para que
             las cartas dejen de ser emojis y se puedan mirar de verdad. Nada de esto es{" "}
             <b>deuda que arreglar</b> —ni el lienzo de tres archivos ni el encuadre, que en el
-            recuento de las veintitrés falla en veintidós—, y
+            recuento de las veinticuatro falla en veintitrés—, y
             no hay que cuadrar nada a mano: ni recortes, ni <code>object-position</code> por
             sujeto. La tabla del README es la <b>lista de comprobación de la tanda buena</b>, no
             una lista de tareas. Con el marco ya decidido, lo único que hay que mirar aquí es que

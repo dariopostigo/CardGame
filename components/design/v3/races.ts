@@ -56,18 +56,22 @@ import {
 // public/assets/v3/races/enanos/ y las ocho unidades en enanos/units/, con los
 // slugs que ya pedía knowledge/v3/races-concept/prompts/enanos.md §"Al terminar".
 //
-// Y con eso ⛏️ ENANOS ES LA PRIMERA RAZA DIBUJADA ENTERA — antes que la piloto,
-// que va por once de doce. Conviene tenerlo escrito porque invierte la premisa de
-// ese archivo de prompts («Fase 2: entra cuando Humanos esté cerrado»,
-// «sin las 12 imágenes de la raza piloto no hay vara de medir»): la vara de medir
-// ya no la pone Humanos, la pone esta raza, que es la única donde se ve una
-// progresión de ocho tiers completa y cuatro héroes al lado. Lo que Humanos
-// seguía enseñando y aquí no —el hueco del emoji en una carta de verdad— se ve
-// todavía en sus unidades sin arte, que el 27 de agosto de 2026 bajaron de cuatro
-// a dos (entraron 🐎 Caballería y 🦅 Grifo) y el 28 a UNA: el 🐉 Dragón dorado del
-// tier 8, con el ✝️ Paladín ya dibujado. O sea que el caso del hueco vacío se mira
-// hoy en una sola carta de todo el laboratorio, y en el extremo más caro de una
-// progresión: cuando llegue ese dragón, esa comparación se queda sin sitio.
+// Y con eso ⛏️ ENANOS FUE LA PRIMERA RAZA DIBUJADA ENTERA, cinco días antes que la
+// piloto. Conviene tenerlo escrito porque invierte la premisa de ese archivo de
+// prompts («Fase 2: entra cuando Humanos esté cerrado», «sin las 12 imágenes de
+// la raza piloto no hay vara de medir»): durante esos cinco días la vara de medir
+// la puso esta raza, la única con una progresión de ocho tiers completa y cuatro
+// héroes al lado. Desde el 31 de agosto de 2026 son DOS —👤 Humanos cerró con el
+// 🐉 Dragón dorado—, así que ahora hay dos progresiones enteras que comparar entre
+// sí, y acaban en cosas distintas a propósito: aquí en un armazón de metal
+// (⛰️ Coloso de adamantita), allí en una criatura.
+//
+// Lo que Humanos seguía enseñando y aquí no —el hueco del emoji en una carta de
+// verdad— se acabó con esa tanda: sus unidades sin arte bajaron de cuatro a dos
+// el 27 (entraron 🐎 Caballería y 🦅 Grifo), a una el 28 (✝️ Paladín) y a ninguna
+// el 31. En todo el laboratorio el hueco vacío se ve ya en una sola carta, el
+// 🐉 Dragón esquelético del caso límite de `sample.ts`, que es de 💀 No-muertos —o
+// sea que ninguna de las dos razas dibujadas puede volver a enseñarlo.
 //
 // SON PROVISIONALES, igual que las de Humanos y por la misma decisión de Dario
 // (public/assets/v3/README.md): se mete lo que sale para que las cartas dejen de
@@ -76,7 +80,7 @@ import {
 // anota y se sigue.
 //
 // De la tanda salen dos datos, y el primero es una MEJORA: las doce son
-// VERTICALES. Ni una apaisada, que es lo que estropeaba tres de las once de
+// VERTICALES. Ni una apaisada, que es lo que estropeaba tres de las doce de
 // Humanos. Siete están en el 5:7 bueno (1060×1484) y cinco en 2:3 (1024×1536:
 // Minero, Guerrero enano, Herrero de guerra, Ingeniero unidad y Mosquetero), que
 // no es un fallo — el README lo da como el sustituto válido cuando la herramienta
@@ -104,10 +108,11 @@ import {
  * eso ya lo dejaba escrito el archivo de prompts.
  *
  * `.png` de ~2,7 MB, donde el README pide `.webp`. Con estas doce el repo pasó de
- * ~20 MB a ~52 MB de arte provisional —y con las tres de Humanos del 27 y el 28 de
- * agosto va por ~58 MB—, así que el argumento de «no convertir lo que se va a tirar» ya
- * no sale gratis: sigue en pie, pero es el dato que hay que mirar cuando llegue la
- * tercera raza.
+ * ~20 MB a ~52 MB de arte provisional —y con las cuatro de Humanos del 27, el 28 y
+ * el 31 de agosto va por ~60 MB—, así que el argumento de «no convertir lo que se
+ * va a tirar» ya no sale gratis: sigue en pie, pero es el dato que hay que mirar
+ * cuando llegue la tercera raza, y ahora la proyección tiene dos muestras en vez
+ * de una — las dos razas completas pesan 30,1 MB cada una.
  */
 const ART_DWARF = (slug: string) => `/assets/v3/races/enanos/${slug}.png`;
 

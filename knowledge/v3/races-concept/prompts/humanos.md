@@ -43,7 +43,7 @@
 >
 > **Y el Grifo deja una pista buena para [`preambulo.md`](preambulo.md), que es
 > donde hay que arreglar el encuadre de las once razas.** Es el archivo mejor
-> encuadrado de los veintitrés (garra más baja al 77%, cuando la banda de los demás
+> encuadrado de los veinticuatro (garra más baja al 77%, cuando la banda de los demás
 > va del 78 al 91) y no por su bloque de POSE sino por su **ESCENARIO**: «cielo
 > abierto sobre piedra clara de castillo **abajo**» ocupa el cuarto inferior con
 > algo que no es el sujeto. Es exactamente la forma que le falta al ancla de aire
@@ -56,7 +56,7 @@
 > heráldica y peto, el martillo de guerra, el escudo con la divisa del sol y el
 > castillo con estandartes de fondo, subordinado— y falló lo que controla el
 > **preámbulo**: la figura entera ocupa el **81% del alto** y la bota de delante
-> cae al **91%**, la peor cifra de los veintitrés archivos del repo.
+> cae al **91%**, la peor cifra de un cuerpo en los veinticuatro archivos del repo.
 >
 > **Y este sujeto es la mejor prueba que hay de dónde está el fallo, porque su
 > propio bloque acierta ARRIBA y falla ABAJO.** La línea «el penacho no toca el
@@ -85,6 +85,64 @@
 > martillo acaba **al 2% del ancho**, pegada al filo izquierdo: es la segunda tanda
 > seguida en que el remate del arma se apoya en un borde, y ninguna línea del
 > encuadre habla del arma — solo del cuerpo.
+
+> **Al 31 de agosto de 2026 la raza está ENTERA: doce de doce.** Entró el
+> 🐉 Dragón dorado (1060×1484, el 5:7 bueno por sexta tanda seguida) y con él
+> 👤 Humanos es la **segunda raza completa** del juego, cinco días después de
+> ⛏️ Enanos. Su bloque era el más exigente de los doce —enorme, entero y con la
+> escala dada por el fondo, tres cosas a la vez— y **se cumplió casi todo lo que
+> este archivo controla**: el ORO PLENO en toda la escama, que es la excepción de
+> la raza; la bestia **antigua** y no la joya (placas partidas, tajos rojos,
+> cicatrices viejas); el fuego saliendo de las fauces; la pose alzado sobre las
+> traseras con el cuello arqueado; las cuatro garras y la cola enteras dentro del
+> cuadro; y **el ancla de escala**, que era la parte difícil — el castillo sale
+> diminuto abajo y al lado del dragón se lee lo que se tenía que leer.
+>
+> **Lo que falló es la línea que este archivo ya sabía que iba a fallar, y van
+> dos.** El bloque pide «la criatura ENTERA dentro del cuadro —alas completas,
+> cola, las cuatro garras—» y **las dos alas salen cortadas por los filos**
+> laterales (la izquierda del ~19% al ~55% del alto, la derecha del ~17% al ~49%).
+> Es exactamente lo del 🦅 Grifo, y el aviso que quedó escrito arriba el 27 de
+> agosto —«para un sujeto con envergadura el ancla no puede ser *aléjate lo que
+> haga falta*, tiene que decir **qué se ve alrededor de la punta del ala**»— seguía
+> sin aplicarse cuando se tiró este. **Los dos sujetos con envergadura del juego
+> han salido con las alas cortadas**, mientras que el sujeto ancho de tierra
+> (🐎 Caballería) sí obedeció la misma instrucción: «aléjate» funciona contra la
+> anchura de un caballo y no contra la de un ala. Ese arreglo es de **este
+> archivo**, no del preámbulo, y ya tiene dos facturas.
+>
+> **Y el encuadre falla por un sitio nuevo: un apéndice.** Las garras delanteras
+> acaban al **81%** y las traseras al **84%** —o sea que el cuerpo para antes que
+> el de cualquier sujeto a pie de las dos razas dibujadas, y por el mismo motivo
+> que el Grifo: este ESCENARIO también reclama el cuarto de abajo para otra cosa—,
+> pero **la cola cuelga hasta el 91%** y con la punta del ala al 5% la figura
+> ocupa el **86% del alto**, el nuevo techo del repo. Con la lanza de la Caballería
+> (1% del alto) y el mazo del Paladín (2% del ancho) son **tres tandas seguidas en
+> las que lo que rompe el cuadro es el REMATE y no el cuerpo**. Eso ya no es de
+> aquí: el encuadre de [`preambulo.md`](preambulo.md) mide el aire desde la
+> coronilla, los pies y los costados **de la figura**, y ninguna de sus cuatro
+> líneas dice que un arma, un ala o una cola cuenten como figura. Es el tercer
+> cambio pendiente de ese archivo, junto al ancla de suelo y al ancla de escala.
+>
+> **El ESCENARIO llega a ocho de ocho, y eso cierra media discusión.** El dragón
+> está sobre el mismo castillo de estandartes azul y oro, el mismo río y el mismo
+> puente que las siete anteriores, pero ahora diminuto y abajo, porque aquí el
+> castillo hace de escala. Y este es **el único de los ocho bloques que menciona el
+> castillo**: pide «piedra clara de castillo muy pequeña abajo» y **no pide ESE
+> castillo**. O sea que la continuidad aguanta incluso cuando el prompt habla del
+> fondo, así que escribirla en el campo `Fondo:` de la ficha de raza —como en
+> ⛏️ Enanos— no es domesticar al generador, es dejar dicho lo que ya está pasando.
+> La otra media sigue igual: romperla, si algún día se quiere, hay que hacerlo a
+> mano tier a tier.
+>
+> **Y el ancla de escala confirma lo que el ⛰️ Coloso de Enanos dejó anotado.** El
+> castillo cae del **~70% para abajo**, o sea dentro del cuarto que el preámbulo
+> reserva al rótulo, así que en la carta el panel se come la ciudad, la muralla y
+> el puente — que es donde se compara el tamaño. Se salva a medias y por un motivo
+> aprovechable para los tier 8 de las otras nueve razas: **las torres y las agujas
+> suben por encima del 75% y esas sí se ven**, mientras que las figuritas a los
+> pies del Coloso caían enteras entre el 88% y el 92%. El ancla de escala no falla
+> por estar abajo, falla por estar **a ras de suelo**.
 
 > **Corregido también el reparto de cuerpos (misma fecha).** La misma tirada
 > salió con los tres personajes **jóvenes, esbeltos, musculosos y guapos**, que en
