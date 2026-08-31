@@ -34,12 +34,13 @@
 // sobre 14×12 y con los dos 👢 a 2, el 🗡️ contacta en la ronda 6 comiendo 2
 // disparos, donde el modelo sin borde decía que no llegaba jamás.
 //
-// Lo que eso arrastra para el §1.2, y hay que decirlo aunque no toque al motor:
-// **el bucle del arquero no se sostiene solo en esta arena**. La banda de
-// 👢 Movimiento por tipo de daño puede seguir valiendo la pena por el carácter de
-// cada tipo —el 🏹 que espera, el 🗡️ que corre—, pero el kiting no la exige. Y
-// como es un requisito para las 132 fichas, conviene que el argumento sea el
-// bueno.
+// Y ESE RESULTADO ERA OPTIMISTA, lo que se vio el 31 de agosto de 2026 midiendo
+// el mismo duelo en 2D (lib/v3/duel.ts): en línea recta la presa solo puede huir
+// hacia atrás, y en el tablero de verdad da la vuelta al campo conservando la
+// distancia. Con los dos 👢 a 2 el 🗡️ tarda **16 rondas y come 11 disparos** en
+// el tablero mínimo. Así que el borde caza al arquero tonto y no al arquero, y
+// la banda de 👢 Movimiento vuelve a ser **necesidad** y no carácter. De ahí
+// salió `MOVEMENT_BAND`.
 //
 // SIGUE SIENDO 1D: mide el retroceso hacia atrás y nada más. En 2D el que huye
 // tiene las filas del tablero para escapar de lado, y además un 🏹 que avanza en
@@ -70,18 +71,23 @@ import { DAMAGE_TYPES, DAMAGE_TYPE_IDS, type DamageTypeId } from "./damage";
 export type MovementByType = Readonly<Record<DamageTypeId, number>>;
 
 /**
- * Los tres valores con los que abre el laboratorio. **No son una decisión**: el
- * REPARTO sí está decidido (damage.ts `movementBand`), los números son insumo
- * de Dario como el resto de la escala.
+ * **La banda de 👢 Movimiento, decidida por Dario el 31 de agosto de 2026**
+ * (battle.md §1.1 y razas.md, la escala). Dejó de ser un dial de laboratorio: es
+ * el primer valor numérico de las 8 Habilidades que entra en la escala, y entró
+ * porque el duelo 2D (duel.ts) midió qué pasa sin él.
  *
- * Estos tres son el juego más pequeño que hace dos cosas a la vez: rompe el
- * bucle del §1.2 —el 🗡️ alcanza al 🏹 en una ronda— y deja las tres bandas
- * separadas, que es lo que hay que poder ver moviéndose. El día que la escala
- * tenga números, se comparan con los que salgan y esto se tira.
+ * Se eligió el reparto **más lento que sigue siendo seguro**: respeta la
+ * intención del §1.1 —de tres a cinco rondas de maniobra antes del choque— y el
+ * 🏹 cobra **un disparo** mientras el 🗡️ cruza, en los cuatro tamaños de arena.
+ * Subirlo a 4·3·1 quitaba ese disparo y bajaba la aproximación a tres rondas;
+ * igualarlo devuelve el bucle del §1.2 (con los dos a 2 son 11 disparos).
+ *
+ * Las fichas todavía no tienen valores propios, así que hoy esto es su 👢: lo que
+ * la escala fija es la banda por tipo de daño, no un número por ficha.
  */
-export const LAB_MOVEMENT: MovementByType = {
-  "cuerpo-a-cuerpo": 4,
-  magico: 3,
+export const MOVEMENT_BAND: MovementByType = {
+  "cuerpo-a-cuerpo": 3,
+  magico: 2,
   "a-distancia": 1,
 };
 

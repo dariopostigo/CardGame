@@ -102,9 +102,10 @@ const PLAYER_DAMAGE: readonly DamageTypeId[] = [
  * todos los tuyos (§6)—, así que mata la asimetría que el propio §8 señalaba
  * (con un solo héroe enemigo, tú ganas tumbando uno y él tiene que tumbar tres).
  *
- * > **Lo que arrastra:** el §6 dice "cae el héroe enemigo" en singular, escrito
- * > cuando enfrente había uno. Con el espejo hay un héroe enemigo por jugador y
- * > esa línea hay que corregirla en el documento.
+ * > **Lo que arrastró, ya corregido en el documento (28-ago):** el §6 decía
+ * > "cae el héroe enemigo" en singular, escrito cuando enfrente había uno. Con
+ * > el espejo hay un héroe enemigo por jugador, así que la victoria pasa a
+ * > plural y se lee igual por los dos lados.
  *
  * @param {Side} side - De qué lado. Solo cambia los ids y cómo se nombra: la
  *   composición es idéntica, que es justo la decisión.

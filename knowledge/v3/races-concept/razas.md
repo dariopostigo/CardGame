@@ -120,17 +120,33 @@ umbrales o porcentajes que el motor ya acota, y solo dos son cantidades libres.
 | 🎯 **Precisión** | Umbral de acierto sobre 1..100 | **65 – 95** |
 | 🍀 **Suerte** | Umbral de crítico sobre 1..100 | 0 – **25**, y nunca por encima de 🎯 Precisión |
 | ⚡ **Iniciativa** | Orden de actuación | Sin escala propia: solo se compara |
-| 👢 **Movimiento** | Hexágonos por turno | Entero pequeño, **en tres bandas según el tipo de daño**: 🗡️ la más alta, ✨ media, 🏹 la más baja |
+| 👢 **Movimiento** | Hexágonos por turno | **Decidido** *(31-ago-2026)*: **🗡️ 3 · ✨ 2 · 🏹 1**, banda por tipo de daño |
 
-**Las tres bandas de 👢 Movimiento son un requisito, no una preferencia**
-*(27 de agosto de 2026)*, y vienen del tablero grande
-(`docs/v3/board/battle.md` §1.2). Con el mismo 👢 Movimiento para todos, el 🏹
-dispara y retrocede indefinidamente y el 🗡️ **no contacta nunca**: en un tablero
-pequeño lo acorralaba el borde, y en 168 hexágonos no hay borde al que llegar.
-Que el alcance se pague con los pies es lo que rompe ese bucle, así que al
-repartir los valores de las 132 fichas **ninguna 🏹 puede tener el 👢 Movimiento
-de una 🗡️ de su mismo tier**. Los números concretos de cada banda siguen siendo
-insumo de Dario, como el resto de la escala.
+**👢 Movimiento es la primera Habilidad con número, y son tres: 🗡️ 3 · ✨ 2 ·
+🏹 1** *(decisión de Dario, 31 de agosto de 2026)*. No es un valor por ficha sino
+una **banda por tipo de daño**, igual que el alcance, y sale del tablero grande
+(`docs/v3/board/battle.md` §1.2), no del gusto: con el mismo 👢 para todos el 🏹
+dispara y retrocede dando la vuelta al campo, y el 🗡️ tarda **16 rondas comiendo
+11 disparos** en alcanzarlo. Con 3 contra 1 son **4 rondas y un disparo**.
+
+Se eligió el reparto **más lento que sigue siendo seguro**: mantiene la
+aproximación larga que quiere el §1.1 —cuatro rondas de maniobra en el tablero
+mínimo, seis en el mayor— y deja que el arquero cobre **un** disparo mientras el
+🗡️ cruza, que es justo su trabajo. Subirlo a 4 · 3 · 1 le quitaba el disparo y
+acortaba la aproximación a tres rondas.
+
+**Al repartir los valores de las 132 fichas**: ninguna 🏹 puede tener el
+👢 Movimiento de una 🗡️ de su mismo tier, y si alguna ficha se sale de su banda,
+lo medido dice hasta dónde — **ninguna 🏹 por encima de 2, ninguna 🗡️ por debajo
+de 3**. Fuera de ahí vuelve el bucle.
+
+**Y el argumento se corrigió dos veces antes de quedarse quieto**, que conviene
+saberlo porque esto ata las 132 fichas. Primero *(28-ago)* el laboratorio
+enseñó que el bucle no es infinito: las bandas de despliegue van pegadas al
+borde, así que al que huye le queda **un hexágono** de retroceso. Y después
+*(31-ago)*, jugando el mismo duelo en dos dimensiones, que esa medida era
+optimista: el que huye no retrocede, **da la vuelta al campo**. El borde caza al
+arquero tonto, no al arquero.
 
 **Solo ❤️ Vida y ⚔️ Ataque crecen con el tier**, y crecen **×10 de tier 1 a
 tier 8** — unos **×1,4 por escalón**:

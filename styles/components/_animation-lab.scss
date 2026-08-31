@@ -1,0 +1,411 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// El banco de animación de V3 — ver components/dev/AnimationBench.tsx
+//
+// Comparte PALETA con la arena (_arena.scss) y no la hereda: son el mismo
+// campo, así que los tokens tienen que ser los mismos, pero el banco no tiene
+// bandas, ni alcances, ni cámara, y sus fichas son DOM en vez de SVG. Un
+// parcial común obligaría a parametrizar por lo que difieren, que es la
+// estructura entera.
+//
+// LO QUE ESTE ARCHIVO NO HACE, y es lo importante: aquí no hay ni una
+// `transition` ni un `@keyframes` de las secuencias. Todo el movimiento lo
+// lleva la Web Animations API desde el componente, porque los tiempos son
+// diales que se mueven en vivo con sliders y una regla de CSS no se puede
+// mover en vivo (el porqué completo, en lib/v3/anim.ts). Lo que hay aquí es
+// dónde está cada capa y de qué color es.
+//
+// EL APILADO, de abajo arriba, y el orden es la mitad del efecto:
+//   1. la mesa (fondo de .anim__stage)
+//   2. el suelo y la rejilla (SVG)
+//   3. el polvo (canvas) — por encima del suelo, por debajo de las fichas: una
+//      nube tiene que tapar el terreno pero pasar por detrás de quien la
+//      levanta, o la ficha parece estar dentro de la nube en vez de encima
+//   4. las sombras, TODAS juntas y antes que cualquier ficha
+//   5. las fichas
+//   6. los números de daño
+// -------------------------------------------------------------------------
+
+.anim {
+  display: grid;
+  gap: 0.75rem;
+}
+
+// --- El escenario ----------------------------------------------------------
+
+.anim__stage {
+  position: relative;
+  overflow: hidden;
+  height: 30rem;
+  min-height: 22rem;
+  border-radius: radius("md");
+
+  // La misma mesa que la arena y que el tablero de v2: es la misma mesa aunque
+  // encima haya un retal en vez de un tablero.
+  background:
+    radial-gradient(125% 95% at 50% 40%, rgba($board-table-edge, 0) 30%, $board-table-edge 100%),
+    $board-table;
+
+  // El arrastre lo lleva el puntero: sin esto, en pantalla táctil el gesto lo
+  // captura el scroll de la página y la carta no se mueve.
+  touch-action: none;
+  user-select: none;
+}
+
+.anim__scene {
+  position: absolute;
+  inset: 0;
+}
+
+// --- Suelo y rejilla -------------------------------------------------------
+
+.anim__ground {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  // La sombra sale de la silueta del retal entero, no hexágono a hexágono: si
+  // cada uno tuviera la suya se sombrearían entre ellos, estando todos a la
+  // misma altura. Y un filtro se rasteriza una vez, no quince.
+  filter: drop-shadow(0 6px 7px $board-shadow);
+  pointer-events: none;
+}
+
+.anim__soil-far {
+  stop-color: $arena-ground-far;
+}
+
+.anim__soil-mid {
+  stop-color: $arena-ground-mid;
+}
+
+.anim__soil-near {
+  stop-color: $arena-ground-near;
+}
+
+.anim__soil polygon {
+  // Un filete del mismo tono cierra las juntas: los polígonos se tocan exacto,
+  // pero el suavizado de bordes deja una hebra de un píxel por la que se vería
+  // la mesa.
+  stroke: $arena-ground-far;
+  stroke-width: 1;
+}
+
+.anim__mesh line {
+  stroke: $arena-grid;
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: 0.28;
+}
+
+// --- El polvo --------------------------------------------------------------
+
+.anim__dust {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+// --- Sombras ---------------------------------------------------------------
+
+// El punto que se mueve. No se ve: mide 0×0 y solo lleva el `translate` que le
+// escribe el componente.
+.anim__shadow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  // Aquí sí va en fijo, y no es una incoherencia con `.anim__piece`: lo que
+  // emborrona una capa permanente es el detalle fino, y esto es un degradado
+  // sin un solo borde duro. Remuestrear una mancha difusa no se ve.
+  will-change: transform, opacity;
+}
+
+// La mancha que sí se ve, centrada sobre ese punto. Un degradado radial y no un
+// color plano con `blur`: el desenfoque es un filtro y se recalcularía en cada
+// fotograma de la caída; el degradado se compone en la GPU y sale gratis.
+.anim__blot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba($board-shadow, 0.62) 0%,
+    rgba($board-shadow, 0.34) 45%,
+    rgba($board-shadow, 0) 72%
+  );
+}
+
+// --- Las fichas ------------------------------------------------------------
+
+// Igual que la sombra: un punto sin tamaño con el `transform` de la ficha, y
+// las dos caras centradas encima. Que el padre no tenga tamaño es lo que hace
+// que `scale()` gire alrededor del centro de la ficha sin tener que declarar un
+// `transform-origin` que habría que corregir cada vez que cambie el hexágono.
+.anim__piece {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  cursor: default;
+
+  // El `will-change` va SOLO mientras se mueve, y esto no es una optimización
+  // fina: puesto en fijo emborronaba la carta.
+  //
+  // El porqué: `will-change: transform` promociona el elemento a su propia capa
+  // de compositor para siempre, y una capa se dibuja como una TEXTURA —el
+  // navegador la rasteriza una vez y luego la desplaza y la estira sin volver a
+  // dibujarla, que es justo lo que la hace barata de animar—. Pero la carta en
+  // la mano está en `translate(333.61px, …) scale(2.4)`: coordenadas
+  // fraccionarias y un aumento, así que esa textura se remuestrea al pintarla y
+  // el texto sale lavado ESTANDO QUIETA, que es cuando se lee.
+  //
+  // Medido en Chrome: sin él, la carta en reposo gana un 9 % de contraste de
+  // borde, y arrastrándola no cuesta ni un fotograma tardío (repintar una carta
+  // de 112×157 con tres líneas de texto es barato). El componente pone
+  // `data-moving` al empezar cada secuencia y lo quita al acabarla — la marca la
+  // escribe `run()`, en AnimationBench.tsx.
+  &[data-moving="true"] {
+    will-change: transform, opacity;
+  }
+
+  &[data-placed="false"] {
+    cursor: grab;
+  }
+
+  &[data-dragging="true"] {
+    cursor: grabbing;
+    // La que llevas cogida va por delante de todo lo demás.
+    z-index: 2;
+  }
+}
+
+// La ficha: un disco TUMBADO, como en el tablero (_piece.scss y _arena.scss).
+// El alto lo pone el componente comprimido por la misma inclinación que el
+// tablero, así que aquí no hay ni un número de geometría.
+.anim__token {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  border: 2px solid $arena-side-own;
+  border-radius: 50%;
+  // Peana plana, como en la arena: el disco es el fondo sobre el que se lee el
+  // glifo, y cualquier brillo que se le meta compite con él.
+  background: $arena-piece;
+  line-height: 1;
+  user-select: none;
+}
+
+.anim__piece[data-side="enemigo"] .anim__token {
+  border-color: $arena-side-enemy;
+}
+
+// La carta. Se dibuja a tamaño real y se encoge por el inverso de `cardScale`
+// (variable --counter, la escribe el componente) para que el padre la deje
+// exactamente a 1: dibujarla pequeña y agrandarla emborronaría el texto durante
+// todo el vuelo.
+.anim__face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 7rem;
+  height: 9.8rem;
+  transform: translate(-50%, -50%) scale(var(--counter, 0.42));
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  place-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 0.5rem;
+  border: 2px solid rgba($arena-grid, 0.55);
+  border-radius: radius("sm");
+  // Un marco de mentira: la carta de verdad se está diseñando aparte
+  // (knowledge/v3/card-concept/) y aquí solo hace falta que se lea COMO una
+  // carta durante los 260 ms que dura el vuelo. Cuando el marco esté decidido,
+  // esto se sustituye por el componente de verdad.
+  background: linear-gradient(160deg, $arena-ground-mid 0%, $arena-piece 100%);
+  box-shadow: 0 6px 14px rgba($board-shadow, 0.75);
+  text-align: center;
+  user-select: none;
+}
+
+.anim__face-icon {
+  align-self: end;
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.anim__face-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: $arena-origin;
+}
+
+.anim__face-range {
+  font-size: 0.68rem;
+  color: rgba($arena-origin, 0.6);
+}
+
+// --- El número del golpe ----------------------------------------------------
+
+// Marcador de posición hasta que exista el motor de combate: la cifra es
+// aleatoria a propósito para que no se lea como un dato.
+.anim__damage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: -0.7rem 0 0 -1.2rem;
+  width: 2.4rem;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: $arena-damage;
+  // El número cae sobre suelo, ficha o polvo, así que se apoya en su propio
+  // contorno y no en el color de debajo.
+  paint-order: stroke;
+  -webkit-text-stroke: 3px $arena-label-halo;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+// El crítico: más grande y hacia el blanco. El tamaño hace aquí más que el
+// color — un número que ocupa el doble se ve con el rabillo del ojo, y un
+// crítico tiene que verse aunque estés mirando otra esquina del tablero.
+.anim__damage--critico {
+  width: 4rem;
+  margin-left: -2rem;
+  font-size: 1.9rem;
+  color: $arena-crit;
+  -webkit-text-stroke: 4px $arena-label-halo;
+}
+
+// El fallo: la única cosa de este tablero que se pinta SIN halo. No es
+// descuido. El halo existe para que algo se lea sobre cualquier fondo, y un
+// fallo es justo lo que no tiene que reclamar la vista: se lee si lo miras y
+// se pierde si no. Más pequeño que el daño, en versalitas y apagado.
+.anim__damage--fallo {
+  width: 4.5rem;
+  margin-left: -2.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $arena-miss;
+  -webkit-text-stroke: 0;
+}
+
+// --- El relevo del crítico --------------------------------------------------
+
+// El estado que el crítico deja puesto (§4.5: los de control los aplica el
+// crítico). Es un marcador de posición del módulo de estados, y está aquí solo
+// para poder ver el EMPALME —que el crítico termine entregando algo, en vez de
+// acabar en sí mismo—. Va dentro de la ficha, no en la capa de la escena, para
+// que la siga sin que nadie tenga que moverlo: cuando la ficha embiste, su
+// estado embiste con ella.
+.anim__state {
+  position: absolute;
+  left: 0;
+  top: 0;
+  // Arriba y a la derecha del disco. El disco es una elipse tumbada, así que
+  // la esquina de su caja queda en el aire y no tapa el glifo de debajo.
+  margin: -1.55em 0.35em 0 0.35em;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px $board-shadow);
+}
+
+// --- Pie del escenario ------------------------------------------------------
+
+// Arriba a la izquierda y no debajo de la mano: la mano ocupa el bajo del
+// escenario entero, y un rótulo ahí acaba encima de las cartas.
+.anim__hint {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.6rem;
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba($arena-origin, 0.55);
+  pointer-events: none;
+}
+
+.anim__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// El rótulo que agrupa los tres desenlaces en la barra. No es un botón y tiene
+// que no parecerlo: sin él, «Golpear · Fallar · Crítico» se lee como tres
+// acciones sueltas en vez de como las tres caras de la misma.
+.anim__group {
+  align-self: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: skin("muted");
+}
+
+.anim__count {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: skin("muted");
+}
+
+// --- Los mandos -------------------------------------------------------------
+
+.anim__knobs {
+  display: grid;
+  gap: 0.9rem 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.anim__knob {
+  display: grid;
+  gap: 0.3rem;
+  align-content: start;
+}
+
+.anim__knob-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: skin("muted");
+}
+
+.anim__knob-value {
+  font-variant-numeric: tabular-nums;
+  text-transform: none;
+  letter-spacing: 0;
+  color: skin("text");
+}
+
+// Nada se mueve para quien ha pedido que nada se mueva. El componente ya
+// aplana los tiempos (anim.ts, `reduced`), y esto es el cinturón por si algún
+// día algo de aquí vuelve a ser una transición de CSS.
+@include reduced-motion {
+  .anim__piece,
+  .anim__shadow,
+  .anim__damage {
+    transition: none !important;
+  }
+}

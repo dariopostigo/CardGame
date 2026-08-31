@@ -113,7 +113,17 @@ umbrales o porcentajes que el motor ya acota, y solo dos son cantidades libres.
 | 🎯 **Precisión** | Umbral de acierto sobre 1..100 | **65 – 95** |
 | 🍀 **Suerte** | Umbral de crítico sobre 1..100 | 0 – **25**, y nunca por encima de 🎯 Precisión |
 | ⚡ **Iniciativa** | Orden de actuación | Sin escala propia: solo se compara |
-| 👢 **Movimiento** | Hexágonos por turno | Entero pequeño, **en tres bandas según el tipo de daño** *(27-ago-2026)*: 🗡️ la más alta, ✨ media, 🏹 la más baja — es lo que rompe el bucle del arquero que dispara y retrocede ([battle.md](board/battle.md) §1.2) |
+| 👢 **Movimiento** | Hexágonos por turno | **Decidido** *(31-ago-2026)*: **🗡️ 3 · ✨ 2 · 🏹 1**, banda por tipo de daño |
+
+**👢 Movimiento es la primera Habilidad con número** *(31 de agosto de 2026)*, y
+no es un valor por ficha sino una **banda por tipo de daño**, igual que el
+alcance. Sale del duelo del [tablero de batalla](board/battle.md) §1.2, medido y
+no supuesto: con el mismo 👢 para todos, el 🏹 dispara y retrocede dando la
+vuelta al campo y el 🗡️ tarda **16 rondas comiendo 11 disparos** en alcanzarlo;
+con 3 contra 1 son **cuatro rondas y un disparo**, que es la aproximación larga
+del §1.1 con el arquero cobrando su peaje. **Ninguna 🏹 puede tener el 👢 de una
+🗡️ de su mismo tier**, y si una ficha se sale de su banda, el límite medido es
+ninguna 🏹 por encima de 2 y ninguna 🗡️ por debajo de 3.
 
 **Solo ❤️ Vida y ⚔️ Ataque crecen con el tier**, y crecen **×10 de tier 1 a
 tier 8** — unos **×1,4 por escalón**:

@@ -20,6 +20,12 @@
 // la lista a propósito — no es que se haya adelantado, es que no depende de
 // nadie.
 //
+// El segundo fue la ANIMACIÓN, el 31 de agosto de 2026, y por lo mismo: una
+// caída no necesita saber cuánto pega la ficha que cae. Va la última de la
+// lista pero no es la última en importancia — es la única entrada que no
+// construye una regla sino una SENSACIÓN, y la que decide si esto parece un
+// videojuego o una web que aplica un reglamento.
+//
 // El ORDEN es el de dependencia, no el de importancia: cada módulo necesita
 // que el anterior esté resuelto. Sale de docs/v3/status.md §2.
 // =========================================================================
@@ -54,7 +60,8 @@ export const DEV_MODULES: readonly DevModule[] = [
     icon: "pi pi-id-card",
     status: "planificado",
     doc: { href: "/docs/v3/razas", label: "Razas · Habilidades y Características" },
-    blocker: "Faltan los valores numéricos de las 8 Habilidades.",
+    blocker:
+      "Faltan siete de las 8 Habilidades en valores. 👢 Movimiento ya está: 🗡️ 3 · ✨ 2 · 🏹 1, banda por tipo de daño (31-ago), medida en el duelo del tablero.",
   },
   {
     slug: "combate",
@@ -105,7 +112,18 @@ export const DEV_MODULES: readonly DevModule[] = [
     status: "en-curso",
     doc: { href: "/docs/v3/board/battle", label: "Tablero de batalla" },
     blocker:
-      "Ninguno de geometría. Dos cosas que el tablero ha medido y son decisión de diseño: el bucle del arquero del §1.2 no se sostiene en esta arena —las bandas van pegadas al borde, así que a quien huye le queda UN hexágono de retroceso—, y la promesa del §5 de que «rodear siempre es legal» es falsa dentro de tu propia banda: con el despliegue natural hay fichas que la ronda 1 las pilla sin salida (una con un jugador, cinco con tres). Falta la ilustración del campo, la segunda forma del bando enemigo (fauna u horda, §2) y una línea del §6 que quedó en singular. Iniciativa y turno siguen esperando los valores de las 8 Habilidades.",
+      "Ninguno de geometría, y lo que el tablero midió ya está en el documento: el bando enemigo se cierra en espejo, la victoria pasa a plural y desplegar apretado encierra a las tuyas (28-ago); el duelo del arquero jugado en 2D dio la banda de 👢 Movimiento —🗡️ 3 · ✨ 2 · 🏹 1, la primera cifra de las 8 Habilidades— (31-ago). Queda por construir la ilustración del campo, la segunda forma del bando enemigo (fauna u horda, §2) y el mismo bucle con quince fichas por bando, que el duelo 1 contra 1 no contesta. ⚡ Iniciativa y el turno siguen esperando las otras siete Habilidades.",
+  },
+  {
+    slug: "animacion",
+    label: "Animación",
+    summary:
+      "Cómo se SIENTE el juego, que es lo único de esta lista que no es una regla: soltar una carta y verla convertirse en ficha en el aire, la caída con su sombra y su polvo, el golpe con su embestida y su congelado, y la baja con su fogonazo. Están los TRES DESENLACES del §4.1 —fallo, impacto y crítico—, que en un juego sin dados en pantalla no son adorno sino el único canal por el que el jugador se entera de lo que ha pasado: la embestida es idéntica en los tres hasta el fotograma del contacto, y lo que separa fallar de criticar empieza ahí y ni un milisegundo antes. Diales en vivo para el vuelo, la curva de caída, el aplastado, el hit-stop, el temblor, el esquive, el congelado del crítico y las partículas, sobre un retal de quince hexágonos con la geometría y la cámara de la arena.",
+    icon: "pi pi-play",
+    status: "en-curso",
+    doc: { href: "/docs/v3/game-design", label: "Diseño del juego §4.1" },
+    blocker:
+      "Ninguno, y es el segundo módulo que rompe el orden de dependencia por el mismo motivo que el tablero: no espera datos. Una caída no necesita saber cuánto pega la ficha. Lo que sí espera es al motor de combate, pero al revés de lo normal —no lo necesita para funcionar, es el motor el que va a tener que nacer emitiendo SUCESOS en vez de mutando estado, o nada de esto se podrá enseñar (lib/v3/anim.ts, `schedule`)—. De ese motor ya está escrito el primer trozo, y por necesidad de aquí: lib/v3/combat.ts resuelve la tirada del §4.1, que no depende de los valores de las 8 Habilidades. Lo que el banco pide a cambio es que `schedule()` aprenda a solapar: hoy es estrictamente secuencial, y el tic de estados al empezar el turno no cabe en fila.",
   },
 ];
 

@@ -1,6 +1,6 @@
 # Tablero de batalla — V3
 
-> **Escrito el 24 de agosto de 2026** y **reabierto y cerrado el 27 de agosto de 2026**, cuando el bando dejó de ser cinco fichas y pasó a ser de uno a tres jugadores con sus héroes (§2). El tablero de batalla es uno de los dos tableros del juego *(decidido, [game-design.md](../game-design.md) §2)*; el otro es el [tablero de exploración](board-map.md).
+> **Escrito el 24 de agosto de 2026**, **reabierto y cerrado el 27 de agosto de 2026** —cuando el bando dejó de ser cinco fichas y pasó a ser de uno a tres jugadores con sus héroes (§2)— y **corregido con lo que midió el laboratorio** ([/dev/tablero](/dev/tablero)): el **28 de agosto de 2026** el presupuesto del bando enemigo se cerró en espejo (§2), la victoria pasó a plural (§6) y desplegar apretado resultó encerrar a las tuyas (§3); el **31 de agosto de 2026** el duelo del arquero se jugó en 2D y **la banda de 👢 Movimiento quedó decidida en 3 · 2 · 1** (§1.1 y §1.2), que es la primera cifra escrita de las 8 Habilidades. El tablero de batalla es uno de los dos tableros del juego *(decidido, [game-design.md](../game-design.md) §2)*; el otro es el [tablero de exploración](board-map.md).
 
 ## Qué cubre este documento
 
@@ -44,13 +44,15 @@ Lo que sí cambia es el otro lado de la ecuación: **👢 Movimiento pasa a depe
 
 | Tipo | Alcance | 👢 Movimiento | Su trabajo en la aproximación |
 |---|---|---|---|
-| 🗡️ **Cuerpo a cuerpo** | 1 | el más alto | Cruza el campo entero. Es el que paga la aproximación, y por eso es el que corre |
-| ✨ **Mágico** | 2 | medio | Avanza a media rienda y entra detrás del 🗡️ |
-| 🏹 **A distancia** | 4 | el más bajo | **No avanza: espera.** Su trabajo es castigar a quien cruce |
+| 🗡️ **Cuerpo a cuerpo** | 1 | **3** | Cruza el campo entero. Es el que paga la aproximación, y por eso es el que corre |
+| ✨ **Mágico** | 2 | **2** | Avanza a media rienda y entra detrás del 🗡️ |
+| 🏹 **A distancia** | 4 | **1** | **No avanza: espera.** Su trabajo es castigar a quien cruce |
+
+Los tres valores de 👢 se decidieron el **31 de agosto de 2026** midiendo el duelo del §1.2, y son la primera cifra escrita de las 8 Habilidades.
 
 **El 🏹 deja de abrir la batalla y pasa a esperarla**, y es el cambio de carácter más grande que trae el tablero grande. En 7×5 el frente enemigo estaba a tiro desde la casilla de salida; a 11 hexágonos, el arquero que avanza para disparar es el arquero que se pone a tiro del que corre. Su sitio es quieto.
 
-### 1.2 El arquero que retrocede *(decidido el 27 de agosto de 2026)*
+### 1.2 El arquero que retrocede *(decidido el 27 y corregido el 28 de agosto de 2026)*
 
 En un tablero grande y con pocas fichas aparece un bucle que en 7×5 no existía:
 
@@ -63,18 +65,28 @@ En un tablero grande y con pocas fichas aparece un bucle que en 7×5 no existía
   …
 ```
 
-**El bucle es estable: el 🗡️ nunca llega a d=1.** Con 👢 Movimiento igual para los dos y el ataque en cualquier orden dentro del turno (§5), el tirador conserva la distancia para siempre. En 7×5 lo paraba el borde del tablero —dos turnos de retroceso y estaba acorralado—; en 14×12 o más **no hay borde al que llegar**, y en un 1 contra 1 de 🗡️ contra 🏹 no es un desequilibrio, es una partida que no se puede ganar.
+**En el papel el bucle es estable: el 🗡️ nunca llega a d=1.** Con 👢 Movimiento igual para los dos y el ataque en cualquier orden dentro del turno (§5), el tirador conserva la distancia para siempre. En 7×5 lo paraba el borde del tablero —dos turnos de retroceso y estaba acorralado—, y de ahí salía la conclusión que este apartado escribió: que en 14×12 o más **no hay borde al que llegar**, y que un 1 contra 1 de 🗡️ contra 🏹 no es un desequilibrio sino una partida que no se puede ganar.
 
-**La respuesta: el alcance se paga con los pies.** 👢 Movimiento alto para el 🗡️, bajo para el 🏹. Con 🗡️ 👢 4 y 🏹 👢 1 el bucle se rompe en un turno:
+**Medida sobre la arena, esa conclusión era falsa** *(28 de agosto de 2026, [/dev/tablero](/dev/tablero))*. Las bandas van **pegadas al borde** (§1), así que el que espera tiene el borde a la espalda **desde la ronda 1**: lo que le queda para retroceder es la profundidad de su banda menos uno —**un hexágono**— y eso **no cambia con el tamaño del tablero**, porque la banda son dos columnas siempre. Con los dos 👢 a 2 sobre 14×12, el 🗡️ **contacta en la ronda 6 comiendo 2 disparos**, donde el modelo sin borde decía *jamás*.
 
-```
-  d=4   el 🏹 dispara y retrocede 1   →  d=5
-  d=5   el 🗡️ avanza 4                →  d=1   contacto
-```
+**Y esa medida era optimista** *(31 de agosto de 2026, el mismo duelo jugado en 2D)*. En línea recta huir es retroceder, y por eso el borde caza; sobre el tablero el que huye tiene **las doce filas para correr de lado**, y correr en paralelo al borde conserva la distancia sin gastar sitio a la espalda. Medido así, con los dos 👢 a 2, **el 🗡️ tarda 16 rondas y come 11 disparos** en el tablero mínimo — y **22 rondas y 14 disparos** en el de 20×16, porque cuanto más grande es el campo, más sitio hay para dar la vuelta. **El borde caza al arquero tonto, no al arquero.**
 
-No toca el motor y no toca el §5: **son valores de ficha**, y las 8 Habilidades todavía no tienen números, así que esto entra en la escala de [razas.md](../razas.md) en vez de ser un parche del tablero. Se descartó la otra salida —que disparar cueste el movimiento, o mover o disparar— porque rompe el §5 para un tipo de daño y el §5 argumenta justo lo contrario para las 70 fichas 🗡️.
+**Así que el bucle es real y el reparto de 👢 Movimiento es necesidad, no carácter.** Es la conclusión que dos medidas seguidas han tenido que corregir, y por eso queda escrita con sus números:
 
-> **Lo que arrastra, y es trabajo:** la escala de 👢 Movimiento deja de ser "entero pequeño" a repartir libremente. Pasa a tener **una banda por tipo de daño**, y eso es un requisito para las 132 fichas. Los números exactos son insumo de Dario, como el resto de la escala.
+| 👢 🗡️ contra 👢 🏹 | 14×12 | 20×16 |
+|---|---|---|
+| **2 contra 2** | contacto en la ronda 16, **11 disparos** | ronda 22, **14 disparos** |
+| **3 contra 1** | ronda 4, 1 disparo | ronda 6, 1 disparo |
+| **4 contra 1** | ronda 3, 1 disparo | ronda 4, 0 disparos |
+| **4 contra 4** | ronda 4, 0 disparos | ronda 4, 0 disparos |
+
+Lo que manda no es solo la diferencia: es que **el 👢 del que cruza se acerque al alcance 4 del arquero**. Igualados a 4 no pasa nada —quien cierra la distancia en un turno no da tiempo a retroceder— e igualados a 2 el juego se rompe. El peligro no es la igualdad, es la **igualdad baja**.
+
+**La banda queda decidida: 🗡️ 3 · ✨ 2 · 🏹 1** *(Dario, 31 de agosto de 2026)*. Es el reparto **más lento que sigue siendo seguro**: la aproximación dura **cuatro rondas en el tablero mínimo y seis en el de 20×16** —dentro de las tres a cinco que pide el §1.1, y una por encima en el campo más grande— y deja al 🏹 cobrar **un disparo** mientras el 🗡️ cruza, que es exactamente su trabajo. Subir a 4 · 3 · 1 le quitaba ese disparo y bajaba la aproximación a tres rondas.
+
+No toca el motor y no toca el §5: **son valores de ficha**, así que esto entra en la escala de [razas.md](../razas.md) en vez de ser un parche del tablero. Se descartó la otra salida —que disparar cueste el movimiento, o mover o disparar— porque rompe el §5 para un tipo de daño y el §5 argumenta justo lo contrario para las 70 fichas 🗡️.
+
+> **Lo que arrastra, y ya no es solo trabajo:** la escala de 👢 Movimiento deja de ser "entero pequeño" a repartir libremente y pasa a tener **una banda por tipo de daño con valores escritos**. Es el **primer número de las 8 Habilidades** que entra en la escala. Si algún día una ficha quiere salirse de su banda, lo medido dice hasta dónde: **ninguna 🏹 por encima de 2, ninguna 🗡️ por debajo de 3**.
 
 ## 2. El bando: de uno a tres jugadores, cada uno con su héroe *(decidido el 27 de agosto de 2026)*
 
@@ -98,18 +110,26 @@ Sustituye al "héroe + 4 unidades, cinco fichas" que este documento fijó el 24 
 
 | Encuentro | Composición | Cómo se gana |
 |---|---|---|
-| **De facción** | Héroe enemigo + unidades de su raza | Cae su héroe |
+| **De facción** | **Un héroe enemigo por jugador**, cada uno con hasta 4 unidades de su raza | Caen **todos** sus héroes |
 | **De fauna u horda** | Criaturas, sin héroe | Caen todas |
 
 El de facción no hay que inventarlo: las **44 cartas de clase** de las once razas ya existen, y las unidades tienen su cara hostil por diseño ([characters/enemies.md](../characters/enemies.md)). El precio de tener dos formas es que **son dos condiciones de victoria**, y el jugador tiene que saber cuál está jugando **antes de desplegar** —porque cambia a qué apuntas y por tanto dónde te colocas—: eso es un requisito de pantalla, no una regla.
 
-> **Lo que el co-op deja abierto, y bloquea el bando enemigo** (§8): **cuántas fichas trae la máquina.** Contra 15 fichas no puede traer las mismas que contra 5, y el presupuesto no está escrito. v2 lo tenía en *héroes-que-entran + 1*, que es la referencia natural pero es de un juego con otras cuentas. Y sale una segunda pregunta de la misma raíz: **cuántos héroes enemigos** trae un encuentro de facción. Con uno solo la victoria es asimétrica —los jugadores ganan tumbando un héroe y la máquina tiene que tumbar tres (§6)—, así que lo más probable es que escale con el número de jugadores. No se decide aquí de refilón.
+**El presupuesto de la máquina es el espejo: trae lo mismo que la mesa** *(decidido el 28 de agosto de 2026)*. Un héroe enemigo y hasta 4 unidades **por jugador**, así que la tabla de arriba vale igual para los dos lados: 5 fichas contra 5, 15 contra 15. Era lo único que bloqueaba poner un bando enemigo de verdad en el tablero, y ya no bloquea.
+
+Se eligió entre tres candidatos **por lo que resuelve**: es la única forma en la que **la victoria se lee igual por los dos lados** —caen todos sus héroes ↔ caen todos los tuyos (§6)—, y con eso muere la asimetría que este apartado señalaba, la de ganar tumbando un héroe mientras la máquina tiene que tumbar tres. No se hereda la fórmula de v2 (*héroes-que-entran + 1*): era de un juego con otras cuentas, y el espejo dice lo mismo sin sumar nada.
+
+> **Lo que sigue abierto no es el presupuesto, es la dificultad.** El espejo es el punto de partida, no una promesa de que la pelea esté igualada: la máquina no juega como una persona (§10), y si resulta fácil o imposible el dial es **su composición** —qué tiers trae, con qué Características— y no el número de fichas. Eso se mira con valores en la mano, no antes.
 
 ## 3. Despliegue *(decidido)*
 
 **Colocación libre dentro de tu banda**, antes de la ronda 1: eliges el hexágono de cada una de tus fichas entre los de las dos columnas. Cero reglas nuevas, y es la decisión táctica más barata que existe.
 
 **La banda es del bando, no del jugador** *(27-ago-2026)*. Los jugadores comparten las dos columnas: con tres son **15 fichas en 24 hexágonos**, así que la banda se llena y quién se pone delante deja de ser cosa de cada uno. Es la primera decisión conjunta de la partida y sale gratis — no hace falta ninguna regla para que exista.
+
+**Y hay que desplegar dejando huecos** *(medido el 28 de agosto de 2026, [/dev/tablero](/dev/tablero))*. Como no se atraviesa a nadie (§5) y la banda tiene el borde detrás, un despliegue apretado **se encierra a sí mismo**: con la colocación natural —pantalla delante, héroes detrás— hay fichas a las que la ronda 1 les llega **sin salida, cero hexágonos**, tapadas por las suyas y con el borde a la espalda. Una con un jugador, tres con dos, **cinco con tres**, y no mejora agrandando el tablero: la banda son dos columnas siempre.
+
+No es un fallo que haya que arreglar con una regla: es **la primera decisión táctica de la partida**, y el documento tiene que decirla en voz alta porque hasta ahora no la decía. Quién se queda sin turno depende además del **orden** de la lista de Iniciativa (§4) — la ficha tapada que mueve antes que su tapón sale, la que mueve después se queda. Queda una puerta con su condición escrita: **si al jugar resulta que apretar la banda castiga más de lo que enseña**, la respuesta barata es dejar que dos fichas aliadas **intercambien el sitio**, y no hace falta nada más.
 
 Queda un detalle pendiente y es de mesa, no de reglas: **en qué orden colocan los jugadores** (§8). Colocar a la vez, por turnos o por Iniciativa cambia quién ve el despliegue de quién.
 
@@ -142,7 +162,9 @@ Ronda 1
 
 **Si además puede jugar una carta en su turno, cuántas y a qué coste, es de [game-design.md](../game-design.md) §6** (Turno y economía de cartas), que no está escrito. Este documento no lo decide de refilón.
 
-**No se atraviesa a ninguna ficha, ni aliada ni enemiga**, y dos fichas nunca comparten hexágono *(decidido)*. Es lo que convierte una línea de unidades en una **pantalla**. Con 12 filas de alto, la pantalla no es un muro: quince fichas no tapan doce filas, así que **rodear siempre es legal y lo que cuesta es tiempo** —el desvío se paga en rondas, y en un tablero donde el 🏹 espera quieto, pagar rondas cruzando es caro—. Es un peaje, no una pared, y se acepta como tal.
+**No se atraviesa a ninguna ficha, ni aliada ni enemiga**, y dos fichas nunca comparten hexágono *(decidido)*. Es lo que convierte una línea de unidades en una **pantalla**. Con 12 filas de alto, la pantalla no es un muro: quince fichas no tapan doce filas, así que **rodear es legal y lo que cuesta es tiempo** —el desvío se paga en rondas, y en un tablero donde el 🏹 espera quieto, pagar rondas cruzando es caro—. Es un peaje, no una pared, y se acepta como tal.
+
+**Con una excepción, y es dentro de tu propia banda** *(medido el 28 de agosto de 2026)*. Este apartado decía *"rodear **siempre** es legal"* y eso es cierto en campo abierto y falso en las dos columnas del despliegue: allí el borde está a la espalda y las fichas propias tapan el frente, así que una ficha apretada puede empezar la batalla **sin ningún hexágono al que ir**. La regla no cambia —la que se queda sin salida simplemente no mueve, y ataca si tiene a alguien a tiro—; lo que cambia es que **desplegar deja de ser gratis**, y eso está escrito en el §3.
 
 Encaja con lo que ya decía el catálogo: 🦅 **Volador** *"ignora obstáculos del mapa durante el movimiento, pero no puede atravesar enemigos"* ([razas.md](../razas.md)). Volar salta terreno, no cuerpos.
 
@@ -150,8 +172,10 @@ Encaja con lo que ya decía el catálogo: 🦅 **Volador** *"ignora obstáculos 
 
 | Resultado | Condición |
 |---|---|
-| **Victoria** | Cae el héroe enemigo, o caen todas las criaturas si el encuentro no lleva héroe (§2) |
+| **Victoria** | **Caen todos los héroes enemigos**, o caen todas las criaturas si el encuentro no lleva héroe (§2) |
 | **Derrota** | **Caen todos los héroes del bando** |
+
+**La victoria se lee igual por los dos lados** *(corregido el 28 de agosto de 2026)*. Esta tabla decía *"cae el héroe enemigo"*, en singular, porque se escribió cuando enfrente había uno; con el presupuesto en espejo del §2 hay **un héroe enemigo por jugador**, y la condición pasa a ser simétrica —caen todos los suyos ↔ caen todos los tuyos—, que es justo por lo que se eligió el espejo.
 
 **Un jugador cuyo héroe cae sigue jugando con sus unidades.** No sale de la mesa, no se retira nada del tablero, y la batalla continúa mientras quede un héroe aliado en pie.
 
@@ -177,7 +201,7 @@ Pendiente, por tanto: el **catálogo de obstáculos** (cuáles, con qué regla e
 
 ## 8. Lo que sigue por definir
 
-- **El presupuesto del bando enemigo por número de jugadores** (§2), y con él **cuántos héroes enemigos** trae un encuentro de facción. Es lo único que hoy bloquea poner un bando enemigo de verdad en el tablero.
+- **La persecución con pantalla** (§1.2). El duelo ya está medido en 2D, pero es **1 contra 1**, que es el peor caso a propósito. Falta la otra mitad: qué hace el kiting con quince fichas por bando, donde la presa se choca con las suyas y el cazador tiene ayuda. No se contesta con un duelo — se contesta jugando la ronda entera.
 - **El orden de colocación entre jugadores** en la banda compartida (§3).
 - **El tope de jugadores.** Se escribe **1 a 3**, que es el formato nombrado; v2 llegaba a 4 y el tablero mínimo aguantaría 40 fichas de sitio, pero la lista de Iniciativa pasaría de 30 entradas y eso hay que jugarlo antes de prometerlo.
 - **Si el tablero grande necesita un reloj o un incentivo para avanzar** (§10). Con el 🏹 esperando quieto, el bando que cruza es el que se expone: si a los dos les conviene esperar, la batalla se puede quedar mirándose. v2 tenía un reloj de 40 turnos que V3 no ha recuperado.
@@ -200,7 +224,7 @@ De [v2/board/battle.md](../../v2/board/battle.md) se heredan **dos cosas, las do
 | Estado *Derribado* y rescate | No hace falta: perder el héroe ya no te saca de la batalla (§6). Queda como puerta |
 | **Desengancharse** y **Retirada** | Eran tiradas enfrentadas `1d20 + mod DES`: no hay d20 ni DES |
 | Penalización a bocajarro | Era "Desventaja", mecanismo retirado; ya decidido que no penaliza (§1.1) |
-| Presupuesto de composición enemiga | **Vuelve a hacer falta** con el co-op, y su fórmula (héroes-que-entran + 1) es la referencia de partida. Pendiente (§8) |
+| Presupuesto de composición enemiga (*héroes-que-entran + 1*) | **Resuelto por otro camino** (28-ago): la máquina trae **lo mismo que la mesa** (§2). El espejo hace simétrica la victoria, que es lo que su fórmula no daba |
 | Mercenarios en el tablero | El tipo de carta desaparece; lo sustituye la Unidad |
 | Cobertura como "+1 CA" | No hay CA: la cobertura resta acierto (§7) |
 | Reloj de 40 turnos | No se ha recuperado, y el tablero grande vuelve a plantear si hace falta (§8) |
@@ -211,7 +235,8 @@ Su §12 dejaba **reabierto el par tamaño-de-tablero / alcances**, con el sínto
 ## 10. Qué hay que vigilar en el primer balance
 
 - **Si a los dos bandos les conviene esperar, no pasa nada.** Es el riesgo propio del tablero grande con el 🏹 quieto: cruzar te expone y esperar no cuesta. Es el primer sitio donde mirar, y si aparece, el dial es un reloj o una recompensa por avanzar (§8), no el tamaño del campo.
-- **El kiting está resuelto en el papel, no en la mesa.** El reparto de 👢 Movimiento por tipo de daño (§1.2) rompe el bucle con los números del ejemplo; con los números reales de la escala hay que volver a comprobarlo, y el caso límite es el **1 contra 1 de 🗡️ contra 🏹**, donde no hay pantalla que ayude.
+- **El kiting está medido en el duelo, no en la batalla.** El 1 contra 1 de 🗡️ contra 🏹 —el caso límite, sin pantalla que ayude— está resuelto con la banda de 👢 del §1.2: contacto en la ronda 4 y un disparo de peaje. Lo que falta es el mismo bucle **con quince fichas por bando** (§8), y ahí las dos correcciones que ya se han comido dos conclusiones seguidas aconsejan lo mismo: medirlo antes de darlo por bueno.
+- **La máquina no juega como una persona, y el espejo no es una promesa de dificultad.** El bando enemigo trae lo mismo que la mesa (§2), así que lo que decidirá si la pelea está igualada es **qué** trae —tiers y Características— y cómo decide sus turnos. Es el segundo sitio donde mirar, después del reloj.
 - **El 🏹 sigue siendo la pieza anti-héroe, pero ya no decide la partida.** Dos cosas lo han moderado sin haberlo buscado: a 11 hexágonos no amenaza al héroe rival en la ronda 1, y con la derrota por caída de **todos** los héroes (§6) matar uno ya no gana. 🗣️ **Provocación** sigue siendo la única respuesta escrita que existe contra él, y merece mirarse al asignar Características.
 - **Los empates de ⚡ Iniciativa con 30 fichas.** El desempate por 🍀 Suerte (§4.6) está escrito para eso, pero se escribió pensando en diez fichas, y es el cuarto trabajo de Suerte con un tope de 25 que se fijó cuando hacía dos.
 - **Cuánto se tarda en jugar una ronda de 30 turnos.** No es balance de números, es balance de mesa, y es lo que puede decidir que el tope sean 2 jugadores y no 3.

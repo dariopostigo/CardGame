@@ -22,6 +22,10 @@
 // misma rejilla hexagonal, pero sin losetas, sin terreno y sin canto (ver la
 // cabecera de _arena.scss).
 @use "arena";
+// El banco de animación (/dev/animacion). Comparte la paleta de la arena pero
+// no su estructura: sus fichas son DOM y su polvo es un canvas, así que va
+// aparte y no derivado (ver la cabecera de _animation-lab.scss).
+@use "animation-lab";
 @use "piece";
 @use "sprite-lab";
 @use "combatant-drawer";

@@ -16,25 +16,32 @@
 // partida que no se puede ganar, y por eso va en su propio bloque y se dice con
 // el color de peligro.
 //
-// Los tres mandos de 👢 Movimiento existen porque esos valores NO están
-// decididos: el reparto sí (🗡️ alto, 🏹 bajo), los números son insumo de Dario.
-// Abren en LAB_MOVEMENT, que es el juego más pequeño que rompe el bucle.
+// Los tres mandos de 👢 Movimiento abren en la BANDA DECIDIDA —3 · 2 · 1, Dario,
+// 31 de agosto de 2026— y siguen siendo mandos porque hay que poder ver qué pasa
+// al moverlos: es lo que dejó claro que igualarlos rompe el juego.
 //
-// Todo lo que se afirma aquí lo calcula lib/v3/tempo.ts: este componente no
-// decide nada.
+// LA CAZA SE MIDE DOS VECES, y no es duplicar: en línea recta (tempo.ts `chase`)
+// la presa solo puede huir hacia atrás, así que el borde la caza; sobre la arena
+// (duel.ts `duel`) usa las filas y da la vuelta al campo. Las dos cuentas juntas
+// son el argumento entero del §1.2, y enseñarlas separadas es lo que evita
+// volver a concluir de más con la fácil.
+//
+// Todo lo que se afirma aquí lo calculan lib/v3/tempo.ts y lib/v3/duel.ts: este
+// componente no decide nada.
 // =========================================================================
 
 import { Slider, type SliderChangeEvent } from "primereact/slider";
 import { retreatRoom, type Arena } from "@/lib/v3/arena";
 import { DAMAGE_TYPES, DAMAGE_TYPE_IDS, type DamageTypeId } from "@/lib/v3/damage";
 import {
-  LAB_MOVEMENT,
+  MOVEMENT_BAND,
   chaseAgainstArcher,
   openingTempo,
   tempoVerdict,
   type MovementByType,
   type TempoVerdict,
 } from "@/lib/v3/tempo";
+import { duelsAgainstArcher, frontToFront, type RunnerPolicy } from "@/lib/v3/duel";
 
 /** El tope del mando. Doce hexágonos por turno ya es cruzar medio campo. */
 const MOVEMENT_MAX = 12;
@@ -95,14 +102,14 @@ export default function ArenaTempo({
       <div className="mb-4 grid gap-x-6 gap-y-3 sm:grid-cols-3">
         {DAMAGE_TYPE_IDS.map((id) => {
           const t = DAMAGE_TYPES[id];
-          const isLab = movement[id] === LAB_MOVEMENT[id];
+          const isBand = movement[id] === MOVEMENT_BAND[id];
           return (
             <div key={id} className="flex flex-col gap-1">
               <span className={labelClass}>
                 {t.icon} 👢 {movement[id]}
                 <span className="ml-1 normal-case opacity-70">
                   ({BAND_LABEL[t.movementBand]}
-                  {isLab && " · lab"})
+                  {isBand && " · decidido"})
                 </span>
               </span>
               <Slider
@@ -203,6 +210,56 @@ export default function ArenaTempo({
             );
           })}
         </ul>
+      </div>
+
+      {/* --- La misma caza, jugada en 2D sobre la arena (§1.2) --- */}
+      <div className="mt-3 border-t border-[var(--wiki-border)] pt-2 text-sm">
+        <div className={`mb-1 font-semibold ${strong}`}>Y lo mismo, jugado sobre esta arena</div>
+        <p className={`mb-2 text-xs ${muted}`}>
+          La cuenta de arriba es <b className={strong}>en línea recta</b>, y ahí huir es retroceder:
+          por eso el borde caza. Aquí el duelo se juega en el tablero, 1 contra 1 y desde la columna
+          del frente, así que la presa tiene las {arena.spec.rows} filas para correr de lado. Se
+          miden dos presas, porque no dan lo mismo: la <b className={strong}>voraz</b> coge siempre
+          el hexágono que más la aleja —es la que juega el tablero hoy— y acaba metiéndose en la
+          esquina ella sola; la que <b className={strong}>conserva sitio</b> desempata alejándose del
+          borde, y es el peor caso.
+        </p>
+        <ul className="grid gap-1">
+          {(["voraz", "con-sitio"] as RunnerPolicy[]).map((policy) => (
+            <li key={policy} className="flex flex-wrap items-baseline gap-x-2">
+              <span className={`w-52 shrink-0 ${strong}`}>
+                presa {policy === "voraz" ? "voraz" : "que conserva sitio"}
+              </span>
+              <span className={muted}>
+                {duelsAgainstArcher(arena, frontToFront(arena), movement, { policy }).map(
+                  ({ id, result }, i) => (
+                    <span key={id}>
+                      {i > 0 && " · "}
+                      {DAMAGE_TYPES[id].icon}{" "}
+                      {result.contact ? (
+                        <>
+                          <b className={strong}>ronda {result.round}</b>, {result.shots}{" "}
+                          {result.shots === 1 ? "disparo" : "disparos"}
+                        </>
+                      ) : (
+                        <b className="text-[var(--wiki-danger)]">no lo alcanza</b>
+                      )}
+                      {result.rowsUsed > 1 && (
+                        <span className="opacity-70"> ({result.rowsUsed} filas)</span>
+                      )}
+                    </span>
+                  ),
+                )}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p className={`mt-2 text-xs ${muted}`}>
+          Con la banda decidida —🗡️ 3 · ✨ 2 · 🏹 1— las dos presas caen igual y el peaje es{" "}
+          <b className={strong}>un disparo</b>. Igualando los tres mandos a 2 el bucle vuelve entero:{" "}
+          <b className={strong}>16 rondas y 11 disparos</b> aquí, y peor cuanto más grande el campo.
+          Es lo que hace que el reparto sea un requisito de la escala y no una preferencia.
+        </p>
       </div>
     </div>
   );

@@ -46,7 +46,10 @@ abiertas, que es donde estaban anotadas. Estas son las que este documento tiene
 que responder:
 
 - **Valores numéricos de las 8 Habilidades.** Siguen siendo insumo de Dario; no
-  se inventan. Lo que **ya no falta** es la escala *(23-ago-2026)*: rangos, topes
+  se inventan. **Una ya está puesta** *(31-ago-2026)*: **👢 Movimiento, 🗡️ 3 ·
+  ✨ 2 · 🏹 1**, banda por tipo de daño y no valor por ficha, decidida sobre el
+  duelo del arquero medido en el laboratorio del tablero. Quedan siete. Lo que
+  **ya no falta** es la escala *(23-ago-2026)*: rangos, topes
   y curva por tier están en [`razas.md`](razas.md#-la-escala-23-de-agosto-de-2026)
   —Vida 2–3 cifras, Ataque 1–2, mitigaciones topadas en 75, Precisión 65–95,
   Suerte 25, y solo Vida y Ataque crecen con el tier, ×10 de tier 1 a tier 8—.

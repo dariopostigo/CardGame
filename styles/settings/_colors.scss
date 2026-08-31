@@ -339,6 +339,23 @@ $arena-origin: #f2ede2;
 $arena-label: rgba(255, 255, 255, 0.88);
 $arena-label-halo: rgba(16, 12, 8, 0.7);
 
+// LA CIFRA DEL GOLPE, la que sale flotando de una ficha al recibir (el banco de
+// animación, /dev/animacion). Blanco tirando a rosa y no el rojo del bando
+// propio: el rojo ya significa "es mía" en este tablero, y un número rojo sobre
+// una ficha enemiga diría lo contrario de lo que pasa. Se lee sobre suelo,
+// ficha y polvo, así que va con el mismo halo que los rótulos.
+$arena-damage: #ffd9d0;
+
+// Los otros dos desenlaces del §4.1, que son un par y hay que moverlos juntos:
+// lo que tienen que hacer es separarse del impacto en DIRECCIONES CONTRARIAS.
+// El crítico, hacia la luz: más claro y más cálido que la cifra normal, hasta
+// tocar el blanco del fogonazo del que lo recibe. El fallo, hacia el suelo:
+// desaturado, apagado y sin halo —lo único de todo el tablero que se pinta sin
+// contorno—, porque un fallo tiene que costar leerse. Es la diferencia entre
+// "no ha pasado nada" y "no ha pasado nada, y ha sido culpa tuya".
+$arena-crit: #fff3c4;
+$arena-miss: #b9b3a6;
+
 // Ancla, en el lienzo de losetas (/dev/losetas): la flecha que marca por dónde
 // se une una loseta a otra. Va rellena oscura con filete claro porque se pinta
 // sobre cualquier terreno, y sobre el Bosque una flecha sin filete

@@ -21,10 +21,13 @@
 //     §1.1 —el 🏹 abriendo en la ronda 1 sobre 7×5—: con frentes a 11 la
 //     aproximación larga es la intención, así que se enseña lo que dura y en qué
 //     orden entra cada tipo de daño, sin aprobado.
-//   · Si el que corre alcanza al que dispara (§1.2). Esta sí tiene suspenso: con
-//     👢 Movimiento igual para todos, el 🏹 dispara y retrocede para siempre y en
-//     un tablero grande no hay borde que lo acorrale. Por eso 👢 Movimiento se
-//     reparte por tipo de daño y por eso el mando son tres y no uno.
+//   · Si el que corre alcanza al que dispara (§1.2). Esta sí tiene suspenso, y
+//     de medirla salió el primer número de la escala: con 👢 Movimiento igual
+//     para todos el 🏹 dispara y retrocede dando la vuelta al campo —16 rondas y
+//     11 disparos con los dos a 2, medido en 2D el 31 de agosto de 2026—, así que
+//     👢 Movimiento se reparte por tipo de daño y su banda ya está decidida
+//     (3 · 2 · 1). El mando sigue siendo triple para poder ver qué pasa al
+//     igualarlos, que es lo que lo demostró.
 //   · Si la banda da para el bando. Con tres jugadores son quince fichas en
 //     veinticuatro hexágonos, y eso se ve colocándolas.
 //
@@ -73,7 +76,7 @@ import {
   type Deployment,
   type Roster,
 } from "@/lib/v3/deployment";
-import { LAB_MOVEMENT, firstAttackRound, type MovementByType } from "@/lib/v3/tempo";
+import { MOVEMENT_BAND, firstAttackRound, type MovementByType } from "@/lib/v3/tempo";
 import {
   moveProblem,
   openFieldReach,
@@ -144,7 +147,7 @@ export default function ArenaModule() {
 
   // 👢 Movimiento por tipo de daño (battle.md §1.1). Tres valores y no uno: el
   // reparto está decidido, los números son diales de laboratorio.
-  const [movement, setMovement] = useState<MovementByType>(LAB_MOVEMENT);
+  const [movement, setMovement] = useState<MovementByType>(MOVEMENT_BAND);
 
   // --- El bando y su despliegue --------------------------------------------
   // El roster es estado por dos motivos: el tipo de daño de cada ficha se puede
@@ -993,16 +996,12 @@ export default function ArenaModule() {
             hoy aplazado.
           </li>
           <li>
-            <b className="text-[var(--wiki-text)]">Una promesa del §5 que no se cumple</b>: dice
-            que la pantalla «no es un muro» y que «rodear siempre es legal, y lo que cuesta es
-            tiempo». Medido con la fase de movimiento, eso es cierto en campo abierto y{" "}
-            <b className="text-[var(--wiki-text)]">falso dentro de tu propia banda</b>: con el
-            despliegue de muestra —el natural, pantalla delante y héroes detrás— hay fichas que la
-            ronda 1 las pilla <b className="text-[var(--wiki-text)]">sin salida</b>, cero
-            hexágonos, encerradas entre los suyos y el borde. Una con un jugador, tres con dos,
-            cinco con tres, y no cambia con el tamaño del tablero: la banda son dos columnas
-            siempre. Se puede evitar dejando huecos al desplegar, y eso es una regla táctica que el
-            documento no cuenta.
+            <b className="text-[var(--wiki-text)]">La persecución con pantalla</b>: el duelo del
+            §1.2 ya está medido en 2D, pero es{" "}
+            <b className="text-[var(--wiki-text)]">1 contra 1</b>, que es el peor caso a propósito.
+            Falta la otra mitad de la pregunta —qué hace el kiting con quince fichas por bando— y
+            esa no se contesta con un duelo: se contesta jugando la ronda entera y mirando si la
+            pantalla llega a tiempo de tapar al arquero.
           </li>
           <li>
             <b className="text-[var(--wiki-text)]">La segunda forma del bando enemigo</b>: enfrente
@@ -1013,16 +1012,12 @@ export default function ArenaModule() {
             no está aquí. Cambia la condición de victoria, así que entra con ella.
           </li>
           <li>
-            <b className="text-[var(--wiki-text)]">Una línea del §6 que hay que corregir</b>: dice
-            «cae el héroe enemigo», en singular, y se escribió cuando enfrente había uno. Con el
-            espejo hay un héroe enemigo por jugador y la victoria pasa a ser simétrica —caen todos
-            sus héroes ↔ caen todos los tuyos—, que es justo por lo que se eligió.
-          </li>
-          <li>
             <b className="text-[var(--wiki-text)]">Iniciativa y turno</b>: hasta 30 fichas en una
             sola lista, mover hasta 👢 Movimiento y atacar en cualquier orden (§4 y §5). Esto sí
-            necesita fichas con valores: los tres mandos de 👢 Movimiento de arriba son diales de
-            laboratorio, no datos — lo decidido es el reparto (🗡️ alto, 🏹 bajo), no los números.
+            necesita fichas con valores, y de las ocho Habilidades hoy solo hay una:{" "}
+            <b className="text-[var(--wiki-text)]">👢 Movimiento</b>, con su banda por tipo de daño
+            decidida el 31 de agosto (3 · 2 · 1). ⚡ Iniciativa sigue sin escala, así que la ronda
+            se juega alternando bandos en vez de ordenando de verdad.
           </li>
         </ul>
       </div>
