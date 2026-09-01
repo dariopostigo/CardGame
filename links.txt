@@ -1,0 +1,106 @@
+---------------------------
+---- SISTEMA DE BARAJA ---- 
+---------------------------
+https://codepen.io/cbolson/pen/dPXMRWG
+https://codepen.io/schwiiiii/pen/GgJPQvr
+https://codepen.io/delvignefred/pen/abMmXwg
+https://codepen.io/HejChristian/pen/RNwXexO
+
+-------------------------
+---- DISEÑO DE CARTA ----
+-------------------------
+https://codepen.io/BalintFerenczy/pen/KwdoyEN
+https://codepen.io/Gustav-Wahlbom-Andersson/pen/MYayBoX
+https://codepen.io/OfigenusMaximus/pen/gOjGoPV
+
+-------------------------
+---- DISEÑO DE HEROE ----
+-------------------------
+https://codepen.io/GemmaCroad/pen/wBBPpPZ
+
+-----------------------------
+---- MOVIMIENTO DE CARTA ----
+-----------------------------
+https://codepen.io/jackrugile/pen/zqJdXM
+https://codepen.io/jay-khatri-dev/pen/JojjKwM
+https://codepen.io/Philip-Walsh/pen/qEBzGmM
+
+---------------
+---- DADOS ----
+---------------
+https://codepen.io/Mant0uStudio/pen/ZYWywJB
+https://codepen.io/NotARealAccount/pen/GgRBJmR
+https://codepen.io/creativeocean/pen/oNEPggW
+---------------
+---- Otros ----
+---------------
+https://codepen.io/RodenKerthin/pen/oNbXNxo
+Niebla
+https://codepen.io/faltastic/pen/evKbEV
+
+Tormenta
+https://codepen.io/davidlyons/pen/KyXvjp
+
+----------------
+---- Musica ----
+----------------
+https://www.youtube.com/watch?v=CkOfFh01RW8&list=RDCkOfFh01RW8&index=1
+https://www.youtube.com/watch?v=NPnCfolm5NY&list=RDCkOfFh01RW8&index=2
+https://www.youtube.com/watch?v=m2xnPSRSSzU&list=RDCkOfFh01RW8&index=3
+
+
+--------------------------------------------
+---- DÓNDE BUSCAR EFECTOS Y RECURSOS ----
+--------------------------------------------
+
+1. Comunidades de código interactivo
+   (para copiar y aprender efectos)
+
+   Si buscas el código JavaScript exacto de un efecto de partículas, una
+   explosión o físicas en canvas, estas plataformas son las mejores:
+
+   - CodePen
+     Es la mayor comunidad de desarrolladores web experimentales. Si buscas
+     términos como "canvas particles", "canvas explosion" o "html5 game
+     effect", encontrarás miles de ejemplos creados por la comunidad con el
+     código (HTML/JS) expuesto para clonar, editar en tiempo real y descargar.
+
+   - CodeSandbox
+     Similar a CodePen, pero más orientada a proyectos estructurados. Es ideal
+     si buscas cómo integrar efectos de Canvas dentro de frameworks modernos.
+
+
+2. Comunidades de motores de videojuegos web
+
+   La mayoría de los desarrolladores web no crean todo desde cero; usan
+   motores que facilitan el renderizado en Canvas o WebGL. Sus comunidades
+   comparten extensiones, plugins y efectos constantemente:
+
+   - Phaser
+     El framework 2D más popular del desarrollo web. Su foro oficial y su
+     servidor de Discord están llenos de desarrolladores que comparten plugins
+     específicos para efectos de iluminación, sistemas de partículas y
+     animaciones complejas en Canvas.
+
+   - PlayCanvas
+     Si quieres dar el salto a efectos visuales más avanzados y en 3D
+     corriendo en el navegador, su ecosistema cuenta con una comunidad muy
+     activa que comparte "scripts" y proyectos abiertos.
+
+
+3. Comunidades de arte y assets
+   (gráficos y sprites)
+
+   Si lo que necesitas no es el código, sino los dibujos, animaciones cuadro
+   por cuadro (sprite sheets) o efectos visuales dibujados para cargarlos en
+   tu Canvas:
+
+   - Itch.io (sección Game Assets)
+     La comunidad indie por excelencia. Tienen una gigantesca sección de
+     recursos gratuitos y de pago creados por artistas. Puedes filtrar por
+     "VFX", "Pixel Art" o "Animations".
+
+   - OpenGameArt.org
+     Una comunidad clásica donde los usuarios suben arte conceptual,
+     animaciones 2D y efectos bajo licencias libres (muchas veces CC0 /
+     dominio público) para que los uses sin restricciones.

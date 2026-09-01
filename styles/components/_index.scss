@@ -37,49 +37,39 @@
 @use "character-lab";
 @use "card-themes/armored";
 
-// Bocetos de marco V3 (knowledge/v3/card-concept/). Mismo patrón que la carta
-// de v2 justo encima: primero el esqueleto común y después un parcial por
-// boceto, que es la capa que puede pisarlo. Lo que dos bocetos comparten baja a
-// card-sketch; lo de cada uno vive en su parcial.
+// Los dos bocetos de marco de V3 que quedan (knowledge/v3/card-concept/).
+// Mismo patrón que la carta de v2 justo encima: primero el esqueleto común y
+// después la capa que puede pisarlo.
 //
-// Hay cinco: la E, que ganó la primera tanda (las otras cuatro se borraron);
-// la G, que abre la segunda cruzándola con una réplica de referencia —la
-// F · Blasón, borrada a su vez en cuanto la G la absorbió—, su octógono con la
-// veta de la E; la H, que es la G con todo dentro del contorno y las ocho
-// Habilidades juntas; la I, que cruza la H con una carta de Magic y es la
-// primera que mete la ilustración en una VENTANA en vez de a sangre; y la J,
-// que cruza la H con Magic por el otro extremo —el BORDE— y la mete detrás de
-// un mat negro macizo, sin tocarla.
+// EL 1 DE SEPTIEMBRE DE 2026 SE BORRARON LOS OTROS CUATRO —E · Forja,
+// G · Estandarte, H · Recinto e I · Retablo— junto con la probeta de aleación,
+// que dejó de tener sentido en cuanto uno de los dos supervivientes trae el
+// metal horneado en un PNG. Lo que aprendió cada boceto sigue escrito en
+// knowledge/v3/card-concept/README.md, que es donde vive el razonamiento; aquí
+// solo vive lo que se dibuja.
 //
-// La H es el único caso de boceto DERIVADO en el sentido estricto: no tiene
-// parcial propio completo, solo pisa a la G con lo que cambia, así que su
-// selector lleva las dos clases y va necesariamente DESPUÉS de estandarte. No
-// es un orden estético.
+//   card-sketch          el esqueleto: la caja, el escenario, el hueco de arte
+//                        y las dos piezas de texto que cualquier boceto pide.
+//   card-sketch/cuerpo   el INTERIOR compartido por los dos. NO es un boceto:
+//                        es la fusión de la G y la H —o sea la H entera, que es
+//                        lo que las dos supervivientes montan por dentro— en
+//                        una sola clase. Va el primero porque las otras dos lo
+//                        pisan.
+//   card-sketch/orla     la J: ese cuerpo detrás de un mat negro macizo, con un
+//                        anillo vectorial propio y más fino.
+//   card-sketch/moldura  la K: ese cuerpo con una moldura DIBUJADA delante, que
+//                        deshace el octógono porque su archivo es un rectángulo
+//                        redondeado.
 //
-// La I no deriva de nadie: comparte el CONTORNO con la G y nada más, y eso no
-// se hereda pisando sino con un mixin (octagon-shell, en tools/_mixins.scss).
-// Es el mismo criterio de cuando la F y la G convivían: lo que comparten dos
-// hermanos se extrae, lo que un boceto copia de otro se hereda. Por eso su
-// posición aquí sí es indiferente.
-//
-// La J SÍ es una copia de la H —.sketch__inlay lleva sus dos clases tal
-// cual—, pero un nivel del árbol por debajo del artículo, no en él: por eso
-// su parcial no puede ir antes que estandarte y recinto (necesita que las
-// reglas de las dos existan para que su selector compuesto tenga algo que
-// pisar), y por eso también el orden aquí sigue siendo cronológico y no solo
-// de cascada.
-//
-// alloy-probe va el ÚLTIMO de todos y no es cronológico ni indiferente: tiene
-// que serlo. Tiene el selector de siempre —sin subir su especificidad— y solo
-// gana sus empates por ir después, así que si algún día carga antes que un
-// boceto vuelve a perder ese empate contra él en silencio, sin un error que
-// lo avise. Es justo lo que le pasó a la J el 25 de agosto de 2026 mientras
-// la probeta vivía dentro de card-sketch (razón completa en
-// card-sketch/_alloy-probe.scss).
+// El orden ya no es una atadura, y conviene saber por qué dejó de serlo: la J y
+// la K pisan a `cuerpo` con DOS clases contra una, así que ganan por
+// especificidad. Antes no era así —la H pisaba a la G con
+// `.sketch--estandarte.sketch--recinto`, tres clases contra tres, y el desempate
+// lo ponía este archivo—, y la probeta de aleación tenía que ir la última de
+// todas por esa misma cuenta. Con una clase por capa el orden de abajo es
+// cronológico y no decide nada; aun así conviene mantenerlo, porque la J y la K
+// leen el mismo elemento y un empate futuro entre las dos lo resolvería él.
 @use "card-sketch";
-@use "card-sketch/forja";
-@use "card-sketch/estandarte";
-@use "card-sketch/recinto";
-@use "card-sketch/retablo";
+@use "card-sketch/cuerpo";
 @use "card-sketch/orla";
-@use "card-sketch/alloy-probe";
+@use "card-sketch/moldura";

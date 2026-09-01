@@ -1,5 +1,3 @@
-@use "sass:map";
-
 // -------------------------------------------------------------------------
 // Color
 //
@@ -400,88 +398,6 @@ $back-metal: #5b6572;
 $back-metal-hi: #c3ccd6;
 $back-metal-edge: #121316;
 
-// --- Probeta de aleación del boceto E (TEMPORAL) --------------------------
-// Los candidatos a metal de la carta, para poder elegirlo mirándolo en el lab
-// y no describiéndolo. Cada entrada es UN color y no una paleta: armor-vars()
-// (tools/_mixins.scss) le saca la luz, la sombra y el filo, así que elegir
-// aleación es elegir un tono base y nada más.
-//
-// Lo que hay que mirar al compararlos no es el marco suelto, son las tres
-// cosas que se apoyan en él: el ORO del rótulo sobre la placa, el EMBLEMA de
-// la raza sobre el medallón —que necesita cara clara para leerse— y la VETA de
-// rareza, que es color sobre color y se apaga si el metal ya es del mismo
-// tono.
-//
-// Va en un mapa aparte y no dentro de $card-sketch porque no es un token que
-// consuma nadie: es una lista de opciones con fecha de caducidad. Cuando se
-// elija, "alloy" se queda con el valor ganador y esto se borra entero, junto
-// con el selector del lab y el @each de components/card-sketch/_forja.scss.
-// Van ORDENADAS DE OSCURA A CLARA y no por familias, para que la fila de
-// botones del lab se recorra como una escala: pasando de una a la siguiente se
-// ve dónde el marco deja de aguantar el oro del rótulo y dónde empieza a
-// tragarse la ilustración. La familia se dice en el comentario de cada una.
-$sketch-alloy: (
-  // Carbón: el extremo oscuro, negro cálido. El marco casi desaparece y la
-  // carta se queda siendo su ilustración con un borde. Todo lo que se apoya en
-  // él gana; el riesgo es que la carta se lea apagada al lado de las demás.
-  "carbon": #332f2c,
-  // Pavonado: el azul-negro del acero quemado. Frío y oscuro a la vez, que es
-  // la única esquina que ninguna otra ocupa.
-  "pavonado": #3c4552,
-  // Hierro: casi negro, pero cálido. El carbón un escalón más arriba.
-  "hierro": #4f4a45,
-  // Cardenillo: la pátina verde del cobre viejo. El único metal que no es gris
-  // ni dorado, y el que más lejos queda de la paleta de la interfaz — puede ser
-  // justo lo que le falta o puede sonar a otro juego.
-  "cardenillo": #5f7f74,
-  // Óxido: el cobre pasado de vueltas, más rojo y más sucio. Metal comido.
-  "oxido": #7b4a35,
-  // Acero: gris azulado, el del dorso de v2 ($back-metal). Frío en una interfaz
-  // de cuero y hierro, pero hace que la veta cante.
-  "acero": #6e7681,
-  // El de ahora: hierro de $game visto a plena luz. Cálido y callado.
-  "peltre": #7d7168,
-  // Cobre rojizo. El más caliente de la lista y el más marcado de material.
-  "cobre": #96573a,
-  // Bronce viejo, mate y terroso. Emparenta el marco con el oro del rótulo.
-  "bronce": #8a6a45,
-  // Estaño: gris claro y frío. Es a la plata lo que el acero al peltre —el
-  // mismo tono sin la calidez—, y sirve para separar si lo que molesta de un
-  // metal claro es la luz o la temperatura.
-  "estano": #9aa0a4,
-  // Latón: el bronce subido de brillo, ya cerca del oro sin llegar a serlo.
-  // Ojo con la legendaria, que es dorada y puede fundirse con el marco.
-  "laton": #a08347,
-  // El latón de los PICTOGRAMAS, y por eso es el que manda hoy: no es un tono
-  // elegido mirando el marco, es el que ya está pintado en los diez PNG de
-  // public/assets/v3/icons/ (las ocho Habilidades y los dos Tipos de daño).
-  // Sale de medirlos, no de aproximarlos: es la MEDIANA de los diez archivos
-  // juntos, descartando la alfa y el contorno casi negro.
-  //
-  // Se mide la mediana y no el pixel más brillante porque armor-vars() quiere
-  // el TONO MEDIO del material —de ahí saca luz, sombra y filo—, y ese reparto
-  // cae encima del histograma de los iconos casi por sí solo: la luz (#d5c2a4)
-  // aterriza entre el percentil 85 y el 95 de los PNG, la sombra (#614a26) en
-  // el 30 y el filo (#322614) en el 5. O sea que un solo color basta: no hace
-  // falta escribirle una rampa a mano como al dorso de v2 ($back-metal-*).
-  //
-  // Está a un pelo de "laton" (#a08347) y se queda aparte a propósito. Aquel es
-  // un candidato de la probeta, elegido a ojo en la escala; este es una MEDIDA
-  // de un archivo que existe, y si los iconos se regeneran, este número se
-  // vuelve a sacar de ellos y aquel no se toca.
-  "laton-icono": #a77f42,
-  // Plata sucia, casi níquel. Mucho contraste con el arte y con los números,
-  // poco con el oro del rótulo.
-  "plata": #a8a29a,
-  // Oro de verdad, el extremo cálido. Es la prueba de fuego del rótulo: si el
-  // nombre se lee aquí, se lee en todas — y si no, mide cuánto oro aguanta la
-  // placa antes de tener que oscurecerse, que es el problema que tenía el D.
-  "oro": #c1993f,
-  // Marfil: el extremo claro. Ya no parece metal sino hueso o piedra pulida, y
-  // por eso está — para ver si el marco tiene que ser metálico siquiera.
-  "marfil": #cdc2ad,
-);
-
 // --- Bocetos de marco de V3 -----------------------------------------------
 // Los tonos que NO están ya en $game. El cuerpo de la carta —fondo, oro,
 // crema, filete— sale de game() a propósito: la carta es una pieza más de la
@@ -535,9 +451,6 @@ $card-sketch: (
   // ES la rareza y aquí es material de carta, siempre igual, y lo único que
   // cambia de una carta a otra es la luz que corre entre los dos raíles.
   //
-  // Mientras dure la probeta de arriba, el valor por defecto es una de sus
-  // entradas y no un literal repetido: si se cambia la lista, este va detrás.
-  //
   // Desde el 27 de agosto de 2026 es el LATÓN DE LOS ICONOS y no el peltre. El
   // motivo no es que el peltre se viera mal, es que dejó de estar solo: con los
   // diez pictogramas puestos, la carta tenía dos metales —el latón dibujado de
@@ -551,7 +464,23 @@ $card-sketch: (
   // con el cuerpo del marco y el marco pierde la mitad de su relieve». El hilo
   // sigue escrito contra el peltre; si en el lab ya no se ve, lo que hay que
   // cambiar es el hilo, no volver el metal atrás.
-  "alloy": map.get($sketch-alloy, "laton-icono"),
+  // EL VALOR SALE DE MEDIR LOS ARCHIVOS, no de elegirlo a ojo: es la MEDIANA de
+  // los diez PNG de public/assets/v3/icons/ juntos, descartando la alfa y el
+  // contorno casi negro. Se mide la mediana y no el pixel más brillante porque
+  // armor-vars() quiere el TONO MEDIO del material —de ahí saca luz, sombra y
+  // filo—, y ese reparto cae encima del histograma de los iconos casi por sí
+  // solo: la luz (#d5c2a4) aterriza entre el percentil 85 y el 95 de los PNG,
+  // la sombra (#614a26) en el 30 y el filo (#322614) en el 5. O sea que un solo
+  // color basta: no hace falta escribirle una rampa a mano como al dorso de v2
+  // ($back-metal-*). Si los iconos se regeneran, este número se vuelve a sacar
+  // de ellos.
+  //
+  // Hasta el 1 de septiembre de 2026 esto era `map.get($sketch-alloy, …)`: había
+  // un mapa de catorce candidatos y un selector en el lab para recorrerlos. Se
+  // borraron los dos con los bocetos vectoriales — el único marco que queda
+  // aparte de la J trae el metal horneado en un PNG, así que una probeta de
+  // aleación movía media página y dejaba la otra media quieta.
+  "alloy": #a77f42,
 );
 
 // --- Selección "en juego" (Baraja y Oteo) ---------------------------------

@@ -230,7 +230,7 @@ export function raceArtFor(race: string): string | undefined {
 
 /**
  * El ESTANDARTE de cada raza: el paño teñido del que cuelga el emblema, y que
- * hasta ahora dibujaba el CSS (`styles/components/card-sketch/_estandarte.scss`).
+ * hasta ahora dibujaba el CSS (`styles/components/card-sketch/_cuerpo.scss`).
  * Es la otra mitad de la pieza, y va aparte a propósito — el archivo es la
  * bandera VACÍA y el emblema se pone encima, que es como la heráldica reparte
  * campo y carga (knowledge/v3/card-concept/banners.md §4).
@@ -243,7 +243,7 @@ export function raceArtFor(race: string): string | undefined {
  * El paño de CSS que había antes NO se borra aunque ya no lo use ninguna de las
  * once. Es la red: una raza que entre mañana sin estandarte dibujado cae a un
  * paño teñido en vez de a un hueco. Vive en su parcial
- * (`styles/components/card-sketch/_estandarte.scss`), y el selector que decide
+ * (`styles/components/card-sketch/_cuerpo.scss`), y el selector que decide
  * es `[data-art]` — con archivo, la imagen; sin él, la tela pintada.
  */
 const RACE_BANNERS: Record<string, string> = {

@@ -122,16 +122,15 @@ export default function CardDeck() {
       {/* Escenario. Mismo objeto que el laboratorio de bocetos
           (objects/_stage.scss); el fondo oscuro lo pone .sketch-lab.
 
-          Sin data-alloy: la baraja va con el metal por defecto de settings/
-          (card-sketch("alloy"), hoy el latón medido de los pictogramas), igual
-          que el laboratorio de bocetos.
+          El metal es el de settings/ (card-sketch("alloy"), el latón medido
+          de los pictogramas) y no hay forma de cambiarlo desde la página, que
+          es lo correcto: la baraja es donde se mira la carta tal cual va a ser.
 
           Hasta el 27 de agosto de 2026 esta página clavaba data-alloy="carbon"
-          —la probeta de aleación (styles/components/card-sketch/_alloy-probe.scss)
-          usada sin su picker— para quedarse en Carbón pasara lo que pasara con
-          el valor de settings/. Se quita al elegir metal: la baraja es donde se
-          mira la carta tal cual va a ser, y un metal propio la convertía en una
-          segunda opinión sobre algo ya decidido. */}
+          —la probeta de aleación del laboratorio de bocetos, usada sin su
+          picker— para quedarse en Carbón pasara lo que pasara con el valor de
+          settings/. Se quitó al elegir metal, y la probeta entera se borró el 1
+          de septiembre de 2026 con los bocetos vectoriales. */}
       <div className="card-lab__stage">
         {shownRaces.map((r) => (
           <section key={r.name} className="mb-10 last:mb-0">

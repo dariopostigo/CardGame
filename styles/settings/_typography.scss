@@ -73,63 +73,33 @@ $sketch-font: (
   // ocupa lo mismo pero pesa menos, y el nombre se estiraba de lado a lado de la
   // placa sin llegar a sostenerla. Más pequeño y ligero se lee como una
   // inscripción; más grande y ligero, como un texto que se quedó sin tinta.
-  "name-xl": 1.46rem,
-  "name-xl-long": 1.14rem,
-  // El escalón grande de la fila de ocho: al no llevar recuadro cada cápsula,
-  // sobra el sitio que ocupaba el acolchado, y sin casilla que la sostenga la
-  // cifra tiene que ganar peso o se pierde sobre la chapa. El tope lo pone la
-  // columna: (300 − 34) / 8 = 33px, y ahí tiene que caber una Vida de tres
-  // cifras.
+  // El escalón de la fila de ocho: al no llevar recuadro cada cápsula, sobra el
+  // sitio que ocupaba el acolchado, y sin casilla que la sostenga la cifra tiene
+  // que ganar peso o se pierde sobre la chapa. El tope lo pone la columna:
+  // (300 − 42 de acolchado − 14 de huecos) / 8 = ~30,5px, y ahí tiene que caber
+  // una Vida de tres cifras.
   "pod-xl": 1rem,
   "stat-icon-xl": 1.1rem,
-  "medal": 1.08rem,       // glifo de Característica en medallón
-  // El emblema dentro del medallón del marco. Grande para lo que es porque un
-  // emoji no llena su caja como lo hace un número —trae su propio aire
-  // alrededor— y más pequeño se ve como una pegatina en mitad de un disco de
-  // 42px.
-  //
-  // Subió de 0.92 a 1.08rem el 25 de agosto de 2026, mirándolo en el lab. Es el
-  // mismo aire de sobra que se le vio al rombo cuando era una cara plana, pero
-  // al revés: la pieza estaba bien de tamaño y era el dibujo de dentro el que se
-  // quedaba corto. Uno solo para la E y la G a propósito —el medallón se dibuja
-  // igual en las dos desde que dejó de ser octógono—, así que no vuelve a ser
-  // una diferencia entre los dos bocetos. El tope lo pone el hueco más
-  // estrecho, que es el de la E: 30px de medallón menos 2 de borde por lado
-  // dejan 26, y ahí un glifo de 17px sigue teniendo aire por los cuatro lados.
-  "boss-icon": 1.5rem,
 
-  // --- Boceto G · Estandarte ----------------------------------------------
+  // --- El cuerpo de la carta ----------------------------------------------
+  // Lo que piden los dos bocetos que quedan, que por dentro son la misma carta
+  // (styles/components/card-sketch/_cuerpo.scss).
+  //
   // El rótulo va en VERSALITAS, y eso cambia la cuenta entera: una caja alta
   // ocupa más ancho por carácter y no tiene descendentes que den altura, así
-  // que el mismo cuerpo se lee más grande y cabe menos. De ahí que el par
-  // corto/largo esté un escalón por debajo del par "xl" del boceto E aunque la
-  // placa sea igual de ancha. «DRAGÓN ESQUELÉTICO» son 18 versales: es el que
-  // fija el escalón largo, y por poco.
+  // que el mismo cuerpo se lee más grande y cabe menos. «DRAGÓN ESQUELÉTICO»
+  // son 18 versales: es el que fija el escalón largo, y por poco.
   "name-caps": 1.02rem,
   "name-caps-long": 0.8rem,
-  // Los seis números del panel, en UNA fila. La cuenta es la que decide el
-  // escalón: (300 − 42 de acolchado − 10 de huecos) / 6 = ~41px por columna.
-  // Ahí no cabe el par en línea —icono y número suman 39 de los 41— así que van
-  // apilados, y apilados el sitio que falta es de ancho y no de alto: el par
-  // puede ir un pelo más grande que el de la fila de ocho de la E, que reparte
-  // 33px por columna.
-  "pod-lg": 1.04rem,
-  "stat-icon-lg": 1.16rem,
-  // Los dos de las esquinas de abajo (⚔️ Ataque y ❤️ Vida). Son los que se
-  // consultan en cada intercambio de golpes, así que mandan sobre los seis del
-  // panel: la diferencia de cuerpo ES la jerarquía, que es justo lo que este
-  // boceto prueba y el E no hace.
-  "pin": 1.15rem,
-  "pin-icon": 0.72rem,
   // El Tier dentro del disco de la esquina. Es el número más grande de la
   // carta a propósito: en la referencia ese disco es lo primero que se lee.
   //
   // Subió de 1.45 a 1.7rem al crecer el disco (46 → 54px, settings/_card.scss).
-  // No es un ajuste automático: el hueco de la J pasa de 43 a 50px y el de la
-  // G/H de 40 a 48, así que con el cuerpo de antes el número se quedaba nadando
-  // en un marco más grande — la pieza habría crecido y el dato, no.
+  // No es un ajuste automático: el hueco del PNG pasa de 43 a 50px, así que con
+  // el cuerpo de antes el número se quedaba nadando en un medallón más grande
+  // — la pieza habría crecido y el dato, no.
   "disc": 1.7rem,
-  // La raza en versalitas al pie, entre los dos pines. Diminuta y muy
+  // La raza en versalitas, en el último renglón del panel. Diminuta y muy
   // espaciada: es una etiqueta de catálogo, no un dato que se consulte.
   "type": 0.6rem,
   // El emblema de la raza dentro del estandarte que cuelga del disco. Es el
@@ -138,50 +108,19 @@ $sketch-font: (
   // que es lo que le pone el tope.
   //
   // Subió de 1.12 a 1.36rem al ensanchar la bandera (28 → 34px), y el escalón
-  // sale de esa cuenta y no del gusto: con el factor de
-  // $sketch-race-art (1.25) son 27,2px de dibujo en 34 de tela, el mismo 80%
-  // que tenía a 22,4 en 28. Lo que cambia no es la proporción, es que 27px es
+  // sale de esa cuenta y no del gusto: con el factor de $sketch-race-art (1.25)
+  // son 27,2px de dibujo en 34 de tela, el mismo 80% que tenía a 22,4 en 28. Lo que cambia no es la proporción, es que 27px es
   // donde el pictograma empieza a enseñar el motivo y no solo el metal —a 22 se
   // veía que era oro, no QUÉ era—, y es la medida que icons.md §4 defiende a
   // 42px.
   "banner-icon": 1.36rem,
-  // Los glifos del raíl, que aquí van DESNUDOS: sin disco detrás, el escalón
-  // compartido "medal" ya no vale porque estaba medido contra el hueco que
-  // dejaba el aro. Sin pieza que lo contenga el tope lo pone la casilla del
-  // raíl —30px— y el glifo puede ocuparla casi entera; a 1.08rem se veía
-  // pequeño no por ser pequeño, sino por estar solo.
+  // Los glifos del raíl de Características, que van DESNUDOS. Hubo un escalón
+  // "medal" para cuando llevaban disco detrás, medido contra el hueco que
+  // dejaba el aro, y se borró con la pieza. Sin nada que lo contenga el tope lo
+  // pone la casilla del raíl —30px— y el glifo puede ocuparla casi entera; a
+  // 1.08rem se veía pequeño no por ser pequeño, sino por estar solo.
   "medal-bare": 1.4rem,
 
-  // --- Boceto I · Retablo -------------------------------------------------
-  // El rótulo vuelve a CAJA MIXTA, como en la E y al revés que la G, y no es
-  // una vuelta atrás: es lo que hace la referencia. En una carta de Magic el
-  // nombre va solo en su propia barra, con el coste al otro extremo, y en una
-  // barra estrecha la caja mixta se lee antes que la versal porque las
-  // ascendentes y descendentes le dan silueta a la palabra. La versal de la G
-  // necesita el ancho entero de la placa para funcionar; aquí compite con el
-  // bisel del Tier por unos 210px.
-  //
-  // Y sube respecto al par base porque la barra no comparte renglón con nada:
-  // el nombre puede ocupar su alto entero. «Dragón esquelético», 18 caracteres,
-  // es el que fija el escalón largo.
-  "name-page": 1.12rem,
-  "name-page-long": 0.94rem,
-  // El Tier en el bisel de la barra, donde la referencia pone el coste de maná.
-  // Más pequeño que el disco de la G (1.45rem) a propósito: allí es la pieza que
-  // domina la carta y aquí es el segundo dato de una barra. El rótulo manda y el
-  // número acompaña, que es el reparto de la referencia.
-  "cost": 0.98rem,
-  // La línea de tipo. Es la única línea de la carta que se lee como PROSA
-  // —«Unidad — Humanos»—, así que va en caja mixta y no en versalitas
-  // espaciadas como la etiqueta de raza de la G, que es una etiqueta y no una
-  // frase. Diminuta porque en la referencia comparte cuerpo con el texto de
-  // reglas, y aquí no hay reglas con las que compararla.
-  "typeline": 0.68rem,
-  // El glifo de Característica dentro de la caja de datos. Muy por debajo del
-  // del raíl (1.4rem) y no por una cuestión de sitio: allí el glifo va desnudo
-  // sobre la ilustración y tiene que sostenerse solo, y aquí es un renglón
-  // dentro de una caja de papel, donde lo que lo sostiene es la caja.
-  "trait-glyph": 0.86rem,
 );
 
 // Escalones de ajuste: tamaño de cuerpo, interlineado y nº de líneas.

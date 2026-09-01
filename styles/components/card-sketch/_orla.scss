@@ -2,7 +2,16 @@
 @use "../../abstracts" as *;
 
 // =========================================================================
-// Boceto J · Orla — la H · Recinto detrás del borde negro de Magic
+// Boceto J · Orla — el cuerpo de la carta detrás del borde negro de Magic
+//
+// ES EL DISEÑO ELEGIDO (25 de agosto de 2026), y desde el 1 de septiembre uno
+// de los DOS bocetos que quedan: el otro es la K · Moldura, que monta el mismo
+// cuerpo con una moldura dibujada en vez de un anillo trazado. Los cuatro que
+// sobrevivían de las tandas anteriores —E · Forja, G · Estandarte, H · Recinto
+// e I · Retablo— se borraron ese día. Cuando aquí abajo se nombra a la G o a la
+// H se está nombrando lo que hoy es card-sketch/_cuerpo.scss, que es la fusión
+// de las dos; se dejan por su nombre porque es así como está escrito el
+// razonamiento en knowledge/v3/card-concept/README.md.
 //
 // Cruza la H con la misma referencia que la I
 // (knowledge/v3/card-concept/imgs/magic-the-gathering-fading-hope-mid.webp),
@@ -78,15 +87,14 @@ $orla-height: $sketch-height + $orla-border * 2;
   height: $orla-height;
 }
 
-// --- El recinto, metido dentro --------------------------------------------
-// Sigue viviendo aquí una copia de la H —lleva sus dos clases
-// (.sketch--estandarte.sketch--recinto) para heredar la composición entera:
-// dónde cae el disco, dónde el estandarte, que las ocho van en una fila, cómo
-// se pinta la placa—, pero YA NO hereda el filete: OrlaCard
-// (components/design/v3/sketch-cards.tsx) dibuja <OrlaFrame /> en vez de
-// <EstandarteFrame />, y las reglas de abajo pisan todo lo que en la G y la H
-// dependía de $sketch-band para que la composición siga el anillo nuevo en
-// vez del viejo.
+// --- El cuerpo, metido dentro ---------------------------------------------
+// El interior vive en una caja aparte y lleva la clase .sketch--cuerpo
+// (card-sketch/_cuerpo.scss) para heredar la composición entera: dónde cae el
+// disco, dónde el estandarte, que las ocho van en una fila, cómo se pinta la
+// placa. Lo que NO hereda es el filete: OrlaCard
+// (components/design/v3/sketch-cards.tsx) dibuja <OrlaFrame />, y las reglas de
+// abajo pisan todo lo que en el cuerpo dependía de $sketch-band para que la
+// composición siga el anillo nuevo en vez del viejo.
 .sketch__inlay {
   position: absolute;
   inset: $orla-border;
@@ -101,16 +109,15 @@ $orla-height: $sketch-height + $orla-border * 2;
   justify-content: flex-end;
 }
 
-// --- Los overrides: la H leída con el anillo de la J ----------------------
-// Todo lo de aquí abajo existe por una sola razón: la G y la H miden el disco,
-// el estandarte, el raíl y el acolchado del panel a partir de $sketch-band
-// (15px). Con OrlaFrame en vez de EstandarteFrame ese número deja de ser
-// verdad — el metal real que hay dibujado mide $orla-ring (8px) — y todo lo
-// que se apoyaba en el filete se quedaría flotando en un hueco vacío si no se
-// vuelve a medir. Especificidad: tres clases contra las tres de
-// `.sketch--estandarte.sketch--recinto .pieza`, así que el desempate lo pone
-// el ORDEN DE CARGA — este parcial entra después de estandarte y recinto en
-// styles/components/_index.scss, y tiene que seguir así.
+// --- Los overrides: el cuerpo leído con el anillo de la J -----------------
+// Todo lo de aquí abajo existe por una sola razón: el cuerpo mide el disco, el
+// estandarte, el raíl y el acolchado del panel a partir de $sketch-band (15px).
+// Con OrlaFrame ese número deja de ser verdad —el metal real que hay dibujado
+// mide $orla-ring (8px)— y todo lo que se apoyaba en el filete se quedaría
+// flotando en un hueco vacío si no se vuelve a medir. Especificidad: tres
+// clases contra las DOS de `.sketch--cuerpo .pieza`, así que gana sin depender
+// del orden de carga. Dependía de él hasta el 1 de septiembre de 2026, cuando
+// el cuerpo todavía eran dos clases apiladas.
 .sketch--orla .sketch__inlay {
   // El baño de luz interior de octagon-shell (styles/tools/_mixins.scss) se
   // vuelve a pedir con el anillo fino: si no, sigue recortado a
@@ -125,11 +132,12 @@ $orla-height: $sketch-height + $orla-border * 2;
   // --- El disco del Tier, ahora una pieza DIBUJADA ------------------------
   // Hasta el 26 de agosto de 2026 el disco era CSS puro: un círculo de 46px
   // con borde de metal, aro de oro en box-shadow y un radial-gradient de cara
-  // oscura (_estandarte.scss §"El disco del Tier"). Aquí lo sustituye un
-  // archivo —/assets/v3/frames/tier.png, el medallón generado esa noche—, y el
-  // cambio vive SOLO en la J: la G y la H se quedan con su círculo de CSS
-  // porque son bocetos ya juzgados, y cambiarles una pieza por debajo
-  // reescribiría la comparación que decidió el marco.
+  // oscura (_cuerpo.scss §"El disco del Tier", que sigue siendo el que hay
+  // debajo). Aquí lo sustituye un archivo —/assets/v3/frames/tier.png, el
+  // medallón generado esa noche—. Mientras vivieron, la G y la H se quedaron
+  // con el círculo de CSS por no cambiarles una pieza por debajo a dos bocetos
+  // ya juzgados; borradas las dos, la K hace lo mismo que esta y el CSS es solo
+  // el suelo del que salieron las medidas.
   //
   // Es la primera url() de asset de todo styles/, y por eso queda dicho el
   // porqué de que sea background y no un <img> como los pictogramas de la fila
@@ -164,10 +172,10 @@ $orla-height: $sketch-height + $orla-border * 2;
   $orla-disc: math.div($sketch-disc, 0.782);
 
   // Centrado sobre donde caía el disco de CSS, no alineado con su esquina: el
-  // eje del medallón es el que sujeta el estandarte y el que la composición de
-  // la H medía contra el chaflán. Con eso las puntas se comen los 7,5px de más
+  // eje del medallón es el que sujeta el estandarte y el que la composición del
+  // cuerpo medía contra el chaflán. Con eso las puntas se comen los 7,5px de más
   // por los cuatro lados, y la de arriba a la izquierda acaba montada sobre el
-  // anillo de OrlaFrame — que es exactamente lo que _estandarte.scss pedía del
+  // anillo de OrlaFrame — que es exactamente lo que la G pedía del
   // disco: "la única pieza de la carta que se sale del contorno, y es
   // deliberado".
   $orla-disc-in: $disc-in - math.div($orla-disc - $sketch-disc, 2);
@@ -188,14 +196,14 @@ $orla-height: $sketch-height + $orla-border * 2;
     box-shadow: none;
 
     // Y la sombra pasa de box-shadow a filter por el mismo motivo que la del
-    // raíl (_estandarte.scss): sin caja que proyectar, un box-shadow dibujaría
+    // raíl (_cuerpo.scss): sin caja que proyectar, un box-shadow dibujaría
     // el rectángulo fantasma de los 60px; el drop-shadow sigue la silueta
     // recortada, puntas incluidas.
     filter: drop-shadow(0 3px 5px card-sketch("shadow"));
   }
 
   // El estandarte sigue colgando del disco, así que se mueve solo con él: las
-  // mismas dos fórmulas de _recinto.scss, sobre $disc-in en vez del suyo.
+  // mismas dos fórmulas de _cuerpo.scss, sobre $disc-in en vez del suyo.
   .sketch__banner {
     top: $disc-in + $sketch-disc - 10px;
     left: $disc-in + math.div($sketch-disc - $sketch-banner, 2);
@@ -206,16 +214,16 @@ $orla-height: $sketch-height + $orla-border * 2;
     // ($orla-disc − $sketch-disc) / 2 ≈ 7,5px por fuera del círculo nominal,
     // una de ellas justo por el eje de la bandera. Con el acolchado de la G el
     // emblema quedaría a 4px de esa punta —rozado por el medallón, que es
-    // exactamente lo que el acolchado existe para evitar (_estandarte.scss)—.
+    // exactamente lo que el acolchado existe para evitar (_cuerpo.scss)—.
     //
-    // Y es un CUARTO del saliente, no la mitad, porque el acolchado de la G ya
+    // Y es un CUARTO del saliente, no la mitad, porque ese acolchado ya
     // es un centrado: el asiento del emblema empieza 7,5px más abajo, pero su
     // punto medio solo baja la mitad de eso. Sumar el saliente entero pondría
     // el emblema 4px por debajo del centro de la tela que le queda.
     padding-top: 26px + math.div($orla-disc - $sketch-disc, 4);
 
     // Y lo mismo sobre el acolchado de la bandera DIBUJADA, que parte de 32 en
-    // vez de 26 porque su caja empieza más arriba (_estandarte.scss).
+    // vez de 26 porque su caja empieza más arriba (_cuerpo.scss).
     &[data-art] {
       padding-top: 32px + math.div($orla-disc - $sketch-disc, 4);
     }
@@ -227,8 +235,8 @@ $orla-height: $sketch-height + $orla-border * 2;
     right: $orla-ring + 3px;
   }
 
-  // El rombo de Rareza, centrado en la banda de METAL real. La G lo centra en
-  // $sketch-band / 2 —la mitad de su filete de 15px— y esa cuenta no se
+  // El rombo de Rareza, centrado en la banda de METAL real. El cuerpo lo centra
+  // en $sketch-band / 2 —la mitad de su filete de 15px— y esa cuenta no se
   // heredaba sola: con el anillo de 8px de la J, la mitad de 15 lo deja
   // 3,5px por debajo del centro de un filete que ya no está ahí, colgando
   // hacia el arte en vez de montado sobre el canto. Iba a $sketch-band en el
@@ -239,10 +247,9 @@ $orla-height: $sketch-height + $orla-border * 2;
     top: math.div($orla-ring, 2);
   }
 
-  // El acolchado lateral y el de abajo del panel, que en la G y la H
-  // descuentan el filete a mano ($frame-clear = $sketch-band + 6px) porque el
-  // pie va a sangre contra él. Aquí el filete es otro, así que el descuento
-  // también.
+  // El acolchado lateral y el de abajo del panel, que en el cuerpo descuenta el
+  // filete a mano ($frame-clear = $sketch-band + 6px) porque el pie va a sangre
+  // contra él. Aquí el filete es otro, así que el descuento también.
   .sketch__plate--panel {
     padding-right: $orla-ring + 6px;
     padding-bottom: $orla-ring + 6px;

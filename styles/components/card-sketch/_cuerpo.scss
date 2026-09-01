@@ -2,53 +2,58 @@
 @use "../../abstracts" as *;
 
 // =========================================================================
-// Boceto G · Estandarte — el octógono de una réplica con la luz de la E
+// El CUERPO de la carta — lo que la J y la K tienen en común
 //
-// No sale de la E ni de una referencia: sale de las dos cosas a la vez. La
-// silueta y la mitad de las piezas vienen de la F · Blasón —la réplica de
-// Might & Magic: Fates
-// (knowledge/v3/card-concept/imgs/might-magic-fates-heroes-tcg-pc-cd-key-4.webp),
-// borrada el 25 de agosto de 2026 en cuanto este boceto la absorbió— y la
-// Rareza vuelve a ser la de la E.
+// Esto NO es un boceto. Es el interior compartido por los dos que quedan, y
+// existe como parcial propio porque los dos lo llevan entero: la J lo mete
+// detrás de un mat negro y la K le pone una moldura dibujada delante, pero por
+// dentro son la misma carta y eso es la condición para que se puedan comparar.
+// Si además cambiara el reparto, habría dos variables en juego y no se podría
+// leer ninguna.
 //
-// Lo que se queda de la réplica, que es lo que la E daba por cerrado:
+// DE DÓNDE VIENE, porque el nombre de las piezas lo delata. Este archivo es la
+// fusión de dos bocetos borrados el 1 de septiembre de 2026: la G · Estandarte
+// —el octógono de la réplica de Might & Magic: Fates con la veta encendida de
+// la E · Forja— y la H · Recinto, que era la G con dos cambios. De la fusión
+// solo sobreviven las respuestas de la H, que son las que la J y la K usan:
 //
-//   · LA SILUETA. Los cinco bocetos de la primera tanda son el mismo rectángulo
-//     redondeado con distinta piel; este es un OCTÓGONO, con las cuatro
-//     esquinas cortadas a 45° y un roblón en cada corte. Es lo primero que se
-//     reconoce de la referencia, antes de leer un número.
-//   · LA JERARQUÍA DE LOS OCHO. La E los pone todos del mismo tamaño en una
-//     fila. Aquí ⚔️ Ataque y ❤️ Vida se van a las esquinas de abajo en pines con
-//     forma propia —hoja de acero y gema de sangre— y los otros seis se quedan
-//     en el panel. La carta dice cuáles se consultan en cada golpe y cuáles se
-//     consultan una vez.
-//   · SI LA CARTA ESCRIBE O ENSEÑA. La E no escribe el Tier en ningún sitio y
-//     paga el precio de no poder decir cuál es. Aquí va en número, en el disco
-//     de la esquina, y la raza vuelve a escribirse en versalitas al pie.
+//   · NADA SE SALE DEL CONTORNO. El disco del Tier vive por dentro del filete
+//     en vez de montar sobre el chaflán, y el estandarte de raza baja con él.
+//     La G lo desbordaba a propósito —«lo que la hace parecer un sello colgado
+//     y no un botón dibujado es justamente que no cabe»—; se perdió el sello y
+//     se ganó una carta cuyo contorno es de verdad su contorno.
+//   · LAS OCHO VAN JUNTAS. La G sacaba ⚔️ Ataque y ❤️ Vida a dos pines en las
+//     esquinas de abajo y dejaba seis en el panel. Aquí las ocho van en una
+//     fila, abriendo por ⚔️ Ataque —al revés que razas.md— porque ese par es el
+//     que se consulta en cada intercambio de golpes.
 //
-// Y lo que NO se queda, que es lo que la réplica había sacado fuera: la RAREZA.
-// Allí el color era el canto de la carta —un filete duro que rodeaba el
-// octógono entero, más un hilo de oro por dentro—; aquí vuelve DENTRO del
-// metal, a la veta encendida de la E que corre por el canal entre los dos
-// raíles del filete, con su baño derramándose sobre la ilustración. El octógono
-// se queda; el canto teñido y el hilo de oro se fueron con la F. Encendido, no
-// acuñado.
+// Con los pines se fue la franja de 48px que el panel les reservaba y la línea
+// de raza volvió al flujo, que es lo que hay hoy. Todo lo demás —el rótulo en
+// versalitas con su subrayado, el disco, el raíl de Características a la
+// derecha, la piedra de Rareza, el estandarte y su versión dibujada— es de la G
+// sin tocar una medida.
 //
-// Tres cosas más son suyas y de nadie:
+// LO QUE APRENDIERON LOS BOCETOS BORRADOS no se pierde al borrarlos: vive en
+// knowledge/v3/card-concept/README.md, que es donde vive el razonamiento. Aquí
+// solo vive lo que se dibuja.
 //
-//   · LA VETA DA LA VUELTA ENTERA. La E la corta en cuatro tramos con sus
-//     cantoneras; aquí no hay escuadra, solo el roblón del chaflán, así que el
-//     canal se cierra en un aro continuo de ocho lados.
-//   · EL ROMBO SE TALLA. En la réplica era una cara de color girada 45°, y a
-//     15px eso es una mancha. Aquí es una piedra: engaste de metal, cuatro
-//     facetas que se cortan en la mitad y una tabla con su destello.
-//   · CUELGA UN ESTANDARTE DE RAZA del disco del Tier. Es la ficha que la
-//     referencia dedica a la facción y que la réplica dejó fuera por no tener
-//     qué escribir en ella: aquí lleva el emblema de la raza, que es el dato
-//     que la E ya había decidido enseñar en imagen y no en letra.
+// UNA CLASE Y NO DOS. Hasta la fusión esto eran `.sketch--estandarte` y
+// `.sketch--recinto`, y la segunda pisaba a la primera ganando por
+// especificidad. Colapsadas en una, lo que decide entre dos declaraciones de la
+// misma propiedad es el ORDEN dentro de este archivo — que es exactamente lo
+// mismo que decidía antes, así que la cascada no cambió al fusionarlas. Lo que
+// sí cambió es que la J y la K la pisan ahora por especificidad y no por orden
+// de carga (dos clases contra una), que es una atadura menos.
 //
-// Reparto con el TSX, el de siempre: el contorno y sus anillos los dibuja
-// EstandarteFrame (components/design/v3/sketch-frames.tsx); aquí va lo que
+// EL OCTÓGONO ES DEL CUERPO Y NO DE LOS DOS. La J lo usa tal cual; la K lo
+// deshace entero en su parcial, porque su moldura dibujada es un rectángulo
+// redondeado. Se queda aquí y no en _orla.scss porque es la silueta con la que
+// están medidas todas las piezas de abajo — el acolchado del panel, el asiento
+// del disco, dónde arranca el raíl—, y sacarlo obligaría a mover esas cuatro
+// cuentas a un sitio donde ya no se leen juntas.
+//
+// Reparto con el TSX, el de siempre: el contorno y sus anillos los dibuja el
+// marco de cada boceto (OrlaFrame en la J, un PNG en la K); aquí va lo que
 // crece o encoge con el contenido.
 // =========================================================================
 
@@ -67,21 +72,34 @@ $oct-foot: "polygon(0 0, 100% 0, 100% calc(100% - #{$c}), calc(100% - #{$c}) 100
 // se ve, así que el acolchado tiene que descontarlo a mano.
 $frame-clear: $sketch-band + 6px;
 
-// Los pines montan sobre el marco a propósito —como en la referencia—, así que
-// arrancan por dentro del filete pero no del todo.
-$pin-inset: $sketch-band - 4px;
-$pin-width: 54px;
+// Cuánto se separa el disco del Tier del canto INTERIOR del filete, no del
+// canto de la carta: por eso arranca en $sketch-band. Los 4px de aire no son
+// estéticos, son lo que impide que el disco muera contra el raíl del marco, que
+// se lee como una pieza mal encajada y no como una pieza puesta encima.
+//
+// Y cabe con sitio de sobra, aunque la esquina esté cortada: el chaflán visto
+// desde dentro mide 18 − 15(2 − √2) ≈ 9,2px, o sea que el corte interior es la
+// recta x + y = 24,2 + 15. El centro del disco cae en (46, 46) y queda a
+// (92 − 39,2) / √2 ≈ 37,3px de esa recta, contra un radio de 27. Diez píxeles de
+// holgura, y por el mismo eje del chaflán — que es lo que hace que la esquina
+// cortada acabe siendo el sitio del disco en vez de un estorbo.
+//
+// La holgura AUMENTÓ al crecer el disco (46 → 54px el 27 de agosto de 2026), que
+// es lo contrario de lo que se teme al agrandar una pieza metida en una esquina:
+// el centro se aleja del corte 4px por cada eje —5,7 medidos contra la recta—
+// mientras el radio solo gana 4. Por aquí el disco tiene sitio para crecer
+// bastante más de lo que le hace falta; lo que topa antes es la bandera contra
+// el canto (settings/_card.scss, $sketch-banner).
+$disc-in: $sketch-band + 4px;
 
-// La franja de abajo del panel: los dos pines y, entre ellos, la línea de raza.
-// El panel tiene que RESERVARLA con acolchado, porque ni los pines ni la línea
-// están en el flujo —los pines viven fuera del pie y la línea va anclada—, así
-// que si no se reserva, la última fila de la rejilla les cae encima. Es el
-// primer fallo que enseñó este boceto montado.
-$pin-band: 48px;
-
-// Cuánto se sale el disco del Tier por la esquina. De aquí cuelga también el
-// estandarte, que tiene que caer centrado en el eje del disco.
-$disc-inset: 7px;
+// El estandarte cuelga del disco, así que sus dos medidas salen de dónde está
+// el disco y no de la carta: centrado en su eje —(54 − 38) / 2 = 8px a cada
+// lado— y arrancando 10px por encima de su canto de abajo, para que se lea
+// colgando de él y no apoyada debajo. Lo que se mete por debajo es tela sin
+// nada escrito: el emblema tiene que caer LIBRE del disco o se lee cortado, y
+// de ahí el acolchado de arriba, que es ese solape más el aire de la bandera.
+$banner-left: $disc-in + math.div($sketch-disc - $sketch-banner, 2);
+$banner-top: $disc-in + $sketch-disc - 10px;
 
 // Los dos cortes de dentro de la piedra: lo que mide el engaste de metal y lo
 // que se mete la tabla. Van en fracción de $sketch-gem y no en píxeles clavados
@@ -91,20 +109,7 @@ $disc-inset: 7px;
 $gem-bezel: math.div($sketch-gem, 8);
 $gem-table: math.div($sketch-gem * 3, 10);
 
-// El estandarte, centrado en el eje del disco: el disco se sale $disc-inset por
-// la esquina, así que su centro cae en −7 + 54/2 = 20px y la bandera arranca
-// media anchura antes. Sale 3px, o sea justo por dentro del raíl exterior del
-// filete — la bandera tapa el canal de la veta pero no el canto de la carta.
-// Al crecer las dos piezas juntas (46 → 54 y 28 → 34) esta cuenta da lo mismo
-// que daba antes, que es la razón de que las dos crecieran a la vez.
-$banner-left: math.div($sketch-disc - $sketch-banner, 2) - $disc-inset;
-// Y arranca 10px por encima del canto de abajo del disco, para que se lea
-// colgando de él y no apoyada debajo. Lo que se mete por debajo es tela sin
-// nada escrito: el emblema tiene que caer LIBRE del disco o se lee cortado, y
-// de ahí el acolchado de arriba, que es ese solape más el aire de la bandera.
-$banner-top: $sketch-disc - $disc-inset - 10px;
-
-.sketch--estandarte {
+.sketch--cuerpo {
   // --- La silueta ---------------------------------------------------------
   // Todo lo que cuesta dejar de ser un rectángulo está en octagon-shell
   // (tools/_mixins.scss) y ahí se explica pieza a pieza: el radio y el fondo
@@ -112,10 +117,8 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   // chaflán, el material —aleación y veta— y el baño de luz hacia dentro,
   // recortado al canto interior del filete.
   //
-  // Salió del parcial cuando entró la I · Retablo, que corta las esquinas igual
-  // y no tiene nada más en común con esta carta. Lo que el mixin NO decide, a
-  // propósito, es QUIÉN rellena el octógono: aquí lo hace el arte a sangre
-  // —recortado justo debajo—, y en la I una página de franjas.
+  // Lo que el mixin NO decide, a propósito, es QUIÉN rellena el octógono: aquí
+  // lo hace el arte a sangre, recortado justo debajo.
   @include octagon-shell;
 
   .sketch__art {
@@ -148,9 +151,14 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   // carta, que es justo lo que el fundido evita. Los 20px de acolchado de arriba
   // son los que hacen falta para que el rótulo no caiga en ese tramo a medio
   // teñir: el nombre no se negocia.
+  //
+  // El acolchado de abajo es el mismo que el de los lados desde que se fueron
+  // los pines: mientras estuvieron, el panel tenía que reservarles una franja de
+  // 48px con acolchado —ni ellos ni la línea de raza estaban en el flujo—, y sin
+  // ellos no queda nada que reservar.
   .sketch__plate--panel {
     position: relative;
-    padding: 20px $frame-clear $pin-band;
+    padding: 20px $frame-clear $frame-clear;
     text-align: center;
     background: linear-gradient(
       to bottom,
@@ -162,11 +170,11 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
 
   // --- El rótulo ----------------------------------------------------------
   // En VERSALITAS, que es como titula la referencia, y ahí está el matiz que
-  // hay que mirar: el peso 300 que se eligió para la E no aguanta la caja alta.
-  // Una versal fina y pequeña no tiene trazo con el que sostenerse, así que
-  // aquí sube a 800 — el eje variable de Platypi lo da sin descargar nada. Es
-  // una decisión abierta: o la carta titula en fino y en caja mixta (E), o
-  // titula en versalitas y necesita peso (G). Las dos a la vez, no.
+  // hay que mirar: el peso 300 con el que se probó la caja mixta no aguanta la
+  // caja alta. Una versal fina y pequeña no tiene trazo con el que sostenerse,
+  // así que aquí sube a 800 — el eje variable de Platypi lo da sin descargar
+  // nada. O la carta titula en fino y en caja mixta, o titula en versalitas y
+  // necesita peso. Las dos a la vez, no.
   .sketch__name {
     font-size: sketch-font("name-caps");
     font-weight: 800;
@@ -202,16 +210,12 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   // Donde la referencia escribe el tipo de criatura. Va muy espaciada y muy
   // pequeña: es una etiqueta de catálogo, no un dato que se consulte jugando.
   //
-  // Va ANCLADA a la franja de abajo y no al final del flujo: tiene que caer a
-  // la misma altura que los dos pines —que están fuera del pie— y en el flujo
-  // caería justo encima de ellos. El acolchado lateral tampoco es estético: es
-  // el sitio que ocupan, y sin él «No-muertos» se metería bajo la hoja de acero.
+  // Es el último renglón del panel y va en el flujo, que es lo que siempre fue.
+  // Estuvo anclada al fondo con 70px de acolchado lateral mientras hubo pines:
+  // tenía que caer a su misma altura —en el flujo se les habría puesto encima—
+  // y esquivar la hoja de acero para que «No-muertos» no se metiera debajo.
   .sketch__type {
-    position: absolute;
-    right: 0;
-    bottom: 24px;
-    left: 0;
-    padding-inline: 70px;
+    margin-top: 11px;
     font-family: $font-game-display;
     font-size: sketch-font("type");
     font-weight: 600;
@@ -223,19 +227,28 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   }
 
   // --- El disco del Tier --------------------------------------------------
-  // Montado sobre el chaflán y desbordándolo, como el disco de coste de la
-  // referencia. Es la única pieza de la carta que se sale del contorno, y es
-  // deliberado: lo que la hace parecer un sello colgado y no un botón dibujado
-  // es justamente que no cabe.
+  // Metido en la esquina por dentro del filete, apoyado en el arte y contra el
+  // metal: se lee como un botón. Desbordando el chaflán se leía como un sello
+  // colgado del canto, que es lo que la G hacía y lo que la H cambió.
   //
-  // Cara oscura y aro de oro, al revés que el medallón de la E: ahí dentro va
-  // un NÚMERO —que sí toma color— y no un emoji, así que no necesita papel
-  // claro y gana leyéndose en oro sobre negro. La corona del héroe es la
-  // excepción, y funciona porque es un emoji claro.
+  // Cara oscura, porque ahí dentro va un NÚMERO —que sí toma color— y gana
+  // leyéndose en oro sobre negro. La corona del héroe es la excepción, y
+  // funciona porque es un emoji claro.
+  //
+  // Sin ARO DE ORO. El de la G lo llevaba, y era el remate que lo hacía moneda
+  // —y una moneda es algo que se cuelga del canto—. Metido dentro del marco ese
+  // hilo hacía dos cosas malas a la vez: repetía el oro del subrayado del rótulo
+  // y del rombo sin que ninguno de los tres fuera el importante, y le ponía un
+  // contorno duro a la única pieza que aquí tiene que parecer apoyada. Se queda
+  // el borde de metal, que es el que la ata a la aleación de la carta.
+  //
+  // Ojo: los dos bocetos que quedan lo SUSTITUYEN por un archivo
+  // (/assets/v3/frames/tier.png). Esto es lo que hay debajo, y sigue vivo
+  // porque es la medida contra la que se colocó el PNG.
   .sketch__disc {
     position: absolute;
-    top: -$disc-inset;
-    left: -$disc-inset;
+    top: $disc-in;
+    left: $disc-in;
     z-index: z("chip");
     display: grid;
     place-items: center;
@@ -245,7 +258,6 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     border-radius: 50%;
     background: radial-gradient(circle at 38% 28%, game("surface-2"), card-sketch("void") 74%);
     box-shadow:
-      0 0 0 1.5px game("gold"),
       inset 0 1px 0 card-sketch("glass-hi"),
       0 4px 10px card-sketch("shadow");
   }
@@ -258,11 +270,10 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   }
 
   // --- El raíl de Características, a la DERECHA ---------------------------
-  // Cambia de lado respecto a la E porque la esquina izquierda se la llevan el
-  // disco del Tier y el estandarte que cuelga de él. Sigue siendo la misma idea
-  // del boceto A —con cero medallones no queda hueco, queda arte— y sigue por
-  // debajo del marco, para que si alguno llega a rozar el chaflán pase por
-  // debajo del herraje.
+  // A la derecha porque la esquina izquierda se la llevan el disco del Tier y el
+  // estandarte que cuelga de él. Sigue siendo la misma idea del boceto A —con
+  // cero medallones no queda hueco, queda arte— y sigue por debajo del marco,
+  // para que si alguno llega a rozar el chaflán pase por debajo del herraje.
   //
   // La sombra la pone el raíl y no cada pieza, y ahora es la única forma de que
   // exista: al quitarles el fondo, un `box-shadow` por pieza dibujaría el círculo
@@ -280,21 +291,17 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     filter: drop-shadow(0 2px 3px card-sketch("shadow"));
   }
 
-  // SIN FONDO (25-ago-2026, decidido en el lab). Aquí ya no hay medallón: hay
-  // seis glifos colgados del borde derecho, y la casilla de 30px solo existe
-  // para repartirlos.
+  // SIN FONDO (25-ago-2026, decidido en el lab). Aquí no hay medallón: hay
+  // glifos colgados del borde derecho, y la casilla de 30px solo existe para
+  // repartirlos.
   //
   // La pieza venía de un camino largo —nació octógono repitiendo la silueta de
-  // la carta, pasó a redondo porque a 30px el chaflán son dos píxeles y no se
+  // la carta, pasó a redonda porque a 30px el chaflán son dos píxeles y no se
   // leía, y el aro adelgazó a la mitad para dejar crecer al glifo— y ese camino
   // es el que dice por qué se quita: cada paso fue restarle dibujo a la pieza
   // para que se viera lo de dentro. Restado el último queda que el disco no
-  // aportaba nada que el glifo no dijera ya, y este marco claro tiene bastante
-  // herraje sin sumarle seis chapas más en el canto.
-  //
-  // Con eso la Característica vuelve a dibujarse distinta en la E y en la G
-  // —allí sigue siendo un remache atornillado— y es a propósito: es una
-  // diferencia de las que este par de bocetos está para enseñar, no adorno.
+  // aportaba nada que el glifo no dijera ya, y este marco tiene bastante herraje
+  // sin sumarle cinco chapas más en el canto.
   //
   // Lo que hacía la cara oscura lo hace ahora la sombra del raíl: un emoji sobre
   // metal claro se pierde (💀, 🐾), y sin papel detrás lo que lo despega es el
@@ -309,111 +316,34 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     line-height: 1;
   }
 
-  // --- Las seis, en UNA fila ----------------------------------------------
-  // Juntas y no en dos renglones: la rejilla de 3×2 que traía la réplica leía
-  // como un bloque de texto —que es de donde salía, del párrafo de reglas de la
-  // referencia— y en una fila leen como lo que son, una tira de valores.
+  // --- Las ocho, en UNA fila ----------------------------------------------
+  // Juntas y no en dos renglones ni repartidas entre el panel y las esquinas:
+  // en una fila leen como lo que son, una tira de valores.
   //
-  // Y el icono va ENCIMA del número. No es un cambio de gusto, es que la
-  // anchura manda: con tres columnas de ~85px el par en línea cabe con aire,
-  // pero aquí son seis de ~41px y en línea ocupa 39, así que dos vecinos se
-  // tocarían y la fila se leería como una tapia. Apilado sobra sitio a los
-  // lados y falta a lo alto, que es el intercambio que este boceto puede pagar:
-  // el panel tiene una fila menos.
+  // La cuenta: (300 − 42 de acolchado − 14 de huecos) / 8 = ~30,5px por columna.
+  // Es la columna más estrecha que ha tenido esta página, y no por casualidad:
+  // el octógono gasta más acolchado que un rectángulo porque su panel cierra a
+  // sangre contra un filete sin cantoneras. A 30,5px el par tiene que ir apilado
+  // —es la regla de la anchura, por debajo de ~60px no hay elección— y una Vida
+  // de tres cifras entra: 240 a 1rem de Platypi ocupa unos 24px.
+  //
+  // Y el icono va ENCIMA del número por lo mismo: en línea el par ocupa casi
+  // toda la columna y dos vecinos se tocan, así que la fila se lee como una
+  // tapia. Apilado sobra sitio a los lados y falta a lo alto, que es el
+  // intercambio que este pie puede pagar.
   .sketch__pods {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(8, 1fr);
     gap: 2px;
     margin-top: 12px;
   }
 
   .sketch__pod-icon {
-    font-size: sketch-font("stat-icon-lg");
+    font-size: sketch-font("stat-icon-xl");
   }
 
   .sketch__pod-value {
-    font-size: sketch-font("pod-lg");
-  }
-
-  // --- Los dos pines ------------------------------------------------------
-  // Lo que la referencia pone en las esquinas de abajo, y lo que el concepto B
-  // señalaba como digno de robar sin que ningún boceto llegara a dibujarlo:
-  // los números que se consultan en cada intercambio de golpes salen del grupo
-  // y se van a las esquinas, con forma y tamaño propios.
-  //
-  // Van FUERA del pie porque montan sobre el marco y sobre el chaflán, y el pie
-  // va recortado. Y la sombra va aquí por lo mismo que en el raíl: los pines
-  // llevan clip-path.
-  .sketch__pins {
-    position: absolute;
-    bottom: 8px;
-    left: $pin-inset;
-    right: $pin-inset;
-    z-index: z("chip");
-    display: flex;
-    justify-content: space-between;
-    filter: drop-shadow(0 2px 4px card-sketch("shadow"));
-  }
-
-  // La punta hacia abajo es de la referencia y no es adorno: es lo que hace que
-  // el pin se lea como una pieza colgada del marco y no como una casilla del
-  // panel. El acolchado de abajo es el sitio que se come esa punta.
-  //
-  // Icono y número van EN LÍNEA, al revés que las seis del panel: apilados el
-  // pin crece a lo alto, y a lo alto es justo donde no hay sitio —cada píxel que
-  // sube se lo quita a la rejilla—. En línea cabe en la franja y de paso deja el
-  // número más grande, que es lo que este pin viene a hacer.
-  .sketch__pin {
-    display: grid;
-    grid-auto-flow: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    width: $pin-width;
-    padding: 5px 0 13px;
-    clip-path: polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%);
-  }
-
-  .sketch__pin-icon {
-    font-size: sketch-font("pin-icon");
-    line-height: 1;
-  }
-
-  .sketch__pin-value {
-    font-family: $font-game-display;
-    font-size: sketch-font("pin");
-    line-height: 1;
-    color: game("text");
-    text-shadow: 0 1px 2px card-sketch("shadow");
-  }
-
-  // El de ⚔️ Ataque, en acero: mismo metal que el marco, para que se lea como
-  // una hoja atornillada a la carta. Lleva el icono del TIPO DE DAÑO en vez del
-  // de Ataque (lo pone Stat, desde el boceto E), así que la esquina dice cuánto
-  // pega y de qué manera.
-  //
-  // El filo de luz de arriba va como parada dura del degradado y no como borde:
-  // con clip-path no hay borde que valga.
-  .sketch__pin:first-child {
-    background: linear-gradient(
-      to bottom,
-      var(--m-hi) 0 2px,
-      var(--m) 2px,
-      var(--m-lo) 100%
-    );
-  }
-
-  // Y el de ❤️ Vida en la sangre del tema, que es lo que la referencia hace con
-  // su gema roja. Ojo: es el mismo rojo del raíl de los héroes, así que en una
-  // carta de héroe el pin y la veta del marco van a juego — hay que mirar si
-  // eso ayuda o si confunde las dos cosas.
-  .sketch__pin:last-child {
-    background: linear-gradient(
-      to bottom,
-      game("accent-hi") 0 2px,
-      color-mix(in srgb, #{game("accent-hi")} 62%, #{game("accent")}) 2px,
-      game("accent") 100%
-    );
+    font-size: sketch-font("pod-xl");
   }
 
   // --- La piedra de Rareza ------------------------------------------------
@@ -440,6 +370,10 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   // del 50% —que mide sobre la caja, no sobre el padre— la trae encima. Así el
   // centrado no depende del tamaño: cambiar $sketch-gem la encoge sin moverla,
   // que con el margen negativo de antes había que recalcularlo a mano.
+  //
+  // La pinta SOLO la J. La K no la dibuja —su gema viene tallada dentro del
+  // PNG de la moldura— así que MolduraCard no pone el elemento, y estas reglas
+  // se quedan sin nadie a quien aplicarse en esa carta.
   .sketch__gem {
     position: absolute;
     top: math.div($sketch-band, 2);
@@ -462,9 +396,9 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     // piedra tallada tiene aristas, y en cuanto las facetas se funden vuelve a
     // ser la mancha plana de la que salió.
     //
-    // El color de partida es --seam y no --rarity porque en este boceto la
-    // rareza ES la veta: si la piedra tirara del color plano quedaría medio
-    // tono por debajo del canal y se leerían como dos cosas distintas.
+    // El color de partida es --seam y no --rarity porque aquí la rareza ES la
+    // veta: si la piedra tirara del color plano quedaría medio tono por debajo
+    // del canal y se leerían como dos cosas distintas.
     &::before {
       content: "";
       position: absolute;
@@ -499,8 +433,7 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   // la referencia ahí va el banderín de la facción, y V3 no tiene facción.
   // Lleva la RAZA, que es la única taxonomía del juego — así que la carta la
   // dice dos veces, en emblema aquí y en versalitas al pie. Eso es un cabo
-  // suelto a propósito: con las dos puestas se puede decidir cuál sobra, que es
-  // la discusión que la E y la réplica tenían abierta sin poder mirarla.
+  // suelto a propósito: con las dos puestas se puede decidir cuál sobra.
   //
   // La bandera no es el elemento sino su ::before, y no es un capricho: lleva
   // clip-path para la punta, y un clip se come la sombra —y también la de un
@@ -532,6 +465,10 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     // recto mide 38 × 2,3 × 0,8 = 69,9px, así que descontado el solape quedan
     // 59,9 para un emblema de 27,2 y el emblema se sienta centrado en ellos:
     // 10 + (59,9 − 27,2) / 2 ≈ 26.
+    //
+    // Los dos bocetos que quedan lo suben un poco (_orla.scss, _moldura.scss) y
+    // por la misma razón en los dos: su disco es el PNG, que mide más que el
+    // círculo nominal y baja una punta justo por el eje de la bandera.
     padding-top: 26px;
     filter: drop-shadow(0 3px 4px card-sketch("shadow"));
 
@@ -541,10 +478,10 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
     // de oro (icons.md §4) el argumento se invierte entero, y aquí se veía peor
     // que en ningún otro sitio: la tela era del mismo latón que el glifo, así que
     // la bandera enseñaba un relieve y no un dibujo. Misma cara que el disco del
-    // Tier de aquí al lado, que es la pieza oscura ya probada de este boceto.
+    // Tier de aquí al lado.
     //
-    // La punta de abajo es la del pin de Ataque a otra escala: la bandera es
-    // "más larga" y por eso el corte empieza al 80% y no al 60%.
+    // La punta de abajo empieza al 80% y no al 60% como empezaba la del pin de
+    // Ataque de la G: la bandera es «más larga».
     &::before {
       content: "";
       position: absolute;
@@ -569,13 +506,13 @@ $banner-top: $sketch-disc - $disc-inset - 10px;
   }
 
   // --- El estandarte DIBUJADO, cuando la raza tiene archivo ---------------
-  // Mismo trato que el disco del Tier de la J: la moldura deja de pintarse con
-  // CSS y pasa a ser un PNG (public/assets/v3/banners/), con la diferencia de
-  // que aquí la ruta cambia con la raza, así que la trae una custom property
-  // desde el TSX en vez de una url() escrita en el parcial.
+  // Mismo trato que el disco del Tier: la moldura deja de pintarse con CSS y
+  // pasa a ser un PNG (public/assets/v3/banners/), con la diferencia de que aquí
+  // la ruta cambia con la raza, así que la trae una custom property desde el TSX
+  // en vez de una url() escrita en el parcial.
   //
   // Las razas SIN archivo se quedan con el paño de arriba y no se rompen: es lo
-  // que permite ver la primera bandera dibujada al lado de tres pintadas.
+  // que permite que entre una raza nueva antes que su bandera.
   //
   // Las fracciones hacen falta porque el archivo NO es solo el paño: trae el asta
   // con sus remates, que sobresale por los lados, así que el lienzo es más ancho

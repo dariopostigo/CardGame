@@ -732,13 +732,19 @@ eso van aparte y por eso los pinta el SCSS del boceto que los usa, con
 
 | Archivo | Qué es | Dónde se pinta |
 |---|---|---|
-| `frames/tier.png` | El medallón del **Tier**: anillo de oro con cuatro puntas en cruz sobre cara de piedra oscura | El disco de la esquina de la carta elegida, boceto **J · Orla** ([`styles/components/card-sketch/_orla.scss`](../../../styles/components/card-sketch/_orla.scss)) |
+| `frames/tier.png` | El medallón del **Tier**: anillo de oro con cuatro puntas en cruz sobre cara de piedra oscura | El disco de la esquina, bocetos **J · Orla** ([`_orla.scss`](../../../styles/components/card-sketch/_orla.scss)) y **K · Moldura** ([`_moldura.scss`](../../../styles/components/card-sketch/_moldura.scss)) |
+| `frames/card/<raíl>.png` | **La moldura entera de la carta**, con la gema de Rareza tallada en el canto de arriba. **Seis**, una por raíl de color | La capa `.sketch__frame` del boceto **K · Moldura** ([`_moldura.scss`](../../../styles/components/card-sketch/_moldura.scss)) |
 
-**Entró el 26 de agosto de 2026 y solo lo usa la J.** Hasta entonces ese disco
+**Entró el 26 de agosto de 2026 para la J, y desde el 1 de septiembre lo usa
+también la K.** Hasta entonces ese disco
 era CSS puro —círculo, borde de metal, aro de oro y degradado de cara oscura, en
-`_estandarte.scss`—, y la G y la H **se quedan con el de CSS**: son bocetos ya
-juzgados, y cambiarles una pieza por debajo reescribiría la comparación que
-decidió el marco.
+`_cuerpo.scss`—, y mientras vivieron, la G y la H **se quedaron con el de
+CSS**: eran bocetos ya juzgados, y cambiarles una pieza por debajo habría
+reescrito la comparación que decidió el marco. Borradas las dos el 1 de
+septiembre de 2026, el círculo de CSS sigue en el parcial del cuerpo como el
+suelo del que salieron las medidas, pero no lo pinta ya ninguna carta. La K sí lo hereda porque nace después: es el disco vigente, y
+un boceto cuyo argumento es «la moldura se dibuja fuera» sería raro que montara
+el medallón de CSS.
 
 **El lienzo se recortó al llegar, y esa es la norma de la carpeta.** El archivo
 salió del generador a 1254×1254 px y 1,9 MB, con la pieza descentrada y sombra
@@ -758,6 +764,53 @@ CSS— y el hueco en 43, así que lo único que crece es lo que sobresale.
 
 Extensión `.png` por lo mismo que los pictogramas: transparencia y aristas
 limpias, que es lo contrario de lo que pide la tabla de *Lienzo y formato*.
+
+#### `frames/card/` — la moldura entera, seis archivos
+
+**Entraron el 1 de septiembre de 2026** y son un salto de escala dentro de esta
+carpeta: `tier.png` es una pieza *del* marco y esto es **el marco**. Con ellos el
+boceto **K · Moldura** no dibuja metal, lo coloca — y por primera vez hay una
+carta en el laboratorio a la que la probeta de aleación no le hace nada.
+
+| | Norma |
+|---|---|
+| **Cuántos** | **6**, uno por raíl de color: `comun`, `poco-comun`, `raro`, `epico`, `legendario` y `heroe`. Son las claves de `$rarity` ([`styles/settings/_colors.scss`](../../../styles/settings/_colors.scss)) que hoy usa la baraja, no las nueve del mapa |
+| **Lienzo** | **600 × 840 px**, o sea el 5:7 de la carta al doble de como se pinta (300 × 420). El archivo es la carta ENTERA, no un recorte del canto |
+| **Aire de arriba** | **0,0357 del alto** (y 0 → y 30) por encima del canto exterior del raíl. Es la única asimetría, y no es un recorte mal hecho: ahí asoma la mitad de la gema. Por los lados y por abajo la moldura llega a sangre del lienzo |
+| **Banda** | **0,0517 del ancho** y **0,0369 del alto** — 15,5 px sobre la carta, la misma banda que dibuja el filete vectorial de la G y la H (`$sketch-band`, 15 px) |
+| **Ventana** | El hueco interior: **0,0726** por arriba, **0,0517** por los lados, **0,038** por abajo |
+| **Radios** | **0,117 del ancho** el exterior (35 px en la carta) y **0,081** el interior (24 px). El exterior manda sobre el radio de la CARTA, o el fondo asoma por fuera del oro |
+| **Gema** | Rombo tallado a caballo del canto de arriba, **en el eje exacto del lienzo** y a la misma altura en los seis. Es la pieza que sustituye al `.sketch__gem` de CSS de la G/H/J |
+| **Fondo** | Transparente, ventana incluida: el arte va detrás y la moldura encima |
+| **Extensión** | `.png`, por lo de siempre — transparencia y aristas limpias |
+
+**La exigencia es la de los estandartes, y por el mismo motivo: las seis tienen
+que ser intercambiables.** La carta las apila en un hueco fijo, así que lo que
+puede variar es el color y el ornamento, nunca dónde cae el raíl. Medidas las
+seis al entregarlas, se cumple con holgura:
+
+| | Medido sobre las seis | Norma |
+|---|---|---|
+| Ventana, canto izquierdo | 0,0500 … 0,0533 — **0,3 puntos** | 0,0517 |
+| Ventana, canto de arriba | 0,0714 … 0,0738 — **0,2 puntos** | 0,0726 |
+| Eje de la gema | **300 de 600 en las seis** | 300 |
+
+Dos se descuelgan por el pie y está anotado en vez de retocado: **`poco-comun` y
+`heroe` traen el raíl de abajo cortado por el lienzo** (arranca a 0,0083 y 0,0036
+del canto en vez de a 0), así que en la carta se les ve una hebra de fondo por
+debajo del oro. Es de la generación, no del montaje.
+
+**Y el peso sigue siendo el pendiente de siempre**: 1,1 MB entre las seis, de
+173 a 197 KB cada una, ya recortadas del 1060 × 1484 con el que salieron. Es la
+misma cuenta abierta que `icons/` (14 MB) y `banners/` (17 MB), con la
+diferencia de que aquí la pasada de reencuadre no hace falta — salieron de una
+tacada y el registro ya cuadra.
+
+**Lo que cuesta el formato, dicho antes de que alguien lo descubra montando.**
+Un marco vectorial tiene once raíles de color gratis, porque el color es una
+variable; aquí cada raíl es un archivo. Eso cierra la escala en seis y convierte
+«añadir una rareza» en «generar un PNG». Es el precio que el boceto K está
+puesto a la página para cobrar, no un defecto de la entrega.
 
 ### `banners/` — los estandartes de raza, uno por raza
 
@@ -843,7 +896,7 @@ Los ~18 px de más en el ancho (677 medidos contra los 661 que serían 700 de
 1000) son el **filete de oro**, que se dibuja por fuera de la tela. Por eso el
 CSS usa 717/1000 y no 700: la norma le habla al generador del paño, y el CSS
 necesita la pieza visible. Están explicados en
-`styles/components/card-sketch/_estandarte.scss`, y **no son un error que haya
+`styles/components/card-sketch/_cuerpo.scss`, y **no son un error que haya
 que arreglar igualando una cifra a la otra**.
 
 Lo que sí queda pendiente es el **peso**: 17 MB entre los once, de 1,3 a 1,8 MB

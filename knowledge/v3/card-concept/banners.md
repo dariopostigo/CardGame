@@ -23,7 +23,7 @@
 
 Tela oscura con la punta cortada al 80 % de su alto, colgada por debajo del disco
 del Tier, con el emblema de raza en oro encima. Vive en
-[`_estandarte.scss`](../../../styles/components/card-sketch/_estandarte.scss)
+[`_cuerpo.scss`](../../../styles/components/card-sketch/_cuerpo.scss)
 (`.sketch__banner`), la pintan los bocetos **G**, **H** y **J**, y sus medidas
 salen de `$sketch-banner` y `$sketch-disc` en
 [`_card.scss`](../../../styles/settings/_card.scss).
@@ -451,7 +451,7 @@ arranca entre el **65 %** del paño (Elfos, que es la punta más larga) y el
 la variable de raza— pero obliga a que el CSS no dé por hecho ningún 80 %: lo
 único que tiene que cumplirse es que el emblema quede por encima del corte más
 alto, y el peor caso es Elfos, al que le sobra **1 px**. Está anotado en
-`_estandarte.scss`, junto a las fracciones.
+`_cuerpo.scss`, junto a las fracciones.
 
 ## 11. Qué falta decidir
 

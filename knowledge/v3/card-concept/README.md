@@ -357,7 +357,7 @@ leyéndose como blindaje aunque el arte vaya a sangre por debajo.
 
 Boceto **E · Forja** en `/docs/v3/cards/design`. Comparte el marco vectorial
 con el D (`ForjaFrame` en `components/design/v3/sketch-frames.tsx`) y tiene su
-propio parcial en `styles/components/card-sketch/_forja.scss`.
+propio parcial en `styles/components/card-sketch/_forja.scss`, borrado el 1 de septiembre de 2026 con el boceto.
 
 Sale del D pero **acaba diciendo lo contrario que él**, y esa oposición es el
 motivo de que los dos convivan:
@@ -1217,7 +1217,7 @@ que ya había detrás.
 llevando las dos clases de la H (`.sketch--estandarte.sketch--recinto`) para
 heredar dónde cae el disco, dónde el estandarte, que las ocho van en una fila,
 cómo se pinta la placa — nada de eso cambia, y ni una regla de
-`_estandarte.scss` ni de `_recinto.scss` se toca para conseguirlo. Lo que sí
+`_estandarte.scss` ni de `_recinto.scss` se toca para conseguirlo —los dos son hoy `_cuerpo.scss`, fusionados al borrar sus bocetos. Lo que sí
 es propio de este boceto: `OrlaCard` (`components/design/v3/sketch-cards.tsx`)
 ya no envuelve a `<RecintoCard>` como una caja opaca — clona su árbol pieza
 por pieza y sustituye `<EstandarteFrame />` por `<OrlaFrame />`, y
@@ -1282,6 +1282,64 @@ enseñar: el tier se reconoce por el halo antes de leer el disco.
   este es el primero, y conviene que quede escrito como una decisión y no como
   un efecto colateral que nadie miró.
 
+## Boceto K — Moldura (el marco como archivo generado)
+
+**Entró el 1 de septiembre de 2026** y no discute ninguna de las preguntas de
+esta carpeta: no toca la silueta, ni la jerarquía de los ocho, ni dónde vive la
+Rareza, ni si la carta escribe o enseña. Por dentro **es la H · Recinto sin
+negociar** —disco en la esquina, estandarte colgando, fila de ocho, placa a
+sangre—, y eso es la condición para que sirva de algo. Lo que discute es de otro
+orden: **con qué se dibuja un marco.**
+
+Los diez bocetos anteriores lo trazan con las herramientas del navegador —un
+`<svg>` de trazados y unos cuantos gradientes—. Este lo trae hecho: seis PNG con
+transparencia en
+[`public/assets/v3/frames/card/`](../../../public/assets/v3/frames/card/), uno
+por raíl de color, y el CSS solo los coloca. Salieron de la tanda que Dario
+generó esa noche a partir de una referencia previa
+(`ChatGPT Image 31 ago 2026, 23_26_25.png`, que se queda fuera del set: es la
+muestra, sin alfa y con el fondo horneado).
+
+**La apuesta:** si el marco es una pieza de arte y no de código, puede tener
+relieve, talla y pedrería de verdad. La gema de Rareza deja de ser un rombo de
+CSS con su engaste dibujado a mano y viene tallada dentro del archivo, a caballo
+del canto de arriba.
+
+**Y encaja sin forzar nada, que es el hallazgo de montarlo.** La banda de metal
+del archivo mide **15,5 px** sobre una carta de 300 y el `$sketch-band` de la G y
+la H mide **15**. Medio píxel. Así que las cuatro cosas que la J tuvo que volver
+a medir por bajar su anillo de 15 a 8 —el disco, el estandarte, el raíl y el
+acolchado del panel— aquí caen donde ya caían, sin una cifra propia. Lo único que
+hay que deshacer es la **silueta**: la H es un octógono y esto es un rectángulo
+redondeado, con un radio bastante más abierto que el de la E y la J (35 px contra
+14) porque es el que trae la moldura dibujada.
+
+**Lo que cuesta, que es lo que hay que mirar y no lo que hay que leer:**
+
+- **La probeta de aleación no lo toca.** Los cinco bocetos vectoriales cambian de
+  metal a la vez con `data-alloy`; este se queda con el latón que traiga el PNG.
+  No es un fallo que arreglar — es exactamente el precio de dibujar el marco
+  fuera, y verlo en la misma página donde los otros cinco sí obedecen vale más
+  que cualquier párrafo. Un marco dibujado fuera no se afina desde el CSS: se
+  vuelve a generar.
+- **La Rareza cuesta un archivo.** En la E, la G, la H y la J la veta es una
+  variable de color, así que once raíles salen gratis. Aquí cada raíl son ~180 KB,
+  y la escala se cierra en los **seis** que hoy usa la baraja: las cinco rarezas
+  más el rojo de héroe. Añadir uno deja de ser escribir y pasa a ser generar.
+- **Las seis tienen que ser intercambiables o no son nada**, porque la carta las
+  apila en el mismo hueco. Medidas al entregarlas, se cumple con holgura —0,3
+  puntos de dispersión en el canto y la gema centrada en el eje exacto en las
+  seis—, y el detalle está en
+  [`public/assets/v3/README.md`](../../../public/assets/v3/README.md) §`frames/card/`.
+
+**La asimetría del archivo no es un defecto y conviene no "arreglarla":** por los
+lados y por abajo la moldura llega a sangre del lienzo, y por arriba deja un 3,6 %
+de aire donde asoma la mitad de la gema. En la carta eso se ve como una franja
+negra de 15 px en el canto de arriba, y ahí está la decisión que este boceto deja
+abierta — o se acepta como un borde (la lectura de Magic, que es la de la J) o se
+sube la moldura hasta el canto y la gema sale fuera de la carta. Hoy está lo
+primero, que es lo que el archivo da tal cual.
+
 ## Lo que esto cambia de lo ya escrito
 
 **El lienzo heredado de v2 era el equivocado, y ya está corregido.** La
@@ -1335,6 +1393,24 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 > registro de CÓMO se llegó ahí, con los bocetos delante en
 > `/docs/v3/cards/design`, que sigue viva para el día que haga falta volver a
 > abrir alguna.
+>
+> **Y ese día llegó una vez, el 1 de septiembre de 2026, sin mover ninguna de
+> estas preguntas**: la K · Moldura no discute la silueta ni el reparto —por
+> dentro es la H, igual que la J— sino **con qué se dibuja el marco**, y trae
+> el suyo como archivo generado (§"Boceto K"). Está sin juzgar.
+>
+> **Ese mismo día la página se quedó en dos.** Por decisión de Dario se borraron
+> los cuatro bocetos que seguían vivos —E · Forja, G · Estandarte, H · Recinto e
+> I · Retablo— con sus componentes, sus marcos vectoriales y sus parciales, y
+> con ellos **la probeta de aleación**: catorce metales que ya no movían nada
+> que estuviera en discusión, y que de los dos supervivientes solo podían mover
+> uno. Lo que enseñó cada boceto es exactamente lo que sigue escrito en este
+> archivo, y por eso se pueden borrar sin perder nada: **el laboratorio dejó de
+> ser el archivo de la comparación y pasó a ser el banco de la única que sigue
+> abierta**, J contra K. En el código, la G y la H se fundieron en un solo
+> parcial —`styles/components/card-sketch/_cuerpo.scss`— porque las dos
+> supervivientes montan ese interior entero: dejó de ser un boceto y pasó a ser
+> el cuerpo de la carta.
 
 - **Si la carta es un rectángulo.** *(Abierto desde el 24-ago-2026.)* Los cinco
   primeros bocetos no lo preguntaron: los cinco son la misma caja redondeada con

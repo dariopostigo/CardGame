@@ -95,16 +95,20 @@ $sketch-race-art: 1.25;
 // silueta pero suma exactamente los mismos 15px. Entre bocetos cambia el
 // aspecto, nunca la medida — si no, no se pueden comparar.
 $sketch-band: 15px;                // grosor del filete metálico
-$sketch-boss: 42px;                // medallón montado en la placa
 
-// --- Boceto G · Estandarte ------------------------------------------------
+// --- El cuerpo de la carta ------------------------------------------------
+// Las cuatro cotas del interior compartido por los dos bocetos que quedan
+// (styles/components/card-sketch/_cuerpo.scss).
+//
 // Su silueta no es un rectángulo redondeado: es un OCTÓGONO, con las cuatro
 // esquinas cortadas a 45°. El chaflán es el cateto de ese corte medido sobre
 // cada borde, y es espejo de la C de sketch-frames.tsx — el marco vectorial
 // dibuja el mismo contorno que recortan el arte y el pie, así que las dos
 // medidas tienen que moverse juntas o el filete deja de seguir a la silueta.
+// La K · Moldura lo deshace en su parcial, porque su archivo es un rectángulo;
+// las cotas se quedan porque son las que sujetan la composición en las dos.
 //
-// Las tres primeras cotas vienen de la F · Blasón —la réplica de Might & Magic:
+// Las tres primeras vienen de la F · Blasón —la réplica de Might & Magic:
 // Fates, borrada el 25 de agosto de 2026 en cuanto la G la absorbió— y siguen
 // midiendo lo mismo: lo que la mezcla cambió fue dónde vive la Rareza, no la
 // forma.
@@ -126,7 +130,7 @@ $sketch-disc: 54px;                // disco de Tier, montado en la esquina
 // ser medidas clavadas y ahora son fracciones de esta, así que encogen con ella:
 // es la cuenta que faltaba la primera vez, cuando a 15px la piedra se quedó
 // pequeña pero el tallado siguió midiendo lo mismo y la tabla se comió a sí
-// misma. Van en components/card-sketch/_estandarte.scss, junto a la piedra.
+// misma. Van en components/card-sketch/_cuerpo.scss, junto a la piedra.
 $sketch-gem: 16px;
 
 // El estandarte de raza que cuelga del disco del Tier: la ficha que la
@@ -149,54 +153,3 @@ $sketch-gem: 16px;
 // arrancaría en 0 y mordería el canto de la carta. Si alguna vez hace falta más
 // gruesa, lo que tiene que crecer primero es el disco.
 $sketch-banner: 38px;
-
-// --- Boceto I · Retablo ---------------------------------------------------
-// El único boceto donde la carta NO es una ilustración con cosas encima: es una
-// página de franjas apiladas, con el arte metido en una ventana que no lleva
-// ningún dato. Sale de mezclar la anatomía de una carta de Magic
-// (imgs/magic-the-gathering-fading-hope-mid.webp) con el octógono de la H.
-//
-// Estas cinco cotas son un PRESUPUESTO y hay que leerlas juntas, porque suman
-// exactamente el alto útil de la carta. Con el filete de 15px y el aire de la
-// página quedan 372px de contenido, y se reparten así:
-//
-//   barra de título   30      (rótulo + Tier)
-//   hueco              6
-//   ventana          220      ← lo que le queda a la ilustración
-//   hueco              6
-//   línea de tipo     22      (raza + sello de Rareza)
-//   hueco              6
-//   caja de datos     82      (los ocho, filete, y las Características)
-//                    ---
-//                    372
-//
-// Cambiar una obliga a mover otra, y la que paga siempre es la VENTANA: es la
-// única que no tiene un contenido que la empuje. Por eso está escrita como
-// medida y no como `flex: 1` — con el sobrante, cada carta tendría una ventana
-// distinta según cuántas Características trajera, y entonces la ilustración no
-// se podría encuadrar una sola vez para todas (public/assets/v3/README.md
-// §"Encuadre" depende de que el recorte sea siempre el mismo).
-$sketch-bar: 30px;                 // barra de título
-$sketch-typeline: 22px;            // línea de tipo
-$sketch-window: 220px;             // ventana de arte
-$sketch-databox: 82px;             // caja de datos sobre vitela
-// El bisel del Tier, en el extremo derecho de la barra de título: es el sitio
-// que la referencia da al coste de maná. Cabe justo en la barra de 30 con 4px
-// de aire arriba y abajo.
-$sketch-cost: 22px;
-// El glifo de Característica dentro de la caja de datos. Es DOS TERCIOS del
-// medallón del raíl (30px) a propósito: allí es una ficha montada sobre la
-// ilustración y aquí es un renglón de la caja, así que tiene que pesar como un
-// dato y no como una pieza.
-$sketch-trait: 20px;
-// El sello de Rareza, al final de la línea de tipo. Es el sitio exacto donde la
-// referencia pone el símbolo de colección, que es LO QUE DICE SU RAREZA (negro
-// común, plata infrecuente, oro rara). Diminuto a propósito: la apuesta de este
-// boceto es que la Rareza no necesita ni un canto teñido ni una piedra de 16px,
-// le basta un glifo en un renglón. Es la medida que hay que mirar de cerca.
-$sketch-seal: 12px;
-// El aire de la página por dentro del filete, y el hueco entre franjas. Los dos
-// juntos son lo que convierte la carta en una PÁGINA: sin margen, las franjas
-// morirían contra el metal y se leerían como parte del marco.
-$sketch-page-pad: 9px;
-$sketch-page-gap: 6px;

@@ -23,26 +23,20 @@
 // no volver a escribir aquí nada que dé por hecho lo primero.
 //
 // Lo que un boceto decide —dónde caen las ocho Habilidades y las
-// Características, y de qué está hecho el marco— vive en card-sketch/, un
-// parcial por boceto, que van después en la cascada.
+// Características, y de qué está hecho el marco— vive en card-sketch/, que
+// desde el 1 de septiembre de 2026 son tres parciales: el CUERPO común de los
+// dos bocetos que quedan y uno por boceto encima.
 //
-// Hubo cinco bocetos, quedó uno (E · Forja), el 24 de agosto de 2026 entró otro
-// al lado (G · Estandarte), el 25 un tercero derivado de él (H · Recinto, la G
-// con todo dentro del contorno y las ocho juntas), ese mismo día un cuarto que
-// no se parece a ninguno (I · Retablo, la H cruzada con una carta de Magic: la
-// carta es una página de franjas y el arte va en una ventana) y, ya de noche,
-// un quinto que cruza la misma referencia por el otro lado (J · Orla, la H
-// detrás de un borde negro macizo en vez de dentro de una ventana). Lo que
-// aquí se comparte quedó medido contra los cinco de la primera tanda, así que
-// sigue siendo el suelo común y no un resto de la E. Lo que solo servía a los
-// otros cuatro —la cenefa de glifos, el subtítulo, el filete de rareza de
-// 3px— se borró con ellos.
+// SE DIBUJARON DIEZ Y QUEDAN DOS. Lo que aquí se comparte quedó medido contra
+// los cinco de la primera tanda, así que sigue siendo el suelo común y no el
+// resto de un boceto concreto. Lo que solo servía a los borrados —la cenefa de
+// glifos, el subtítulo, el filete de rareza de 3px— se fue con ellos.
 //
-// Ojo con lo que se da por común: la G rompe la SILUETA (es un octógono) y con
-// ella el radio, el fondo y el recorte del arte y del pie. Todo eso sigue aquí
-// porque es lo que hace cualquier carta que no diga lo contrario, pero ya no es
-// una constante — es el caso por defecto, y lo que la G hace en su lugar vive
-// en card-sketch/_estandarte.scss.
+// Ojo con lo que se da por común: el cuerpo rompe la SILUETA (es un octógono) y
+// con ella el radio, el fondo y el recorte del arte y del pie. Todo eso sigue
+// aquí porque es lo que hace cualquier carta que no diga lo contrario, pero ya
+// no es una constante — es el caso por defecto, y lo que el cuerpo hace en su
+// lugar vive en card-sketch/_cuerpo.scss.
 //
 // La piel sale de game() y no de skin(): la carta es una pieza de la interfaz
 // de producción, y su oro tiene que ser el mismo oro del botón. Por eso el
@@ -130,12 +124,16 @@
   }
 }
 
-// --- El marco vectorial ---------------------------------------------------
-// La capa donde cae el <svg> de components/design/v3/sketch-frames.tsx. Es la
-// misma para los dos marcos —encima de todo y sin capturar el puntero—; lo que
-// cambia de un boceto a otro es lo que el SVG dibuja dentro, no dónde se pone.
-// Dos marcos y cinco bocetos: la H, la I y la J usan el de la G tal cual, porque las
-// dos discuten dónde caen las piezas y no qué forma tiene la carta.
+// --- El marco -------------------------------------------------------------
+// La capa donde cae el marco, y ya no es «la capa del <svg>»: desde la
+// K · Moldura hay un boceto cuyo marco es un PNG que le pinta el SCSS con
+// background-image (card-sketch/_moldura.scss), así que aquí el elemento va
+// vacío. Lo que la capa hace es lo mismo en los dos casos —encima de todo y sin
+// capturar el puntero—; lo que cambia de un boceto a otro es QUÉ la llena.
+//
+// Dos bocetos y UN marco vectorial: el de la J lo dibuja OrlaFrame
+// (components/design/v3/sketch-frames.tsx) y el de la K no existe como código —
+// es un PNG.
 .sketch__frame {
   position: absolute;
   inset: 0;
@@ -300,11 +298,3 @@
   line-height: 1;
   color: game("text");
 }
-
-// --- Probeta de aleación (TEMPORAL) --------------------------------------
-// Vivió aquí como un @each de tres líneas hasta que la J · Orla demostró que
-// "aquí" era el sitio equivocado: la regla se mudó a
-// card-sketch/_alloy-probe.scss y se carga la ÚLTIMA de todo
-// styles/components/_index.scss. El porqué está escrito allí — en corto, es
-// una pelea de especificidad que esta hoja, cargada ANTES que los parciales de
-// boceto, no podía ganar contra la J.
