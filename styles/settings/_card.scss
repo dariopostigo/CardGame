@@ -86,27 +86,27 @@ $sketch-stat-art: 1.7;
 // distinguen a 42px— aplicada al hueco que hay, no al que se querría.
 $sketch-race-art: 1.25;
 
-// El marco no es un filete sino una BANDA de metal, y de ahí estas dos.
-// $sketch-band es espejo del último anillo de SEAM en
-// components/design/v3/sketch-frames.tsx: si allí crece el filete y aquí no,
-// el marco se come la fila de ocho.
+// La BANDA de metal del marco: 15px, el grosor que sumaban los anillos del
+// filete vectorial de la G y la H.
 //
-// Y vale para los DOS bocetos a propósito: el G reparte sus anillos sobre otra
-// silueta pero suma exactamente los mismos 15px. Entre bocetos cambia el
-// aspecto, nunca la medida — si no, no se pueden comparar.
+// LA CARTA YA NO TIENE FILETE —el diseño elegido no lleva marco— pero esta cota
+// no es decorativa y por eso se queda: es contra ella contra la que están
+// calculadas las piezas del cuerpo (card-sketch/_cuerpo.scss), y el paspartú de
+// la carta las vuelve a medir encima. Borrarla obligaría a rehacer esas cuentas
+// para no mover nada, que es trabajo sin resultado visible.
 $sketch-band: 15px;                // grosor del filete metálico
 
 // --- El cuerpo de la carta ------------------------------------------------
-// Las cuatro cotas del interior compartido por los dos bocetos que quedan
-// (styles/components/card-sketch/_cuerpo.scss).
+// Las cotas del interior de la carta (styles/components/card-sketch/_cuerpo.scss).
 //
 // Su silueta no es un rectángulo redondeado: es un OCTÓGONO, con las cuatro
 // esquinas cortadas a 45°. El chaflán es el cateto de ese corte medido sobre
-// cada borde, y es espejo de la C de sketch-frames.tsx — el marco vectorial
-// dibuja el mismo contorno que recortan el arte y el pie, así que las dos
-// medidas tienen que moverse juntas o el filete deja de seguir a la silueta.
-// La K · Moldura lo deshace en su parcial, porque su archivo es un rectángulo;
-// las cotas se quedan porque son las que sujetan la composición en las dos.
+// cada borde, y era espejo de la C del marco vectorial, que dibujaba el mismo
+// contorno que recortan el arte y el pie. Ese marco ya no existe y el octógono
+// no se ve en ninguna carta —la K lo deshacía porque su archivo era un
+// rectángulo, y la L porque Dario pidió esquinas redondeadas—, pero la cota se
+// queda por lo mismo que la de arriba: es la silueta con la que están medidas
+// las piezas del cuerpo.
 //
 // Las tres primeras vienen de la F · Blasón —la réplica de Might & Magic:
 // Fates, borrada el 25 de agosto de 2026 en cuanto la G la absorbió— y siguen
@@ -122,16 +122,13 @@ $sketch-chamfer: 18px;
 // da a 42px. La bandera no podía crecer sin que creciera él primero, porque su
 // anchura sale de este número.
 $sketch-disc: 54px;                // disco de Tier, montado en la esquina
-// El rombo de Rareza, a caballo del canto de arriba. En la réplica era una cara
-// plana de 15px y aquí va tallado: engaste, cuatro facetas y tabla.
-//
-// Bajó de 20 a 16px el 25 de agosto de 2026, mirándola en el lab. Para que la
-// talla aguante el recorte, los cortes de dentro —engaste y tabla— dejaron de
-// ser medidas clavadas y ahora son fracciones de esta, así que encogen con ella:
-// es la cuenta que faltaba la primera vez, cuando a 15px la piedra se quedó
-// pequeña pero el tallado siguió midiendo lo mismo y la tabla se comió a sí
-// misma. Van en components/card-sketch/_cuerpo.scss, junto a la piedra.
-$sketch-gem: 16px;
+
+// Aquí vivió $sketch-gem, el rombo de Rareza que iba a caballo del canto de
+// arriba: 16px de engaste, cuatro facetas y tabla, tallado en CSS. Se fue el 3
+// de septiembre de 2026 con los dos bocetos que podían llevarlo —la J lo pintaba
+// y la K lo traía dentro de su PNG—: la carta elegida no tiene banda de metal
+// donde engastar una piedra, y lo que dice la Rareza es una línea encendida en
+// el canto del hueco de arte ($lamina-edge, en card-sketch/_lamina.scss).
 
 // El estandarte de raza que cuelga del disco del Tier: la ficha que la
 // referencia dedica a la facción y que la réplica dejó fuera por no tener qué

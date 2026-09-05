@@ -1,0 +1,274 @@
+@use "../abstracts" as *;
+
+// -------------------------------------------------------------------------
+// La ficha de personaje de V3 — ver components/dev/PieceToken.tsx
+//
+// La pieza que se pone en el hexágono y anda por él (docs/v3/board/battle.md §5).
+// Misma división de trabajo que _arena.scss, de quien es hermana y con quien
+// comparte paleta: el SVG aporta geometría —todas las medidas salen del radio
+// del hexágono, en lib/v3/piece.ts— y aquí no hay ni un número de posición, solo
+// color y grosor de trazo.
+//
+// LA FICHA ES UN HEXÁGONO TUMBADO Y PLANO: la forma de la casilla, un poco más
+// pequeña para que la rejilla se siga viendo (1 de septiembre de 2026), y SIN
+// GROSOR —el canto, el bisel y la sombra de contacto que se probaron el día 2 se
+// fueron el día 3: «quita el disco y el grosor ya»—. Así que aquí NADA es redondo
+// salvo las gemas de cifra, y hay TRES piezas con tres trabajos distintos, que es
+// por lo que los colores no se reparten a gusto:
+//
+//   · LA CASILLA ILUMINADA dice DE QUIÉN ES, en TRES tonos: azul la mía, verde la
+//     de un aliado, rojo la del enemigo *(Dario, 3 de septiembre de 2026)*. Es el
+//     hexágono entero de la rejilla, translúcido y por debajo de todo.
+//   · EL CARTÓN es el hexágono de fuera y dice EL TIER: se lleva en su contorno
+//     el raíl de $rarity que le toca —el mismo con el que se imprime su carta—.
+//     Por dentro va casi negro, por lo mismo que la peana en la arena: es el
+//     fondo contra el que ese color tiene que separarse del suelo claro y del
+//     oscuro a la vez.
+//   · LA CARA es el retrato, y NO lleva trazo de ningún tipo: va a ras del marco
+//     y lo que la cierra es el marco mismo. Un contorno propio aquí era la
+//     tercera línea del mismo color, y por eso se fue.
+// -------------------------------------------------------------------------
+
+// DE QUIÉN ES, en TRES colores *(Dario, 3 de septiembre de 2026: «para mí azul,
+// para mis enemigos rojo y para mis aliados verde»)*. Esto no es el bando
+// —aliados y yo somos el MISMO bando (battle.md §2)—: es de quién es la ficha, y
+// son tres respuestas. El día empezó con dos tonos y una cifra encima de la ficha
+// para decir el jugador; la cifra se fue en cuanto el verde entró, porque decía lo
+// mismo.
+//
+// El azul y el rojo son los mismos que pintan las bandas de despliegue en la
+// arena, y eso es lo que dice sin palabras que una ficha azul sale de la banda
+// azul. El verde no tiene banda: los tres jugadores despliegan en la misma.
+//
+// LOS DOS ALIADOS COMPARTEN EL VERDE a propósito, y eso deja una pregunta sin
+// contestar —cuál de los dos es cada ficha verde—. Es la decisión, no un olvido: lo
+// que un jugador necesita saber de un vistazo es qué puede mover, y para eso hay
+// dos respuestas, no tres.
+//
+// Van los cuatro escritos y no un `:not()`: un bando nuevo tiene que ser una
+// entrada, no una excepción.
+$ficha-sides: (
+  "j1": $arena-side-own,
+  "j2": $arena-side-ally,
+  "j3": $arena-side-ally,
+  "enemigo": $arena-side-enemy,
+);
+
+// EL TIER, por el raíl de Rareza que le corresponde. Son cinco para ocho tiers
+// —la Rareza sale del tier (game-design.md §3) y `rarityForTier()` los colapsa—
+// más el raíl propio del héroe, que no tiene tier. No hay paleta nueva a
+// propósito: si el color de la ficha no fuera el de su carta, el tablero y la
+// mano dirían cosas distintas de la misma unidad.
+$ficha-rails: ("comun", "poco-comun", "raro", "epico", "legendario", "heroe");
+
+// Las hojas que pintan fichas fuera de la arena: el calibre y la tira de tiers.
+// El suelo no se pinta —aquí no se juzga el terreno— así que el hexágono es solo
+// trazo, el mismo oro apagado de la rejilla de la arena y un punto más visible
+// que allí, porque aquí no hay lámina debajo que lo sostenga.
+.ficha-calibre {
+  display: block;
+  width: 100%;
+  background: $arena-ground-mid;
+  border-radius: radius("md");
+}
+
+.ficha-calibre__hex {
+  fill: none;
+  stroke: $arena-grid;
+  stroke-width: 1.4;
+  opacity: 0.45;
+}
+
+.ficha {
+  // Los textos de dentro se centran todos igual, así que se dice una vez.
+  text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    user-select: none;
+  }
+}
+
+// --- La casilla iluminada: de quién es la ficha ---------------------------
+// El hexágono de la rejilla, encendido por debajo de la ficha. Va con opacidad y
+// no en plano porque tiene que ENCENDER la casilla, no taparla: por debajo hay
+// suelo —que algún día será una ilustración— y la línea de la rejilla, y las dos
+// se siguen viendo a través. Sin trazo propio, que sería otro contorno más en una
+// ficha que acaba de quedarse con uno solo.
+.ficha__casilla {
+  stroke: none;
+  opacity: 0.34;
+}
+
+// --- El cartón: EL MARCO, y es el único ------------------------------------
+// Un solo trazo de color por ficha *(3 de septiembre de 2026: «parece que tiene
+// como 3 bordes del mismo color… solo un marco»)*. Aquí eso es una regla, no una
+// preferencia: el color del tier lo lleva ESTE trazo y nada más, así que ni el
+// retrato ni el héroe pueden añadir línea. El fondo va casi negro por lo mismo
+// que la peana en la arena —es contra lo que ese color tiene que separarse del
+// suelo claro y del oscuro a la vez—.
+// El grosor del marco, y el filo negro que lo rodea. Van juntos porque el
+// segundo se define contra el primero: el halo es el trazo de color MÁS un
+// píxel por cada lado, dibujado debajo. Su espejo en TS —donde se mide lo que
+// le comen a la casilla— son `FRAME_STROKE` y `FRAME_HALO` en lib/v3/piece.ts.
+$ficha-frame-stroke: 2.2;
+$ficha-frame-halo: 1;
+
+// EL HALO DEL MARCO *(Dario, 5 de septiembre de 2026)*. El color del tier y el
+// del bando son EL MISMO TONO en tres pares —"raro" sobre casilla azul,
+// "poco-comun" sobre verde, "heroe" sobre rojo— y con la misma luminosidad en la
+// paleta: lo único que hoy los separa en pantalla es que la casilla va al 34%
+// sobre un suelo oscuro. Eso no aguanta, y por dos motivos medidos: la
+// separación se estrecha según el suelo se aclara hacia el frente (ΔE2000 de
+// 26,7 al fondo a 19,5 en la fila de delante) y el suelo es un sustituto que se
+// va el día que exista la ilustración del campo.
+//
+// Así que el marco deja de compararse con lo que tenga debajo y se apoya en su
+// propio filo, que es lo que ya hacen los rótulos de la arena con
+// $arena-label-halo. Va del mismo negro que el cuerpo de la ficha a propósito:
+// no es un segundo borde —los tres bordes que se retiraron el 3 de septiembre
+// eran todos DEL MISMO COLOR—, es el canto del cartón.
+.ficha__halo {
+  fill: none;
+  stroke: $arena-piece;
+  stroke-width: $ficha-frame-stroke + $ficha-frame-halo * 2;
+}
+
+.ficha__carton {
+  fill: $arena-piece;
+  stroke-width: $ficha-frame-stroke;
+}
+
+// (Aquí vivió `.ficha__bando`, la cifra del jugador en la punta de abajo: un 1, 2
+// o 3 con halo. Se probó el 3 de septiembre de 2026 y se retiró el mismo día, en
+// cuanto los aliados pasaron a tener verde propio —«de esa manera se distinguen y
+// no hace falta el número del jugador»—. Si algún día hay que separar al aliado 2
+// del 3, esto es lo que ya se sabe: la punta de abajo es la única esquina libre,
+// porque las cuatro laterales llevan cifras y la de arriba los estados.)
+
+// --- La cara: el retrato ---------------------------------------------------
+
+// El fondo de la cara. Se ve en dos casos y los dos importan: cuando el sujeto
+// no tiene ilustración todavía —hay 108 de 132 sin dibujar— y por debajo de un
+// PNG con transparencia.
+.ficha__fondo {
+  fill: $arena-ground-far;
+}
+
+.ficha__emoji,
+.ficha__nombre {
+  fill: $arena-origin;
+}
+
+// El nombre. Lleva halo porque cae sobre la ilustración, que no es un fondo
+// controlado: es el mismo recurso que usa el rótulo de la casilla en la arena.
+.ficha__nombre {
+  paint-order: stroke;
+  stroke: $arena-label-halo;
+  stroke-width: 3;
+  font-weight: 600;
+}
+
+// --- La barra de ❤️ Vida ---------------------------------------------------
+// Cuelga por debajo de la ficha, como en cualquier videojuego *(decisión de
+// Dario del 2 de septiembre de 2026)*. Dos piezas: el carril, que dice cuánta
+// había, y el relleno, que dice cuánta queda. El carril es imprescindible —sin él
+// una barra corta no se distingue de una barra pequeña—.
+
+.ficha__vida-carril {
+  fill: $arena-life-track;
+}
+
+.ficha__vida-lleno {
+  fill: $arena-life;
+}
+
+// --- Las gemas de cifra ----------------------------------------------------
+// Una gema es un círculo con un número. El color dice QUÉ número es, y solo dos
+// se salen del gris: la ❤️ Vida y el ⚔️ Ataque, que son las dos de Hearthstone.
+
+.ficha__gema {
+  // Va con clase propia y no como `circle` a secas para que los colores por dato
+  // no se lleven también las chapas de estado.
+  .ficha__gema-cuerpo {
+    fill: $arena-piece;
+    stroke: $arena-origin;
+    stroke-width: 1;
+  }
+
+  text {
+    fill: $arena-origin;
+    font-weight: 700;
+  }
+
+  &[data-field="vida"] {
+    .ficha__gema-cuerpo {
+      fill: $arena-life-deep;
+      stroke: $arena-life;
+    }
+
+    text {
+      fill: $arena-damage;
+    }
+  }
+
+  &[data-field="ataque"] {
+    .ficha__gema-cuerpo {
+      stroke: $arena-reach;
+    }
+
+    text {
+      fill: $arena-reach;
+    }
+  }
+}
+
+// --- Las chapas de estado --------------------------------------------------
+// Los nueve de effects.md §5, leídos del documento. Van sobre la ficha y no
+// dentro: dentro taparían la cara, que es lo único que el retrato aporta.
+
+.ficha__chapa {
+  fill: $arena-piece;
+  stroke: $arena-origin;
+  stroke-width: 1;
+  opacity: 0.95;
+}
+
+// --- De quién es, su tier y su estado -------------------------------------
+
+.ficha {
+  // De quién es, en la casilla iluminada y en nada más.
+  @each $side, $color in $ficha-sides {
+    &[data-side="#{$side}"] .ficha__casilla {
+      fill: $color;
+    }
+  }
+
+  // El tier, en el marco y en nada más. La clave la pone el TSX ya resuelta
+  // (`rarityForTier`), así que esta hoja no sabe de tiers: sabe de raíles.
+  @each $rail in $ficha-rails {
+    &[data-rarity="#{$rail}"] .ficha__carton {
+      stroke: rarity($rail);
+    }
+  }
+
+  // EL HÉROE NO LLEVA MARCA PROPIA, y ya van dos que se le quitan el mismo 3 de
+  // septiembre de 2026: primero el aro de más («solo un marco») y después el
+  // grosor doble de este trazo, que Dario leyó como un fallo —«la de los héroes
+  // es distinta que las demás, como más gruesa»— y lo era, porque sobraba: en
+  // cuanto el marco pasó a llevar el color del tier, el héroe se quedó con RAÍL
+  // PROPIO. O sea que ya se dice con el color, como todas, y un grosor distinto
+  // solo repetía lo mismo con otra herramienta. TODAS LAS FICHAS SE DIBUJAN
+  // IGUAL: lo que cambia es el color, nunca la forma ni el trazo.
+  //
+  // Lo que la marca tenía que resolver sigue de pie (§6: la caída del héroe se
+  // paga en la condición de derrota, así que hay que encontrarlo entre diez), y
+  // hoy lo resuelve su raíl rojo. Si algún día no basta, la respuesta no es
+  // engordar el marco.
+
+  // La elegida: el marco pasa al hueso de la casilla de origen, que es el color
+  // que este tablero reserva para "esto es lo que estás mirando ahora". Es lo
+  // único que gana al color del tier, y solo mientras se la está mirando.
+  &[data-selected="true"] .ficha__carton {
+    stroke: $arena-origin;
+  }
+}

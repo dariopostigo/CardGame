@@ -22,6 +22,10 @@
 // misma rejilla hexagonal, pero sin losetas, sin terreno y sin canto (ver la
 // cabecera de _arena.scss).
 @use "arena";
+// La ficha que se pone encima (/dev/pieza). Va detrás de la arena porque
+// comparte su paleta y se lee contra su suelo, pero es un bloque propio: la
+// ficha se pinta también fuera del tablero, en su hoja de calibre.
+@use "ficha";
 // El banco de animación (/dev/animacion). Comparte la paleta de la arena pero
 // no su estructura: sus fichas son DOM y su polvo es un canvas, así que va
 // aparte y no derivado (ver la cabecera de _animation-lab.scss).
@@ -37,39 +41,34 @@
 @use "character-lab";
 @use "card-themes/armored";
 
-// Los dos bocetos de marco de V3 que quedan (knowledge/v3/card-concept/).
-// Mismo patrón que la carta de v2 justo encima: primero el esqueleto común y
-// después la capa que puede pisarlo.
+// La carta de V3 (knowledge/v3/card-concept/). Mismo patrón que la carta de v2
+// justo encima: primero el esqueleto común y después la capa que puede pisarlo.
 //
-// EL 1 DE SEPTIEMBRE DE 2026 SE BORRARON LOS OTROS CUATRO —E · Forja,
-// G · Estandarte, H · Recinto e I · Retablo— junto con la probeta de aleación,
-// que dejó de tener sentido en cuanto uno de los dos supervivientes trae el
-// metal horneado en un PNG. Lo que aprendió cada boceto sigue escrito en
+// SE DIBUJARON DOCE BOCETOS Y QUEDA UNO. El 1 de septiembre de 2026 se borraron
+// E · Forja, G · Estandarte, H · Recinto e I · Retablo junto con la probeta de
+// aleación; el 3 de septiembre, elegida la L · Lámina como diseño definitivo,
+// se borraron los dos que quedaban —J · Orla y K · Moldura— con sus parciales y
+// su marco vectorial. Lo que aprendió cada boceto sigue escrito en
 // knowledge/v3/card-concept/README.md, que es donde vive el razonamiento; aquí
 // solo vive lo que se dibuja.
 //
 //   card-sketch          el esqueleto: la caja, el escenario, el hueco de arte
-//                        y las dos piezas de texto que cualquier boceto pide.
-//   card-sketch/cuerpo   el INTERIOR compartido por los dos. NO es un boceto:
-//                        es la fusión de la G y la H —o sea la H entera, que es
-//                        lo que las dos supervivientes montan por dentro— en
-//                        una sola clase. Va el primero porque las otras dos lo
-//                        pisan.
-//   card-sketch/orla     la J: ese cuerpo detrás de un mat negro macizo, con un
-//                        anillo vectorial propio y más fino.
-//   card-sketch/moldura  la K: ese cuerpo con una moldura DIBUJADA delante, que
-//                        deshace el octógono porque su archivo es un rectángulo
-//                        redondeado.
+//                        y las dos piezas de texto que la carta pide.
+//   card-sketch/cuerpo   el INTERIOR: disco, estandarte, raíl, la fila de ocho y
+//                        la placa. NO es un boceto — es la fusión de la G y la
+//                        H, o sea el reparto que sobrevivió a la comparación
+//                        entera. Va el primero porque la capa de abajo lo pisa.
+//   card-sketch/lamina   la L: ese cuerpo SIN marco *(2-sep-2026, elegido el 3)*.
+//                        Ni anillo trazado ni archivo — la ilustración con doce
+//                        píxeles de paspartú negro alrededor, las esquinas
+//                        redondeadas de la carta base y una línea de Rareza
+//                        encendida en el canto del hueco de arte.
 //
-// El orden ya no es una atadura, y conviene saber por qué dejó de serlo: la J y
-// la K pisan a `cuerpo` con DOS clases contra una, así que ganan por
-// especificidad. Antes no era así —la H pisaba a la G con
+// El orden no es una atadura: `lamina` pisa a `cuerpo` con DOS clases contra una,
+// así que gana por especificidad. Antes sí lo era —la H pisaba a la G con
 // `.sketch--estandarte.sketch--recinto`, tres clases contra tres, y el desempate
-// lo ponía este archivo—, y la probeta de aleación tenía que ir la última de
-// todas por esa misma cuenta. Con una clase por capa el orden de abajo es
-// cronológico y no decide nada; aun así conviene mantenerlo, porque la J y la K
-// leen el mismo elemento y un empate futuro entre las dos lo resolvería él.
+// lo ponía este archivo—. Se mantiene el orden porque los dos leen el mismo
+// elemento y un empate futuro lo resolvería él.
 @use "card-sketch";
 @use "card-sketch/cuerpo";
-@use "card-sketch/orla";
-@use "card-sketch/moldura";
+@use "card-sketch/lamina";

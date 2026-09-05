@@ -7,7 +7,7 @@
 > ✅ **GENERADA, las doce, la noche del 26 de agosto de 2026.** Están en
 > `public/assets/v3/races/enanos/` y `enanos/units/` con los slugs de §"Al
 > terminar", y cableadas en `components/design/v3/races.ts`, así que se ven en
-> **Cartas › Diseño baraja** (`/docs/v3/cards/deck`). Son **provisionales**, como
+> **Cartas › Diseño de cartas** (`/docs/v3/cards/design`). Son **provisionales**, como
 > todo el arte de V3 (`public/assets/v3/README.md`): el lienzo salió bien —las
 > doce verticales, siete en 5:7 y cinco en el 2:3 que la norma autoriza— y el
 > **encuadre no**, con los pies entre el 82% y el 89% cuando el tope son 72.

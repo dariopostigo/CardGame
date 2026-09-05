@@ -1,3 +1,5 @@
+<!-- estado: por-escribir -->
+
 # Cartas de clase — V3
 
 > Esqueleto. Nada escrito todavía. **El motor de combate ya no bloquea**: está escrito en [game-design.md](../game-design.md) §4 y con sus diales fijados, así que un efecto de carta ya se puede redactar en términos de Habilidades, umbrales y estados. Lo que falta es de este documento — la anatomía de la carta— y la colisión de vocabulario de más abajo.

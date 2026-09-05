@@ -121,9 +121,10 @@
 
 // --- La silueta octogonal de los bocetos V3 -------------------------------
 // El `clip-path` del contorno de carta: las cuatro esquinas cortadas a 45°.
-// Espejo exacto de octagon(d) en components/design/v3/sketch-frames.tsx, que es
-// quien dibuja el filete — si las dos cuentas no dicen lo mismo, el marco deja
-// de seguir a la silueta y se ve en los cuatro chaflanes a la vez.
+// Era espejo exacto de octagon(d) en el marco vectorial de la J
+// (components/design/v3/sketch-frames.tsx, borrado el 3 de septiembre de 2026
+// con su boceto) — si las dos cuentas no decían lo mismo, el marco dejaba de
+// seguir a la silueta y se veía en los cuatro chaflanes a la vez.
 //
 // `$shrink` NO desplaza el trazado: dice cuánto se ha metido hacia dentro el
 // ELEMENTO al que se le aplica, y sirve solo para corregir el chaflán. Ahí está
@@ -136,10 +137,13 @@
 //   oct-clip()               el contorno de la carta entera
 //   oct-clip($sketch-band)   el de una caja ya metida por dentro del filete
 //
-// Lo piden DOS bocetos —la G · Estandarte y la I · Retablo— y por eso vive aquí
-// y no en el parcial de uno de ellos. Es el mismo criterio que se siguió cuando
-// la F y la G compartían anatomía: lo que comparten dos HERMANOS baja a una
-// pieza común; lo que un boceto COPIA de otro se hereda pisando (la H).
+// Vive aquí y no en un parcial porque lo pedían dos bocetos a la vez —la
+// G · Estandarte y la I · Retablo—, que es el criterio de siempre: lo que
+// comparten dos HERMANOS baja a una pieza común; lo que un boceto COPIA de otro
+// se hereda pisando (la H). Hoy lo pide uno solo, el cuerpo de la carta
+// (card-sketch/_cuerpo.scss), y el recorte no llega a verse: la carta elegida lo
+// deshace. Se queda porque el cuerpo sigue midiendo sus piezas contra esa
+// silueta.
 @function oct-clip($shrink: 0) {
   $c: math.max($sketch-chamfer - $shrink * (2 - math.sqrt(2)), 1px);
 

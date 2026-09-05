@@ -1,37 +1,40 @@
 // =========================================================================
-// Los dos bocetos de marco de V3
+// La carta de V3
 //
 // Un boceto es una respuesta a la pregunta de dónde caen los 13 datos de una
 // carta de unidad (knowledge/v3/card-concept/README.md §"Contra qué se
 // juzgan"). No es una piel: lo que un boceto decide es la POSICIÓN de las ocho
 // Habilidades y de las Características.
 //
-// HUBO DIEZ Y QUEDAN DOS. Se dibujaron A · Rejilla, B · Gema, C · Losa,
-// D · Blindada, E · Forja, F · Blasón, G · Estandarte, H · Recinto, I · Retablo
-// y J · Orla; el 1 de septiembre de 2026 entró la K · Moldura y ese mismo día
-// se borraron los cuatro que seguían vivos —E, G, H e I— por decisión de Dario.
-// Lo que aprendió cada uno sigue escrito en
-// knowledge/v3/card-concept/README.md, que es donde vive el razonamiento; aquí
-// solo vive lo que se dibuja.
+// SE DIBUJARON DOCE Y QUEDA UNO. Fueron A · Rejilla, B · Gema, C · Losa,
+// D · Blindada, E · Forja, F · Blasón, G · Estandarte, H · Recinto, I · Retablo,
+// J · Orla, K · Moldura y L · Lámina, y se fueron borrando en tres tandas: los
+// cuatro primeros el 22 de agosto de 2026, la F el 25, y E, G, H e I el 1 de
+// septiembre. **El 3 de septiembre Dario eligió la L · Lámina como el diseño
+// definitivo de la carta** y con ella se borraron las dos últimas que quedaban,
+// la J —que había sido el diseño elegido desde el 25 de agosto— y la K. Lo que
+// aprendió cada una sigue escrito en knowledge/v3/card-concept/README.md, que es
+// donde vive el razonamiento; aquí solo vive lo que se dibuja.
 //
-// LOS DOS QUE QUEDAN SON LA MISMA CARTA CON OTRO MARCO, y esa es la única razón
-// de que sigan los dos: por dentro montan el mismo cuerpo
-// (styles/components/card-sketch/_cuerpo.scss, que es la fusión de la G y la H),
-// así que lo único que se compara entre ellos es el borde.
-//
-//   J · Orla     el marco lo TRAZA el navegador: un anillo de ocho lados con un
-//                canal de luz, dentro de un mat negro macizo. Es el diseño
-//                elegido el 25 de agosto de 2026 y el que pinta la baraja.
-//   K · Moldura  el marco es un ARCHIVO: seis PNG, uno por raíl de color, y el
-//                CSS solo los coloca.
+// LA CARTA, EN UNA FRASE: NO HAY MARCO. La ilustración con doce píxeles de
+// paspartú negro alrededor y las esquinas redondeadas de la carta base —no el
+// chaflán del octógono—, con la Rareza dicha por una línea de 2px encendida en el
+// canto del hueco de arte. Por dentro monta el cuerpo
+// (styles/components/card-sketch/_cuerpo.scss, que es la fusión de la G y la H):
+// disco del Tier en la esquina, estandarte de raza colgando de él, las ocho
+// Habilidades en una fila y la placa al pie. Eso no lo decidió este boceto, lo
+// heredó — es lo que sobrevivió a la comparación entera.
 //
 // Reparto con el SCSS, el mismo de card-frames.tsx: aquí va la ESTRUCTURA (qué
 // piezas hay y en qué orden), en styles/components/card-sketch/ va todo lo
 // demás. Aquí no se calcula ni una posición.
 //
-// AÑADIR UN BOCETO: un componente aquí, su entrada en SKETCHES (abajo) y su
-// parcial en styles/components/card-sketch/. El Record SKETCH_CARDS es
-// exhaustivo, así que dar de alta un id sin dibujarlo rompe el build.
+// LA MAQUINARIA DE VARIOS BOCETOS SE QUEDA aunque hoy solo haya uno: SKETCHES es
+// de donde comen la pestaña y la ficha del laboratorio, y el Record SKETCH_CARDS
+// es exhaustivo, así que dar de alta un id sin dibujarlo rompe el build. Un
+// boceto nuevo es un componente aquí, su entrada en SKETCHES y su parcial en
+// styles/components/card-sketch/ — y con dos, la fila de pestañas del lab vuelve
+// a aparecer sola.
 // =========================================================================
 
 import type { CSSProperties } from "react";
@@ -45,9 +48,8 @@ import {
   type SkillKey,
   type Subject,
 } from "./sample";
-import { OrlaFrame } from "./sketch-frames";
 
-export type SketchId = "orla" | "moldura";
+export type SketchId = "lamina";
 
 /** Ficha de cada boceto: de aquí comen las pestañas y las notas del lab. */
 export const SKETCHES: readonly {
@@ -59,16 +61,10 @@ export const SKETCHES: readonly {
   bet: string;
 }[] = [
   {
-    id: "orla",
-    label: "J · Orla",
-    source: "El cuerpo de la carta detrás del borde negro de una carta de Magic: The Gathering",
-    bet: "ES EL DISEÑO ELEGIDO (25 de agosto de 2026) y el que pinta la baraja. La carta no es un octógono físico: es un rectángulo redondeado —se corta recta, no hace falta troquel— y detrás de un mat negro macizo vive el cuerpo entero, con su octógono, su veta encendida de Rareza, su disco de Tier en la esquina y su fila de ocho. El octógono se sigue leyendo porque lo traza el CONTRASTE entre el negro del mat y el metal encendido de dentro, no un recorte físico, que es exactamente la solución que Magic usa desde 1993 para absorber el desalineado de imprenta. Su anillo (OrlaFrame) es la mitad de fino que el filete con el que están medidas las piezas del cuerpo y no lleva un solo herraje: las cantoneras y los roblones decían «esto es blindaje atornillado al canto de la carta», y ese mensaje solo se sostiene mientras el octógono ES el canto — aquí vive dentro de un borde negro, así que una ficha remachada pasa de leerse como blindaje a leerse como ruido. Y de regalo un efecto que ningún boceto anterior tenía dónde enseñar: el resplandor de la Rareza se derrama sobre el negro del propio marco en vez de perderse contra el fondo de la página. El precio es que la carta CRECE —300×420 pasan a 316×436—, porque el borde se suma por fuera en vez de restarle sitio al cuerpo.",
-  },
-  {
-    id: "moldura",
-    label: "K · Moldura",
-    source: "El mismo cuerpo con el marco generado como ilustración (1-sept-2026)",
-    bet: "El primer boceto cuyo marco NO lo dibuja el navegador: la moldura es un ARCHIVO, seis, uno por raíl de color (public/assets/v3/frames/card/), y el CSS no traza metal, solo lo coloca. La apuesta es que si el marco es una pieza de arte y no de código puede tener relieve, talla y pedrería de verdad — la gema de la Rareza ya viene tallada dentro del archivo, en el eje del canto de arriba, y el rombo de CSS que la J sigue pintando desaparece. Lo que se pierde es poder moverlo, y son tres cosas: EL METAL NO SE AFINA DESDE EL CSS —en la J basta cambiar un color para reconstruir el material entero; aquí el latón viene horneado y cambiarlo es volver a generar los seis archivos, que es también por lo que la probeta de aleación de esta página se borró—; LA RAREZA CUESTA UN ARCHIVO, así que la escala se cierra en los seis raíles que hoy usa la baraja en vez de salir gratis de una variable de color; y LAS SEIS SON INTERCAMBIABLES o no son nada, porque la carta las apila en el mismo hueco (medidas y dispersión en public/assets/v3/README.md §frames/card). Todo lo demás es el cuerpo sin negociar —disco en la esquina, estandarte colgando, fila de ocho, placa a sangre— y encaja sin volver a medir nada porque la banda dibujada mide 15,5px contra los 15 del filete vectorial: medio píxel. Lo único que hay que deshacer es la SILUETA, que vuelve a ser un rectángulo redondeado con un radio bastante más abierto que el de la J (35px contra 14) porque es el que trae la moldura. Y el archivo tiene una asimetría que no es un defecto: por los lados y por abajo llega a sangre, y por arriba deja 15px de aire donde asoma la mitad de la gema.",
+    id: "lamina",
+    label: "L · Lámina",
+    source: "La carta sin marco de ninguna clase (2-sept-2026)",
+    bet: "ES EL DISEÑO DEFINITIVO DE LA CARTA (3 de septiembre de 2026), y con él se borraron los dos bocetos que quedaban: la J · Orla, que había sido el elegido desde el 25 de agosto, y la K · Moldura. Los once anteriores discutían CÓMO es el marco —de qué metal, con cuántos anillos, trazado por el navegador o traído hecho—; este preguntó lo único que nadie había puesto sobre la mesa en doce días, si hace falta, y la respuesta es que no. La carta es la ilustración con doce píxeles de paspartú negro alrededor, y nada más encima. EL ENCUADRE DEL ARTE no se eligió aquí: 12px era la ventana que dejaba la moldura fina de los héroes de la K, así que las dos cartas enseñaban el mismo trozo de ilustración y lo único que cambiaba era qué había alrededor — metal dibujado en una, negro en la otra. El número se quedó porque salió de esa comparación, no de un gusto. LAS ESQUINAS SON REDONDEADAS y no el chaflán a 45° del octógono: la primera versión, esa misma tarde, heredaba el octógono de .sketch--cuerpo sin haberlo decidido —era lo que traía puesto, no una elección— y se corrigió a petición de Dario. El radio tampoco es nuevo: es el de la carta base ($sketch-radius, 14px) sin tocar, encogido por el paspartú para la ventana del arte (14 − 12 = 2px), y la esquina se sigue leyendo curva porque el canto encendido se dibuja hacia fuera y su borde visible queda a 4. LA RAREZA SE QUEDÓ SIN PIEDRA y eso ya está resuelto: el rombo iba montado sobre la banda de metal, así que sin banda no hay dónde engastarlo, y las dos señales que quedaban —el baño de luz hacia dentro y el halo de fuera— son las dos de LUZ, que es lo único que no se imprime; en papel a 63mm esta carta no decía su raíl. La sustituye un CANTO ENCENDIDO: 2px del color del raíl en la línea donde el paspartú muere contra la ilustración, elegido entre seis variantes montadas en el lab y borradas el mismo día. Es pigmento y no cuesta ilustración, porque la línea se dibuja hacia fuera, sobre el negro que ya estaba. Con la decisión el disco se corrió 2,7px hacia dentro: sus cuatro puntas cruzaban la línea y la partían. Y EL PANEL PERDIÓ SU TAPA: en los otros dos bocetos iba a sangre y eran los 15px de metal los que le recortaban los cantos, así que aquí se recoge dentro del paspartú para que el borde cierre por los cuatro lados en vez de quedarse en forma de U. Todo lo demás es el cuerpo sin negociar —disco en la esquina, estandarte colgando, fila de ocho, placa al pie—, que es lo que sobrevivió a la comparación entera y no algo que este boceto decidiera. Lo que queda por mirar, y no se puede mirar en pantalla, es si 2px aguantan impresos; y en el raíl común el gris sobre negro se lee casi blanco, así que la carta más barata de la escala dice «tengo un canto» antes que decir de qué color es. Las dos variantes que perdieron por poco están escritas en knowledge/v3/card-concept/README.md §Boceto L, porque son las que se volverían a proponer: el paspartú entero teñido —se lee antes, pero es la vía que ya descartó el boceto D— y las muescas contadas en la banda de abajo, las únicas que llevaban el Tier EXACTO y no la clase.",
   },
 ];
 
@@ -102,22 +98,19 @@ const CARD_SKILLS: readonly SkillKey[] = [
  * archivos**, doce y doce —👤 Humanos entera desde el 🐉 Dragón dorado del 31 de
  * agosto de 2026, y ⛏️ Enanos entera desde el 26—, así que las dos progresiones
  * están dibujadas de arriba abajo. En la baraja quedan muchas cartas a emoji,
- * pero son de otras razas: 💀 No-muertos y 🔥 Demonios entraron enteras así; y en
- * el laboratorio de bocetos queda **una sola**, el 🐉 Dragón esquelético del caso
- * límite, que es la única carta donde ya se puede ver cómo aguanta un marco sin
- * ilustración. Ojo
- * con el reparto, porque esta pieza la comparten las dos páginas: el
- * laboratorio de bocetos pinta solo la raza piloto, así que **las doce de Enanos
- * únicamente se ven en Diseño baraja**. <img> plano y no next/image por el mismo
- * motivo que en SpriteLab: es imagen de laboratorio, no arte de partida.
+ * pero son de otras razas: 💀 No-muertos y 🔥 Demonios entraron enteras así, y
+ * son las que enseñan cómo aguanta la carta un hueco de arte vacío. <img> plano
+ * y no next/image por el mismo motivo que en SpriteLab: es imagen de
+ * laboratorio, no arte de partida.
  *
- * Dónde acaba este <div> depende del boceto, y es lo único de esta pieza que hay
- * que tener presente: en la J es el fondo de la carta de dentro (`inset: 0`
- * contra el inlay) y en la K está metido en la ventana que le deja la moldura —
- * el mismo elemento con otro `inset`, puesto por el SCSS. Ni una prop de
- * diferencia. Hubo un boceto, la I · Retablo, donde el hueco era una VENTANA
- * dibujada dentro de una página de franjas, y de ahí viene la advertencia: esto
- * no es "el fondo de la carta", es "el hueco de arte, donde sea que esté".
+ * Dónde acaba este <div> lo dice el SCSS y no esta pieza, y es lo único que hay
+ * que tener presente: hoy se retira **12px** por los cuatro lados para dejar ver
+ * el paspartú, y en los bocetos borrados era el fondo de la carta de dentro (la
+ * J, `inset: 0` contra el inlay) o el hueco que le dejaba una moldura dibujada
+ * (la K). El mismo elemento con otro `inset`, sin una prop de diferencia. Hubo
+ * un boceto, la I · Retablo, donde el hueco era una VENTANA dibujada dentro de
+ * una página de franjas, y de ahí viene la advertencia: esto no es "el fondo de
+ * la carta", es "el hueco de arte, donde sea que esté".
  */
 function Art({ subject }: { subject: Subject }) {
   return (
@@ -170,10 +163,9 @@ function Plate({
  * medallones no queda un hueco vacío, queda arte. No es una fila del layout,
  * es una capa encima — por eso no vive dentro del pie.
  *
- * De qué lado cae lo decide el SCSS y no esta pieza. Hoy cae a la derecha en
- * los dos bocetos, porque la esquina izquierda se la llevan el disco del Tier y
- * el estandarte que cuelga de él; en los borrados que no tenían disco caía a la
- * izquierda.
+ * De qué lado cae lo decide el SCSS y no esta pieza. Cae a la derecha porque la
+ * esquina izquierda se la llevan el disco del Tier y el estandarte que cuelga de
+ * él; en los bocetos borrados que no tenían disco caía a la izquierda.
  */
 function Rail({ subject }: { subject: Subject }) {
   if (subject.traits.length === 0) return null;
@@ -242,10 +234,9 @@ function Stat({ subject, skill, base }: { subject: Subject; skill: SkillKey; bas
  * los sitios sin CSS que dimensione una imagen (el `title` de aquí al lado no
  * lleva glifo, pero la baraja sí lo usa en sus filtros).
  *
- * Va como componente y no repetido porque el emblema cae en más de un hueco
- * —hoy el estandarte de la J y el de la K, y en los bocetos borrados también un
- * medallón y un renglón de texto— y son todos el mismo par imagen/emoji con
- * distinta clase encima.
+ * Va como componente y no repetido porque el emblema cae en más de un hueco —hoy
+ * el estandarte, y en los bocetos borrados también un medallón y un renglón de
+ * texto— y son todos el mismo par imagen/emoji con distinta clase encima.
  */
 function RaceEmblem({ subject, className }: { subject: Subject; className: string }) {
   const art = raceArtFor(subject.race);
@@ -257,8 +248,8 @@ function RaceEmblem({ subject, className }: { subject: Subject; className: strin
 }
 
 /**
- * El ESTANDARTE de raza: el paño, con el emblema dentro. Lo pintan los dos
- * bocetos, y hasta el 27 de agosto de 2026 era CSS puro.
+ * El ESTANDARTE de raza: el paño, con el emblema dentro. Hasta el 27 de agosto
+ * de 2026 era CSS puro.
  *
  * La raza que tiene archivo lo trae como imagen y las demás siguen con el paño
  * de CSS, así que la carta no se rompe mientras el set se dibuja — y de paso se
@@ -266,7 +257,7 @@ function RaceEmblem({ subject, className }: { subject: Subject; className: strin
  * para juzgar la primera.
  *
  * El archivo va por custom property y no por `<img>`, al revés que el emblema, y
- * es la misma razón que da _orla.scss para el disco del Tier: **esto no es un
+ * es la misma razón que da _lamina.scss para el disco del Tier: **esto no es un
  * dato, es moldura**, así que lo pinta el CSS con `background-image`. Y tiene
  * que ir por variable porque la ruta cambia con la raza, que es lo que un
  * parcial de SCSS no puede saber.
@@ -285,91 +276,41 @@ function RaceBanner({ subject }: { subject: Subject }) {
   );
 }
 
-// --- J · Orla ---------------------------------------------------------------
-// El diseño elegido. La carta es un rectángulo redondeado —se corta recta, no
-// hace falta troquel— y detrás de un mat negro macizo
-// (styles/components/card-sketch/_orla.scss) vive el cuerpo entero.
+// --- L · Lámina -------------------------------------------------------------
+// El árbol de la carta, y es el más corto de los doce bocetos: lo que le falta
+// es justo lo que se estaba preguntando. Contra la J y la K, dos líneas de
+// menos, y las dos se quedaron fuera por una razón distinta:
 //
-// EL CUERPO VA EN UN HIJO, no en el artículo, y de ahí sale casi todo lo demás:
-// el artículo ES el mat, así que la carta de dentro necesita su propia caja
-// (.sketch__inlay) y es ella la que lleva .sketch--cuerpo. Por eso también se
-// repite aquí data-rarity: octagon-shell (styles/tools/_mixins.scss) elige la
-// veta con un selector de atributo sobre el MISMO elemento que lleva la clase,
-// y sin el atributo en el inlay la carta se queda con la veta común.
+//   · NO HAY CAPA DE MARCO. Ni el <svg> vectorial de la J ni el
+//     <span className="sketch__frame" /> al que la K le colgaba un PNG: no hay
+//     nada que dibujar ahí, así que la capa se borró del esqueleto con los dos
+//     bocetos. El contorno lo pinta el propio artículo, con el radio de la carta
+//     base y no el chaflán octogonal que trae el cuerpo
+//     (styles/components/card-sketch/_lamina.scss lo deshace).
+//   · NO HAY .sketch__gem. La K tampoco la pintaba, pero por el motivo
+//     contrario: allí la piedra venía tallada DENTRO del archivo, así que estaba
+//     puesta dos veces si se dibujaba. Aquí no hay dónde engastarla —una piedra
+//     necesita banda de metal y esta carta no tiene—, y lo que hace su trabajo no
+//     es un elemento: es el CANTO ENCENDIDO, 2px del color del raíl en el borde
+//     del hueco de arte, que lo pinta el SCSS con un box-shadow sobre
+//     .sketch__art (card-sketch/_lamina.scss). Por eso este árbol no gana una
+//     pieza al resolver la Rareza: la marca vive en el canto de una que ya
+//     estaba.
 //
-// SU MARCO NO ES EL DEL CUERPO. La primera versión de este componente envolvía
-// tal cual al boceto del que sale, con el argumento de que «entero y sin tocar
-// un píxel» era la apuesta; se corrigió el mismo día. Aquel filete —cantoneras,
-// roblones, 15px de banda— estaba dibujado para ser el CANTO de la carta, la
-// pieza que dice «esto es blindaje atornillado al borde», y metido dentro de un
-// borde negro deja de serlo: una ficha remachada montada sobre otro borde no se
-// lee como blindaje, se lee como ruido. Así que aquí va <OrlaFrame />, que es el
-// mismo octógono y la misma idea de una veta que dice la Rareza, con un anillo
-// mucho más fino y sin un solo herraje (ver sketch-frames.tsx).
-function OrlaCard({ subject }: { subject: Subject }) {
+// Lo demás es el cuerpo tal cual: el inlay lleva .sketch--cuerpo y hereda la
+// composición entera. Y ES EN EL INLAY Y NO EN EL ARTÍCULO, aunque aquí ya no
+// haya mat dentro del que meterlo — se conserva porque es donde vive
+// data-rarity: octagon-shell (styles/tools/_mixins.scss) elige la veta con un
+// selector de atributo sobre el MISMO elemento que lleva la clase, así que sin
+// el atributo repetido aquí la carta se quedaría con la veta común.
+function LaminaCard({ subject }: { subject: Subject }) {
   return (
+    // Llevó un data-tier durante unas horas, el 2 de septiembre de 2026, y se
+    // fue con la probeta que lo pedía: era para contar muescas desde el CSS, y
+    // la variante que ganó —el canto encendido— es una línea de color que sale
+    // de data-rarity, que ya estaba.
     <div className="sketch__inlay sketch--cuerpo" data-rarity={subject.rarity}>
       <Art subject={subject} />
-      <OrlaFrame />
-      <Rail subject={subject} />
-
-      <span className="sketch__gem" title={`Rareza: ${subject.rarity}`} />
-
-      <RaceBanner subject={subject} />
-
-      <span className="sketch__disc" title={rankOf(subject)}>
-        <b className="sketch__disc-value">{subject.tier ?? "👑"}</b>
-      </span>
-
-      <div className="sketch__foot">
-        <Plate
-          subject={subject}
-          className="sketch__plate sketch__plate--panel"
-          after={
-            <>
-              <ul className="sketch__pods">
-                {CARD_SKILLS.map((k) => (
-                  <Stat key={k} subject={subject} skill={k} base="pod" />
-                ))}
-              </ul>
-              <p className="sketch__type">{subject.race}</p>
-            </>
-          }
-        />
-      </div>
-    </div>
-  );
-}
-
-// --- K · Moldura ------------------------------------------------------------
-// El único boceto cuyo marco no lo traza el navegador. Donde la J pone un <svg>
-// de sketch-frames.tsx, este pone una capa vacía y el SCSS le cuelga un PNG
-// (styles/components/card-sketch/_moldura.scss): seis archivos, uno por raíl de
-// color, en public/assets/v3/frames/card/.
-//
-// El árbol es el de la J salvo por dos líneas, y las dos dicen lo mismo —que
-// el marco dejó de ser código—:
-//
-//   · <span className="sketch__frame" /> en vez de <OrlaFrame />. La capa es la
-//     misma de siempre (inset 0, z("frame"), sin puntero); lo que cambia es que
-//     su contenido lo pinta el CSS con background-image y no un trazado. Va
-//     vacío y no como un <img> por la norma de la carpeta: una moldura no dice
-//     ningún dato, así que no es contenido — es fondo.
-//   · NO hay .sketch__gem. El rombo de la Rareza está tallado dentro del
-//     archivo, a caballo del canto de arriba y en el mismo sitio en los seis;
-//     pintar además el de CSS sería una segunda piedra encima de la primera.
-//
-// Lo demás es el cuerpo tal cual, igual que en la J: el inlay lleva
-// .sketch--cuerpo y hereda la composición entera, así que lo único que se
-// compara entre las dos cartas es el marco. Aquí el inlay no hace falta para
-// meter la carta dentro de un mat —no hay mat— pero se conserva por eso mismo:
-// las dos tienen que montar el cuerpo en el mismo sitio del árbol o dejarían de
-// ser comparables.
-function MolduraCard({ subject }: { subject: Subject }) {
-  return (
-    <div className="sketch__inlay sketch--cuerpo" data-rarity={subject.rarity}>
-      <Art subject={subject} />
-      <span className="sketch__frame" aria-hidden="true" />
       <Rail subject={subject} />
 
       {/* Antes que el disco: entre dos piezas de la misma capa manda el orden
@@ -402,20 +343,25 @@ function MolduraCard({ subject }: { subject: Subject }) {
 }
 
 const SKETCH_CARDS: Record<SketchId, (p: { subject: Subject }) => React.ReactElement> = {
-  orla: OrlaCard,
-  moldura: MolduraCard,
+  lamina: LaminaCard,
 };
 
 /**
- * Una carta de boceto: el artículo con su rareza, y dentro el cuerpo que le
- * toque. La rareza se publica como atributo y no como color porque de ella
- * cuelgan las variables --rarity/--seam del SCSS; el artículo no pinta nada.
+ * Una carta: el artículo con su rareza, y dentro el cuerpo. La rareza se publica
+ * como atributo y no como color porque de ella cuelgan las variables
+ * --rarity/--seam del SCSS.
+ *
+ * El artículo SÍ pinta, y esto cambió con la L: mientras la carta elegida fue la
+ * J era un mat negro, y mientras hubo tres bocetos aquí no se pintaba nada
+ * —cada uno ponía su fondo—. Hoy el artículo es la lámina: fondo, radio y halo
+ * de Rareza salen del `.sketch` de siempre (styles/components/_card-sketch.scss)
+ * sin que ningún parcial los pise.
  *
  * Hubo aquí un mecanismo de HERENCIA —una ficha con `derives` que apilaba la
  * clase del boceto base y la del derivado en el mismo elemento— y se borró con
- * el único boceto que lo usaba, la H · Recinto. Los dos que quedan heredan de
- * otra manera: la clase del cuerpo compartido va en el HIJO (ver OrlaCard) y no
- * en el artículo, así que no hay nada que apilar aquí.
+ * el único boceto que lo usaba, la H · Recinto. Lo que quedó hereda de otra
+ * manera: la clase del cuerpo va en el HIJO (ver LaminaCard) y no en el
+ * artículo, así que no hay nada que apilar aquí.
  */
 export default function SketchCard({ id, subject }: { id: SketchId; subject: Subject }) {
   const Body = SKETCH_CARDS[id];

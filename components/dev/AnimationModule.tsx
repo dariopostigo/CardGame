@@ -30,12 +30,26 @@
 //      pasó, y si el fallo se notara en la embestida el resultado se leería en
 //      el gesto. Luego tira una TANDA DE 12, que es lo que no se puede juzgar de
 //      uno en uno: si el conjunto lleva un ritmo o va a trompicones.
+//   6. Pon las tres cartas en el campo y CÓGELAS una por una. Son 🗡️, ✨ y 🏹, y
+//      👢 Movimiento va por tipo de daño (3, 2 y 1): tres ofertas distintas sobre
+//      el mismo tablero. Luego pon una ficha en medio del camino y vuelve a
+//      cogerlas — la oferta encoge, porque no se atraviesa a nadie (§5).
+//   7. Anda con una y mira las OTRAS. La que acaba de andar es la única que no
+//      respira, y eso es lo que dice cuál ya se movió. Ahora baja el ALIENTO a 0
+//      y busca cuál era: sigue hundida y sigue apagada, y aun así hay que
+//      recorrer el tablero mirando fichas de una en una. Esa es toda la
+//      diferencia entre las dos animaciones más baratas de esta pantalla.
 //
 // LO QUE ESTA PANTALLA NO DECIDE: el aspecto. Las fichas son discos con un
-// glifo y la carta es un rectángulo con un borde, a propósito. El marco de
-// carta se está decidiendo aparte (knowledge/v3/card-concept/) y la
-// ilustración del campo tampoco existe todavía. Aquí se decide el MOVIMIENTO,
-// y mezclarlo con el aspecto haría que se juzgaran los dos a la vez y mal.
+// glifo, la carta es un rectángulo con un borde y el suelo es un retal de
+// quince hexágonos, todo a propósito. Aquí se decide el MOVIMIENTO, y
+// mezclarlo con el aspecto haría que se juzgaran los dos a la vez y mal.
+//
+// Esos cuatro remiendos no son deuda escondida: están declarados como `standIn`
+// en lib/dev-registry.ts, en las cuatro aristas que este módulo tiene con el
+// tablero, el diseño de ficha, el marco de carta y la baraja. El hub de /dev
+// los enseña, así que cuando alguno de esos módulos exista se ve de un vistazo
+// que hay que volver aquí. Antes esto era este párrafo y nada más.
 //
 // Ninguna regla de juego vive aquí (ARCHITECTURE.md §6): los tiempos son datos
 // de lib/v3/anim.ts y este componente solo tiene estado de interfaz.
@@ -49,8 +63,10 @@ import { InputSwitch } from "primereact/inputswitch";
 import {
   CURVES,
   KNOBS,
+  OFFER_BUDGET,
   TIMINGS,
   attackPhases,
+  offerDuration,
   reduced,
   schedule,
   totalDuration,
@@ -60,6 +76,9 @@ import {
   type Timings,
 } from "@/lib/v3/anim";
 import { HIT_BAND, LUCK_CAP, cappedLuck, expectedMix } from "@/lib/v3/combat";
+import { ARENA, buildArena } from "@/lib/v3/arena";
+import * as Hex from "@/lib/v3/hex";
+import { MOVEMENT_BAND } from "@/lib/v3/tempo";
 import AnimationBench from "./AnimationBench";
 import { buttonClass } from "@/components/ui/Button";
 
@@ -83,6 +102,18 @@ const GROUPS: { id: Knob["group"]; label: string; blurb: string }[] = [
       "Los tres desenlaces del §4.1 son el mismo golpe con otra suerte, así que aquí no hay tiempos propios: son multiplicadores de los de arriba. Todos actúan A PARTIR del contacto — la embestida es idéntica en los tres a propósito, y esa es la regla que sostiene que una tirada oculta tenga suspense.",
   },
   {
+    id: "vida",
+    label: "La mesa viva",
+    blurb:
+      "Lo que pasa cuando NO pasa nada. Las fichas respiran, cada una en su fase, y la que ya ha andado deja de hacerlo: lo gastado se lee por AUSENCIA, y por eso las dos cosas son una sola y no se pueden juzgar por separado. Apaga el aliento y mira si todavía distingues cuál ya se movió.",
+  },
+  {
+    id: "movimiento",
+    label: "Ofrecer y andar",
+    blurb:
+      "Al coger una ficha, el terreno al que llega se levanta en onda desde ella. La cuenta no es de aquí: la hace lib/v3/movement.ts, que rodea los cuerpos porque no se atraviesa a nadie (§5), así que la oferta puede ser bastante menor que el círculo de su 👢 — y eso es justo lo que hay que poder ver.",
+  },
+  {
     id: "polvo",
     label: "El polvo",
     blurb:
@@ -99,6 +130,15 @@ const CURVE_OPTIONS: { value: CurveId; label: string }[] = (
 const ROUND = 30;
 
 /**
+ * Los pasos que anda una ficha media en su turno. El §5 dice que mueve Y ataca,
+ * así que una ronda que solo cuente ataques miente por defecto — y bastante: son
+ * dos pasos de más por ficha y treinta fichas.
+ */
+const ROUND_STEPS = Math.round(
+  (MOVEMENT_BAND["cuerpo-a-cuerpo"] + MOVEMENT_BAND.magico + MOVEMENT_BAND["a-distancia"]) / 3,
+);
+
+/**
  * La cola de ejemplo con la que se mide cuánto duraría una ronda.
  *
  * Se construye con el REPARTO que dan los umbrales, no con treinta impactos: un
@@ -112,11 +152,29 @@ function sampleRound(precision: number, luck: number): AnimEvent[] {
   let i = 0;
   for (const [result, n] of Object.entries(mix)) {
     for (let k = 0; k < n; k++, i++) {
+      out.push({ kind: "paso", id: `f${i}`, steps: ROUND_STEPS });
       out.push({ kind: "ataque", id: `f${i}`, target: `e${i}`, result: result as never });
     }
   }
   return out;
 }
+
+/**
+ * El hexágono más lejano que puede ofrecer un DESPLIEGUE en la arena de verdad.
+ *
+ * Es el caso peor de la onda y el único que puede salirse del presupuesto: al
+ * mover, la oferta llega como mucho a 👢 3, pero al soltar una carta se ofrece el
+ * tablero entero. Se mide contra el 14×12 y no contra el retal del banco, porque
+ * el retal siempre va a caber y no contesta la pregunta.
+ */
+/** El 👢 más largo de la banda: el caso peor de la oferta al andar. */
+const MAX_BOOTS = Math.max(...Object.values(MOVEMENT_BAND));
+
+const DEPLOY_SPAN = (() => {
+  const arena = buildArena(ARENA);
+  const entry = Hex.offsetToAxial({ col: Math.floor(ARENA.cols / 2), row: ARENA.rows - 1 });
+  return arena.hexes.reduce((max, hex) => Math.max(max, Hex.distance(hex, entry)), 0);
+})();
 
 export default function AnimationModule() {
   const [timings, setTimings] = useState<Timings>(TIMINGS);
@@ -261,6 +319,48 @@ export default function AnimationModule() {
                 <b className="text-[var(--wiki-text)]">{CURVES[timings.fallCurve].label}</b>:{" "}
                 {CURVES[timings.fallCurve].help}
               </p>
+            )}
+
+            {group.id === "vida" && (
+              <p className="mt-3 text-xs text-[var(--wiki-muted)]">
+                Con el <b className="text-[var(--wiki-text)]">aliento</b> a 0 no queda un tablero
+                quieto: queda una captura de pantalla. Y de paso desaparece la mitad de la lectura
+                de <b className="text-[var(--wiki-text)]">lo ya andado</b>, porque lo que dice que
+                una ficha ya se movió no es que esté hundida, es que es la única que{" "}
+                <b className="text-[var(--wiki-text)]">no respira</b> — y una ausencia solo se ve
+                si lo demás está. Es la razón de que estas dos se hayan construido juntas.
+              </p>
+            )}
+
+            {group.id === "movimiento" && (
+              <div className="mt-4 rounded-md border border-dashed border-[var(--wiki-border)] p-3">
+                <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]">
+                  El presupuesto de la oferta
+                </div>
+                <p className="mb-3 text-xs text-[var(--wiki-muted)]">
+                  Una ayuda que llega después de que hayas decidido no es una ayuda: es un
+                  parpadeo por detrás del gesto. El presupuesto son{" "}
+                  <b className="text-[var(--wiki-text)]">{OFFER_BUDGET} ms</b> —lo que se tarda en
+                  pasar de coger una ficha a haber elegido a dónde va—, y es una afirmación a
+                  comprobar, no una ley. Los dos casos no se parecen: al{" "}
+                  <b className="text-[var(--wiki-text)]">andar</b> se ofrecen tres hexágonos y al{" "}
+                  <b className="text-[var(--wiki-text)]">desplegar</b> se ofrece el tablero entero,
+                  así que el que puede romperse es el segundo — y no se ve en el banco, porque el
+                  retal de quince siempre cabe.
+                </p>
+                <div className="grid gap-1 text-xs">
+                  <OfferRow
+                    label={`Andar · 👢 ${MAX_BOOTS}, el más largo`}
+                    steps={MAX_BOOTS}
+                    t={effective}
+                  />
+                  <OfferRow
+                    label={`Desplegar · arena ${ARENA.cols}×${ARENA.rows}, desde la mano`}
+                    steps={DEPLOY_SPAN}
+                    t={effective}
+                  />
+                </div>
+              </div>
             )}
 
             {group.id === "desenlace" && (
@@ -424,18 +524,23 @@ export default function AnimationModule() {
           <span title="El congelado del crítico es el que paga la diferencia.">
             un crítico: <b>{phases.critico.total} ms</b>
           </span>
+          <span title="Los pasos que anda una ficha media antes de pegar. El §5 dice que mueve Y ataca en el mismo turno, así que esto no es opcional en la cuenta.">
+            andar {ROUND_STEPS}: <b>{ROUND_STEPS * effective.step} ms</b>
+          </span>
           <span
             className="font-semibold"
-            title="Treinta fichas atacando una detrás de otra, que es el caso peor del §4: tres jugadores contra un bando espejo. El reparto entre golpes, fallos y críticos sale de los umbrales."
+            title="Treinta fichas andando y atacando una detrás de otra, que es el caso peor del §4: tres jugadores contra un bando espejo. El reparto entre golpes, fallos y críticos sale de los umbrales."
           >
             una ronda de {ROUND}: <b>{(round / 1000).toFixed(1)} s</b>
           </span>
         </div>
         <p className="mt-2 text-xs text-[var(--wiki-muted)]">
           Esa última cifra es la que decide si el juego se puede mirar o hace falta un botón de
-          saltar animaciones — y ahora depende también de los umbrales, porque una ronda en la que
-          se falla mucho no dura lo mismo. Todo esto se calcula sin pantalla, que es justo por lo
-          que los tiempos viven en{" "}
+          saltar animaciones, y ahora cuenta la ronda entera: cada ficha{" "}
+          <b className="text-[var(--wiki-text)]">anda y ataca</b> (§5), no solo ataca. Con solo los
+          golpes salía casi la mitad, que era una cifra tranquilizadora y falsa. Depende también de
+          los umbrales, porque una ronda en la que se falla mucho no dura lo mismo. Todo esto se
+          calcula sin pantalla, que es justo por lo que los tiempos viven en{" "}
           <code className="rounded bg-[var(--wiki-code-bg)] px-1 text-[0.85em]">lib/v3/</code> y no
           en el componente.
         </p>
@@ -461,11 +566,25 @@ export default function AnimationModule() {
             meterla después, sobre reglas que mutan estado a la primera, es rehacerlas.
           </li>
           <li>
-            <b className="text-[var(--wiki-text)]">Las secuencias que faltan</b>: andar de hexágono
-            en hexágono (§5), los nueve estados —el crítico ya deja uno puesto, pero es un glifo que
-            aparece y se queda: un estado de verdad es un BUCLE que vive mientras dure y que tiene
-            que seguir a la ficha en su embestida y en su muerte, que es otro objeto y no otro
-            reventón—, y el robo de carta con el abanico recolocándose.
+            <b className="text-[var(--wiki-text)]">Las secuencias que faltan</b>: los nueve estados
+            —el crítico ya deja uno puesto, pero es un glifo que aparece y se queda: un estado de
+            verdad es un BUCLE que vive mientras dure y que tiene que seguir a la ficha en su
+            embestida y en su muerte, que es otro objeto y no otro reventón—, y el robo de carta
+            con el abanico recolocándose. El aliento ya es el primer bucle del banco, así que el
+            sitio donde colgarlos existe.
+          </li>
+          <li>
+            <b className="text-[var(--wiki-text)]">La oferta, en el tablero de verdad</b>: aquí se
+            mide contra quince hexágonos y siempre cabe. En el 14×12 un despliegue ofrece el campo
+            entero, y ese es el único caso que puede pasarse del presupuesto — la cifra está
+            calculada arriba, pero verla es otra cosa. Con ella entra la pareja que falta: enseñar
+            a la vez lo que ALCANZA MOVIÉNDOSE y lo que AMENAZA atacando, que son dos colores
+            distintos (<code className="rounded bg-[var(--wiki-code-bg)] px-1 text-[0.85em]">
+              $arena-move
+            </code>{" "}
+            y{" "}
+            <code className="rounded bg-[var(--wiki-code-bg)] px-1 text-[0.85em]">$arena-reach</code>
+            ) porque una ficha hace las dos cosas en el mismo turno.
           </li>
           <li>
             <b className="text-[var(--wiki-text)]">Beats en paralelo en `schedule()`</b>: hoy la cola
@@ -481,6 +600,32 @@ export default function AnimationModule() {
           </li>
         </ul>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Una fila del presupuesto: lo que tarda la onda en cubrir `steps` hexágonos, y
+ * si eso entra o no.
+ *
+ * La cifra sale de `offerDuration()`, que vive en lib/v3/anim.ts justamente
+ * porque esto se puede contestar sin pintar nada — igual que la igualdad de la
+ * ida en los tres desenlaces. Que se pueda medir sin pantalla es lo que la
+ * convierte en una propiedad y no en una impresión.
+ */
+function OfferRow({ label, steps, t }: { label: string; steps: number; t: Timings }) {
+  const ms = offerDuration(steps, t);
+  const over = ms > OFFER_BUDGET;
+  return (
+    <div className="flex flex-wrap items-baseline justify-between gap-2">
+      <span className="text-[var(--wiki-muted)]">{label}</span>
+      <span className={over ? "font-semibold text-[var(--wiki-danger)]" : "text-[var(--wiki-text)]"}>
+        {ms} ms{" "}
+        <span className="font-normal text-[var(--wiki-muted)]">
+          · {steps} hex ·{" "}
+          {over ? `${ms - OFFER_BUDGET} ms tarde` : `sobran ${OFFER_BUDGET - ms}`}
+        </span>
+      </span>
     </div>
   );
 }

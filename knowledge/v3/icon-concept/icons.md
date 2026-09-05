@@ -229,6 +229,35 @@ son el motivo de que los emblemas no se dibujen como figuras:
 - Igual pasa, en menor medida, con 😈 (Demonios infernales como raza, Demonio
   como Característica).
 
+> **La última frase del primer punto es falsa desde el 3 de septiembre de 2026,
+> y se deja escrita porque la conclusión contraria es la que hay que entender.**
+> Se le preguntó a Dario quién cedía —si la Característica cambiaba de emoji, si
+> se declaraba un sexto grupo compartido a propósito, o si se quedaba— y la
+> respuesta fue que **no cede nadie porque no hay nada que ceder**: «los emojis
+> son provisionales, ya se generarán otros donde se diferencien mejor». El 💀
+> triple **no es un pendiente de catálogo, es de dibujo y solo de dibujo**, y lo
+> mismo vale para 😈 y para 🗡️ *Perforante* contra el 🗡️ del tipo de daño (§2).
+>
+> El razonamiento cabe en una línea: **la colisión la fabrica el emoji**, que es
+> lo único de la carta que no se puede dibujar distinto. Dos conceptos vecinos
+> —una raza de muertos y un rasgo de muerto— *deben* parecerse; con emoji la
+> única forma de parecerse es ser el mismo carácter, y de ahí sale el choque. Un
+> pictograma propio puede parecerse sin ser idéntico, que es exactamente lo que
+> §3 ya hace con el aro de las familias elementales.
+>
+> **Y no cuesta un dibujo de más**, que es lo que lo convierte en una decisión
+> barata y no en un aplazamiento: §3 y §4 cuentan el emblema de raza y la
+> Característica homónima como **siluetas separadas** desde el principio, y §2
+> cuenta los tipos de daño aparte. El presupuesto de 36 siluetas base + 11
+> emblemas no se mueve.
+>
+> Lo que sí cambia es **qué hay que escribir en el encargo de cada una**: la
+> pareja 💀/💀, la pareja 😈/😈 y la pareja 🗡️/🗡️ pasan a tener un requisito
+> explícito de contraste entre sí, igual que los once emblemas ya lo tienen
+> entre ellos a 42px. No es «dibújalos distintos», es «dibújalos reconocibles
+> como parientes y separables de un vistazo», que es un encargo más difícil que
+> cualquiera de los dos por separado.
+
 ### Los once, entregados *(27 de agosto de 2026)*
 
 **Y los dos problemas de arriba se resuelven por dibujo, no por catálogo.** El
@@ -600,6 +629,15 @@ normalización de lo ya entregado. Por orden de lo que bloquea a lo que no:
   eso no se juzga con dos. **Lleva suplente en pantalla** —el genérico
   `abilities/ataque.png`, decisión de Dario, ver el aviso de §2— y por eso este
   pendiente es de los que se olvidan: la carta ya no enseña ningún hueco.
+
+  **Desde el 3 de septiembre de 2026 este archivo cierra además un punto de otro
+  documento**, así que vale más de lo que parece: mientras el 🗡️ sea emoji, es
+  *el mismo carácter* que la Característica 🗡️ *Perforante*, y esa colisión
+  estaba abierta en [`card-concept/README.md`](../card-concept/README.md). La
+  decisión fue que la separa el dibujo y solo el dibujo (§4, el aviso del 💀
+  triple). O sea que `damage/cuerpo-a-cuerpo.png` **no es el tercero de una
+  serie, es el que apaga un pendiente ajeno** — y con el suplente puesto, nadie
+  lo va a echar de menos mirando la carta.
 - **La normalización de encuadre** de lo ya entregado, que ahora son **21
   archivos** (§5 y §4): recorte y relleno a caja común. Es mecánica, no vuelve a
   pedirle nada al generador, y conviene resolverla **antes** de las 41
@@ -613,6 +651,16 @@ normalización de lo ya entregado. Por orden de lo que bloquea a lo que no:
   tres **el que hay que mover es Veneno**, que es el único que no necesita un
   cráneo. Se decide en §3 y en [`docs/v3/razas.md`](../../../docs/v3/razas.md),
   pero **el emblema llega antes** y las otras tres se dibujan contra él.
+
+  **Y el 3 de septiembre de 2026 se le quitó la mitad del trabajo** (§4, el
+  aviso del 💀 triple). Ya no hay que *repartir emojis* entre las cuatro: la
+  colisión la fabrica el emoji y la deshace el pictograma, así que la
+  Característica *No-muerto* y la clase *Nigromante* **se quedan donde están** y
+  lo único que cambia es que su encargo lleva un requisito de contraste contra
+  el emblema. Lo que sobrevive de este punto es la observación sobre **Veneno**,
+  que nunca fue de colisión sino de significado: el veneno no es la muerte, así
+  que su glifo no necesita un cráneo aunque quepa uno. Eso sigue decidiéndose en
+  §3, y ya no lo empuja el 💀 — lo empuja el propio ☠️.
 - **Si se acepta la excepción al «un solo metal»** de dos emblemas: la venda de
   `no-muertos` en hueso pálido y la cola de `hombres-rata` en cobre rosado (§4).
   Es la primera grieta en el rasgo 1 de §5, y decidirla marca si el resto del set

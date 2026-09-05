@@ -128,12 +128,14 @@ ofrece 5:7 —«coge el ratio vertical más alto que tenga»—, y recortar de 2
 es la operación barata que esa misma norma autoriza. El `1023×1537` del ⚙️
 Ingeniero unidad es el mismo 2:3 con un píxel de menos, no otro lienzo.)*
 
-**Los doce de Humanos** se pintan en dos sitios: los bocetos de marco de
-**Cartas › Diseño de cartas** (`/docs/v3/cards/design`) y el marco elegido de
-**Cartas › Diseño baraja** (`/docs/v3/cards/deck`). **Los doce de Enanos, solo en
-la baraja**, y a propósito: el laboratorio de bocetos se queda con la raza piloto
-porque nueve marcos × veinticuatro cartas no se comparan, se hojean. Así que la
-página donde se ven las veinticuatro juntas es la baraja.
+**Los veinticuatro se pintan en un sitio**, **Cartas › Diseño de cartas**
+(`/docs/v3/cards/design`), que desde el 3 de septiembre de 2026 es la única
+página de cartas de V3: ese día se eligió el diseño *(L · Lámina)* y absorbió a
+*Diseño baraja*, que era la que traía el roster. Antes estaban repartidos —los
+doce de 👤 Humanos en las dos y los doce de ⛏️ Enanos solo en la baraja, porque
+el laboratorio de bocetos se quedaba con la raza piloto: nueve marcos ×
+veinticuatro cartas no se comparan, se hojean—. Hoy están las cuatro razas
+juntas, y lo que se filtra son **casos límite**: los sujetos que rompen la carta.
 
 ## 👤 Humanos — las doce, y la raza queda cerrada
 
@@ -732,19 +734,24 @@ eso van aparte y por eso los pinta el SCSS del boceto que los usa, con
 
 | Archivo | Qué es | Dónde se pinta |
 |---|---|---|
-| `frames/tier.png` | El medallón del **Tier**: anillo de oro con cuatro puntas en cruz sobre cara de piedra oscura | El disco de la esquina, bocetos **J · Orla** ([`_orla.scss`](../../../styles/components/card-sketch/_orla.scss)) y **K · Moldura** ([`_moldura.scss`](../../../styles/components/card-sketch/_moldura.scss)) |
-| `frames/card/<raíl>.png` | **La moldura entera de la carta**, con la gema de Rareza tallada en el canto de arriba. **Seis**, una por raíl de color | La capa `.sketch__frame` del boceto **K · Moldura** ([`_moldura.scss`](../../../styles/components/card-sketch/_moldura.scss)) |
+| `frames/tier.png` | El medallón del **Tier**: anillo de oro con cuatro puntas en cruz sobre cara de piedra oscura | El disco de la esquina de **la carta** ([`_lamina.scss`](../../../styles/components/card-sketch/_lamina.scss)) |
+| `frames/card/<raíl>.png` | **La moldura entera de la carta**, con la gema de Rareza tallada en el canto de arriba. **Seis**, una por raíl de color — y desde el 2 de septiembre de 2026 **cinco y uno**: el de héroe es otra moldura | **Nada, desde el 3 de septiembre de 2026**: eran del boceto K · Moldura, y la carta elegida no lleva marco. Ver el aviso de su apartado |
 
-**Entró el 26 de agosto de 2026 para la J, y desde el 1 de septiembre lo usa
-también la K.** Hasta entonces ese disco
-era CSS puro —círculo, borde de metal, aro de oro y degradado de cara oscura, en
-`_cuerpo.scss`—, y mientras vivieron, la G y la H **se quedaron con el de
-CSS**: eran bocetos ya juzgados, y cambiarles una pieza por debajo habría
-reescrito la comparación que decidió el marco. Borradas las dos el 1 de
-septiembre de 2026, el círculo de CSS sigue en el parcial del cuerpo como el
-suelo del que salieron las medidas, pero no lo pinta ya ninguna carta. La K sí lo hereda porque nace después: es el disco vigente, y
-un boceto cuyo argumento es «la moldura se dibuja fuera» sería raro que montara
-el medallón de CSS.
+**Entró el 26 de agosto de 2026 para la J**, y desde entonces lo montan todas las
+cartas que ha habido. Hasta ese día el disco era CSS puro —círculo, borde de
+metal, aro de oro y degradado de cara oscura, en `_cuerpo.scss`—, y mientras
+vivieron, la G y la H **se quedaron con el de CSS**: eran bocetos ya juzgados, y
+cambiarles una pieza por debajo habría reescrito la comparación que decidió el
+marco. El círculo de CSS sigue en el parcial del cuerpo como el suelo del que
+salieron las medidas, pero no lo pinta ninguna carta.
+
+**Es la única pieza de esta carpeta que sobrevive a la carta sin marco** *(3 de
+septiembre de 2026)*, y no por descuido: el disco **no es marco, es un dato** —el
+tier— con su chapa, así que quitarlo habría contestado una pregunta que el boceto
+elegido no hacía. Lo que sí cambió con la decisión es dónde se sienta: sus cuatro
+puntas cruzaban la línea de Rareza del canto y la partían, así que su asiento
+sale ahora de la punta (`$lamina-disc-tip`, 0,488) y no de los 4 px de aire de
+siempre.
 
 **El lienzo se recortó al llegar, y esa es la norma de la carpeta.** El archivo
 salió del generador a 1254×1254 px y 1,9 MB, con la pieza descentrada y sombra
@@ -767,33 +774,55 @@ limpias, que es lo contrario de lo que pide la tabla de *Lienzo y formato*.
 
 #### `frames/card/` — la moldura entera, seis archivos
 
-**Entraron el 1 de septiembre de 2026** y son un salto de escala dentro de esta
-carpeta: `tier.png` es una pieza *del* marco y esto es **el marco**. Con ellos el
-boceto **K · Moldura** no dibuja metal, lo coloca — y por primera vez hay una
-carta en el laboratorio a la que la probeta de aleación no le hace nada.
+> **YA NO LOS PINTA NADIE** *(3 de septiembre de 2026)*. Eran la capa
+> `.sketch__frame` del boceto **K · Moldura**, y ese día Dario eligió la
+> **L · Lámina** —la carta **sin marco**— como diseño definitivo; la K y la J se
+> borraron con sus parciales. Los archivos **se quedan en el disco**: son arte
+> generado, no código, y borrarlos es una decisión aparte de la de borrar el
+> boceto. Lo que sigue abajo es la norma con la que se hicieron y con la que se
+> midieron, y vale tal cual el día que vuelva a hacer falta una moldura — que es
+> justo lo que esta ficha existe para no tener que volver a deducir.
+
+**Entraron el 1 de septiembre de 2026** y fueron un salto de escala dentro de
+esta carpeta: `tier.png` es una pieza *del* marco y esto era **el marco**. Con
+ellos el boceto **K · Moldura** no dibujaba metal, lo colocaba — y por primera vez
+hubo una carta en el laboratorio a la que la probeta de aleación no le hacía
+nada.
+
+**Y desde el 2 de septiembre de 2026 son cinco y uno**, que es el cambio que hay
+que leer antes de la tabla: `heroe.png` dejó de ser una variante de color de los
+otros cinco y es **otra moldura**, con otra banda, otra esquina y otra pedrería.
+La tabla de abajo describe **los cinco de la escala de rareza**; lo que el de
+héroe hace distinto —y lo que cuesta— está en
+[su apartado](#heroepng--la-moldura-que-no-cumple-la-norma-2-sep-2026).
 
 | | Norma |
 |---|---|
-| **Cuántos** | **6**, uno por raíl de color: `comun`, `poco-comun`, `raro`, `epico`, `legendario` y `heroe`. Son las claves de `$rarity` ([`styles/settings/_colors.scss`](../../../styles/settings/_colors.scss)) que hoy usa la baraja, no las nueve del mapa |
+| **Cuántos** | **6**, uno por raíl de color: `comun`, `poco-comun`, `raro`, `epico`, `legendario` y `heroe`. Son las claves de `$rarity` ([`styles/settings/_colors.scss`](../../../styles/settings/_colors.scss)) que hoy usa la baraja, no las nueve del mapa. **`heroe` cumple solo el lienzo y el fondo**: el resto de esta tabla es de los cinco |
 | **Lienzo** | **600 × 840 px**, o sea el 5:7 de la carta al doble de como se pinta (300 × 420). El archivo es la carta ENTERA, no un recorte del canto |
 | **Aire de arriba** | **0,0357 del alto** (y 0 → y 30) por encima del canto exterior del raíl. Es la única asimetría, y no es un recorte mal hecho: ahí asoma la mitad de la gema. Por los lados y por abajo la moldura llega a sangre del lienzo |
 | **Banda** | **0,0517 del ancho** y **0,0369 del alto** — 15,5 px sobre la carta, la misma banda que dibuja el filete vectorial de la G y la H (`$sketch-band`, 15 px) |
 | **Ventana** | El hueco interior: **0,0726** por arriba, **0,0517** por los lados, **0,038** por abajo |
 | **Radios** | **0,117 del ancho** el exterior (35 px en la carta) y **0,081** el interior (24 px). El exterior manda sobre el radio de la CARTA, o el fondo asoma por fuera del oro |
-| **Gema** | Rombo tallado a caballo del canto de arriba, **en el eje exacto del lienzo** y a la misma altura en los seis. Es la pieza que sustituye al `.sketch__gem` de CSS de la G/H/J |
+| **Gema** | Rombo tallado a caballo del canto de arriba, **en el eje exacto del lienzo** y a la misma altura en los seis. Era la pieza que sustituía al `.sketch__gem` de CSS de la G/H/J — que también se borró el 3 de septiembre de 2026, y por el mismo motivo: una piedra necesita banda de metal donde engastarse |
 | **Fondo** | Transparente, ventana incluida: el arte va detrás y la moldura encima |
 | **Extensión** | `.png`, por lo de siempre — transparencia y aristas limpias |
 
-**La exigencia es la de los estandartes, y por el mismo motivo: las seis tienen
+**La exigencia era la de los estandartes, y por el mismo motivo: las seis tenían
 que ser intercambiables.** La carta las apila en un hueco fijo, así que lo que
-puede variar es el color y el ornamento, nunca dónde cae el raíl. Medidas las
-seis al entregarlas, se cumple con holgura:
+podía variar era el color y el ornamento, nunca dónde cae el raíl. Medidas las
+seis al entregarlas, se cumplía con holgura —y la columna dice «las seis» porque
+esto se midió el 1 de septiembre, cuando la de héroe todavía era una de ellas:
 
 | | Medido sobre las seis | Norma |
 |---|---|---|
 | Ventana, canto izquierdo | 0,0500 … 0,0533 — **0,3 puntos** | 0,0517 |
 | Ventana, canto de arriba | 0,0714 … 0,0738 — **0,2 puntos** | 0,0726 |
 | Eje de la gema | **300 de 600 en las seis** | 300 |
+
+**Hoy ya no se cumple, y no por dispersión sino por decisión**: `heroe.png` se
+sustituyó al día siguiente por una moldura distinta. Las tres cotas de arriba
+valen para los cinco que quedan en la escala.
 
 Dos se descuelgan por el pie y está anotado en vez de retocado: **`poco-comun` y
 `heroe` traen el raíl de abajo cortado por el lienzo** (arranca a 0,0083 y 0,0036
@@ -811,6 +840,49 @@ Un marco vectorial tiene once raíles de color gratis, porque el color es una
 variable; aquí cada raíl es un archivo. Eso cierra la escala en seis y convierte
 «añadir una rareza» en «generar un PNG». Es el precio que el boceto K está
 puesto a la página para cobrar, no un defecto de la entrega.
+
+##### `heroe.png` — la moldura que no cumple la norma *(2-sep-2026)*
+
+**Entró un archivo dibujado solo para las cartas de héroe** y sustituyó al que
+salió en la tanda del día anterior *(el viejo sigue en el historial de git, que
+es donde se recupera si la comparación sale al revés)*. No es una variante de
+color: es otra moldura. Y como el raíl de héroe **no está en la escala de
+rareza** —los héroes no tienen tier ni Rareza, tienen raíl propio— es el único de
+los seis que puede irse por su cuenta sin romper una escala; eso es lo que hace
+que este cambio sea barato de probar y de deshacer.
+
+| | Los cinco de la escala | `heroe.png` |
+|---|---|---|
+| **Banda** | 0,0517 del ancho — **15,5 px** en la carta | 0,0217 — **6,5 px**, menos de la mitad |
+| **Ventana** | 0,0517 por los lados, **0,0726 por arriba** (banda + aire de la gema) | **0,0400 / 0,0321** — 12 px por los cuatro lados |
+| **Canto exterior** | A sangre por los lados y por abajo; **0,0357 de aire arriba** | **A sangre por los cuatro**, con 1 px de holgura para que la punta no se corte |
+| **Esquina** | Curva: radio 0,117 exterior y 0,081 interior | **Chaflán**, con dos púas en diagonal. La silueta es un **octógono** |
+| **Gema** | **Una**, rombo tallado en el eje del canto de arriba | **Dos**, una en el medio de cada costado. **Arriba no hay** |
+| **Lienzo y fondo** | 600 × 840, transparente | **Igual** — es lo único de la norma que comparte |
+
+**El reencuadre está hecho aquí, no en el generador**, y conviene saber cómo
+porque es lo que hace que el archivo caiga en el hueco: salió a **1024 × 1536**
+(2:3, no 5:7) y con el marco **descentrado** —19 px de canvas muerto arriba y 62
+abajo—, así que se recortó por el ornamento (x 9…1015, y 19…1473) y se llevó al
+lienzo de la norma. Eso mete un estirón **anisótropo del 3,2 %** en la
+horizontal, que en una pieza decorativa no se ve, y deja las cuatro cotas de la
+tabla medidas sobre el archivo final. Lo que **no** se hizo es escalar el marco
+para que su banda midiera 15,5: eso pedía agrandarlo un 41 % y la ventana se
+quedaba en nada.
+
+**Lo que se pagaba era la intercambiabilidad**, que era la única exigencia dura
+de esta carpeta. El montaje no podía tratar los seis igual: la ventana, el radio
+de la carta y el chaflán del pie iban por un bloque aparte del SCSS con la cuenta
+de cada número. Mientras el que se descolgaba fuera uno, se pagaba con ese
+bloque; el día que cada rareza traiga su propia moldura, lo que hay que reescribir
+es esta ficha.
+
+**Y este archivo dejó una cota que sobrevive al boceto**: su **ventana**, 12 px,
+es de donde sale el paspartú de la carta definitiva. La L empezó copiándole los
+9 px del solape del arte y subió a 12 el mismo día, y el número se paró ahí
+porque con él las dos cartas enseñaban el mismo trozo de ilustración — la única
+comparación que servía de algo entre un marco fino y ningún marco. Está anotado
+en [`_lamina.scss`](../../../styles/components/card-sketch/_lamina.scss).
 
 ### `banners/` — los estandartes de raza, uno por raza
 

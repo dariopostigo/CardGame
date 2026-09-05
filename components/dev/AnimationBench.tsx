@@ -44,17 +44,23 @@ import * as Hex from "@/lib/v3/hex";
 import type { HexCoord, HexKey } from "@/lib/v3/hex";
 import {
   CURVES,
+  OFFER_RISE_MS,
   attackPhases,
   critDust,
   cubic,
   deathDust,
   hitDust,
+  idlePhase,
   landingDust,
+  rippleDelay,
+  stepDust,
   type Timings,
 } from "@/lib/v3/anim";
 import { resolveAttack, type AttackResult } from "@/lib/v3/combat";
 import { DAMAGE_TYPES, type DamageTypeId } from "@/lib/v3/damage";
-import type { Side } from "@/lib/v3/arena";
+import { buildArena, type Side } from "@/lib/v3/arena";
+import { moveProblem, pathTo, reachable } from "@/lib/v3/movement";
+import { MOVEMENT_BAND } from "@/lib/v3/tempo";
 import { DustField } from "./dust";
 import { buttonClass } from "@/components/ui/Button";
 
@@ -64,6 +70,32 @@ const TILT = 0.67;
 /** El retal de tablero. Cinco por tres es lo justo para que quepa una embestida. */
 const COLS = 5;
 const ROWS = 3;
+
+/**
+ * El retal, pero como ARENA de verdad.
+ *
+ * Existe para no reimplementar aquí ni una sola regla de movimiento: quién llega
+ * a dónde lo contesta lib/v3/movement.ts (`reachable`, que rodea los cuerpos
+ * porque no se atraviesa a nadie, §5) y por qué no se puede lo contesta
+ * `moveProblem`. `buildArena` acepta estas medidas —dos columnas de banda caben
+ * en cinco y las tres filas dan sitio para las cinco fichas del §2—, así que el
+ * banco puede pedirle las cuentas al motor en vez de inventárselas con un
+ * `distance <= n` que ignoraría a quien haya en medio.
+ */
+const ARENA_PATCH = buildArena({ cols: COLS, rows: ROWS, bandDepth: 2 });
+
+/**
+ * De dónde sale la onda cuando lo que se ofrece es un DESPLIEGUE.
+ *
+ * Al mover una ficha la onda nace de ella y no hay nada que elegir, pero una
+ * carta no está en el tablero: viene de la mano, que está abajo y en el centro.
+ * Así el terreno se abre hacia el fondo, en la misma dirección en la que va el
+ * gesto, en vez de encenderse desde una esquina cualquiera.
+ */
+const HAND_ENTRY = Hex.offsetToAxial({ col: Math.floor(COLS / 2), row: ROWS - 1 });
+
+/** Lo que tarda una ficha en acuclillarse tras andar, o en volver a levantarse. */
+const SPENT_MS = 240;
 
 const SQRT3 = Math.sqrt(3);
 
@@ -100,6 +132,17 @@ type Piece = {
    * termine entregando algo en vez de acabar en sí mismo (§4.5).
    */
   state: string | null;
+  /**
+   * Si ya ha andado este turno.
+   *
+   * ANDADO y no "agotada", y la precisión importa porque decide el aspecto: el
+   * §5 dice que una ficha "mueve hasta 👢 Movimiento hexágonos **y** hace su
+   * ataque, en cualquier orden", así que haber andado no la deja fuera del turno
+   * —todavía puede pegar—. Por eso se apaga a medias y no del todo: una ficha
+   * que parece muerta deja de contarse, y esta cuenta. Cuando exista el modelo de
+   * turno esto se parte en dos marcas, o pasa a ser "agotada" de verdad.
+   */
+  moved: boolean;
 };
 
 /** El glifo que deja un crítico. 💫 Aturdimiento, del catálogo de control. */
@@ -135,16 +178,29 @@ function handSlot(l: Layout, index: number, count: number, cardScale: number) {
   };
 }
 
-const INITIAL: readonly Omit<Piece, "hex" | "state">[] = [
+const INITIAL: readonly Omit<Piece, "hex" | "state" | "moved">[] = [
   { id: "enemigo-1", damage: "cuerpo-a-cuerpo", side: "enemigo" },
   { id: "propio-1", damage: "cuerpo-a-cuerpo", side: "propio" },
   { id: "propio-2", damage: "magico", side: "propio" },
   { id: "propio-3", damage: "a-distancia", side: "propio" },
 ];
 
-/** El banco recién puesto: el muñeco de pruebas en el campo y tres cartas en la mano. */
+/**
+ * El banco recién puesto: el muñeco de pruebas en el campo y tres cartas en la
+ * mano, una de cada tipo de daño.
+ *
+ * Los tres tipos están a propósito y no por variedad: 👢 Movimiento va por tipo
+ * (🗡️ 3 · ✨ 2 · 🏹 1), así que una vez puestas las tres, arrastrarlas una detrás
+ * de otra enseña tres ofertas distintas sobre el mismo tablero. Con tres fichas
+ * iguales, el terreno que se ofrece parecería una propiedad del tablero.
+ */
 function initialPieces(dummy: HexCoord | null): Piece[] {
-  return INITIAL.map((p) => ({ ...p, hex: p.side === "enemigo" ? dummy : null, state: null }));
+  return INITIAL.map((p) => ({
+    ...p,
+    hex: p.side === "enemigo" ? dummy : null,
+    state: null,
+    moved: false,
+  }));
 }
 
 /** Dónde se planta el muñeco: a la derecha, en la fila de en medio. */
@@ -173,6 +229,24 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   const [box, setBox] = useState<Box>({ w: 0, h: 0 });
   const [pieces, setPieces] = useState<readonly Piece[]>(() => initialPieces(DUMMY_HEX));
   const [busy, setBusy] = useState(false);
+
+  /**
+   * El terreno que se ofrece: destino → pasos desde el origen. Los pasos no son
+   * de adorno, son lo que ordena la onda — el hexágono de al lado se levanta
+   * antes que el de tres más allá, y eso es lo que hace que la oferta parezca
+   * salir de la ficha en vez de encenderse toda de golpe.
+   *
+   * Es de las poquísimas cosas del arrastre que sí van por estado de React: la
+   * oferta se calcula UNA vez al coger la ficha y no cambia mientras la llevas.
+   * Lo que sí cambia sesenta veces por segundo —cuál es el hexágono candidato—
+   * se escribe directamente en el DOM, por lo mismo que la posición de la carta.
+   */
+  const [offer, setOffer] = useState<ReadonlyMap<HexKey, number> | null>(null);
+  const cellNodes = useRef(new Map<HexKey, SVGPolygonElement>());
+  const candidate = useRef<HexKey | null>(null);
+
+  /** El aliento de cada ficha: su animación infinita, para poder pararla. */
+  const idles = useRef(new Map<string, Animation[]>());
 
   // Los tiempos se leen desde dentro de secuencias asíncronas que empezaron
   // hace medio segundo: con la prop a secas, mover un slider a mitad de una
@@ -307,7 +381,18 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
       // termina fijando la opacidad en línea (commitStyles), y una regla no le
       // ganaría a eso al volver la ficha a la mano.
       const token = el.querySelector<HTMLElement>(".anim__token");
-      if (token) token.style.opacity = piece.hex ? "1" : "0";
+      if (token) {
+        token.style.opacity = piece.hex ? "1" : "0";
+        // Y su postura: hundida si ya ha andado, recta si no. Va aquí y no en
+        // una regla de CSS porque el aliento y el acuclillarse escriben esta
+        // misma propiedad con `commitStyles`, y una regla no le ganaría a un
+        // estilo en línea. Mientras el aliento corre, su animación gana a esto y
+        // esto es solo el valor de debajo — que es exactamente lo que hace falta
+        // para que al pararla la ficha se quede donde tiene que quedarse.
+        const rest = tokenRest(piece.moved, l.size, t.current);
+        token.style.transform = rest.transform;
+        token.style.filter = rest.filter;
+      }
 
       if (piece.hex) {
         const c = l.centers.get(Hex.key(piece.hex));
@@ -374,24 +459,241 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     [],
   );
 
-  // --- Arrastre de la carta -------------------------------------------------
+  const setCellNode = useCallback(
+    (key: HexKey) => (node: SVGPolygonElement | null) => {
+      if (node) cellNodes.current.set(key, node);
+      else cellNodes.current.delete(key);
+    },
+    [],
+  );
 
-  const drag = useRef<{ id: string; lastX: number; vx: number } | null>(null);
+  // --- El aliento -----------------------------------------------------------
+
+  /**
+   * La respiración de una ficha parada: sube, se hace un pelo más grande —está
+   * más cerca de la cámara— y baja, para siempre.
+   *
+   * Va sobre el TOKEN y no sobre la ficha, y ese es el detalle que hace que todo
+   * lo demás siga funcionando: el `transform` de `.anim__piece` lo lleva JS en
+   * cada secuencia, así que una animación infinita ahí pelearía con la caída,
+   * con la embestida y con el arrastre. El token no lo toca nadie más, de modo
+   * que el aliento y las secuencias se SUMAN en vez de pisarse: una ficha
+   * respirando embiste igual, y respirando la llevas cogida.
+   *
+   * La sombra respira al revés —se encoge y se aclara cuando la ficha sube—,
+   * porque es lo único que dice que ha subido y no que ha crecido.
+   */
+  const startIdle = useCallback((piece: Piece) => {
+    const l = layoutRef.current;
+    const c = t.current;
+    if (!l || !piece.hex || piece.moved || c.idleRise <= 0) return;
+    if (idles.current.has(piece.id)) return;
+    const el = elements.current.get(piece.id);
+    const token = el?.querySelector<HTMLElement>(".anim__token");
+    if (!el || !token) return;
+
+    const rise = l.size * c.idleRise;
+    const rest = tokenRest(false, l.size, c);
+    const options: KeyframeAnimationOptions = {
+      duration: Math.max(200, c.idleCycle),
+      easing: "ease-in-out",
+      iterations: Infinity,
+      // Negativo: la animación empieza YA EMPEZADA, en el punto de su ciclo que
+      // le toca a esta ficha. Sin esto todas arrancan abajo a la vez y lo que se
+      // ve no son quince fichas vivas, es el tablero entero bombeando.
+      delay: -idlePhase(piece.id, c.idleCycle),
+    };
+
+    const list = [
+      token.animate(
+        [
+          { transform: rest.transform },
+          { transform: `${TOKEN_BASE} translateY(${-rise.toFixed(2)}px) scale(1.015, 1.015)`, offset: 0.5 },
+          { transform: rest.transform },
+        ],
+        options,
+      ),
+    ];
+
+    const blot = shadowOf(el)?.querySelector<HTMLElement>(".anim__blot");
+    if (blot) {
+      list.push(
+        blot.animate(
+          [
+            { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
+            { transform: "translate(-50%, -50%) scale(0.93)", opacity: 0.78, offset: 0.5 },
+            { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
+          ],
+          options,
+        ),
+      );
+    }
+
+    idles.current.set(piece.id, list);
+  }, []);
+
+  const stopIdle = useCallback((id: string) => {
+    for (const anim of idles.current.get(id) ?? []) anim.cancel();
+    idles.current.delete(id);
+  }, []);
+
+  // Quién respira y quién no se deriva del estado, no se ordena a mano: una
+  // ficha respira si está en el campo y no ha andado. Las secuencias paran el
+  // aliento de quien se mueve —dos movimientos sumados en el mismo cuerpo se
+  // leen como un temblor— y lo vuelven a arrancar al terminar.
+  //
+  // Los que YA respiran no se tocan, y por eso el reinicio va aparte: una
+  // animación infinita relanzada vuelve al mismo punto de su ciclo (la fase es
+  // fija por ficha), así que rearrancarla a mitad de una inspiración da un
+  // tirón. Rearrancar solo cuando cambia el dial es a la vez lo correcto y lo
+  // que hace que el slider se vea funcionar — sin esto, mover la amplitud no
+  // cambiaría nada hasta la siguiente jugada, que es la peor forma de que un
+  // mando esté roto.
+  const idleKey = `${timings.idleRise}|${timings.idleCycle}|${layout?.size ?? 0}`;
+  const idleKeyRef = useRef(idleKey);
+  useEffect(() => {
+    if (idleKeyRef.current !== idleKey) {
+      idleKeyRef.current = idleKey;
+      for (const id of [...idles.current.keys()]) stopIdle(id);
+    }
+    for (const piece of pieces) {
+      if (piece.hex && !piece.moved) startIdle(piece);
+      else stopIdle(piece.id);
+    }
+    for (const id of [...idles.current.keys()]) {
+      if (!pieces.some((p) => p.id === id)) stopIdle(id);
+    }
+  }, [pieces, idleKey, startIdle, stopIdle]);
+
+  useEffect(() => {
+    const running = idles.current;
+    return () => {
+      for (const list of running.values()) for (const anim of list) anim.cancel();
+      running.clear();
+    };
+  }, []);
+
+  // --- Coger algo: la carta que se despliega y la ficha que anda -------------
+  //
+  // Son dos gestos con la misma entrada y no se comportan igual, y la diferencia
+  // no es un capricho:
+  //
+  //   · LA CARTA SIGUE AL PUNTERO. Está en tu mano, así que la llevas.
+  //   · LA FICHA NO SE MUEVE: se levanta en su sitio, como quien la coge por
+  //     encima sin sacarla del tablero. Lo que sigue al puntero es el HEXÁGONO
+  //     CANDIDATO. Y no es un atajo, es lo correcto: una ficha que persigue el
+  //     cursor y luego tiene que volver a su casilla para andar el camino da un
+  //     tirón hacia atrás en el momento de soltar, justo cuando la vista está
+  //     puesta en el destino. Dejándola quieta, el camino empieza donde el
+  //     jugador la vio por última vez.
+  //
+  // El "cogido" se pone a la altura del SALTITO (`stepHop`), y de ahí sale una
+  // propiedad gratis: la postura de estar cogida es exactamente el punto más
+  // alto de un paso, así que al soltar no hay que recomponer nada — la ficha ya
+  // está en el aire y el primer tramo del camino es su aterrizaje.
+
+  const drag = useRef<{
+    id: string;
+    /** Su hexágono si ya estaba en el campo; null si viene de la mano. */
+    from: HexCoord | null;
+    lastX: number;
+    vx: number;
+    /** El levantarse, para poder cerrarlo antes de empezar a andar. */
+    lift: Animation[];
+  } | null>(null);
+
+  /** Los hexágonos ocupados, menos el de quien se está yendo del suyo (§5). */
+  const occupiedExcept = useCallback(
+    (id: string) =>
+      new Set(
+        pieces
+          .filter((p): p is Piece & { hex: HexCoord } => !!p.hex && p.id !== id)
+          .map((p) => Hex.key(p.hex)),
+      ),
+    [pieces],
+  );
+
+  /**
+   * Qué terreno se ofrece por coger esto, y a cuántos pasos está cada hexágono.
+   *
+   * Las dos mitades son la misma pregunta con distinta regla, y ninguna de las
+   * dos se contesta aquí: una ficha en el campo llega hasta donde diga
+   * `reachable`, que rodea los cuerpos y por eso puede devolver bastante menos
+   * que el círculo de su 👢; una carta va a cualquier hexágono libre, que es el
+   * despliegue del §3.
+   *
+   * Los pasos importan porque son lo que ordena la onda. Para la ficha los da el
+   * propio recorrido en anchura —gratis, y contando el rodeo—; para la carta se
+   * miden desde el borde por el que entra la mano, así el terreno se abre hacia
+   * el fondo, en la dirección en la que va el gesto.
+   */
+  const offerFor = useCallback(
+    (piece: Piece): Map<HexKey, number> => {
+      const taken = occupiedExcept(piece.id);
+      if (piece.hex) {
+        return reachable(ARENA_PATCH, piece.hex, MOVEMENT_BAND[piece.damage], taken);
+      }
+      const out = new Map<HexKey, number>();
+      for (const hex of ARENA_PATCH.hexes) {
+        const k = Hex.key(hex);
+        if (!taken.has(k)) out.set(k, Hex.distance(hex, HAND_ENTRY));
+      }
+      return out;
+    },
+    [occupiedExcept],
+  );
+
+  /**
+   * El hexágono bajo el puntero. Se escribe en el DOM y no en el estado por lo
+   * mismo que la posición de la carta: cambia sesenta veces por segundo, y
+   * repintar React a esa cadencia con quince polígonos es tirar fotogramas para
+   * cambiar un atributo.
+   */
+  const markCandidate = useCallback((key: HexKey | null) => {
+    if (candidate.current === key) return;
+    if (candidate.current) {
+      cellNodes.current.get(candidate.current)?.removeAttribute("data-candidate");
+    }
+    candidate.current = key;
+    if (key) cellNodes.current.get(key)?.setAttribute("data-candidate", "true");
+  }, []);
 
   const onPointerDown = (piece: Piece) => (event: React.PointerEvent<HTMLDivElement>) => {
-    if (busyRef.current || piece.hex) return;
+    if (busyRef.current) return;
     const l = layoutRef.current;
     const el = elements.current.get(piece.id);
     if (!l || !el) return;
 
+    // Y aquí es donde lo gastado deja de ser cosmética. La negativa se explica,
+    // como todas las de este proyecto (ARCHITECTURE.md §5), y se explica
+    // señalando lo que ya se veía: no respiraba.
+    if (piece.hex && piece.moved) {
+      note(
+        "Esta ficha ya ha andado este turno (§5), y por eso no respira ni tiene color. Todavía puede atacar; para volver a moverla hace falta un turno nuevo.",
+      );
+      return;
+    }
+
     event.preventDefault();
     el.setPointerCapture(event.pointerId);
-    drag.current = { id: piece.id, lastX: event.clientX, vx: 0 };
     el.dataset.dragging = "true";
+    setOffer(offerFor(piece));
 
+    const c = t.current;
     const { x, y } = toStage(event, stageRef.current);
-    el.style.transform = transform(x, y, t.current.hover, t.current.cardScale);
-    moveShadow(el, l, x, y, t.current.hover);
+
+    if (piece.hex) {
+      stopIdle(piece.id);
+      const at = l.centers.get(Hex.key(piece.hex));
+      drag.current = { id: piece.id, from: piece.hex, lastX: event.clientX, vx: 0, lift: [] };
+      if (at) drag.current.lift = pickUp(el, at, c.stepHop);
+      markCandidate(null);
+      return;
+    }
+
+    drag.current = { id: piece.id, from: null, lastX: event.clientX, vx: 0, lift: [] };
+    el.style.transform = transform(x, y, c.hover, c.cardScale);
+    moveShadow(el, l, x, y, c.hover);
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -402,6 +704,12 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     if (!el) return;
 
     const { x, y } = toStage(event, stageRef.current);
+    const cell = nearestCell(l, { x, y });
+    markCandidate(cell && offer?.has(cell.key) ? cell.key : null);
+
+    // La ficha ya puesta no se mueve: lo único que la sigue es el candidato.
+    if (state.from) return;
+
     // La carta se inclina con la velocidad del gesto. Es el detalle más barato
     // de todo el banco y el que hace que arrastrar deje de parecer mover un
     // icono: un naipe que se mueve rápido se ladea porque lo llevas cogido de
@@ -420,6 +728,8 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     const l = layoutRef.current;
     if (!state || !l) return;
     drag.current = null;
+    setOffer(null);
+    markCandidate(null);
 
     const el = elements.current.get(state.id);
     const piece = pieces.find((p) => p.id === state.id);
@@ -429,15 +739,44 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
 
     const from = toStage(event, stageRef.current);
     const cell = nearestCell(l, from);
-    const taken = cell ? pieces.some((p) => p.hex && Hex.equals(p.hex, cell.hex)) : false;
 
+    // --- Una ficha que ya estaba en el campo: andar ---
+    if (state.from) {
+      const origin = state.from;
+      settleAnimations(state.lift);
+
+      if (!cell || Hex.equals(cell.hex, origin)) {
+        note("Se queda donde estaba. Andar es opcional: el §5 dice «hasta» 👢 Movimiento.");
+        void putDown(piece, el, l, origin);
+        return;
+      }
+
+      const boots = MOVEMENT_BAND[piece.damage];
+      const taken = occupiedExcept(piece.id);
+      // El motivo lo da el motor, no el banco. Y da DOS motivos distintos —está
+      // lejos, o hay alguien en medio— que en el tablero se parecen y como regla
+      // no se parecen en nada: es la diferencia entre una pared y un peaje (§5).
+      const problem = moveProblem(ARENA_PATCH, origin, cell.hex, boots, taken, (hex) =>
+        nameAt(pieces, hex),
+      );
+      const path = problem ? null : pathTo(ARENA_PATCH, origin, cell.hex, boots, taken);
+      if (!path) {
+        note(problem ?? "No hay camino hasta ahí.");
+        void putDown(piece, el, l, origin);
+        return;
+      }
+      void walk(piece, path);
+      return;
+    }
+
+    // --- Una carta: desplegar ---
     if (!cell) {
       note("Soltada fuera del tablero: la carta vuelve a la mano.");
       void returnToHand(piece, el, l, from);
       return;
     }
-    if (taken) {
-      note("Ahí ya hay una ficha. En el juego esto sería una negativa del motor, con su motivo.");
+    if (pieces.some((p) => p.hex && Hex.equals(p.hex, cell.hex))) {
+      note("Ahí ya hay una ficha, y ese hexágono no estaba ofrecido: dos fichas nunca comparten casilla (§5).");
       void returnToHand(piece, el, l, from);
       return;
     }
@@ -589,6 +928,174 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     settleAnimations(parallel);
   }
 
+  /** La ficha cogida que se vuelve a posar en su casilla, y respira otra vez. */
+  async function putDown(piece: Piece, el: HTMLElement, l: Layout, hex: HexCoord) {
+    const at = l.centers.get(Hex.key(hex));
+    if (!at) return;
+    const shadow = shadowOf(el);
+    const parallel = shadow
+      ? [
+          shadow.animate([{ transform: `translate(${at.x}px, ${at.y}px) scale(1)`, opacity: 0.55 }], {
+            duration: 170,
+            easing: "ease-out",
+            fill: "forwards",
+          }),
+        ]
+      : [];
+    await run(el, [{ transform: transform(at.x, at.y, 0, 1) }], 170, "ease-out");
+    settleAnimations(parallel);
+    startIdle(piece);
+  }
+
+  /**
+   * ANDAR: de hexágono en hexágono, con un saltito y una pisada en cada uno.
+   *
+   * El camino lo da movement.ts `pathTo` y puede tener más pasos que la
+   * distancia en línea recta, porque no se atraviesa a nadie (§5). Eso es
+   * exactamente lo que la animación tiene que enseñar: el rodeo se ve andando, y
+   * es lo que convierte "no llegas" en "llegas, pero te cuesta". Por eso los
+   * pasos se animan uno a uno en vez de deslizar la ficha hasta el destino —un
+   * deslizamiento recto atravesaría al que estorba y contaría una mentira.
+   *
+   * Empieza en el punto más alto del salto y no en el suelo: la ficha viene de
+   * estar cogida, y estar cogida es justo esa postura.
+   */
+  async function walk(piece: Piece, path: readonly HexCoord[]) {
+    const l = layoutRef.current;
+    const el = elements.current.get(piece.id);
+    if (!l || !el || path.length < 2) return;
+    const way: { x: number; y: number }[] = [];
+    for (const hex of path) {
+      const at = l.centers.get(Hex.key(hex));
+      if (!at) return;
+      way.push(at);
+    }
+
+    busyRef.current = true;
+    setBusy(true);
+    stopIdle(piece.id);
+
+    const c = t.current;
+    const steps = way.length - 1;
+    const total = Math.max(1, steps * c.step);
+    const apex = (at: { x: number; y: number }) =>
+      `translate(${at.x}px, ${at.y}px) scale(${(1 + c.stepHop / 120).toFixed(3)})`;
+
+    const frames: Keyframe[] = [
+      { transform: transform(way[0].x, way[0].y, c.stepHop, 1.05, 0.97), offset: 0, easing: "ease-in" },
+    ];
+    const shadowFrames: Keyframe[] = [
+      { transform: apex(way[0]), opacity: 0.4, offset: 0, easing: "ease-in" },
+    ];
+
+    for (let i = 1; i <= steps; i++) {
+      const last = i === steps;
+      frames.push({
+        transform: transform(way[i].x, way[i].y, 0, last ? 1 : 1.02, last ? 1 : 0.98),
+        offset: i / steps,
+        easing: "ease-out",
+      });
+      shadowFrames.push({
+        transform: `translate(${way[i].x}px, ${way[i].y}px) scale(1)`,
+        opacity: 0.55,
+        offset: i / steps,
+        easing: "ease-out",
+      });
+      if (last) break;
+      const mid = { x: (way[i].x + way[i + 1].x) / 2, y: (way[i].y + way[i + 1].y) / 2 };
+      frames.push({
+        transform: transform(mid.x, mid.y, c.stepHop, 1.03, 0.97),
+        offset: (i + 0.5) / steps,
+        easing: "ease-in",
+      });
+      shadowFrames.push({ transform: apex(mid), opacity: 0.4, offset: (i + 0.5) / steps, easing: "ease-in" });
+    }
+
+    // Una mota de polvo por pisada, en el momento de cada aterrizaje. Es el
+    // reventón más pequeño del catálogo a propósito: con quince fichas por bando
+    // andando, esto se emite noventa veces por ronda.
+    for (let i = 1; i <= steps; i++) {
+      window.setTimeout(
+        () => dustRef.current?.emit(way[i].x, way[i].y + l.size * 0.42, stepDust(c)),
+        (i / steps) * total,
+      );
+    }
+
+    const shadow = shadowOf(el);
+    const parallel = shadow
+      ? [shadow.animate(shadowFrames, { duration: total, easing: "linear", fill: "forwards" })]
+      : [];
+    await run(el, frames, total);
+    settleAnimations(parallel);
+
+    await slump([piece.id], true);
+    const to = path[path.length - 1];
+    setPieces((prev) => prev.map((p) => (p.id === piece.id ? { ...p, hex: to, moved: true } : p)));
+    busyRef.current = false;
+    setBusy(false);
+
+    const straight = Hex.distance(path[0], to);
+    note(
+      `${steps} paso${steps === 1 ? "" : "s"} × ${c.step} ms = ${total} ms` +
+        (steps > straight ? ` — en línea recta eran ${straight}, pero hubo que rodear (§5)` : "") +
+        `. 👢 ${MOVEMENT_BAND[piece.damage]} por ser ${DAMAGE_TYPES[piece.damage].label.toLowerCase()}. Ya ha andado: deja de respirar.`,
+    );
+  }
+
+  /** Se agacha porque ya ha andado, o se endereza porque hay turno nuevo. */
+  async function slump(ids: readonly string[], moved: boolean, stagger = 0): Promise<void> {
+    const l = layoutRef.current;
+    if (!l) return;
+    const c = t.current;
+    const list: Animation[] = [];
+    ids.forEach((id, i) => {
+      const token = elements.current.get(id)?.querySelector<HTMLElement>(".anim__token");
+      if (!token) return;
+      list.push(
+        token.animate([tokenRest(!moved, l.size, c), tokenRest(moved, l.size, c)], {
+          duration: SPENT_MS,
+          delay: i * stagger,
+          // Al agacharse, se deja caer; al levantarse, se pasa un poco. Un turno
+          // nuevo tiene que sentirse como que algo se te devuelve.
+          easing: moved ? "ease-out" : cubic(EASE_BACK),
+          fill: "forwards",
+        }),
+      );
+    });
+    await Promise.allSettled(list.map((a) => a.finished));
+    settleAnimations(list);
+  }
+
+  /**
+   * TURNO NUEVO: todas las que habían andado se levantan, escalonadas.
+   *
+   * El escalón es lo único que hay aquí, y es más de lo que parece: es la misma
+   * forma que va a tener el tic de estados al empezar el turno, que son diez
+   * fichas por tres estados y en fila india resulta eterno. Aquí, con cuatro
+   * fichas, ya se ve la diferencia entre una cascada y un repintado.
+   */
+  async function newTurn() {
+    if (busyRef.current) return;
+    const asleep = pieces.filter((p) => p.hex && p.moved);
+    if (asleep.length === 0) {
+      note("Nadie ha andado todavía. Arrastra una ficha del campo a otro hexágono y vuelve aquí.");
+      return;
+    }
+    busyRef.current = true;
+    setBusy(true);
+    await slump(
+      asleep.map((p) => p.id),
+      false,
+      t.current.wakeStagger,
+    );
+    setPieces((prev) => prev.map((p) => (p.moved ? { ...p, moved: false } : p)));
+    busyRef.current = false;
+    setBusy(false);
+    note(
+      `Turno nuevo: ${asleep.length === 1 ? "una ficha vuelve" : `${asleep.length} fichas vuelven`} a respirar, con ${t.current.wakeStagger} ms de escalón. Ponlo a 0 y repítelo: de golpe parece un fallo de pintado.`,
+    );
+  }
+
   /**
    * ATAQUE: embestida, contacto y vuelta, en sus TRES desenlaces.
    *
@@ -621,6 +1128,10 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     const p = attackPhases(result, c);
     const miss = result === "fallo";
     const crit = result === "critico";
+
+    // El aliento se para durante la embestida y vuelve al final: sumado al
+    // gesto, lo que se ve no es una ficha viva embistiendo, es un temblor.
+    stopIdle(attacker.id);
 
     const dx = (b.x - a.x) * c.lungeDistance;
     const dy = (b.y - a.y) * c.lungeDistance;
@@ -739,6 +1250,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     // que un crítico no termina en sí mismo — deja algo puesto.
     if (crit) setPieces((prev) => prev.map((x) => (x.id === target.id ? { ...x, state: CRIT_STATE } : x)));
 
+    startIdle(attacker);
     return p;
   }
 
@@ -872,6 +1384,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
 
     busyRef.current = true;
     setBusy(true);
+    stopIdle(piece.id);
     const cfg = t.current;
     const shadow = shadowOf(el);
 
@@ -1009,6 +1522,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   const mine = onBoard.filter((p) => p.side === "propio");
   const foes = onBoard.filter((p) => p.side === "enemigo");
   const inHand = pieces.filter((p) => !p.hex);
+  const walked = onBoard.filter((p) => p.moved);
 
   const canAttack = mine.length > 0 && foes.length > 0;
 
@@ -1022,7 +1536,15 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   return (
     <div className={`anim ${className}`}>
       <div className="anim__stage" ref={stageRef}>
-        <div className="anim__scene" ref={sceneRef}>
+        {/* La única duración que sale de aquí hacia el CSS, porque la
+            transición del terreno sí es declarativa y no una secuencia. El
+            retraso de cada hexágono va en su propio estilo; esto es lo que
+            tarda uno solo en levantarse. */}
+        <div
+          className="anim__scene"
+          ref={sceneRef}
+          style={{ ["--offer-rise-ms" as string]: `${OFFER_RISE_MS}ms` }}
+        >
           {layout && (
             <svg
               className="anim__ground"
@@ -1055,6 +1577,33 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
                 {layout.cells.map((c) => (
                   <polygon key={c.key} points={c.points} />
                 ))}
+              </g>
+              {/* EL TERRENO QUE SE OFRECE. Los quince polígonos están SIEMPRE
+                  puestos y lo que cambia es un atributo, no la lista: un
+                  elemento que acaba de nacer no puede hacer una transición
+                  —React lo monta ya en su estado final—, así que montarlos y
+                  desmontarlos daría un encendido seco y ninguna onda.
+
+                  Van entre el suelo y la rejilla a propósito: la oferta es el
+                  terreno iluminándose, no una chapa por encima, así que las
+                  líneas de la rejilla tienen que seguir viéndose sobre ella. */}
+              <g className="anim__offer">
+                {layout.cells.map((c) => {
+                  const steps = offer?.get(c.key);
+                  const on = steps !== undefined;
+                  return (
+                    <polygon
+                      key={c.key}
+                      ref={setCellNode(c.key)}
+                      points={c.points}
+                      data-offered={on ? "true" : "false"}
+                      style={{
+                        transform: on ? `translateY(${-timings.offerRise}px)` : undefined,
+                        transitionDelay: on ? `${rippleDelay(steps, timings)}ms` : "0ms",
+                      }}
+                    />
+                  );
+                })}
               </g>
               <g className="anim__mesh">
                 {layout.mesh.map((s, i) => (
@@ -1100,6 +1649,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
                   data-piece-id={p.id}
                   data-side={p.side}
                   data-placed={p.hex ? "true" : "false"}
+                  data-moved={p.moved ? "true" : "false"}
                   onPointerDown={onPointerDown(p)}
                   onPointerMove={onPointerMove}
                   onPointerUp={onPointerUp}
@@ -1136,12 +1686,16 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
             })}
         </div>
 
-        {inHand.length > 0 && (
-          <p className="anim__hint">
-            Arrastra la carta a un hexágono
-            {inHand.length > 1 && <> · quedan {inHand.length} en la mano</>}
-          </p>
-        )}
+        <p className="anim__hint">
+          {inHand.length > 0 ? (
+            <>
+              Arrastra la carta a un hexágono
+              {inHand.length > 1 && <> · quedan {inHand.length} en la mano</>}
+            </>
+          ) : (
+            <>Coge una ficha del campo para ver hasta dónde llega</>
+          )}
+        </p>
       </div>
 
       <div className="anim__toolbar">
@@ -1200,6 +1754,16 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
         >
           Destruir la mía
         </button>
+        <span className="anim__group">Turno</span>
+        <button
+          className={buttonClass()}
+          disabled={busy || walked.length === 0}
+          onClick={() => void newTurn()}
+          title="Las que ya habían andado se levantan y vuelven a respirar, escalonadas. Es la misma forma que va a tener el tic de estados al empezar el turno."
+        >
+          <i className="pi pi-refresh mr-1" />
+          Nuevo turno
+        </button>
         <button className={buttonClass()} disabled={busy} onClick={reset} title="Todo a la mano.">
           <i className="pi pi-replay mr-1" />
           Reiniciar
@@ -1207,6 +1771,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
         <span className="anim__count">
           {inHand.length === 0 && <>Mano vacía · </>}
           {onBoard.length} en el campo
+          {walked.length > 0 && <> · {walked.length} ya ha{walked.length === 1 ? "" : "n"} andado</>}
         </span>
       </div>
     </div>
@@ -1230,6 +1795,62 @@ function transform(
 ): string {
   const r = rotate ? ` rotate(${rotate.toFixed(2)}deg)` : "";
   return `translate(${x.toFixed(2)}px, ${(y - height).toFixed(2)}px) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})${r}`;
+}
+
+/**
+ * El centrado del disco sobre el punto de la ficha. Va aquí como cadena y no en
+ * el CSS a secas porque el aliento y el hundimiento escriben `transform` sobre
+ * el mismo elemento, y todas las cadenas que compitan tienen que llevar LA MISMA
+ * LISTA DE FUNCIONES en el mismo orden: si una dice `translate scale` y otra
+ * `translate translateY scale`, el navegador no las interpola, las cambia de
+ * golpe y la ficha pega un salto.
+ */
+const TOKEN_BASE = "translate(-50%, -50%)";
+
+/**
+ * La postura de reposo del disco: recto y con su color, o acuclillado y apagado
+ * si ya ha andado.
+ *
+ * El filtro se emite SIEMPRE completo, incluso cuando no hace nada
+ * (`saturate(1) brightness(1)`), por lo mismo que la lista de transformaciones:
+ * interpolar desde `none` no está garantizado y lo que se ve es un corte.
+ */
+function tokenRest(moved: boolean, size: number, c: Timings): { transform: string; filter: string } {
+  const sink = moved ? size * c.spentSink : 0;
+  const fade = moved ? c.spentFade : 0;
+  return {
+    transform: `${TOKEN_BASE} translateY(${sink.toFixed(2)}px) scale(1, 1)`,
+    // El brillo baja bastante menos que el color: una ficha que ya ha andado
+    // tiene que seguir viéndose sobre el suelo, porque todavía puede atacar.
+    filter: `saturate(${(1 - fade).toFixed(2)}) brightness(${(1 - fade * 0.3).toFixed(2)})`,
+  };
+}
+
+/** Coger una ficha sin sacarla de su casilla: sube a la altura de un salto. */
+function pickUp(el: HTMLElement, at: { x: number; y: number }, hop: number): Animation[] {
+  const options: KeyframeAnimationOptions = {
+    duration: 130,
+    easing: cubic(EASE_BACK),
+    fill: "forwards",
+  };
+  const list = [el.animate([{ transform: transform(at.x, at.y, hop, 1.05, 0.97) }], options)];
+  const shadow = shadowOf(el);
+  if (shadow) {
+    list.push(
+      shadow.animate(
+        [{ transform: `translate(${at.x}px, ${at.y}px) scale(${(1 + hop / 120).toFixed(3)})`, opacity: 0.4 }],
+        options,
+      ),
+    );
+  }
+  return list;
+}
+
+/** Cómo se nombra a quien ocupa un hexágono, para que el motor pueda explicarse. */
+function nameAt(pieces: readonly Piece[], hex: HexCoord): string | null {
+  const piece = pieces.find((p) => p.hex && Hex.equals(p.hex, hex));
+  if (!piece) return null;
+  return `la ficha ${DAMAGE_TYPES[piece.damage].icon} ${piece.side === "propio" ? "tuya" : "enemiga"}`;
 }
 
 /**

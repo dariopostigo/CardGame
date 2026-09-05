@@ -21,10 +21,12 @@ La aplicación sigue el mismo corte, y **`/dev` ya no es lo que era**:
 | Ruta | Qué es |
 |---|---|
 | `/docs` | La wiki. Redirige a `/docs/v3`; se salta a `/docs/v2` con el conmutador de la cabecera. **Un solo apartado**, no dos |
-| `/dev` | Construcción de V3 (`lib/dev-registry.ts`, `components/dev/`). Hoy solo el hub: todo planificado |
+| `/dev` | Construcción de V3 (`lib/dev-registry.ts`, `components/dev/`). Una **cadena de dependencia**, no una lista suelta |
 | `/lab` | Los laboratorios del motor v2 (`lib/lab-registry.ts`, `components/lab/`). Antes vivían en `/dev` |
 
 Al escribir código nuevo de V3 va en `/dev` y `lib/v3/`, nunca en `/lab` ni en `lib/v2/`.
+
+**Un módulo de `/dev` declara de quién depende.** `DevModule.needs` lleva el slug del módulo que le hace falta y **qué** le pide, así que la lista está en orden topológico y `dependencyProblems()` lo comprueba. Dos reglas al tocarla: un módulo nuevo va **después** de todos aquellos de los que depende, y si se construye con un remiendo en lugar de una dependencia que aún no existe —como hace `/dev/animacion` con el tablero, la ficha, la carta y el mazo— ese remiendo se escribe en `standIn`, no en un comentario. Un módulo puede construirse fuera de `/dev` (el marco de carta cuelga de la wiki): entonces lleva `home`. El porqué está en [`ARCHITECTURE.md`](ARCHITECTURE.md) §2-bis, "Los apartados".
 
 # Estilos: SCSS + ITCSS
 

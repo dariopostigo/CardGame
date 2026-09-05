@@ -1,3 +1,5 @@
+<!-- estado: por-escribir -->
+
 # Items — V3
 
 > Esqueleto. Nada decidido todavía.

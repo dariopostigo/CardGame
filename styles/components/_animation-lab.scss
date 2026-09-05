@@ -16,15 +16,27 @@
 // mover en vivo (el porqué completo, en lib/v3/anim.ts). Lo que hay aquí es
 // dónde está cada capa y de qué color es.
 //
+// LA ÚNICA EXCEPCIÓN a lo anterior es el TERRENO QUE SE OFRECE, y tiene su
+// motivo: no es una secuencia, es un estado —"estos hexágonos te aceptan"— que
+// se enciende y se apaga con el gesto. Eso en CSS es una transición, y hacerlo
+// con la Web Animations API obligaría a lanzar y cancelar quince animaciones por
+// cada vez que se coge una ficha. La duración se la pasa el componente en
+// `--offer-rise-ms` (de lib/v3/anim.ts) y el retraso de cada hexágono va en su
+// propio estilo, así que sigue sin haber un número de tiempo escrito aquí.
+//
 // EL APILADO, de abajo arriba, y el orden es la mitad del efecto:
 //   1. la mesa (fondo de .anim__stage)
-//   2. el suelo y la rejilla (SVG)
-//   3. el polvo (canvas) — por encima del suelo, por debajo de las fichas: una
+//   2. el suelo (SVG)
+//   3. el terreno ofrecido — ENTRE el suelo y la rejilla: la oferta es el
+//      terreno encendiéndose, no una chapa por encima, así que las líneas de la
+//      rejilla tienen que seguir viéndose sobre ella
+//   4. la rejilla
+//   5. el polvo (canvas) — por encima del suelo, por debajo de las fichas: una
 //      nube tiene que tapar el terreno pero pasar por detrás de quien la
 //      levanta, o la ficha parece estar dentro de la nube en vez de encima
-//   4. las sombras, TODAS juntas y antes que cualquier ficha
-//   5. las fichas
-//   6. los números de daño
+//   6. las sombras, TODAS juntas y antes que cualquier ficha
+//   7. las fichas
+//   8. los números de daño
 // -------------------------------------------------------------------------
 
 .anim {
@@ -97,6 +109,46 @@
   stroke-width: 1;
   stroke-linecap: round;
   opacity: 0.28;
+}
+
+// --- El terreno que se ofrece ----------------------------------------------
+
+// Verde agua, que es el color que la arena ya usa para lo que alcanza una ficha
+// al moverse (_colors.scss, $arena-move). No se le inventa uno propio ni se
+// reutiliza el oro del alcance de ataque: en el mismo turno una ficha mueve Y
+// ataca, así que las dos cosas se van a enseñar a la vez y tienen que poder
+// distinguirse. Que el despliegue de una carta use este mismo verde es
+// deliberado — la pregunta es la misma, "aquí puedes soltar esto", aunque
+// detrás haya dos reglas distintas.
+.anim__offer polygon {
+  fill: rgba($arena-move, 0.16);
+  stroke: rgba($arena-move, 0.5);
+  stroke-width: 1.5;
+  opacity: 0;
+  pointer-events: none;
+  // El levantarse se dibuja desde el CENTRO del hexágono y no desde la esquina
+  // del lienzo: sin esto, el `translateY` iría bien pero cualquier escalado
+  // futuro tiraría el polígono al otro lado del tablero.
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--offer-rise-ms) ease-out,
+    transform var(--offer-rise-ms) ease-out;
+
+  &[data-offered="true"] {
+    opacity: 1;
+  }
+
+  // El candidato: al que va a caer la ficha si sueltas ahora. Sube de golpe y
+  // sin esperar a la onda —es respuesta al puntero, no parte de la oferta— y
+  // por eso se le quita el retraso con `!important`: el retraso escalonado lo
+  // escribe el componente en el estilo en línea, y aquí hay que ganarle.
+  &[data-candidate="true"] {
+    fill: rgba($arena-move, 0.34);
+    stroke: $arena-origin;
+    stroke-width: 2.5;
+    transition-delay: 0ms !important;
+  }
 }
 
 // --- El polvo --------------------------------------------------------------
@@ -176,8 +228,19 @@
     will-change: transform, opacity;
   }
 
-  &[data-placed="false"] {
+  // Se coge tanto la carta de la mano como la ficha del campo: son el mismo
+  // gesto con dos reglas detrás (desplegar y andar), y el cursor tiene que
+  // decir que las dos se cogen.
+  &[data-placed="false"],
+  &[data-placed="true"][data-moved="false"] {
     cursor: grab;
+  }
+
+  // La que ya ha andado no se coge, y el cursor lo dice ANTES de intentarlo. Es
+  // la última capa de la misma información: no respira, no tiene color y no se
+  // deja coger.
+  &[data-moved="true"] {
+    cursor: not-allowed;
   }
 
   &[data-dragging="true"] {
@@ -407,5 +470,14 @@
   .anim__shadow,
   .anim__damage {
     transition: none !important;
+  }
+
+  // La oferta NO se apaga aquí, y es la única de la lista que se queda: es
+  // información sobre lo que se puede hacer, no un adorno. Lo que se le quita es
+  // el relieve y la onda —el componente ya pone `offerRise` y `offerRipple` a 0
+  // (anim.ts, `reduced`)— y lo que queda es el color, que dice lo mismo sin
+  // mover nada. Esto es el cinturón para el encendido en sí.
+  .anim__offer polygon {
+    transition-property: opacity;
   }
 }

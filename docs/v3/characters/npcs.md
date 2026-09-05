@@ -1,3 +1,5 @@
+<!-- estado: por-escribir -->
+
 # NPCs — V3
 
 > Esqueleto. Nada decidido todavía.

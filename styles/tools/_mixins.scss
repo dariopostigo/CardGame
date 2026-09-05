@@ -172,11 +172,15 @@
 //     caja es un rectángulo y el hueco que baña es un octógono.
 //
 // $ring es el grosor del filete que hay que librar, y por defecto es
-// $sketch-band —el de la G y la H, que son el filete entero de la carta—.
-// La J · Orla lo llama con su propio $orla-ring, mucho más fino, porque allí
-// el filete ya no es el canto de la carta: vive dentro de un borde negro
-// (styles/components/card-sketch/_orla.scss) y no tiene que absorber su
-// propio desenfoque contando con 15px, tiene los que le quedan.
+// $sketch-band —el de la G y la H, que era el filete entero de la carta—. Quien
+// tenga otro lo pasa: la J lo llamaba con su anillo fino de 8px y la carta de
+// hoy (card-sketch/_lamina.scss) lo llama con su paspartú de 12, que no es metal
+// pero hace el mismo trabajo de dejarle sitio al desenfoque.
+//
+// Y hoy se llama TAMBIÉN por sus efectos secundarios y no por el octógono: la
+// carta elegida deshace el recorte y se queda con las custom properties del
+// metal y la Rareza y con el baño de luz del ::before. Si algún día no queda
+// nadie que use el clip, este mixin se parte en dos.
 @mixin octagon-shell($ring: $sketch-band) {
   border-radius: 0;
   background: transparent;

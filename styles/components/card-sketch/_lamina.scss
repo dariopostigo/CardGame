@@ -1,0 +1,366 @@
+@use "sass:math";
+@use "../../abstracts" as *;
+
+// =========================================================================
+// La carta de V3 — sin marco *(boceto L · Lámina, 2-sep-2026; ELEGIDA el 3)*
+//
+// ES EL DISEÑO DEFINITIVO. Los once bocetos anteriores discuten CÓMO es el
+// marco: de qué metal, con cuántos anillos, trazado por el navegador o traído
+// como archivo. Este preguntó otra cosa, la única que nadie había puesto sobre
+// la mesa en doce días —**si hace falta un marco**— y ganó con ella. El 3 de
+// septiembre de 2026 Dario lo eligió como la carta de V3 y se borraron los dos
+// que quedaban, la J · Orla —el diseño elegido hasta ese día— y la K · Moldura,
+// con sus parciales y su marco vectorial. Cualquier arreglo de la carta se hace
+// ya sobre este archivo. Lo que enseñó cada boceto sigue en
+// knowledge/v3/card-concept/README.md, que es donde vive el razonamiento.
+//
+// LA IDEA, EN UNA FRASE: la carta es la ilustración recortada con las
+// esquinas redondeadas de siempre, con un paspartú negro de doce píxeles
+// alrededor, una línea de Rareza encendida en su canto interior, y nada más
+// encima.
+//
+// DE DÓNDE SALE EL ENCUADRE DEL ARTE, porque no salió de elegirlo aquí: de la
+// K · Moldura, que el 2 de septiembre de 2026 estrenó una moldura fina solo para
+// los HÉROES. Aquella metía el arte 9px y lo recortaba en octógono para que el
+// borde muriera POR DEBAJO de un filete de 6,5 —tres píxeles y medio de solape
+// para que no se abriera una raya de fondo—, y esta carta empezó copiándole el
+// número: sin filete que lo tape, esos 9px dejaban de ser un solape y pasaban a
+// ser LO QUE SE VE. El mismo número con el trabajo cambiado, que es el aspecto
+// que Dario pidió del arte.
+//
+// Subió a 12 ese mismo día, también a peticion suya, y el número tampoco es
+// libre: 12 era la VENTANA de esa misma moldura fina, o sea el hueco que dejaba
+// para la ilustración. Con la K borrada esa cota ya no vive en ningún parcial
+// —estaba en _moldura.scss, y el archivo se fue con el boceto—, pero el 12 se
+// queda: no es un número elegido, es el que hacía que las dos cartas enseñaran
+// el mismo trozo de ilustración cuando se pudieron poner una al lado de la otra.
+// Su cuenta, con las tres cotas del archivo, está en
+// knowledge/v3/card-concept/README.md §"Boceto K".
+//
+// LA CARTA VUELVE A SER UN RECTÁNGULO REDONDEADO, y no un octógono — corregido
+// el mismo 2 de septiembre, unas horas después de la primera versión. Aquella
+// heredaba el chaflán a 45° sin haberlo decidido: `.sketch--cuerpo` es
+// octogonal de nacimiento (octagon-shell, tools/_mixins.scss) y este parcial no
+// deshacía nada, así que se quedaba con lo que traía puesto. Dario pidió
+// explícitamente lo contrario — esquinas redondeadas, no rectas—, y la
+// corrección es la MISMA que hizo la K por otro motivo: deshacer el octógono
+// heredado y volver a la esquina curva. Con las dos borradas, el octógono ya no
+// se ve en ninguna carta y sigue dibujándose en el cuerpo por lo que dice su
+// cabecera: es la silueta contra la que están medidas sus piezas.
+//
+// Y aquí sale más barato que en la K, porque no hay un archivo dictando la
+// curva: el radio es, sin tocarlo, **el de la carta base** ($sketch-radius,
+// 14px) — literalmente lo que hay debajo de todo boceto antes de que ninguno
+// le pusiera un marco encima. Por eso el artículo ya no se apaga (ver más
+// abajo): pintando la carta él solo, con su radio, su fondo y su halo de
+// Rareza de siempre, ES la lámina. El inlay se vuelve transparente, igual que
+// hace la K, para que las dos siluetas —la del artículo y la de lo que hay
+// encima— sean la misma y no compitan por un halo cada una.
+//
+// La VENTANA del arte hereda el radio de la carta encogido por el paspartú, no
+// un número propio: desplazar un rectángulo redondeado de radio R hacia dentro
+// d píxeles por los cuatro lados deja un radio R − d —la misma propiedad que
+// usa oct-clip() para el chaflán, solo que en un círculo la cuenta es lineal y
+// no hace falta la raíz de 2—. Con R = 14 y d = 12 quedan 2px, y con ellos se
+// recortan las tres piezas que antes usaban oct-clip(): el arte, el baño de luz
+// hacia dentro y las dos esquinas de abajo del pie.
+//
+// Y a 2px la ventana se lee casi a escuadra, que es la consecuencia CORRECTA de
+// que la banda mida 12 por igual en todo el contorno y no un descuido que
+// arreglar subiendo el radio: un radio interior más abierto que R − d ensancha
+// el negro solo en las esquinas, y la ventana se ve pellizcada en las cuatro. Lo
+// que salva la lectura es el canto encendido, y de rebote: el trazo se dibuja
+// hacia fuera, así que el borde VISIBLE de la línea va a 2 + 2 = 4px de radio y
+// la esquina se ve curva aunque el recorte esté a 2. Si algún día el paspartú
+// crece más, lo que hay que subir es el radio de la CARTA, no el de la ventana.
+//
+// LO QUE SE PIERDE AL QUITAR EL MARCO, dicho aquí porque es lo que hay que
+// mirar y no lo que hay que leer:
+//
+//   · LA RAREZA SE QUEDA SIN PIEDRA, y esto ya tiene respuesta. El rombo de
+//     16px vive «a caballo del canto de arriba», o sea montado sobre la banda de
+//     metal (_cuerpo.scss §"La piedra de Rareza"); sin banda no hay dónde
+//     engastarlo, y un rombo de metal flotando sobre la ilustración es un
+//     adorno suelto, no una pieza. Se va, y con él la única marca DURA del raíl
+//     —quedaban el baño de luz y el halo, y los dos son de LUZ, que es lo único
+//     que no se imprime—. Lo que la sustituye es el CANTO ENCENDIDO
+//     ($lamina-edge, abajo), elegido el 2 de septiembre de 2026 entre seis
+//     variantes montadas en el lab.
+//   · EL PANEL PIERDE SU TAPA. En las otras dos el pie iba a sangre y eran los
+//     15px de metal los que le recortaban los cantos, que es lo que hacía que se
+//     leyera cerrando contra el marco. Aquí se recoge dentro del paspartú (abajo,
+//     §"El pie"): sin marco que lo tape, un panel a sangre se lee como una
+//     etiqueta pegada por encima del borde.
+//
+// LO QUE NO SE TOCA, y era la condición de la comparación: por dentro es el
+// mismo cuerpo (card-sketch/_cuerpo.scss) que montaban la J y la K —disco en la
+// esquina, estandarte colgando de él, las ocho en una fila, placa al pie—. Si
+// además hubiera cambiado el reparto habría habido dos variables en juego y no
+// se podría haber leído ninguna. Todo lo que hay aquí abajo es o bien apagar el
+// octógono heredado, o bien volver a medir contra el paspartú lo que el cuerpo
+// mide contra el filete.
+// =========================================================================
+
+// El PASPARTÚ: lo que queda de fondo a la vista alrededor del arte.
+//
+// Nació en 9px, que era el solape con el que el arte se metía por debajo del
+// filete de la moldura fina de los héroes, y subió a **12 el 2 de septiembre de
+// 2026**, a ojo y pedido: «un poco más de margen negro». El número no es libre y
+// por eso se paró en 12 y no en 13: es el mismo que la VENTANA de esa misma
+// moldura, o sea que el paspartú de esta carta y el hueco que dejaba la moldura
+// fina de la K medían lo mismo — las dos enseñaban el mismo trozo de ilustración
+// y lo único que cambiaba era qué había alrededor, metal dibujado en una y negro
+// en la otra. Con la K borrada la comparación ya no se puede hacer, pero el
+// número se queda porque es lo que salió de ella.
+//
+// Y es la medida de la que cuelga todo lo demás de este parcial: el asiento del
+// disco, el del raíl, el retranqueo del pie, el radio de su esquina y dónde cae
+// el canto encendido salen de ella, igual que en el cuerpo salen todos de
+// $sketch-band.
+$lamina-mat: 12px;
+
+// Los 4px de aire entre el canto INTERIOR del paspartú y las piezas de la
+// esquina, que es la misma cuenta que hacen el cuerpo ($sketch-band + 4) y la J
+// ($orla-ring + 4) con el filete que cada una tiene de verdad. Aquí el filete no
+// es metal, es borde — pero hace el mismo trabajo: separa la pieza del canto
+// para que se lea puesta encima y no mal encajada.
+//
+// Ojo: el DISCO del Tier ya no cuelga de aquí, cuelga del canto encendido (ver
+// abajo, §"El disco"). Esto sigue sujetando al raíl de Características.
+$lamina-in: $lamina-mat + 4px;
+
+// El CANTO ENCENDIDO: los 2px de color de Rareza en la línea donde el paspartú
+// muere contra la ilustración. **Es la respuesta elegida a dónde vive el Tier
+// cuando no hay marco** *(2-sep-2026)*, y hace falta saber a qué pregunta
+// contesta o parece un adorno: al quitar el marco se cayó la piedra de Rareza
+// —va engastada en la banda de metal, y sin banda no hay dónde ponerla— y las
+// dos señales que quedaban, el baño de luz hacia dentro y el halo de fuera, son
+// las dos de LUZ. Y la luz es lo único que no se imprime: en papel a 63mm esta
+// carta no decía su raíl, lo decía la pantalla. Esto es pigmento.
+//
+// Se eligió mirando seis variantes montadas en el lab (el razonamiento completo,
+// con lo que enseñó cada una, está en knowledge/v3/card-concept/README.md
+// §"Boceto L"). Las dos que perdió por poco conviene tenerlas escritas porque
+// son las que se volverían a proponer: el mat entero teñido del raíl —se lee
+// antes, pero es la vía que ya descartó el boceto D— y las muescas contadas en
+// la banda de abajo, que son las únicas que llevan el Tier EXACTO y no la clase.
+//
+// 2px y no 1 por la lección del hilo de oro (settings/_colors.scss §alloy): a
+// 1px un filete se pierde en cuanto el fondo se le parece. Y a 2px hay que
+// aceptar lo que se vio en la probeta y no es un defecto que arreglar: en el
+// raíl COMÚN el gris (#9aa0a6) sobre negro se lee casi blanco, así que la carta
+// más barata de la escala dice «tengo un canto» antes que decir de qué color es.
+// Es el precio de que la marca sea una línea fina y no una pieza.
+$lamina-edge: 2px;
+
+// El radio de la VENTANA: el de la carta ($sketch-radius, 14px) encogido por el
+// paspartú. Es la misma propiedad geométrica que oct-clip() usa para el
+// chaflán —desplazar el contorno d hacia dentro encoge el radio d—, solo que
+// en un círculo no hace falta corregir por la raíz de 2: R − d y ya. Con
+// math.max() por si algún día el paspartú creciera más que el radio de la
+// carta, que dejaría un rectángulo de esquina viva y no un radio negativo.
+$lamina-inner-radius: math.max($sketch-radius - $lamina-mat, 0);
+
+// El acolchado del panel, y sale de una cuenta y no del gusto: el pie ya no va
+// a sangre —mide 300 − 18 = 282— así que el descuento del filete ($frame-clear,
+// 21px en el cuerpo) deja de tener sentido y lo que hay que conservar es la
+// COLUMNA de la fila de ocho. El cuerpo la calcula en (300 − 42 − 14) / 8 =
+// 30,5px, que es la medida con la que están juzgadas las ocho cápsulas en las
+// otras dos cartas; aquí sale la misma con 12: (282 − 24 − 14) / 8 = 30,5.
+// Entre bocetos cambia el aspecto, nunca la medida.
+$lamina-pad: 12px;
+
+// --- El artículo: la carta base, sin tocar ---------------------------------
+// No hace falta escribir nada aquí. Antes se apagaba —border-radius:0,
+// background:transparent, box-shadow:none— porque el marco heredado era un
+// octógono y el artículo pintaba por debajo un rectángulo redondeado: dos
+// siluetas compitiendo por el mismo halo. Con las esquinas redondeadas esa
+// razón desaparece —las dos siluetas son la MISMA, la de siempre
+// ($sketch-radius en components/_card-sketch.scss)— así que el artículo vuelve
+// a hacer lo que hace por defecto en cualquier carta sin boceto: pintar el
+// fondo negro, el radio y el halo de Rareza. Es la misma corrección que hizo
+// la K con su propio radio; aquí el radio no cambia, así que ni siquiera hace
+// falta la línea que allí sí hizo falta.
+
+// --- El inlay: transparente, deja ver el artículo debajo -------------------
+// Aquí no hay mat que descontar —eso era la J— así que ocupa la caja completa y
+// las medidas heredadas del cuerpo se cuentan desde el canto de la carta.
+//
+// Especificidad: dos clases contra la UNA del .sketch__inlay del esqueleto y
+// contra la del .sketch--cuerpo que lleva el mismo elemento, así que gana sin
+// depender del orden de carga.
+.sketch--lamina .sketch__inlay {
+  // El material y la luz, con el paspartú como anillo: octagon-shell recorta su
+  // baño hacia dentro a oct-clip($ring) por defecto, y aquí se vuelve a apagar
+  // dos líneas más abajo — se pide solo por sus efectos secundarios: las
+  // custom properties del metal y la Rareza (armor-vars, seam-vars) y el
+  // baño de luz del ::before, que sí se queda.
+  @include octagon-shell($ring: $lamina-mat);
+
+  // Transparente y sin sombra propia: el fondo negro y el halo de fuera ya los
+  // pone el artículo (arriba), y con las dos siluetas iguales un segundo
+  // drop-shadow aquí sería el mismo halo dos veces, ligeramente desalineado
+  // por redondeo. Es la misma corrección que hacía la K en su propio parcial.
+  filter: none;
+
+  // El baño de luz interior de la Rareza, devuelto a la esquina curva: en vez
+  // del chaflán de oct-clip() usa el radio de la ventana, la misma cuenta que
+  // el arte de aquí abajo.
+  &::before {
+    inset: $lamina-mat;
+    border-radius: $lamina-inner-radius;
+    clip-path: none;
+  }
+
+  // --- El arte, con el encuadre de los héroes y su canto encendido --------
+  // El cuerpo lo pone a sangre y lo recorta al octógono de la carta. Aquí se
+  // mete el paspartú por los cuatro lados y el radio encoge con él, que es lo
+  // que mantiene la curva paralela a la de la carta en vez de dejar una
+  // esquina más cerrada que la otra.
+  //
+  // EL CANTO va como box-shadow y no como borde, y no es indiferente: un borde
+  // le restaría 2px de ilustración por cada lado, y lo que se eligió es
+  // justamente una marca que no cuesta ilustración — la línea se dibuja hacia
+  // FUERA, sobre el negro del paspartú, que para eso está. Por eso también vive
+  // aquí, en el arte, y no en el inlay: así la línea sigue exactamente el canto
+  // del hueco de arte —su radio incluido— sin tener que repetir la cuenta.
+  //
+  // Tira de --rarity y no de --seam-hi aunque el vocabulario de la veta sea el
+  // segundo, y es una cuenta: --seam-hi mezcla un 62% de blanco, y en el raíl
+  // común eso deja un filete blanco del todo, o sea una línea que no dice ningún
+  // raíl. La luz se la puede permitir un canal ancho entre dos raíles de metal;
+  // una línea de 2px necesita el color a pelo.
+  .sketch__art {
+    inset: $lamina-mat;
+    border-radius: $lamina-inner-radius;
+    clip-path: none;
+    box-shadow: 0 0 0 $lamina-edge var(--rarity);
+  }
+
+  // --- El pie, recogido dentro del paspartú -------------------------------
+  // La única pieza de la composición que este boceto mueve de sitio, y no por
+  // gusto: en el cuerpo el panel va a sangre porque hay 15px de metal encima
+  // que le recortan los cantos. Sin nada que lo tape, un panel a sangre pisaría
+  // el paspartú por tres lados y lo dejaría en forma de U — que es lo que
+  // convierte un borde en una etiqueta pegada. Retranqueado, el marco cierra
+  // por los cuatro.
+  //
+  // Solo las dos esquinas de ABAJO llevan radio: las de arriba las tapa el
+  // arte, que se sienta justo encima sin ningún hueco entre los dos (el pie no
+  // lleva margen superior). Mismo radio que la ventana del arte, porque está a
+  // la misma profundidad del paspartú.
+  //
+  // El margen se escribe en el pie y no como acolchado del inlay porque el
+  // inlay es la caja de todo lo demás: el arte se mide desde su canto, y las
+  // piezas de la esquina también.
+  .sketch__foot {
+    margin: 0 $lamina-mat $lamina-mat;
+    border-radius: 0 0 $lamina-inner-radius $lamina-inner-radius;
+    clip-path: none;
+  }
+
+  .sketch__plate--panel {
+    padding: 20px $lamina-pad $lamina-pad;
+  }
+
+  // --- El disco del Tier ---------------------------------------------------
+  // Es un ARCHIVO —/assets/v3/frames/tier.png, el medallón generado la noche del
+  // 26 de agosto de 2026— y no el círculo de CSS que sigue dibujando el cuerpo,
+  // que es lo que hay debajo y la medida contra la que se colocó este. Lo
+  // montaron así los tres bocetos que llegaron al final; la cuenta vivía en
+  // _orla.scss y se muda aquí al borrarse aquel archivo.
+  //
+  // Va como background y no como <img>, que es la norma de la carpeta: esto no
+  // es un dato de la carta, es moldura. El dato es el número, que sigue siendo el
+  // ÚNICO hijo del span, centrado por el `place-items: center` que hereda.
+  //
+  // LAS TRES MEDIDAS DEL ARCHIVO, sacadas de él y no a ojo. El lienzo es cuadrado
+  // y la pieza va centrada, así que todas van en fracción del lado:
+  //   · 0,782 — el anillo de oro, medido en la DIAGONAL, que es donde el medallón
+  //     es un círculo limpio.
+  //   · 0,726 — el hueco oscuro de dentro, también en la diagonal, que es donde
+  //     el anillo entra MÁS: por los ejes el hueco se ensancha hasta 0,80. Manda
+  //     la diagonal porque es el círculo inscrito, o sea lo que de verdad le
+  //     queda al número.
+  //   · 0,976 — las cuatro puntas en cruz, que llegan casi al filo del lienzo.
+  //     Son las que piden que la CAJA sea más grande que el disco nominal, y las
+  //     que fijan dónde se sienta la pieza (más abajo).
+  //
+  // De ahí sale el tamaño, y sale DIVIDIDO y no escrito: la caja es el disco de
+  // siempre partido por la fracción del anillo, así que el anillo del PNG mide
+  // exactamente $sketch-disc y lo único que la caja añade son las cuatro puntas.
+  // Escrito como número fijo se rompería a la primera: la primera vez fue un 60
+  // clavado (46 / 0,782 = 58,8) y al subir el disco a 54 aquel 60 habría dejado
+  // el anillo 8px por debajo del círculo que el cuerpo dibuja en CSS. Heredar una
+  // cuenta como número es el error que ya cometieron aquí el rombo y el raíl.
+  //
+  // Y se queda, aunque sea una pieza de metal en una carta sin metal: el disco
+  // no es marco, es un DATO —el tier— con su chapa. Quitarlo sería contestar una
+  // pregunta que este boceto no hace.
+  $lamina-disc: math.div($sketch-disc, 0.782);
+
+  // DÓNDE SE SIENTA, y esto cambió con el canto encendido *(2-sep-2026)*: se
+  // corrió un pelín hacia dentro, a ojo y pedido, y al medirlo resultó que había
+  // un sitio exacto donde ponerlo.
+  //
+  // Antes colgaba de $lamina-in —los 4px de aire de siempre contra el canto
+  // interior del paspartú—, que es la cuenta que hacen el cuerpo y la J. Con esa
+  // cuenta las cuatro PUNTAS en cruz del PNG (0,976 del lado, o sea 0,488 desde
+  // el centro) se salían del hueco de arte y CRUZABAN la línea de Rareza, que
+  // aparecía partida por el medallón — con el paspartú negro no se notaba, con
+  // una línea de color encendida sí.
+  //
+  // Así que el asiento lo pone ahora la punta: centro en $lamina-mat + 0,488 ×
+  // caja, y la punta muere justo donde arranca el canto. Son ~2,7px más adentro
+  // que antes, o sea el pelín que se pedía, pero con un número que se puede
+  // volver a derivar si cambia el paspartú o el archivo.
+  $lamina-disc-tip: 0.488;
+  $lamina-disc-c: $lamina-mat + $lamina-disc * $lamina-disc-tip;
+  $lamina-disc-in: $lamina-disc-c - math.div($lamina-disc, 2);
+
+  // El asiento del ANILLO de oro —el disco NOMINAL de 54px, que va centrado en
+  // la caja del PNG—, y hace falta aparte porque de él cuelga el estandarte. Es
+  // lo que antes valía $lamina-in y ahora ya no: si la bandera se quedara en el
+  // asiento viejo se despegaría del medallón los mismos 2,7px que este se ha
+  // movido.
+  $lamina-disc-seat: $lamina-disc-c - math.div($sketch-disc, 2);
+
+  .sketch__disc {
+    top: $lamina-disc-in;
+    left: $lamina-disc-in;
+    width: $lamina-disc;
+    height: $lamina-disc;
+
+    // Los tres se apagan a mano: el borde y el aro dibujaban el metal que ahora
+    // trae el PNG, y el radial-gradient su cara oscura. La sombra pasa de
+    // box-shadow a filter para que siga la silueta recortada y no el rectángulo
+    // de la caja.
+    border: 0;
+    border-radius: 0;
+    background: url("/assets/v3/frames/tier.png") center / contain no-repeat;
+    box-shadow: none;
+    filter: drop-shadow(0 3px 5px card-sketch("shadow"));
+  }
+
+  // El estandarte cuelga del disco, así que se mueve con él: las dos fórmulas
+  // del cuerpo, sobre el asiento de este boceto. Y el emblema se sienta un poco
+  // más abajo por lo mismo que en la J y la K —el PNG mide más que el círculo
+  // nominal y baja una punta justo por el eje de la bandera—, así que baja un
+  // cuarto del saliente.
+  .sketch__banner {
+    top: $lamina-disc-seat + $sketch-disc - 10px;
+    left: $lamina-disc-seat + math.div($sketch-disc - $sketch-banner, 2);
+    padding-top: 26px + math.div($lamina-disc - $sketch-disc, 4);
+
+    &[data-art] {
+      padding-top: 32px + math.div($lamina-disc - $sketch-disc, 4);
+    }
+  }
+
+  // El raíl de Características, pegado al paspartú real y no a un filete de
+  // 15px que aquí no existe. Mismas dos fórmulas que en la J.
+  .sketch__rail {
+    top: $lamina-mat + 13px;
+    right: $lamina-mat + 3px;
+  }
+}

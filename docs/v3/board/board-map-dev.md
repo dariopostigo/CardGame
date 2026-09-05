@@ -1,3 +1,5 @@
+<!-- estado: por-escribir -->
+
 # Tablero (técnico) — V3
 
 > Esqueleto. Contrapartida técnica de [board-map.md](board-map.md): formato de datos, generación y lo que necesita el código.

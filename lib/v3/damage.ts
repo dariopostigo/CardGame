@@ -2,13 +2,13 @@
 // Tipos de daño — V3
 //
 // Catálogo cerrado de tres, y lo único que aportan aquí es su ALCANCE en
-// hexágonos: docs/v3/game-design.md §4.3. Toda ficha lleva uno y solo uno,
+// hexágonos: docs/v3/game-design.md §4.3. Todo personaje lleva uno y solo uno,
 // obligatorio y sin defecto.
 //
 // Vive en su propio archivo y no dentro de la arena a propósito: el alcance es
 // propiedad del TIPO DE DAÑO, no del tablero. La arena solo mide distancias
 // (lib/v3/hex.ts `distance`); quien decide si un ataque llega es esto. Cuando
-// exista la ficha de personaje, será ella la que importe este módulo.
+// existan las estadísticas de personaje, serán ellas las que importen este módulo.
 //
 // LOS TRES NÚMEROS NO SE MUEVEN, y esto ya está probado en la práctica: el 24 de
 // agosto de 2026 dejaron de ser provisionales sobre la geometría 7×5, el 27 el

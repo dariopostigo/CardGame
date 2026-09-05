@@ -1,17 +1,19 @@
 // =========================================================================
-// El roster de "Diseño baraja" — las razas que hoy se pueden pintar
+// El roster de "Diseño de cartas" — las razas que hoy se pueden pintar
 //
-// Esta página crece raza a raza, y este es el archivo que crece. La lista de
-// razas estaba escrita dentro de CardDeck.tsx cuando solo había una: con dos
-// ya no cabe ahí sin meter doce fichas de datos en un componente.
+// LA PÁGINA CRECE RAZA A RAZA Y ESTE ES EL ARCHIVO QUE CRECE: una raza nueva son
+// sus doce fichas aquí y una línea en DECK_RACES (abajo). CardDesign.tsx no se
+// toca. La lista estuvo escrita dentro del componente cuando solo había una
+// raza; con dos ya no cabía sin meter veinticuatro fichas de datos en un TSX.
 //
-// POR QUÉ NO VA EN sample.ts, que es donde está 👤 Humanos. Porque sample.ts
-// no es "los datos de V3": es la MUESTRA del laboratorio de bocetos
-// (CardSketchLab), la plantilla de la raza piloto contra la que se comparan
-// nueve marcos. Añadir Enanos allí las metería también en esa comparación, y
-// nueve bocetos × veinticuatro cartas no se comparan: se hojean. El
-// laboratorio se queda con la raza piloto, que es todo lo que necesita para
-// juzgar un marco, y la baraja —que ya no compara nada— es la que acumula.
+// POR QUÉ NO VA EN sample.ts, que es donde está 👤 Humanos. Porque sample.ts no
+// es "los datos de V3": nació como la MUESTRA del laboratorio de bocetos, la
+// plantilla de la raza piloto contra la que se comparaban nueve marcos, y
+// añadir Enanos allí las habría metido en esa comparación — nueve bocetos ×
+// veinticuatro cartas no se comparan, se hojean. Cerrada la comparación el 3 de
+// septiembre de 2026 y fundidas las dos páginas en una, el reparto SIGUE
+// valiendo por un motivo distinto: sample.ts es la raza piloto, la que el resto
+// del proyecto importa, y este archivo es el catálogo que se hojea.
 //
 // Así que Humanos se IMPORTA de sample.ts en vez de copiarse. Sigue habiendo
 // una sola copia de cada dato: la raza piloto vive donde nació, y de aquí en
@@ -1031,9 +1033,18 @@ const DEMON_UNITS: readonly Subject[] = [
     // emblema de la raza también son 🔥. Cinco 🔥 en una carta.
     //
     // No tiene arreglo en el marco: en un raíl de glifos sin texto la carta
-    // dice, literalmente, "fuego fuego". Es razas.md lo que hay que tocar
-    // —repartir emojis entre las cuatro cosas que hoy son 🔥—, y le pasa igual
-    // al 👹 Señor demoníaco y al 👹 Balor.
+    // dice, literalmente, "fuego fuego". Le pasa igual al 👹 Señor demoníaco y
+    // al 👹 Balor.
+    //
+    // Y TAMPOCO SE ARREGLA REPARTIENDO EMOJIS, que es lo que decía aquí antes
+    // (corregido el 3 de septiembre de 2026). Las tres acepciones de 🔥
+    // —fuente, resistencia, inmunidad— comparten glifo A PROPÓSITO desde la
+    // auditoría de knowledge/v3/icon-concept/icons.md §3: el glifo dice que van
+    // del mismo tema y lo que falta es el ARO que marca el papel, que es
+    // tratamiento del icono y no otro dibujo. O sea que el trabajo no es de
+    // razas.md sino de icon-concept, y esta carta es su peor caso de prueba:
+    // si el aro no separa "inmune al fuego" de "fuego" AQUÍ, contiguos y del
+    // mismo tamaño, no separa nada en ningún sitio.
     skills: {
       vida: 82,
       ataque: 34,

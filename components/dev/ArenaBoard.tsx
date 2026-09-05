@@ -49,6 +49,10 @@
 //   5. fichas: los discos desplegados, con la sombra corta de una pieza que se
 //      levanta milímetros del suelo. Sin ratón propio: los clics los recoge la
 //      capa de encima, que es la que sabe qué hexágono es cada sitio.
+//   5-bis. la interfaz de cada ficha, por encima de TODAS ellas: lo que cuelga
+//      de una pieza sin ser la pieza (la barra de ❤️ Vida). La capa de fichas se
+//      pinta de atrás hacia delante, y eso es lo correcto para las piezas pero lo
+//      contrario de lo que necesita un indicador.
 //   6. interacción: el hexágono bajo el ratón, el elegido y el de origen.
 //   7. rótulos, pintados en el suelo. No se escriben debajo de una ficha: el
 //      número taparía el glifo y no diría nada que la ficha no diga.
@@ -60,7 +64,7 @@
 // contrario: v2 está congelado y lo vigente no puede colgar de él.
 // =========================================================================
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import * as Hex from "@/lib/v3/hex";
 import type { HexCoord, HexEdge, HexKey } from "@/lib/v3/hex";
 import type { Arena, Side } from "@/lib/v3/arena";
@@ -125,6 +129,13 @@ export type ArenaPiece = {
 
 export type ArenaBoardProps = {
   arena: Arena;
+  /**
+   * Modificador para el marco del tablero. El alto lo pone `.arena__viewport`,
+   * que está pensado para la arena entera: un retal de siete por cinco cabe en
+   * mucho menos, y dejarlo con el alto de siempre solo añade mesa vacía
+   * (`.arena__viewport--escena`).
+   */
+  className?: string;
   /** Radio del hexágono en píxeles del viewBox. */
   hexSize?: number;
   /** Compresión vertical. 1 sería el tablero plano visto a plomo. */
@@ -139,6 +150,29 @@ export type ArenaBoardProps = {
   regions?: readonly ArenaRegion[];
   /** Las fichas ya desplegadas, de los dos bandos. */
   pieces?: readonly ArenaPiece[];
+  /**
+   * Con qué se pinta cada ficha. Sin esto se pinta el disco con su glifo, que es
+   * el SUSTITUTO de este tablero: la ficha de verdad se está diseñando en
+   * /dev/pieza y es ella la que se inyecta por aquí.
+   *
+   * Es un hueco y no un cambio de dueño a propósito. El tablero se construyó
+   * antes que la ficha —no depende de nadie, por eso arrancó primero— y su disco
+   * sigue siendo lo que enseña la geometría sin discutir el dibujo. Cuando la
+   * ficha esté decidida, este tablero la pedirá por defecto y el disco se irá.
+   */
+  renderPiece?: (piece: ArenaPiece, at: { x: number; y: number }) => ReactNode;
+  /**
+   * Lo que se pinta POR ENCIMA de todas las fichas, ficha a ficha: la interfaz
+   * que cuelga de una pieza pero no forma parte de ella.
+   *
+   * Existe porque la capa de fichas se pinta de atrás hacia delante
+   * (`painterOrder`), y eso es lo correcto para las piezas —el solape se lee como
+   * profundidad— pero es lo contrario de lo que necesita un indicador: la barra de
+   * ❤️ Vida de /dev/pieza cuelga por debajo de su contador, o sea justo donde
+   * empieza la casilla de delante, y las dos fichas de delante le comerían las dos
+   * puntas. Pintarla aquí es lo que hace cualquier videojuego con las suyas.
+   */
+  renderPieceOverlay?: (piece: ArenaPiece, at: { x: number; y: number }) => ReactNode;
   /**
    * Dónde se dibuja la malla. En la referencia la rejilla NO está siempre:
    * aparece solo sobre el área que la ficha activa puede pisar, y el resto del
@@ -156,11 +190,14 @@ export type ArenaBoardProps = {
 
 export default function ArenaBoard({
   arena,
+  className,
   hexSize = 34,
   tilt = ARENA_TILT,
   groundImage,
   regions = [],
   pieces = [],
+  renderPiece,
+  renderPieceOverlay,
   grid = "completa",
   origin = null,
   selected = null,
@@ -237,7 +274,7 @@ export default function ArenaBoard({
   );
 
   return (
-    <div className="arena__viewport" {...view.frameProps}>
+    <div className={className ? `arena__viewport ${className}` : "arena__viewport"} {...view.frameProps}>
       <svg
         className="arena__svg"
         viewBox={`${viewBox.minX} ${viewBox.minY} ${viewBox.width} ${viewBox.height}`}
@@ -327,8 +364,12 @@ export default function ArenaBoard({
               la luz les cae igual y el filtro se rasteriza una vez. */}
           {pieces.length > 0 && (
             <g className="arena__pieces">
-              {pieces.map((p) => {
+              {painterOrder(pieces).map((p) => {
                 const { x, y } = Hex.toPixel(p.hex, hexSize, tilt);
+                // La ficha inyectada, cuando hay una que no es el disco. La
+                // clave la pone el tablero para que quien la inyecta no tenga
+                // que acordarse.
+                if (renderPiece) return <g key={p.id}>{renderPiece(p, { x, y })}</g>;
                 // El disco sale del hexágono y se comprime con él: la ficha está
                 // TUMBADA en la casilla, no de pie sobre ella.
                 const rx = hexSize * 0.6;
@@ -364,6 +405,18 @@ export default function ArenaBoard({
                     </text>
                   </g>
                 );
+              })}
+            </g>
+          )}
+
+          {/* 5-bis. La interfaz de cada ficha, por encima de TODAS ellas: lo que
+              cuelga de una pieza pero no es la pieza. Sin sombra propia —no está
+              en el suelo, está delante de él— y sin ratón. */}
+          {renderPieceOverlay && pieces.length > 0 && (
+            <g className="arena__pieces-hud">
+              {pieces.map((p) => {
+                const { x, y } = Hex.toPixel(p.hex, hexSize, tilt);
+                return <g key={p.id}>{renderPieceOverlay(p, { x, y })}</g>;
               })}
             </g>
           )}
@@ -465,6 +518,28 @@ export default function ArenaBoard({
       </div>
     </div>
   );
+}
+
+/**
+ * Las fichas de atrás hacia delante, o sea por fila.
+ *
+ * Con el disco tumbado da igual —no se pisan—, pero en cuanto la ficha tiene
+ * CUERPO deja de dar igual: con la arena a 0,67 de inclinación las filas están a
+ * un radio de hexágono, así que una figura de pie muerde el hexágono de detrás.
+ * Pintadas en el orden en que llegan, la de detrás taparía a la de delante y el
+ * campo se leería del revés. Ordenar por fila es el orden del pintor, que es lo
+ * que hace que el solape se lea como PROFUNDIDAD y no como un fallo.
+ *
+ * Va en el tablero y no en la ficha porque es una propiedad de la escena: la
+ * ficha no sabe quién tiene detrás.
+ */
+function painterOrder(pieces: readonly ArenaPiece[]): readonly ArenaPiece[] {
+  return [...pieces].sort((a, b) => {
+    const ra = Hex.axialToOffset(a.hex).row;
+    const rb = Hex.axialToOffset(b.hex).row;
+    if (ra !== rb) return ra - rb;
+    return Hex.axialToOffset(a.hex).col - Hex.axialToOffset(b.hex).col;
+  });
 }
 
 /** Texto del tooltip nativo: dónde está ese hexágono, a qué distancia y quién. */

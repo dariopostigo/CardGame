@@ -22,15 +22,15 @@
 // "el fondo de la carta", es "el hueco de arte, donde sea que esté" — y conviene
 // no volver a escribir aquí nada que dé por hecho lo primero.
 //
-// Lo que un boceto decide —dónde caen las ocho Habilidades y las
-// Características, y de qué está hecho el marco— vive en card-sketch/, que
-// desde el 1 de septiembre de 2026 son tres parciales: el CUERPO común de los
-// dos bocetos que quedan y uno por boceto encima.
+// Lo que el boceto decide —dónde caen las ocho Habilidades y las
+// Características, y de qué está hecho el marco— vive en card-sketch/: el
+// CUERPO (el reparto) y encima la L · Lámina (el borde, o más bien la falta de
+// él). Dos archivos desde el 3 de septiembre de 2026.
 //
-// SE DIBUJARON DIEZ Y QUEDAN DOS. Lo que aquí se comparte quedó medido contra
-// los cinco de la primera tanda, así que sigue siendo el suelo común y no el
-// resto de un boceto concreto. Lo que solo servía a los borrados —la cenefa de
-// glifos, el subtítulo, el filete de rareza de 3px— se fue con ellos.
+// SE DIBUJARON DOCE Y QUEDA UNO. Lo que aquí se comparte quedó medido contra los
+// cinco de la primera tanda, así que sigue siendo el suelo común y no el resto
+// de un boceto concreto. Lo que solo servía a los borrados —la cenefa de glifos,
+// el subtítulo, el filete de rareza de 3px, la capa del marco— se fue con ellos.
 //
 // Ojo con lo que se da por común: el cuerpo rompe la SILUETA (es un octógono) y
 // con ella el radio, el fondo y el recorte del arte y del pie. Todo eso sigue
@@ -124,24 +124,33 @@
   }
 }
 
-// --- El marco -------------------------------------------------------------
-// La capa donde cae el marco, y ya no es «la capa del <svg>»: desde la
-// K · Moldura hay un boceto cuyo marco es un PNG que le pinta el SCSS con
-// background-image (card-sketch/_moldura.scss), así que aquí el elemento va
-// vacío. Lo que la capa hace es lo mismo en los dos casos —encima de todo y sin
-// capturar el puntero—; lo que cambia de un boceto a otro es QUÉ la llena.
+// --- La carta de dentro ---------------------------------------------------
+// La carta monta el cuerpo (card-sketch/_cuerpo.scss) en una caja aparte y no en
+// el artículo. Lo que esta pieza hace es repetir un nivel más adentro lo que
+// .sketch hace por fuera: el flex de columna anclado abajo, que es lo que empuja
+// .sketch__foot al pie. No se hereda de .sketch —el inlay no es su hijo en
+// flujo, es una caja posicionada aparte— así que hay que repetirlo.
 //
-// Dos bocetos y UN marco vectorial: el de la J lo dibuja OrlaFrame
-// (components/design/v3/sketch-frames.tsx) y el de la K no existe como código —
-// es un PNG.
-.sketch__frame {
+// OCUPA LA CARTA ENTERA, que es lo que pide una carta sin marco. Tuvo un inset
+// mientras existió la J · Orla, cuyo artículo ERA un mat negro y obligaba a meter
+// el cuerpo por dentro de él; borrada la J (3-sep-2026), no queda nada que
+// descontar.
+//
+// Se conserva la caja aunque hoy no meta el cuerpo dentro de nada: es donde vive
+// data-rarity para el mixin del material (ver sketch-cards.tsx) y el nivel donde
+// se posicionan el disco, el estandarte y el raíl.
+.sketch__inlay {
   position: absolute;
   inset: 0;
-  z-index: z("frame");
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
+
+// Aquí vivió .sketch__frame, la capa donde caía el marco —un <svg> de trazados
+// en la J, un PNG de fondo en la K—, y se fue con las dos el 3 de septiembre de
+// 2026: el diseño elegido no pone marco de ninguna clase, así que no hay capa
+// que reservar. Si algún día vuelve a haber uno, vuelve con él.
 
 // --- El arte --------------------------------------------------------------
 // A sangre. Se recorta él solo al radio de la carta, y no con un overflow del

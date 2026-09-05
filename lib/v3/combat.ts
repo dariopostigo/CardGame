@@ -4,7 +4,7 @@
 // POR QUÉ EXISTE YA, con el módulo «Motor de combate» todavía en planificado:
 // la resolución de un ataque NO depende de los valores de las 8 Habilidades,
 // solo los consume. Faltan siete de las ocho por decidir, pero eso bloquea
-// la ficha de personaje, no esta fórmula, que está cerrada desde el 22 de
+// las estadísticas de personaje, no esta fórmula, que está cerrada desde el 22 de
 // agosto de 2026 y con sus diales fijados el 23 (docs/v3/game-design.md §4.1).
 //
 // Y hace falta HOY porque el laboratorio de animación (/dev/animacion) tiene

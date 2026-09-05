@@ -1,3 +1,5 @@
+<!-- estado: a-medias -->
+
 # Diseño del juego — V3
 
 > Esqueleto. Solo contiene lo que ya está decidido; el resto son apartados abiertos que hay que escribir.
@@ -28,11 +30,37 @@ El **tablero de batalla está escrito** *(24 de agosto de 2026)* y **rehecho** *
 **Un solo eje de potencia** *(decidido el 24 de agosto de 2026)*:
 
 - **El tier es el eje de las unidades.** Una unidad es más fuerte porque es *otra* unidad, no porque haya subido. La progresión de ocho por raza ([razas.md](razas.md)) es toda su curva, y los números que la recorren son ❤️ Vida y ⚔️ Ataque con el ×10 de [La escala](razas.md#-la-escala-23-de-agosto-de-2026).
-- **La Rareza no es un segundo eje: sale del tier.** Los 8 tiers se reparten en las 5 Rarezas con una función, que además ya existe en el código (`rarityForTier`). Así no hay 88 rarezas que asignar y balancear a mano, y una carta no puede decir dos cosas distintas sobre lo fuerte que es.
+- **La Rareza no es un segundo eje: sale del tier.** Los 8 tiers se reparten en las 5 Rarezas con una función (`rarityForTier`, en `lib/v3/rarity.ts`). Así no hay 88 rarezas que asignar y balancear a mano, y una carta no puede decir dos cosas distintas sobre lo fuerte que es.
 
 **V3 no tiene progresión de personaje.** Ni el héroe ni las unidades suben de nivel: la mecánica que v2 tenía no se hereda, y queda **fuera de alcance** ([status.md](status.md) §5) hasta que el juego esté lo bastante desarrollado para saber si hace falta. Un héroe es *quién* es —su clase, sus Características y su tipo de daño—, y una unidad, cuál es. El sistema de rareza sí se mantiene conceptualmente respecto a v2; sus diales se redefinen aquí.
 
-Falta definir: la función exacta de tier a Rareza (cinco escalones para ocho tiers, así que dos tiers comparten rareza en tres de los cinco), y **cómo se obtienen las unidades de tier alto**, que es economía y no progresión.
+Falta definir: **cómo se obtienen las unidades de tier alto**, que es economía y no progresión (§7).
+
+### 3.1 La función de tier a Rareza *(decidida el 5 de septiembre de 2026)*
+
+| Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---|---|---|---|---|---|---|---|
+| **Rareza** | Común | Común | Poco común | Poco común | Poco común | Raro | Épico | Legendario |
+
+**Las fronteras no se eligieron: estaban puestas.** Ocho tiers en cinco Rarezas piden cuatro cortes, y se buscaron en las dos curvas que recorren la progresión, sobre las 88 unidades reales:
+
+- **La potencia no da ninguno.** El ×10 de [La escala](razas.md#-la-escala-23-de-agosto-de-2026) sube con pasos de ×1,357 a ×1,421 — una geométrica pura. Ningún escalón destaca, así que cortar ahí habría sido elegir, no medir.
+- **El reparto de Características da exactamente cuatro.** Media de Características por tier, con su salto respecto al anterior:
+
+  | Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+  |---|---|---|---|---|---|---|---|---|
+  | Media | 1,18 | 1,27 | 2,00 | 1,91 | 2,00 | 2,55 | 3,27 | 4,36 |
+  | Salto | — | +0,09 | **+0,73** | −0,09 | +0,09 | **+0,55** | **+0,73** | **+1,09** |
+
+  Cuatro saltos de ≥0,55 y tres llanos de ≤0,09: seis veces de diferencia y ningún caso dudoso. El roster ya había partido los ocho tiers en cinco grupos —{1,2} {3,4,5} {6} {7} {8}— antes de que nadie preguntara.
+
+**Lo que cuesta, dicho:** el reparto **no es una pirámide de colección**. Por raza salen 2 comunes, 3 poco comunes, 1 rara, 1 épica y 1 legendaria (22 · 33 · 11 · 11 · 11 en las 88), así que la banda gorda está en el segundo escalón y no en el primero. Se acepta a sabiendas: aquí la Rareza dice **de qué clase de carta se trata**, y con qué frecuencia aparece una unidad es economía (§7), que no está escrita. Si la economía pide algún día una pirámide, se cambia la función con el motivo escrito — no se asignan rarezas a mano, que es lo que el eje único vino a evitar.
+
+**Y los tres tiers de arriba van solos**, cada uno en su escalón, porque es lo que dice el roster: 2,55 → 3,27 → 4,36, separándose más en cada paso. Un tier 8 no es «un tier 7 grande».
+
+**Un héroe no entra en la escala**: no tiene tier del que derivar Rareza, y prestarle un escalón diría que un Sacerdote es «más legendario» que un Guerrero. Lleva raíl propio (`HERO_RAIL`), el rojo de la identidad de la interfaz.
+
+> **Una corrección de este mismo apartado.** Hasta hoy aquí ponía que hay «cinco escalones para ocho tiers, **así que** dos tiers comparten rareza en tres de los cinco». Ese «así que» no era aritmética: 8 en 5 admite muchas formas, y esa era simplemente la del reparto provisional que corría en el código (1-2 · 3-4 · 5-6 · 7 · 8, escrito en `components/design/v3/sample.ts` para que los bocetos enseñaran los cinco raíles). La forma medida es **2 · 3 · 1 · 1 · 1**, con un solo par compartido. La provisional fallaba en los dos sentidos: juntaba el 5 con el 6 cruzando un salto de +0,55 y separaba el 4 del 5, que van a +0,09 uno de otro.
 
 ## 4. Motor de combate *(decidido en lo esencial, 22 de agosto de 2026)*
 

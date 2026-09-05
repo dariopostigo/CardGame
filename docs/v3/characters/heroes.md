@@ -1,3 +1,5 @@
+<!-- estado: por-escribir -->
+
 # Héroes — V3
 
 > Esqueleto. Las razas y sus clases jugables ya están definidas en [razas.md](../razas.md); este documento es la ficha de cada héroe, no el catálogo de razas.

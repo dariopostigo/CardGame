@@ -5,7 +5,10 @@
 > cómo se dibuja una **ilustración**, y esto no lo es— ni iconografía —
 > [`../icon-concept/icons.md`](../icon-concept/icons.md) §4 ya cerró el
 > **emblema** que va encima—. Nace en el marco de la carta, así que vive aquí,
-> al lado del [`README.md`](README.md) que eligió la J · Orla.
+> al lado del [`README.md`](README.md) donde se comparan los bocetos y del que
+> salió la carta elegida (la J · Orla el 25 de agosto de 2026, y la **L · Lámina**
+> el 3 de septiembre). El cambio no le afecta: el estandarte cuelga del disco del
+> Tier, que es del cuerpo y no del borde, así que cae donde caía.
 >
 > Escrito el **27 de agosto de 2026**, después de montar los once emblemas en la
 > carta y de tener que subirlos de 22 a 27px para que se leyeran. La pregunta que
@@ -62,6 +65,18 @@ La bandera es **una pieza y puede decir una cosa**. Estos son los candidatos:
 | **Unidad / héroe** | Ya lo dice el disco, que cambia el número por una corona. Ver §7 |
 | **Raza** ✅ | Es la **única taxonomía del juego** y la única que la bandera no repetiría de una pieza vecina — la repite del *texto* al pie, y eso es lo que hay que resolver |
 
+> **Y la fila de «Facción / bando» tiene fecha de caducidad** *(3-sep-2026)*.
+> Dario abre **sub-facciones dentro de las razas**, todavía sin definir
+> ([`../races-concept/README.md`](../races-concept/README.md) §"Qué falta
+> decidir"). El día que existan, esa fila deja de decir «V3 no tiene facciones»
+> y pasa a ser la **candidata más fuerte del cuadro**, con un argumento que
+> ninguna otra tiene: sería lo único que la bandera puede decir **sin repetir a
+> una pieza vecina**, porque la raza ya la dicen el emblema de encima y la
+> versalita al pie — y son justamente los dos huecos que la carta acaba de
+> decidir conservar por esto mismo ([`README.md`](README.md) §"Qué falta
+> decidir"). La tabla no se toca: es el análisis del 27 de agosto y era correcto
+> ese día.
+
 Y hay un motivo de más peso que la carta, que es justamente el de la corrección:
 **la raza es lo único de esta lista que existe fuera de la carta.** Un Tier o una
 Rareza no significan nada en una pantalla de reclutamiento; una raza sí, y ahí es
@@ -74,8 +89,8 @@ sitio la usa al tamaño que le toca:
 
 | Escalón | Dónde | Qué se ve a ese tamaño |
 |---|---|---|
-| **~16 px** | Filtros de raza de [`/docs/v3/cards/deck`](../../../components/design/v3/CardDeck.tsx) (hoy solo el emblema) | El **tinte**, y prácticamente nada más: a este tamaño la bandera *es* una mancha de color |
-| **34 × 78 px** | La carta — bocetos G, H y J | Tinte + **canto de abajo** + el emblema encima |
+| **~16 px** | Filtros de raza de [`/docs/v3/cards/design`](../../../components/design/v3/CardDesign.tsx) (hoy solo el emblema) | El **tinte**, y prácticamente nada más: a este tamaño la bandera *es* una mancha de color |
+| **34 × 78 px** | La carta — hoy la L, y antes los bocetos G, H y J | Tinte + **canto de abajo** + el emblema encima |
 | **~100 px** | Cabecera de raza en `/dev/razas` (planificado, [`lib/dev-registry.ts`](../../../lib/dev-registry.ts)) y fichas de la wiki | Aparecen la trama del paño, el fleco, el asta o la anilla de la que cuelga; el remiendo de Hombres rata deja de ser una mancha y se ve que es un remiendo |
 | **~350 px** | Ficha de raza o pantalla de reclutamiento, el día que existan | Aparecen el bordado del dobladillo, el desgaste, las costuras, la translucidez real de la membrana |
 
@@ -125,12 +140,19 @@ oscuras. La heráldica lo tenía escrito desde el siglo XIII.
 Con lo cual el tinte no es un adorno que se le añade a la bandera: es **lo que la
 pieza necesitaba para funcionar**, y de paso lleva un dato.
 
-Y hay sitio para ese color porque el marco elegido dejó esa mitad libre a
-propósito. La apuesta de la E que la J heredó dice, literal: **«la carta no está
+Y hay sitio para ese color porque la carta dejó esa mitad libre a propósito. La
+apuesta de la E, que heredaron la J y la L, dice literal: **«la carta no está
 teñida, está encendida»**
 ([`sketch-cards.tsx`](../../../components/design/v3/sketch-cards.tsx)). El metal
 renunció al tinte para quedarse con la luz. El tinte quedó vacante, y la única
 pieza de la carta que no es metal es esta.
+
+> **Y con la carta sin marco *(3-sep-2026)* el argumento se refuerza en vez de
+> caerse**, aunque haya que releerlo: ya no hay metal del que hablar —se fue el
+> filete y con él la veta y la piedra—, así que las señales de Rareza son un baño
+> de luz, un halo y **una línea de 2px** en el canto del hueco de arte. Sigue
+> siendo luz contra tinte, y el estandarte sigue siendo lo único teñido de la
+> carta. La pieza no se mueve: cuelga del disco del Tier, que es del cuerpo.
 
 ## 5. Los once tintes
 
@@ -335,6 +357,16 @@ Si esas dos se leen, las otras cuarenta y seis se leen.
   dicen lo mismo con la misma fuerza. Un campo teñido rompe el empate en favor
   del emblema: **tinte + emblema se leen a distancia de mesa y la versalita al
   pie no.** No lo decide este documento, pero le da con qué decidirse.
+
+  > **Decidido el 3 de septiembre de 2026, y no hacia donde apuntaba esto: se
+  > quedan las dos.** El argumento de arriba sigue siendo cierto —a distancia de
+  > mesa el tinte gana a la versalita— pero deja de ser el que decide, porque
+  > llegan **sub-facciones** (§2) y con dos taxonomías que decir los dos huecos
+  > dejan de pisarse. Lo que este documento aporta no se cae, se revaloriza:
+  > **el tinte indexa y la materia desempata** (§5) es exactamente la mecánica
+  > que hace falta para meter una segunda taxonomía en una pieza de 34 px sin
+  > convertirla en un arcoíris. Y sube el listón del §11: si el paño acaba
+  > diciendo la sub-facción, los once tintes dejan de ser once.
 - **La excepción al «un solo metal»** ([`icons.md`](../icon-concept/icons.md)
   §7). Era una pregunta sin caso de uso. Feéricos le da uno: si el único campo
   pálido del set lleva emblema de **plata**, el segundo metal deja de ser una

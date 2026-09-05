@@ -2,20 +2,31 @@
 @use "../../abstracts" as *;
 
 // =========================================================================
-// El CUERPO de la carta — lo que la J y la K tienen en común
+// El CUERPO de la carta — el reparto, sin el borde
 //
-// Esto NO es un boceto. Es el interior compartido por los dos que quedan, y
-// existe como parcial propio porque los dos lo llevan entero: la J lo mete
-// detrás de un mat negro y la K le pone una moldura dibujada delante, pero por
-// dentro son la misma carta y eso es la condición para que se puedan comparar.
-// Si además cambiara el reparto, habría dos variables en juego y no se podría
-// leer ninguna.
+// Esto NO es un boceto: es el INTERIOR de la carta, y existe como parcial propio
+// porque los tres bocetos que llegaron al final lo llevaban entero. La J lo
+// metía detrás de un mat negro, la K le ponía una moldura dibujada delante y la
+// L no le pone nada; por dentro eran la misma carta, y esa era la condición para
+// poder compararlos — si además cambiara el reparto, habría dos variables en
+// juego y no se podría leer ninguna.
+//
+// EL 3 DE SEPTIEMBRE DE 2026 SE ELIGIÓ LA L Y SE BORRARON LAS OTRAS DOS, así que
+// hoy este archivo tiene un solo consumidor. Se queda partido en dos capas
+// —reparto aquí, borde en _lamina.scss— porque el corte sigue siendo el bueno:
+// es exactamente la línea por la que se discutió doce días, y lo que se toque de
+// una no toca a la otra. Lo que hay que saber al editarlo es que la capa de
+// arriba pisa POR ESPECIFICIDAD (dos clases contra una) todas las cotas de aquí
+// que se miden contra $sketch-band —el asiento del disco, el del estandarte, el
+// del raíl y el acolchado del panel—: sin filete de metal que librar, la L las
+// vuelve a medir contra su paspartú. Cambiar un número aquí no mueve la carta;
+// hay que cambiarlo allí.
 //
 // DE DÓNDE VIENE, porque el nombre de las piezas lo delata. Este archivo es la
 // fusión de dos bocetos borrados el 1 de septiembre de 2026: la G · Estandarte
 // —el octógono de la réplica de Might & Magic: Fates con la veta encendida de
 // la E · Forja— y la H · Recinto, que era la G con dos cambios. De la fusión
-// solo sobreviven las respuestas de la H, que son las que la J y la K usan:
+// solo sobreviven las respuestas de la H, que son las que usan los tres:
 //
 //   · NADA SE SALE DEL CONTORNO. El disco del Tier vive por dentro del filete
 //     en vez de montar sobre el chaflán, y el estandarte de raza baja con él.
@@ -42,19 +53,21 @@
 // especificidad. Colapsadas en una, lo que decide entre dos declaraciones de la
 // misma propiedad es el ORDEN dentro de este archivo — que es exactamente lo
 // mismo que decidía antes, así que la cascada no cambió al fusionarlas. Lo que
-// sí cambió es que la J y la K la pisan ahora por especificidad y no por orden
-// de carga (dos clases contra una), que es una atadura menos.
+// sí cambió es que la capa de arriba la pisa por especificidad y no por orden de
+// carga (dos clases contra una), que es una atadura menos.
 //
-// EL OCTÓGONO ES DEL CUERPO Y NO DE LOS DOS. La J lo usa tal cual; la K lo
-// deshace entero en su parcial, porque su moldura dibujada es un rectángulo
-// redondeado. Se queda aquí y no en _orla.scss porque es la silueta con la que
-// están medidas todas las piezas de abajo — el acolchado del panel, el asiento
-// del disco, dónde arranca el raíl—, y sacarlo obligaría a mover esas cuatro
-// cuentas a un sitio donde ya no se leen juntas.
+// EL OCTÓGONO SE DIBUJA AQUÍ Y LA CARTA LO DESHACE. Lo usaba tal cual la J; la K
+// lo deshacía porque su moldura dibujada era un rectángulo redondeado y la L
+// porque Dario pidió esquinas redondeadas y no el chaflán que heredaba sin
+// haberlo decidido — así que hoy no se ve en ninguna carta, y lo que queda de él
+// es la MEDIDA: la silueta con la que están calculadas todas las piezas de abajo
+// (el acolchado del panel, el asiento del disco, dónde arranca el raíl). Se
+// queda por eso y no por inercia; el día que estorbe, lo que hay que rehacer son
+// esas cuatro cuentas, no borrar una línea.
 //
-// Reparto con el TSX, el de siempre: el contorno y sus anillos los dibuja el
-// marco de cada boceto (OrlaFrame en la J, un PNG en la K); aquí va lo que
-// crece o encoge con el contenido.
+// Reparto con el TSX, el de siempre: aquí va lo que crece o encoge con el
+// contenido. El contorno lo pintaba el marco de cada boceto —OrlaFrame en la J,
+// un PNG en la K— y en la que quedó no lo pinta nadie.
 // =========================================================================
 
 // Espejo de la C de sketch-frames.tsx. Aquí solo lo pide el pie; el contorno
@@ -100,14 +113,6 @@ $disc-in: $sketch-band + 4px;
 // de ahí el acolchado de arriba, que es ese solape más el aire de la bandera.
 $banner-left: $disc-in + math.div($sketch-disc - $sketch-banner, 2);
 $banner-top: $disc-in + $sketch-disc - 10px;
-
-// Los dos cortes de dentro de la piedra: lo que mide el engaste de metal y lo
-// que se mete la tabla. Van en fracción de $sketch-gem y no en píxeles clavados
-// porque si no, tocar el tamaño encoge el rombo y deja el tallado como estaba
-// —que es como la tabla acabó en dos píxeles y medio la primera vez—. Las
-// fracciones son las que tenía a 20px: 2,5 es un octavo y 6 son tres décimos.
-$gem-bezel: math.div($sketch-gem, 8);
-$gem-table: math.div($sketch-gem * 3, 10);
 
 .sketch--cuerpo {
   // --- La silueta ---------------------------------------------------------
@@ -242,9 +247,9 @@ $gem-table: math.div($sketch-gem * 3, 10);
   // contorno duro a la única pieza que aquí tiene que parecer apoyada. Se queda
   // el borde de metal, que es el que la ata a la aleación de la carta.
   //
-  // Ojo: los dos bocetos que quedan lo SUSTITUYEN por un archivo
-  // (/assets/v3/frames/tier.png). Esto es lo que hay debajo, y sigue vivo
-  // porque es la medida contra la que se colocó el PNG.
+  // Ojo: la carta lo SUSTITUYE por un archivo (/assets/v3/frames/tier.png), y
+  // así fue en los tres bocetos que llegaron al final. Esto es lo que hay
+  // debajo, y sigue vivo porque es la medida contra la que se colocó el PNG.
   .sketch__disc {
     position: absolute;
     top: $disc-in;
@@ -346,94 +351,30 @@ $gem-table: math.div($sketch-gem * 3, 10);
     font-size: sketch-font("pod-xl");
   }
 
-  // --- La piedra de Rareza ------------------------------------------------
-  // El rombo de la réplica, tallado. Son tres capas y cada una hace una cosa:
-  //
-  //   el elemento   el ENGASTE: un cuadrado de metal girado 45°, del mismo
-  //                 material que el marco. Es lo que convierte la pieza en algo
-  //                 montado sobre la carta y no dibujado encima de ella.
-  //   ::before      la PIEDRA: cuatro facetas que se cortan en el centro.
-  //   ::after       la TABLA: la cara plana de arriba, con su destello.
-  //
-  // El giro va en el elemento y las capas lo heredan, así que los cortes del
-  // cónico —que en un cuadrado sin girar caen en las diagonales— acaban
-  // cayendo en la vertical y la horizontal del rombo. Que es exactamente el
-  // tallado que se busca: cuatro caras, una por lado.
-  //
-  // Centrada en el FILETE y no en el canto: el eje de la piedra cae en la mitad
-  // de la banda de metal ($sketch-band / 2), así que la pieza se lee montada
-  // sobre el marco y no colgada del borde. Es medio píxel de cuenta y se nota:
-  // más arriba parece que se cae de la carta.
-  //
-  // Y el centrado se escribe sobre el CENTRO de la piedra, no sobre su esquina:
-  // left/top apuntan al eje de la carta y a la mitad del filete, y el translate
-  // del 50% —que mide sobre la caja, no sobre el padre— la trae encima. Así el
-  // centrado no depende del tamaño: cambiar $sketch-gem la encoge sin moverla,
-  // que con el margen negativo de antes había que recalcularlo a mano.
-  //
-  // La pinta SOLO la J. La K no la dibuja —su gema viene tallada dentro del
-  // PNG de la moldura— así que MolduraCard no pone el elemento, y estas reglas
-  // se quedan sin nadie a quien aplicarse en esa carta.
-  .sketch__gem {
-    position: absolute;
-    top: math.div($sketch-band, 2);
-    left: 50%;
-    z-index: z("chip");
-    width: $sketch-gem;
-    height: $sketch-gem;
-    background: linear-gradient(135deg, var(--m-hi), var(--m) 50%, var(--m-lo));
-    // El giro va detrás del translate a propósito: las dos funciones giran sobre
-    // el mismo origen —el centro de la caja—, así que la piedra rota sobre sí
-    // misma una vez ya colocada, y el rombo sale centrado en el punto exacto.
-    transform: translate(-50%, -50%) rotate(45deg);
-    box-shadow:
-      0 0 0 1px var(--m-edge),
-      0 0 12px var(--rarity-soft);
-
-    // La piedra, metida dentro del engaste. Las cuatro facetas van de la más
-    // iluminada (arriba-izquierda, que es de donde viene la luz en todo este
-    // marco) a la más oscura, y no en degradado sino a corte limpio: una
-    // piedra tallada tiene aristas, y en cuanto las facetas se funden vuelve a
-    // ser la mancha plana de la que salió.
-    //
-    // El color de partida es --seam y no --rarity porque aquí la rareza ES la
-    // veta: si la piedra tirara del color plano quedaría medio tono por debajo
-    // del canal y se leerían como dos cosas distintas.
-    &::before {
-      content: "";
-      position: absolute;
-      inset: $gem-bezel;
-      background: conic-gradient(
-        from 45deg,
-        color-mix(in srgb, white 30%, var(--seam)) 0 25%,
-        color-mix(in srgb, black 38%, var(--seam)) 25% 50%,
-        color-mix(in srgb, black 16%, var(--seam)) 50% 75%,
-        var(--seam-hi) 75%
-      );
-    }
-
-    // La tabla: la cara plana. Va pequeña y descentrada hacia la luz, que es lo
-    // que hace que la piedra parezca tener fondo — centrada y grande se lee
-    // como un segundo rombo pegado encima.
-    &::after {
-      content: "";
-      position: absolute;
-      inset: $gem-table;
-      background: linear-gradient(
-        135deg,
-        color-mix(in srgb, white 30%, var(--seam-hi)),
-        var(--seam) 70%
-      );
-      box-shadow: 0 0 4px var(--seam-soft);
-    }
-  }
+  // Aquí vivió LA PIEDRA DE RAREZA, el rombo tallado de la réplica: engaste de
+  // metal girado 45°, cuatro facetas cortadas a hueso y una tabla con su
+  // destello, montado a caballo del canto de arriba. Se fue el 3 de septiembre
+  // de 2026 con los dos bocetos que la podían llevar —la J la pintaba y la K la
+  // traía tallada dentro de su PNG—, y la razón por la que no se recupera está
+  // dicha en _lamina.scss: una piedra necesita banda de metal donde engastarse,
+  // y el diseño elegido no tiene banda. Lo que hace su trabajo es el CANTO
+  // ENCENDIDO. El rombo, con sus tres capas y por qué cada una, sigue descrito en
+  // knowledge/v3/card-concept/README.md §"Mezcla J".
 
   // --- El estandarte de raza ----------------------------------------------
   // Cuelga del disco del Tier, y es lo que la réplica se dejó por el camino: en
-  // la referencia ahí va el banderín de la facción, y V3 no tiene facción.
-  // Lleva la RAZA, que es la única taxonomía del juego — así que la carta la
-  // dice dos veces, en emblema aquí y en versalitas al pie. Eso es un cabo
-  // suelto a propósito: con las dos puestas se puede decidir cuál sobra.
+  // la referencia ahí va el banderín de la facción, y cuando esto se escribió
+  // V3 no tenía facción. Lleva la RAZA, así que la carta la dice dos veces, en
+  // emblema aquí y en versalitas al pie.
+  //
+  // ESO YA NO ES UN CABO SUELTO, y el motivo cambió el 3 de septiembre de 2026.
+  // Estaba puesto dos veces para poder decidir cuál sobraba, y la respuesta de
+  // Dario fue que no sobra ninguna: llegan SUB-FACCIONES dentro de las razas
+  // —sin definir todavía—, así que la carta va a tener dos taxonomías que decir
+  // y los dos huecos dejan de pisarse. Cuál dice cuál está sin repartir, y no
+  // se reparte hasta saber cuántas sub-facciones hay: no quitar ninguno de los
+  // dos. knowledge/v3/card-concept/README.md §"Qué falta decidir" y banners.md
+  // §2; el hecho, en docs/v3/status.md §preguntas abiertas.
   //
   // La bandera no es el elemento sino su ::before, y no es un capricho: lleva
   // clip-path para la punta, y un clip se come la sombra —y también la de un
@@ -466,9 +407,9 @@ $gem-table: math.div($sketch-gem * 3, 10);
     // 59,9 para un emblema de 27,2 y el emblema se sienta centrado en ellos:
     // 10 + (59,9 − 27,2) / 2 ≈ 26.
     //
-    // Los dos bocetos que quedan lo suben un poco (_orla.scss, _moldura.scss) y
-    // por la misma razón en los dos: su disco es el PNG, que mide más que el
-    // círculo nominal y baja una punta justo por el eje de la bandera.
+    // La carta lo sube un poco (_lamina.scss) y por una razón: su disco es el
+    // PNG, que mide más que el círculo nominal y baja una punta justo por el eje
+    // de la bandera.
     padding-top: 26px;
     filter: drop-shadow(0 3px 4px card-sketch("shadow"));
 
@@ -516,7 +457,7 @@ $gem-table: math.div($sketch-gem * 3, 10);
   //
   // Las fracciones hacen falta porque el archivo NO es solo el paño: trae el asta
   // con sus remates, que sobresale por los lados, así que el lienzo es más ancho
-  // que la tela. Misma disciplina que las de tier.png en _orla.scss.
+  // que la tela. Misma disciplina que las de tier.png en _lamina.scss.
   //
   // Nacieron como las de la NORMA (public/assets/v3/README.md, `banners/`) porque
   // solo había un archivo y venía mal proporcionado. Desde que están las ONCE

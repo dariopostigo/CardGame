@@ -1,3 +1,5 @@
+<!-- estado: a-medias -->
+
 # Razas
 
 Las razas son el eje del diseño de V3: cada una aporta sus clases jugables, su progresión de unidades y su identidad. De ellas cuelga todo lo demás.
@@ -145,8 +147,77 @@ sale del tier** en vez de ser un dato aparte. Los ocho escalones de esta tabla s
 por tanto, **toda la curva de potencia que tiene una raza**: no hay ningún otro eje
 que suba a nadie ([game-design.md](game-design.md) §3).
 
-> **Los valores concretos siguen siendo insumo pendiente.** Lo que está cerrado
-> es la escala en la que van, no las 1.056 cifras.
+### 🧮 De dónde sale cada número *(5 de septiembre de 2026)*
+
+La escala decía **en qué rango** va cada número. Esto dice **quién lo decide**, que
+es lo que faltaba: sin ello, rellenar las 132 fichas eran 1.056 celdas en blanco y
+ninguna forma de saber si dos razas se parecían demasiado. Son 122.
+
+| Habilidad | De dónde sale su número | Cifras que decidir |
+|---|---|---|
+| ❤️ **Vida** | Base de tier 1 **por raza**; la curva ×10 da los otros siete escalones | 11 |
+| ⚔️ **Ataque** | Base de tier 1 **por raza**; la curva ×10 da los otros siete | 11 |
+| 🛡️ **Defensa** | Rejilla **tipo de daño × tier** (3×8); la raza y las Características desvían | 24 |
+| 🔮 **Resistencia mágica** | La misma rejilla | 24 |
+| 🎯 **Precisión** | La misma rejilla | 24 |
+| 🍀 **Suerte** | La misma rejilla | 24 |
+| ⚡ **Iniciativa** | **Banda por tipo de daño**, como el alcance y como 👢 | 3 |
+| 👢 **Movimiento** | Banda por tipo de daño *(31-ago-2026)* | 0 — ya puestas |
+
+Más **una** cifra suelta: el tier al que equivale un héroe (abajo).
+
+**Las cuatro topadas van en rejilla y no por ficha** porque son justo las que
+sobreviven al tier: son lo que hace que un tier 8 pegue diez veces más pero no
+acierte diez veces mejor, así que dejarlas libres por ficha era dejar suelto lo
+único que mantiene comparables a las 132. La textura de una ficha —lo que la
+distingue de otra de su mismo tier y su mismo tipo— la ponen sus **Características**,
+que es donde ya vivía. Y la rejilla no se la inventa nadie para 🎯 Precisión: sus
+treinta puntos ya tenían dicho que se reparten entre **los 8 tiers, la cobertura y
+💨 Evasivo**.
+
+**Dos topes que no se eligen: los impone la curva.** El ×10 del tier 1 al 8 contra
+los rangos de cifras de la tabla de arriba deja esto atado sin que nadie decida:
+
+- **⚔️ Ataque base ≤ 9.** Con tope 99 al tier 8, el tier 1 de cualquier raza es
+  forzosamente de **una sola cifra**.
+- **❤️ Vida base entre 10 y 99.**
+
+Y de ahí sale una consecuencia que no es de este documento: **dónde caiga la base de
+❤️ decide en qué escalón aparece la tercera cifra** —con base 10 solo la ve el tier
+8; con base 99, ya el tier 2—, y esa es la cifra que tiene que caber en la gema de la
+ficha del tablero. No es un caso límite del dibujo: es una consecuencia de un número
+de este documento.
+
+**Un héroe vale un tier fijo.** No tiene tier ni nada que lo sustituya
+([game-design.md](game-design.md) §3), así que su ❤️ y su ⚔️ salen de la base de **su
+raza** aplicando la curva de un tier N, el mismo para los 44. Con eso, lo que
+distingue a las cuatro clases de una raza pasa a ser **lo que no escala** —🛡️ 🔮 🎯
+🍀 ⚡ y sus Características—, que es lo que ya las distinguía en el diseño. El héroe
+sigue **sin tier en la carta**: es una equivalencia interna, no un dato que se imprima.
+
+**Tres de las 122 se miden, no se eligen**, y el precedente es 👢: su reparto no salió
+del gusto, salió de jugar el duelo del arquero.
+
+1. **El tier equivalente del héroe.** Decide si un héroe aguanta al bando enemigo en
+   espejo ([battle.md](board/battle.md) §2), y eso se juega.
+2. **Las tres cifras de ⚡ Iniciativa.** El orden intuitivo es 🏹 abre y 🗡️ cierra,
+   pero eso le carga al 🗡️ el peaje del alcance *y* el del turno encima del 👢 3 que
+   ya paga — el mismo desequilibrio que el duelo destapó con 👢.
+3. **El límite de 👢 de ✨ Mágico**, que el duelo dejó vacío: midió los dos extremos
+   —ninguna 🏹 por encima de 2, ninguna 🗡️ por debajo de 3— y el del medio no.
+
+**Cada Característica lleva su cifra, y es una sola para todo el juego.** 🩸
+Hemorragia dura lo mismo la lleve un ⛏️ Minero o un ⛰️ Coloso, así que la ficha solo
+dice **si la tiene** — que es exactamente lo que la carta ya imprime, un glifo sin
+número al lado. Son 41 cifras de una vez y no cientos, y parte del trabajo está hecho:
+varias ya tienen dial en [game-design.md](game-design.md) §4 (🗡️ Perforante 15), y
+las que aplican un Estado no inventan nada, porque sus turnos y su daño están en
+[effects.md](effects.md) §5. Lo que falta es **atarlas por id** en vez de por nombre
+en texto.
+
+> **Lo que sigue siendo insumo son los valores, no el método.** Cerrada la escala
+> *(23-ago)* y cerrado de dónde sale cada número *(5-sep)*, lo que queda son **122
+> cifras y tres medidas**, no 1.056 celdas en blanco.
 
 ## 🎲 Tipo de daño
 
@@ -274,6 +345,57 @@ siendo Características, y montan *encima* del tipo que tenga la ficha: un
 - 🤖 **Constructo** — No se ve afectado por determinados estados mentales o biológicos.
 - 💀 **No-muerto** — Es inmune al miedo y puede tener interacciones especiales con efectos de curación, veneno y habilidades sagradas.
 - 😈 **Demonio** — Tiene interacciones especiales con fuego, magia infernal y habilidades sagradas.
+
+## 📐 Cuántas Características lleva una ficha *(5 de septiembre de 2026)*
+
+**El tope no es un número: es un techo por tier.** Y el de un héroe es otro.
+
+| tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | héroe |
+|---|---|---|---|---|---|---|---|---|---|
+| **tope** | 2 | 2 | 3 | 3 | 3 | 4 | 4 | 5 | **3** |
+
+Estaba escrito como «¿se congela en cinco o alguna raza puede pasarlo?», y contar
+las 132 fichas dijo que esa no era la pregunta, por tres motivos.
+
+**Primero: el recuento ya era una curva de potencia, y nadie la había declarado.**
+
+| tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---|---|---|---|---|---|---|---|
+| media de rasgos | 1,18 | 1,27 | 2,00 | 1,91 | 2,00 | 2,55 | 3,27 | 4,36 |
+| máximo | 2 | 2 | 3 | 3 | 3 | 4 | 4 | 5 |
+
+Sube monótona del tier 1 al 8. O sea que «cuántas Características llevas» venía
+funcionando como un **segundo eje de progresión** en paralelo a la curva ×10 de
+las estadísticas, sin que ningún documento lo dijera. Un solo número no lo
+describe: dejaría que una unidad de tier 1 llevase cinco rasgos cuando la media
+de su escalón es 1,18 y su máximo es 2.
+
+**Segundo: los héroes paran en 3, y no de milagro.** De los 44, seis llevan uno,
+dieciocho llevan dos y veinte llevan tres. **Ninguno llega a cuatro.** No es que
+un héroe valga menos que una unidad de tier 8: es que lo que distingue a un héroe
+es su clase, y una unidad solo tiene sus rasgos.
+
+**Tercero: el marco no era la restricción.** Medido en un navegador sobre la carta
+real —L · Lámina, 300×420—, el raíl aguanta **siete** medallones antes de tocar el
+panel: con cinco le sobran 77,8 px, con siete 7,8, y con ocho se mete dentro. Así
+que el tope es una decisión de balance, no un límite de sitio.
+
+**La regla es el máximo observado en cada tier, escrito.** Ratifica las 132 tal y
+como están —**cero fichas cambian**—, y el precio va dicho: **holgura cero**. Una
+unidad nueva de tier 5 con cuatro rasgos rompe el tope, y que salte es la
+conversación, no el fallo.
+
+**La etiqueta de tipo ocupa plaza como cualquier otra.** 💀 *No-muerto*, 😈
+*Demonio*, 🤖 *Constructo* y 🐺 *Bestia* dicen **qué eres** y no qué haces, y cuatro
+razas las llevan en sus doce fichas, así que se planteó sacarlas del recuento. **No
+se sacan**: son Características del catálogo y su texto tiene mecánica —💀
+*No-muerto* dice literalmente «es inmune al miedo»—, y sacarlas daría a 💀
+No-muertos, 🔥 Demonios y 🤖 Constructos un rasgo más que a las otras ocho razas,
+gratis. Las razas con etiqueta gastan una plaza permanente en identidad: ese es su
+coste.
+
+**Está comprobado y no prometido**: `capViolations()` en `lib/v3/traits.ts` lee
+este catálogo y mide las 132 contra la tabla. Hoy devuelve vacío.
 
 ## 🦸 Tabla de características de héroes
 

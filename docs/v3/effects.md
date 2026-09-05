@@ -1,3 +1,5 @@
+<!-- estado: escrito -->
+
 # Efectos y estados — V3
 
 > **Escrito el 22 de agosto de 2026**, sobre el motor de [game-design.md](game-design.md) §4. Los porcentajes y duraciones son diales de primera pasada: **nada está balanceado todavía**.

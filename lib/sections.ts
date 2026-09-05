@@ -80,7 +80,7 @@ export const SECTIONS: readonly Section[] = [
     label: "Dev",
     short: "Dev",
     summary:
-      "La construcción de V3: ficha de personaje, motor de combate, razas y tableros. Todavía sin nada implementado — hoy es el mapa de lo que falta.",
+      "La construcción de V3, en cadena: de las estadísticas de personaje al tablero, las cartas, el combate y la animación. Cada módulo dice de quién depende, así que la lista es también el orden de trabajo.",
     icon: "pi pi-code",
   },
   {

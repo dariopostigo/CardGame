@@ -7,16 +7,39 @@ import { cache } from "react";
 import { docPathToRoute } from "@/lib/markdown-link";
 import { hasCardDirective } from "@/lib/card-table";
 import { DOCS_VERSIONS, type DocsVersion } from "@/lib/docs-version";
+import { defaultStatusOf, isDocStatus, type DocStatus } from "@/lib/doc-status";
 
 // Reexportado por comodidad: el servidor puede pedírselo todo a este módulo.
-// El cliente NO — tiene que importar de "@/lib/docs-version" directamente, o
-// se lleva node:fs al bundle.
+// El cliente NO — tiene que importar de "@/lib/docs-version" o de
+// "@/lib/doc-status" directamente, o se lleva node:fs al bundle.
 export * from "@/lib/docs-version";
+export * from "@/lib/doc-status";
 
 const DOCS_ROOT = path.join(process.cwd(), "docs");
 
-export type NavItem = { label: string; href: string; icon: string };
-export type NavGroup = { key: string; label: string; icon: string; items: NavItem[] };
+export type NavItem = {
+  label: string;
+  href: string;
+  icon: string;
+  /**
+   * Lo que declara el documento en su `<!-- estado: … -->` (lib/doc-status.ts).
+   * Sin directiva no hay estado: son los índices y los documentos vivos, que
+   * no se etiquetan nunca.
+   */
+  status?: DocStatus;
+};
+export type NavGroup = {
+  key: string;
+  label: string;
+  icon: string;
+  items: NavItem[];
+  /**
+   * El estado que comparte la mayoría del grupo. Se pinta una vez en la
+   * cabecera, y las entradas que lo tienen se callan: solo se etiqueta lo que
+   * se sale de la norma. Null = no hay norma, cada una carga con la suya.
+   */
+  defaultStatus: DocStatus | null;
+};
 export type SearchHeading = { text: string; id: string };
 export type SearchDoc = {
   href: string;
@@ -67,33 +90,39 @@ const GROUPS = DOCS_VERSIONS.flatMap((version) =>
 // de lib/card-catalog.ts, y sigue en v2 para que el lab no se quede vacío
 // mientras docs/v3/cards/ no tenga su primera tabla.
 //
-// El día que se mueva a "v3" hay que mover tres cosas a la vez: esta
-// constante, CARDS_ROOT y la carpeta de la ruta — cuyo destino cambió el
-// 25-ago-2026, cuando se eligió el marco (J · Orla): ya no es
-// app/docs/v3/cards/design/ (esa ruta es de CardSketchLab, el archivo de
-// bocetos, que se queda tal cual y no se funde con nada), es
-// app/docs/v3/cards/deck/ (CardDeck, más abajo).
+// El día que se mueva a "v3" hay que mover tres cosas a la vez: esta constante,
+// CARDS_ROOT y la carpeta de la ruta — que desde el 3 de septiembre de 2026
+// vuelve a ser app/docs/v3/cards/design/, la única que hay. Estuvo apuntando a
+// .../deck/ desde el 25 de agosto, cuando se eligió el marco y la baraja se
+// separó de los bocetos; borrada esa página al fundirse las dos, el destino es
+// otra vez el de siempre.
 const DESIGN_LAB_VERSION: DocsVersion = "v2";
 const DESIGN_LAB_GROUP = `${DESIGN_LAB_VERSION}-cards`;
 
-// Bocetos y baraja de V3 (app/docs/v3/cards/design/ y .../deck/). Dos páginas
-// propias, ninguna la de arriba: aquella pinta el catálogo real de v2 con un
-// marco YA decidido; estas pintan sujetos escritos a mano
-// (components/design/v3/sample.ts), no un catálogo leído del disco.
+// La carta de V3 (app/docs/v3/cards/design/). UNA página propia, y ninguna la de
+// arriba: aquella pinta el catálogo real de v2, y esta pinta un roster escrito a
+// mano (components/design/v3/races.ts) porque docs/v3/cards/ no tiene tabla.
 //
-// El marco ya se decidió —J · Orla, 25 de agosto de 2026, tras nueve bocetos—
-// pero el CATÁLOGO de v3 sigue sin escribir (docs/v3/cards/ no tiene tabla), y
-// son dos ejes distintos: uno es qué pinta la carta, el otro qué números
-// lleva. Por eso las dos páginas conviven en vez de fundirse en una:
-// "Diseño de cartas" sigue comparando bocetos por si algún día hay que abrir
-// la pregunta del marco otra vez, y "Diseño baraja" pinta YA el marco elegido,
-// pero sobre sujetos de muestra y no sobre catálogo. El día que
-// docs/v3/cards/ tenga su primera tabla, "Diseño baraja" hereda el catálogo
-// real y la constante de arriba pasa a "v3" con sus tres mudanzas — "Diseño de
-// cartas" no se funde con nada, se queda como el archivo de la comparación.
+// FUERON DOS HASTA EL 3 DE SEPTIEMBRE DE 2026: "Diseño de cartas" comparaba los
+// bocetos de marco sobre sujetos de muestra y "Diseño baraja" pintaba el elegido
+// sobre el roster real. Era la separación entre una comparación y su resultado,
+// y ese día se cerró la comparación —L · Lámina, tras doce bocetos; antes lo
+// estuvo la J · Orla desde el 25 de agosto—, así que quedaban dos páginas
+// pintando la misma carta con distintos sujetos delante. Se funden en la
+// primera, que es la que da nombre a lo que hay: el diseño de la carta, con la
+// baraja entera dentro.
+//
+// Lo que sigue abierto no es la carta, es el CATÁLOGO: los números de las 132
+// fichas. Son dos ejes distintos —uno es qué pinta la carta, el otro qué lleva
+// escrito—, y el día que docs/v3/cards/ tenga su primera tabla esta página
+// hereda el catálogo real y la constante de arriba pasa a "v3" con sus tres
+// mudanzas.
 const SKETCH_LAB_GROUP = "v3-cards";
 
 // Metadatos por documento (etiqueta corta + icono + orden dentro del grupo).
+//
+// El ESTADO no está aquí: lo declara cada .md con `<!-- estado: … -->`, que es
+// donde no puede desincronizarse de lo que describe (lib/doc-status.ts).
 const META: Record<string, { label: string; icon: string; order: number }> = {
   // --- V3 (diseño vigente) ---
   v3: { label: "V3 (índice)", icon: "pi pi-sparkles", order: 0 },
@@ -142,6 +171,36 @@ const META: Record<string, { label: string; icon: string; order: number }> = {
 function prettify(name: string): string {
   return name.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+// La directiva de estado. Misma forma que `<!-- cards: … -->` de
+// lib/card-table.ts, pero SOLO en la cabecera del archivo: si valiera en
+// cualquier línea, un documento que explique la convención —o un bloque de
+// código que la cite— se cambiaría el estado a sí mismo sin querer. Ya pasó al
+// escribir docs/v3/cards/README.md.
+const STATUS_DIRECTIVE_RE = /^\s*<!--\s*estado:\s*([a-z-]+)\s*-->\s*$/m;
+const STATUS_HEAD_LINES = 5;
+
+/**
+ * Lee el estado declarado por un documento. Sin directiva no hay estado —es lo
+ * normal en los índices y en v2 entera—, y una directiva mal escrita revienta
+ * en vez de pasar en silencio: un estado que miente es peor que ninguno.
+ */
+const readStatus = cache((abs: string): DocStatus | undefined => {
+  const head = fs
+    .readFileSync(abs, "utf8")
+    .split("\n", STATUS_HEAD_LINES)
+    .join("\n");
+  const m = head.match(STATUS_DIRECTIVE_RE);
+  if (!m) return undefined;
+  const value = m[1];
+  if (!isDocStatus(value)) {
+    throw new Error(
+      `Estado desconocido "${value}" en ${path.relative(DOCS_ROOT, abs)}. ` +
+        `Los válidos están en lib/doc-status.ts: por-escribir, a-medias, escrito, en-espera.`,
+    );
+  }
+  return value;
+});
 
 /** Recorre docs/ y devuelve los .md con su slug (README = índice de carpeta). */
 const listFiles = cache((): FileRec[] => {
@@ -204,33 +263,26 @@ export const getNavTree = cache((version?: DocsVersion): NavGroup[] => {
       .filter((f) => f.dir === g.dir)
       .map((f) => {
         const m = metaFor(f.slug);
+        const status = readStatus(f.abs);
         return {
           label: m.label,
           icon: m.icon,
           href: docPathToRoute(f.slug.join("/")),
+          ...(status ? { status } : {}),
           _order: m.order,
         };
       })
       .sort((a, b) => a._order - b._order || a.label.localeCompare(b.label))
       .map(({ _order, ...item }) => item as NavItem);
-    // Páginas especiales (no-markdown): los dos laboratorios de diseño.
+    // Páginas especiales (no-markdown): los dos laboratorios de diseño, uno por
+    // versión. Fueron TRES hasta el 3 de septiembre de 2026, cuando "Diseño
+    // baraja" (/docs/v3/cards/deck) se fundió con la de V3 al cerrarse la
+    // comparación de bocetos.
     if (g.key === DESIGN_LAB_GROUP) {
       items.push({
         label: "Diseño",
         icon: "pi pi-palette",
         href: `/docs/${DESIGN_LAB_VERSION}/cards/design`,
-      });
-    }
-    // Diseño baraja va ANTES que Diseño de cartas en el push, no por orden
-    // alfabético ni de creación: es el marco ya elegido (J · Orla, 25-ago-2026)
-    // sobre el roster real, y el otro es el laboratorio de comparación que lo
-    // eligió — que se queda para experimentar, pero deja de ser lo primero que
-    // se mira.
-    if (g.key === SKETCH_LAB_GROUP) {
-      items.push({
-        label: "Diseño baraja",
-        icon: "pi pi-images",
-        href: "/docs/v3/cards/deck",
       });
     }
     if (g.key === SKETCH_LAB_GROUP && SKETCH_LAB_GROUP !== DESIGN_LAB_GROUP) {
@@ -240,7 +292,15 @@ export const getNavTree = cache((version?: DocsVersion): NavGroup[] => {
         href: "/docs/v3/cards/design",
       });
     }
-    return { key: g.key, label: g.label, icon: g.icon, items };
+    // Las páginas especiales de arriba no declaran estado y tampoco cuentan
+    // para la norma del grupo: no son documentos, son laboratorios.
+    return {
+      key: g.key,
+      label: g.label,
+      icon: g.icon,
+      items,
+      defaultStatus: defaultStatusOf(items.map((it) => it.status)),
+    };
   }).filter((g) => g.items.length > 0);
 });
 

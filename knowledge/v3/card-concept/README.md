@@ -57,6 +57,24 @@ prosa — a diferencia de las de v2, que eran casi todo texto de efecto:
 > problema que se le ve encima a la mezcla D, que lo había subido a un medallón
 > del marco.
 
+> **Y hay un dato número catorce que no ocupa sitio: el tipo de daño**
+> *(23-ago-2026)*. Las 132 fichas llevan uno —🗡️ Cuerpo a cuerpo, 🏹 A distancia
+> o ✨ Mágico— y es **campo obligatorio**, no Característica
+> ([`docs/v3/razas.md`](../../../docs/v3/razas.md#-tipo-de-daño)). No entra en la
+> tabla porque no pide hueco propio: viaja **dentro del icono del ⚔️ Ataque**,
+> que pasa a ser el del tipo de daño, así que la esquina dice de un golpe cuánto
+> pega y de qué manera. Está así desde la **E** y lo heredaron todos los bocetos
+> siguientes (§"Boceto F", punto 5).
+>
+> **La vía descartada era meterlo en las Características**, y la lección vale
+> para cualquier campo que se quiera colar ahí: un dato que llevan **todas** las
+> cartas no informa de nada en el raíl de las **excepciones**, y allí habría
+> gastado dos de los cinco medallones que la carta tiene contados. Se vio en la
+> página, con las cartas delante: al sacar de ahí los dos rasgos que eran este
+> campo disfrazado, el 🔮 Mago y el 🏹 Arquero de 👤 Humanos se quedaron con el
+> raíl **vacío** — que es exactamente lo que tenían que decir, que no tienen
+> ninguna excepción.
+
 Y tiene que aguantar los dos extremos de
 [`docs/v3/razas.md`](../../../docs/v3/razas.md) sin romperse:
 
@@ -71,14 +89,19 @@ Y tiene que aguantar los dos extremos de
 
 ## Dónde se ven dibujados
 
-En la wiki hay dos páginas, y no una. **Cartas › Diseño baraja**
-(`/docs/v3/cards/deck`) pinta el marco YA elegido —J · Orla— sobre el roster
-real del juego, raza por raza: hoy solo 👤 Humanos, la única con números de
-Habilidades escritos (inventados, pero con forma real). **Cartas › Diseño de
-cartas** (`/docs/v3/cards/design`) es donde se compararon los nueve bocetos y
-se sigue pudiendo experimentar si algún día hace falta volver a abrir la
-pregunta. El código está en `components/design/v3/` y sus estilos en
-`styles/components/card-sketch/`.
+En la wiki hay **una** página: **Cartas › Diseño de cartas**
+(`/docs/v3/cards/design`). El código está en `components/design/v3/` y sus
+estilos en `styles/components/card-sketch/`.
+
+> **Fueron dos hasta el 3 de septiembre de 2026**, y lo que sigue leyéndose aquí
+> abajo se escribió cuando lo eran: *Diseño de cartas* comparaba los bocetos
+> sobre once sujetos de muestra y *Diseño baraja* (`/docs/v3/cards/deck`)
+> pintaba el marco ya elegido sobre el roster real, raza por raza. Era la
+> separación entre una comparación y su resultado — y ese mismo día se cerró la
+> comparación eligiendo la L · Lámina, así que quedaban dos páginas pintando la
+> misma carta con distintos sujetos delante. Se fundieron en la primera, con la
+> baraja entera dentro y los casos límite en un filtro; la ruta `.../deck` ya no
+> existe.
 
 > **Hay CINCO bocetos dibujados: la mezcla E · Forja, la mezcla G · Estandarte,
 > el derivado H · Recinto, la mezcla I · Retablo y la mezcla J · Orla.**
@@ -137,9 +160,57 @@ pregunta. El código está en `components/design/v3/` y sus estilos en
 > cuenta la única que ni la H tenía sobre la mesa, si la carta es un
 > rectángulo, diciendo que sí, pero cortado a la vista y no a la fábrica.
 > Se ve construida sobre el roster real, raza por raza, en **Cartas › Diseño
-> baraja** (`/docs/v3/cards/deck`). Esta página, con sus otros ocho bocetos y
+> baraja** *(la página que existió del 25 de agosto al 3 de septiembre de 2026;
+> hoy su contenido está en Diseño de cartas)*. Esta, con sus otros ocho bocetos y
 > la comparación entera, se queda tal cual: deja de bloquear nada, pero sigue
 > siendo el sitio donde mirar si algún día hay que reabrir la pregunta.
+>
+> **Y hoy la página ya no enseña nueve, enseña TRES** *(2-sep-2026)*. El 1 de
+> septiembre se borraron los cuatro bocetos que seguían vivos —E, G, H e I— y
+> entró la **K · Moldura**; el 2 entró la **L · Lámina**. Todo lo que se lee aquí
+> arriba sigue siendo el razonamiento de cómo se llegó a la J, y por eso no se
+> toca; lo que cambia es qué se puede pinchar. Los tres que quedan son **la misma
+> carta con otro borde** —por dentro montan el mismo cuerpo, que es la G y la H
+> fundidas— así que lo único que se compara entre ellos es el marco, y son los
+> tres valores de esa variable: **trazado** (J), **dibujado en un archivo** (K) y
+> **ninguno** (L). Ver §"Boceto K" y §"Boceto L".
+>
+> ---
+>
+> ## LA COMPARACIÓN ESTÁ CERRADA: gana la **L · Lámina** *(3 de septiembre de 2026)*
+>
+> **La carta de V3 no lleva marco.** Dario eligió la L como diseño definitivo y
+> con ella se borraron los dos bocetos que quedaban: la **J · Orla**, que había
+> sido el elegido desde el 25 de agosto y el que pintaba la baraja, y la
+> **K · Moldura**. La página ya no compara nada — enseña **una** carta.
+>
+> **La pregunta se cierra por donde no se esperaba.** Doce días de bocetos
+> discutiendo *cómo* es el marco —de qué metal, con cuántos anillos, trazado por
+> el navegador o traído como archivo— y la respuesta que gana es que **no hace
+> falta**. Conviene ver que eso no tira nada de lo anterior: el reparto de los 13
+> datos, que es lo que de verdad decidieron los once primeros, sigue intacto
+> —disco del Tier en la esquina, estandarte colgando de él, las ocho en una fila,
+> placa al pie—, y lo único que cambió de la J a la L es el borde. Por dentro son
+> la misma carta, que era exactamente la condición con la que se dibujaron las
+> tres.
+>
+> **Lo que se fue del código y lo que no.** Se borran los dos parciales de SCSS
+> (`_orla.scss`, `_moldura.scss`), el marco vectorial
+> (`components/design/v3/sketch-frames.tsx`), la capa `.sketch__frame` del
+> esqueleto y **la piedra de Rareza** de CSS, que era una pieza que solo tenía
+> sentido engastada en una banda de metal. **No se borran los seis PNG de la
+> moldura** (`public/assets/v3/frames/card/`): son arte generado y no código, así
+> que se quedan con su norma escrita al lado en `public/assets/v3/README.md`, que
+> es lo que hace que sirvan el día que vuelva a hacer falta una moldura. Y no se
+> borra **nada de este archivo**: lo que enseñó cada boceto es justo lo que
+> permite borrarlos sin perder nada.
+>
+> **Dos cosas de las borradas sobreviven dentro de la elegida**, y conviene
+> saberlo antes de tocarlas: el **paspartú de 12px** es la ventana que dejaba la
+> moldura fina de héroe de la K —no es un número elegido, es el que hacía que las
+> dos cartas enseñaran el mismo trozo de ilustración—, y el **disco del Tier**
+> sigue siendo el PNG que estrenó la J, con su misma cuenta (la caja es el disco
+> nominal partido por 0,782, la fracción del anillo de oro en el lienzo).
 
 **Los sujetos son la plantilla real de la raza piloto**, no una selección: las
 **ocho unidades de 👤 Humanos** en su orden de progresión (tier 1 → 8) y sus
@@ -1143,6 +1214,14 @@ por eso hereda pisando.
 
 ## Mezcla J — Orla (la H · Recinto detrás del borde negro de Magic)
 
+> **BORRADA del código el 3 de septiembre de 2026**, al elegirse la L · Lámina.
+> Fue **el diseño elegido del 25 de agosto al 3 de septiembre** y la carta que
+> pintó la baraja durante nueve días, así que lo de aquí abajo no es el análisis
+> de un boceto descartado a la primera: es el de la carta que hubo. Lo que se le
+> ganó al quitarle el marco está en §"Boceto L". Dos cosas suyas siguen vivas en
+> la carta de hoy: el **disco del Tier** como PNG, con su cuenta, y el argumento
+> del mat negro —que aquí eran 8px y allí son 12—.
+
 *(25 de agosto de 2026, ya de noche.)* La I cruza la H con Magic por dentro —le
 roba la anatomía de franjas—; la J la cruza por el extremo contrario: le roba
 el **borde**. Y el borde era, hasta esta noche, la única pieza de la referencia
@@ -1253,7 +1332,7 @@ enseñar: el tier se reconoce por el halo antes de leer el disco.
   carta. El mat de la J es, a propósito, del mismo grosor que `$orla-ring` y
   no de una medida propia.
 - **La probeta de aleación necesitaba un segundo nombre.** El selector de
-  material (`components/design/v3/CardSketchLab.tsx`) movía `--m` con un
+  material (vivía en el componente de la página, hoy `CardDesign.tsx`) movía `--m` con un
   selector `[data-alloy="…"] .sketch`, y `.sketch__inlay` no lleva la clase
   `.sketch` — es un elemento nuevo, a propósito, para no arrastrar el
   `width`/`height` fijo de la carta base. Sin nombrarlo, la probeta habría
@@ -1283,6 +1362,14 @@ enseñar: el tier se reconoce por el halo antes de leer el disco.
   un efecto colateral que nadie miró.
 
 ## Boceto K — Moldura (el marco como archivo generado)
+
+> **BORRADO del código el 3 de septiembre de 2026**, al elegirse la L · Lámina.
+> Vivió dos días y nunca llegó a juzgarse contra la J, porque la pregunta se
+> cerró por debajo de la suya: discutía **con qué** se dibuja un marco y ganó la
+> respuesta de que no hay marco. Los seis PNG **siguen en el disco**
+> (`public/assets/v3/frames/card/`) con su norma en
+> `public/assets/v3/README.md`. Y dejó la cota que más se usa hoy: la **ventana
+> de 12px** de su moldura fina de héroe es el paspartú de la carta elegida.
 
 **Entró el 1 de septiembre de 2026** y no discute ninguna de las preguntas de
 esta carpeta: no toca la silueta, ni la jerarquía de los ocho, ni dónde vive la
@@ -1340,6 +1427,173 @@ abierta — o se acepta como un borde (la lectura de Magic, que es la de la J) o
 sube la moldura hasta el canto y la gema sale fuera de la carta. Hoy está lo
 primero, que es lo que el archivo da tal cual.
 
+## Boceto L — Lámina (la carta sin marco)
+
+> **ES EL DISEÑO DEFINITIVO DE LA CARTA** *(elegido por Dario el 3 de septiembre
+> de 2026, un día después de dibujarse)*. Con él se borraron la J · Orla y la
+> K · Moldura, y esta carpeta deja de tener una comparación abierta. Cualquier
+> arreglo de la carta se hace **sobre esta**, no eligiendo otra — el registro
+> completo de la decisión está arriba, en §"Dónde se ven dibujados".
+
+**Entró el 2 de septiembre de 2026**, un día después de la K, y es la misma
+pregunta llevada al extremo que faltaba. La K pregunta **con qué** se dibuja un
+marco; esta pregunta **si hace falta uno**. En doce días y once bocetos nadie lo
+había puesto sobre la mesa: todos discuten de qué metal es el filete, cuántos
+anillos tiene, si lo traza el navegador o si viene horneado en un PNG — ninguno
+prueba a quitarlo.
+
+**La idea, en una frase:** la carta es la ilustración con un paspartú negro de
+doce píxeles alrededor, una línea de Rareza encendida en su canto interior y
+nada más encima, con las esquinas redondeadas de la carta base — no el chaflán a
+45° del octógono.
+
+**El encuadre del arte no se elige aquí, se copia** *(y creció el mismo día: 9 →
+12 px, «un poco más de margen negro»)*. Los dos números salen de la K y ninguno
+es libre: **9** era su **solape** —la moldura fina mete el arte 9 px para que el
+borde muera bajo un filete de 6,5— y **12** es su **ventana**, o sea el hueco que
+esa moldura deja a la vista. Con 12, las dos cartas enseñan exactamente el mismo
+trozo de ilustración y lo único que cambia es qué hay alrededor: metal dibujado
+en una, negro en la otra. Que es la comparación que sirve de algo.
+
+De ahí sale también el radio de la ventana, que no es un número propio: la banda
+mide 12 por igual en todo el contorno, así que el radio de la carta encoge con
+ella (14 − 12 = **2 px**) y el hueco se lee casi a escuadra. No es un descuido
+—un radio más abierto ensancharía el negro solo en las esquinas y la ventana se
+vería pellizcada— y de rebote lo salva el canto encendido: el trazo se dibuja
+hacia fuera, así que el borde visible de la línea va a 4 px de radio.
+
+La versión de 9 px decía así, y se deja escrito porque es de donde sale el
+número: la moldura fina mete el arte 9 px y lo recorta
+en octógono para que su borde muera **por debajo** de un filete de 6,5 —tres
+píxeles y medio de solape, para que no se abra una raya de fondo entre la
+ilustración y el metal—. Aquí no hay filete que lo tape, así que esos 9 px dejan
+de ser un solape y pasan a ser **lo que se ve**. El mismo número con el trabajo
+cambiado, que es exactamente lo que Dario pidió al pedir el boceto: *«que la
+ilustración tenga el mismo aspecto que le has puesto en los héroes»*.
+
+**Y las esquinas son redondeadas, no el chaflán del octógono — corregido esa
+misma tarde.** La primera versión de este boceto se quedaba con el contorno que
+trae `.sketch--cuerpo` de fábrica (octagon-shell, `tools/_mixins.scss`) sin
+haberlo decidido: nadie había tocado la silueta, así que se quedaba con la que
+traía puesta. Dario pidió lo contrario —esquinas redondeadas—, y la corrección
+es la MISMA que ya había hecho la K por otro motivo: deshacer el octógono
+heredado y volver a la esquina curva. Aquí sale más barato que en la K, porque
+no hay un archivo dictando la curva — el radio es, sin tocarlo, **el de la
+carta base** (`$sketch-radius`, 14px), literalmente lo que hay debajo de todo
+boceto antes de que ninguno le pusiera un marco encima. La ventana del arte
+hereda ese mismo radio encogido por el paspartú (14 − 9 = 5px), la misma
+propiedad geométrica que usa `oct-clip()` para el chaflán, solo que en un
+círculo la cuenta es lineal y no hace falta la raíz de 2. El artículo —que en
+las otras dos cartas pinta el mat (J) o queda apagado (K)— aquí vuelve a hacer
+lo que hace por defecto en cualquier boceto sin marco: pintar el fondo negro,
+el radio y el halo de Rareza, sin una línea de más.
+
+**Lo que se cae con el marco, que es lo que hay que mirar:**
+
+- **La Rareza se queda sin piedra.** El rombo de 16 px vive «a caballo del canto
+  de arriba», o sea engastado en la banda de metal; sin banda no hay dónde
+  ponerlo, y un rombo flotando sobre la ilustración es un adorno suelto, no una
+  pieza montada. Se va, y con él la única marca **dura** del raíl de color: lo
+  que sigue diciendo la Rareza es la luz —el baño hacia dentro y el halo de
+  fuera—, que en una carta común, gris, casi no se ve. Este boceto es, de paso,
+  la medida de **cuánto de la Rareza lo estaba diciendo el marco**.
+- **El panel pierde su tapa.** En la J y en la K el pie va a sangre y son los
+  15 px de metal los que le recortan los cantos, que es lo que hace que se lea
+  cerrando contra el marco. Aquí se recoge dentro del paspartú: sin nada que lo
+  tape, un panel a sangre pisaría el borde por tres lados y lo dejaría en forma
+  de U — que es lo que convierte un marco en una etiqueta pegada.
+
+**Lo que no cambia**, y es la condición de siempre: por dentro es el mismo cuerpo
+(`styles/components/card-sketch/_cuerpo.scss`) que montan las otras dos, con las
+cotas vueltas a medir contra el paspartú en vez de contra el filete —el asiento
+del disco, el del raíl y el acolchado del panel—. El acolchado sale de una cuenta
+y no de un gusto: el pie ya no mide 300 sino 282, así que se pone en 12 px para
+que la columna de la fila de ocho siga midiendo los **30,5 px** con los que están
+juzgadas las ocho cápsulas en las otras dos cartas. Entre bocetos cambia el
+aspecto, nunca la medida.
+
+### Dónde vive el Tier cuando no hay marco *(resuelto: el canto encendido, 2-sep-2026)*
+
+Al caerse la piedra quedaban **dos señales y las dos de luz** —el baño de Rareza
+hacia dentro y el halo de fuera—, y de ahí sale el diagnóstico que ordenó todo lo
+demás: **la luz es lo único que no se imprime.** En papel a 63 mm esta carta no
+decía su raíl; lo decía la pantalla. Así que lo que había que buscar no era más
+color, era una marca de **pigmento**.
+
+Y un límite estructural que parte el problema en dos, porque conviene tenerlo
+escrito: **un color no aguanta ocho valores.** Por eso `rarityForTier()` colapsa
+los ocho tiers en cinco raíles —y ese colapso es un invento provisional, no una
+regla—. Una marca de color solo puede decir la **clase**; para el **tier exacto**
+hay que contar.
+
+> **Actualización del 5 de septiembre de 2026:** ya es una regla. El colapso se
+> midió sobre las 88 unidades y quedó en 1-2 · 3-4-5 · 6 · 7 · 8, decidido por
+> Dario y escrito en `docs/v3/game-design.md` §3.1; el código vive ahora en
+> `lib/v3/rarity.ts` y no en el archivo de bocetos. **Lo que decía este párrafo
+> sigue valiendo entero**: cinco raíles siguen sin poder decir ocho tiers, y el
+> tier exacto lo sigue diciendo el disco. Lo único que cambia es que ahora, la
+> clase que dice el color, la dice a propósito.
+
+Se montaron **seis variantes conmutables** en el lab y se borraron el mismo día,
+con su respuesta puesta. Lo que enseñó cada una:
+
+- **Solo luz** *(la hipótesis nula, lo que había)*. Las cuatro cartas de la
+  tanda —común, rara, legendaria y héroe— salen **indistinguibles**. No es que el
+  raíl se lea flojo: no está. Merecía estar en la lista porque si ninguna de las
+  otras cinco convencía, la respuesta de este boceto era que **el raíl de color
+  no hace falta** y basta el número del disco — una pregunta que los once bocetos
+  anteriores nunca se hicieron, porque todos lo daban por hecho.
+- **Mat teñido** *(el raíl mezclado al 30 % con el negro)*. Funciona, y mejor de
+  lo esperado: se lee a la primera y el mat sigue leyéndose como negro tirando al
+  color, como el *mount* de una lámina enmarcada. No cuesta un píxel de
+  ilustración. **Fue la segunda.**
+- **Banda plena** *(el mismo mat al 100 %)*. Está aquí para cerrar el único
+  parámetro que decidía la anterior —cuánto color— y lo cerró: deja de ser un
+  canto y pasa a ser un chip de interfaz. Es literalmente el argumento con el que
+  se descartó el **boceto D** —«convierte el marco en cinco piezas distintas y le
+  roba la carta a la ilustración»— vuelto a ver en carne. Respuesta: teñido sí,
+  saturado no.
+- **Canto encendido** *(2 px del raíl en el borde del hueco de arte)*. **La
+  elegida.** Es la veta de la E rescatada sin marco donde ponerla, así que sigue
+  el vocabulario que ya existía en vez de inventar uno, y no cuesta ilustración
+  porque el trazo se dibuja hacia fuera, sobre el negro que ya estaba. Su riesgo
+  está anotado y es el del hilo de oro: a 2 px una línea depende de que el fondo
+  no se le parezca. Y trae un precio que se aceptó a la vista: en el raíl
+  **común** el gris sobre negro se lee casi blanco, así que la carta más barata
+  de la escala dice «tengo un canto» antes que decir de qué color es.
+- **Lacre** *(un sello estampado en la esquina de abajo a la derecha)*. Era la
+  favorita en teoría y **falló al montarla**, que es exactamente para lo que se
+  monta: resolvía la objeción de la piedra —un rombo necesita metal donde
+  engastarse, un lacre se estampa sobre papel y esta carta es una lámina— pero a
+  18 px el radio irregular no se lee y sale un **punto de color**, no cera. Como
+  marca de pigmento funciona; la metáfora que la justificaba, no. Subirla de
+  tamaño la convierte en una pieza de arte, no en una línea de CSS.
+- **Muescas** *(una por tier, en la banda de abajo del paspartú)*. La sorpresa
+  buena: se **cuentan** sin esfuerzo, son las más discretas de las seis con la
+  ilustración y el héroe se queda sin ninguna, que es lo correcto. Es la **única**
+  que lleva el tier exacto y la única que no depende de que un color sobreviva a
+  la imprenta. Lo que cuesta: dice el mismo dato que el número del disco, así que
+  abre un segundo cabo suelto del tipo «la raza dicha dos veces». **Si algún día
+  hace falta leer el tier sin leer el número, esta es la vía.**
+
+**Y el disco se movió con la decisión.** Sus cuatro puntas en cruz cruzaban la
+línea y la partían —con el paspartú negro no se notaba, con una línea de color
+sí—, así que su asiento dejó de ser «4 px de aire contra el canto» y pasó a
+salir de la punta: centro en `paspartú + 0,488 × caja`, y la punta muere justo
+donde arranca el canto. Son ~2,7 px más adentro, y el estandarte baja con él
+porque cuelga del medallón.
+
+**Lo que queda por mirar, y no es de gusto:** si 2 px aguantan a tamaño de mesa y
+en papel. Es el mismo riesgo que tenía anotado el hilo de oro del marco de la J,
+y borrada aquella es **la única pregunta que le queda abierta a la carta** — no
+se contesta en pantalla, se contesta con una prueba impresa.
+
+> **Y el argumento acabó llevándose al diseño elegido, literalmente**
+> *(3-sep-2026)*. Aquí decía: «ojo con el alcance — la J también tiene un mat
+> negro, de 8 px, así que que una línea de 2 px diga la Rareza es un argumento
+> que se le puede llevar al diseño elegido y no solo al boceto de al lado». No
+> hizo falta llevárselo: al día siguiente el diseño elegido pasó a ser este.
+
 ## Lo que esto cambia de lo ya escrito
 
 **El lienzo heredado de v2 era el equivocado, y ya está corregido.** La
@@ -1381,23 +1635,31 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 > con la cola: **veintitrés de veinticuatro**. El diagnóstico no cambia, se
 > confirma.)*
 
-## Qué falta decidir (cerrado: J · Orla, 25-ago-2026)
+## Qué falta decidir (cerrado: L · Lámina, 3-sep-2026)
 
-> **Todas las preguntas de aquí abajo están contestadas.** Se eligió
-> **J · Orla** como diseño final, y J hereda las respuestas de la H —el
-> octógono con las ocho juntas, la Rareza en la veta, el disco dentro del
-> contorno, la raza dicha dos veces— sin volver a discutir ninguna; lo único
-> que responde por su cuenta es la que ni la H tenía sobre la mesa, si la
-> carta es un rectángulo, y dice que sí, pero cortado a la vista y no a la
-> fábrica (§"Mezcla J"). La lista se queda entera, sin tocar una línea: es el
-> registro de CÓMO se llegó ahí, con los bocetos delante en
-> `/docs/v3/cards/design`, que sigue viva para el día que haga falta volver a
-> abrir alguna.
+> **Todas las preguntas de aquí abajo están contestadas, y la última se cerró el
+> 3 de septiembre de 2026 con la L · Lámina.** El registro completo de esa
+> decisión está arriba, en §"Dónde se ven dibujados"; aquí basta con saber qué le
+> hace a esta lista, que es **menos de lo que parece**: la L no discute ninguna
+> de estas preguntas —hereda el mismo cuerpo que la J y la K— salvo dos, y las
+> dos por el mismo motivo, que no hay marco. **Dónde vive la Rareza** ya no puede
+> contestarse «en la veta del filete» y se contesta con el canto encendido; y
+> **si la carta es un rectángulo** deja de tener truco, porque sin marco no hay
+> contraste que dibuje un octógono: es un rectángulo redondeado y punto.
+>
+> **La lista se queda entera, sin tocar una línea.** Es el registro de CÓMO se
+> llegó ahí, y sigue valiendo aunque los bocetos que la contestaron estén
+> borrados — de eso va este archivo.
+>
+> **Aviso de lectura, porque lo de abajo está escrito en presente y ya no lo
+> es:** donde dice «el diseño elegido» o «se eligió J · Orla», eso valió del 25
+> de agosto al 3 de septiembre de 2026.
 >
 > **Y ese día llegó una vez, el 1 de septiembre de 2026, sin mover ninguna de
 > estas preguntas**: la K · Moldura no discute la silueta ni el reparto —por
 > dentro es la H, igual que la J— sino **con qué se dibuja el marco**, y trae
-> el suyo como archivo generado (§"Boceto K"). Está sin juzgar.
+> el suyo como archivo generado (§"Boceto K"). Nunca llegó a juzgarse: dos días
+> después la pregunta se cerró por debajo de la suya.
 >
 > **Ese mismo día la página se quedó en dos.** Por decisión de Dario se borraron
 > los cuatro bocetos que seguían vivos —E · Forja, G · Estandarte, H · Recinto e
@@ -1406,11 +1668,30 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
 > que estuviera en discusión, y que de los dos supervivientes solo podían mover
 > uno. Lo que enseñó cada boceto es exactamente lo que sigue escrito en este
 > archivo, y por eso se pueden borrar sin perder nada: **el laboratorio dejó de
-> ser el archivo de la comparación y pasó a ser el banco de la única que sigue
+> ser el archivo de la comparación y pasó a ser el banco de la única que seguía
 > abierta**, J contra K. En el código, la G y la H se fundieron en un solo
 > parcial —`styles/components/card-sketch/_cuerpo.scss`— porque las dos
-> supervivientes montan ese interior entero: dejó de ser un boceto y pasó a ser
-> el cuerpo de la carta.
+> supervivientes montaban ese interior entero: dejó de ser un boceto y pasó a ser
+> el cuerpo de la carta, que es lo que sigue siendo hoy.
+>
+> **Y el 2 de septiembre de 2026 volvió a abrirse por el mismo sitio, un escalón
+> más lejos**: entró la **L · Lámina**, que no pregunta con qué se dibuja el
+> marco sino **si hace falta** (§"Boceto L"). Tampoco movía ninguna de las
+> preguntas de abajo —por dentro sigue siendo el mismo cuerpo— pero sí destapó
+> una que estaba contestada de prestado: **dónde vive la Rareza** se contestó
+> «en la veta del filete», y sin filete no hay veta ni piedra.
+>
+> **Y al día siguiente se cerró todo.** El 3 de septiembre Dario eligió la L como
+> el diseño definitivo y se borraron la J y la K, así que el laboratorio dejó de
+> ser también el banco de la comparación — y ese mismo día dejó de ser un
+> laboratorio: absorbió a *Diseño baraja* y hoy enseña **una** carta sobre el
+> **roster entero**, raza por raza, con los **siete casos límite** en un filtro.
+> Los once sujetos de muestra que pintaba mientras se comparaba ya no hacen
+> falta: elegido el marco, lo que sigue haciendo falta no son los once, son los
+> que rompen algo. La variante que la L dejó pendiente —teñir el paspartú del color
+> del Tier— sigue siendo la única de todo este archivo que puede reabrir de
+> verdad la respuesta de la Rareza, solo que ahora reabriría el **diseño
+> elegido** y no un boceto de al lado.
 
 - **Si la carta es un rectángulo.** *(Abierto desde el 24-ago-2026.)* Los cinco
   primeros bocetos no lo preguntaron: los cinco son la misma caja redondeada con
@@ -1497,6 +1778,24 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   raza, y un campo de color rompe el empate — tinte más emblema se leen a
   distancia de mesa y la versalita al pie no, así que la que pasa a sobrar es el
   texto. Sigue sin decidirse, pero ya no está empatada.
+
+  **Decidido por Dario el 3 de septiembre de 2026: se quedan las dos**, y no por
+  el empate — el empate estaba roto y la respuesta va en contra de por dónde se
+  había roto. El motivo es que **van a dejar de decir lo mismo**: llegan
+  **sub-facciones dentro de las razas** *(anunciadas ese día, sin definir
+  todavía)*, así que la carta va a tener **dos** taxonomías que decir y no una.
+  Borrar hoy uno de los dos huecos sería tirar el sitio donde va la segunda, y
+  volver a abrirlo después cuesta rehacer el pie o la esquina.
+
+  **Cómo se reparten no se decide aquí ni todavía**, porque primero hay que
+  saber cuántas sub-facciones tiene una raza
+  ([`../races-concept/README.md`](../races-concept/README.md) §"Qué falta
+  decidir"). El candidato obvio es el que ya sostienen §5 y §6 de
+  [`banners.md`](banners.md): el **paño** para la sub-facción —el tinte indexa y
+  el corte desempata, que es lo único que sobrevive a 34px— y la **versalita al
+  pie** para la raza, que es la palabra que hay que poder leer con la carta en
+  la mano. Lo que queda cerrado es solo que **no se borra ninguno de los dos**,
+  que era la pregunta.
 - **Cuánto detalle aguanta una pieza pequeña.** *(Abierto desde el 24-ago-2026.)*
   El rombo de la Rareza se dibujó de dos maneras: **cara plana** de 15px (F) y
   **piedra tallada** con engaste, cuatro facetas y tabla (G), que primero tuvo
@@ -1509,6 +1808,15 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   más sucia que la plana. Vale igual para los roblones y el bocel del marco.
 - **Si los ceros se imprimen o se ocultan.** A los imprime; con Suerte 0 en
   media plantilla, ocultarlos deja huecos irregulares en la tira.
+
+  **Decidido por Dario el 3 de septiembre de 2026: se imprimen.** Un 0 es un
+  dato —dice que esa unidad no tiene nada de Suerte, no que falte el número— y
+  la fila se queda con sus **ocho cápsulas siempre en el mismo sitio**, que es
+  lo que deja comparar dos cartas por posición. Las otras tres salidas se
+  miraron y cada una pierde algo: la cápsula sin cifra deja agujeros a la vista
+  en media plantilla, quitar la cápsula rompe la fila fija —la 🍀 estaría en una
+  carta sí y en otra no, y en distinto sitio—, y un guion dice lo mismo que el
+  cero con un signo más.
 - **Si el Tier se escribe o se enseña.** A, B y C lo escriben en el subtítulo; la
   mezcla D lo sube al medallón del marco y le quita el subtítulo; la **E no lo
   escribe en ningún sitio** y paga que solo puede decir de qué *clase* de tier es
@@ -1525,6 +1833,19 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   número esperando ese hueco y la respuesta se elige libre — un emblema, una
   palabra, o no reservar el sitio. Lo que el G enseña es el coste de reservarlo:
   quien reserva, rellena.
+
+  **Decidido por Dario el 3 de septiembre de 2026: una 👑.** El disco reserva el
+  hueco, así que se rellena, y la corona dice «héroe» sin escribirlo. El coste
+  se acepta a la vista: las dieciséis cartas de héroe llevan **el mismo
+  símbolo**, así que el disco los iguala en vez de distinguirlos, y lo que los
+  separa es el nombre y el emblema del estandarte. Se miraron las otras tres: el
+  disco vacío —solo el aro— se lee como un error de maquetación y no como una
+  ausencia deliberada; quitar el disco en los héroes deja al estandarte colgando
+  de nada y hace que una carta de héroe no tenga la silueta de una de unidad; y
+  el icono de la clase (⚔️ 🔮 🏹 ✝️) sí distingue los dieciséis, pero repite el
+  nombre que va tres píxeles más abajo, que es la peor redundancia posible —la
+  misma con la que [`banners.md`](banners.md) §2 descarta que la bandera diga el
+  Tier—.
 - **Si el rojo sangre es el color de los héroes.** Ya está puesto: un héroe no
   está en la escala de rareza —no tiene tier— y prestarle un escalón decía que
   un Sacerdote es "más legendario" que un Guerrero, que es falso. Así que tiene
@@ -1544,6 +1865,25 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   entera, así que se ve bastante peor. O el héroe cambia de color, o la Vida no
   puede ser roja. En la E no se veía, porque allí la Vida es un número más de la
   fila y no tiene color propio.
+
+  **Decidido por Dario el 3 de septiembre de 2026: el raíl dice la Rareza, y el
+  héroe es la única excepción.** O sea que el rojo **no se comparte**: es de los
+  héroes y de nadie más. Lo que se descartó es que el raíl dijera *dos* cosas
+  —la rareza y de qué tipo de carta se trata—, y se descartó porque el tipo ya
+  está dicho tres veces sin gastar color (el nombre, el sitio del mazo del que
+  sale y la anatomía misma de la carta, que no es igual en una unidad que en una
+  maldición), mientras que la rareza no tiene ningún otro sitio donde decirse. El
+  rojo de héroe sobrevive a la regla porque **no es un tipo de carta, es la
+  ausencia de un escalón**: un héroe no tiene tier del que derivar rareza, así
+  que su raíl no está compitiendo con la escala, la está sustituyendo.
+
+  **Y esto afina, no contesta, el pendiente de
+  [`docs/v3/cards/README.md`](../../../docs/v3/cards/README.md) §"Por definir".**
+  Allí falta decir de dónde sale la Rareza de las cartas de clase, item,
+  maldición y encuentro, que no tienen tier. La decisión de hoy dice que sea de
+  donde sea, **la pintan como rareza**: no se les da raíl de tipo para esquivar
+  la pregunta. Las claves `"clase"`, `"maldicion"` y `"enemigo"` que hay en
+  `$rarity` son del catálogo de v2 y del lab, no de V3, y no se amplían.
 - **Dos Características distintas con el mismo emoji** — *destapado aquí,
   resuelto en el catálogo (22-ago-2026)*. El héroe ⚔️ Guerrero de Humanos llevaba
   🛡️ Resistente al daño físico y 🛡️ Último aliento, y como las Características se
@@ -1555,6 +1895,33 @@ Anotado también en [`docs/v3/status.md`](../../../docs/v3/status.md) §6.
   equivalentes de ☠️ y 🧊), y ahí es deliberado: el glifo compartido dice que van
   del mismo tema, y lo que falta por marcar es el *papel*, que es tratamiento
   visual del icono y no otro dibujo. Anotado en `docs/v3/status.md` §6.
+
+  **Y los que quedaban se cerraron el 3 de septiembre de 2026, en bloque y con
+  una sola frase de Dario: «los emojis son provisionales, ya se generarán otros
+  donde se diferencien mejor».** Eran dos y parecían distintos: 💀 dicho tres
+  veces —la raza No-muertos, la Característica *No-muerto*, la clase
+  *Nigromante*—, con 😈 en el mismo caso, y 🗡️ *Perforante* contra el 🗡️ del tipo
+  de daño Cuerpo a cuerpo. Los dos son **el mismo problema, y no es de
+  catálogo**: el emoji es lo único que no se puede dibujar distinto, así que
+  obliga a que dos conceptos parecidos se vean *idénticos*. Un pictograma propio
+  no tiene esa limitación — la calavera de un emblema de raza y la de un rasgo
+  pueden compartir tema y no confundirse, que es justo lo que ya se hace con el
+  aro de las familias elementales.
+
+  **Esto tumba una frase de
+  [`../icon-concept/icons.md`](../icon-concept/icons.md) §4**, que llamaba al 💀
+  triple «un pendiente de catálogo, no solo de dibujo». Es al revés: es de
+  dibujo y solo de dibujo.
+
+  **La comprobación de que no cuesta nada es el inventario, no la intención**:
+  §3 y §4 de icons.md ya cuentan el emblema de raza y la Característica como
+  **dos siluetas distintas**, y §2 cuenta el tipo de daño aparte de las
+  Características. Es decir, el reparto de dibujos que hace falta para separarlos
+  **ya estaba presupuestado** — nadie tiene que dibujar de más. Lo que sí queda
+  es una fecha: el 🗡️ deja de chocar cuando exista
+  `public/assets/v3/icons/damage/cuerpo-a-cuerpo.png`, que es **el único de los
+  tres tipos de daño que falta** y hoy se suple con el genérico `ataque.png`
+  (icons.md §2, "Excepción viva").
 - **De qué metal es la carta.** Se puede preguntar en la E y en la G: en las dos
   el metal no lleva ningún dato —en el D *es* la rareza— y por tanto el
   tono es una decisión libre. Está montada una **probeta** en el

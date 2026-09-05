@@ -78,6 +78,8 @@
  * imagen—. Por eso `icon` y `art` conviven en la misma ficha en vez de
  * sustituirse.
  */
+import { HERO_RAIL, rarityForTier } from "@/lib/v3/rarity";
+
 const ICONS = "/assets/v3/icons";
 const BANNERS = "/assets/v3/banners";
 
@@ -373,18 +375,17 @@ const ART_V3 = (slug: string) => `/assets/v3/races/humanos/${slug}.png`;
 const ART_V3_UNIT = (slug: string) => `/assets/v3/races/humanos/units/${slug}.png`;
 
 /**
- * Rareza por tier. No está decidida en ningún documento —status.md la tiene
- * abierta en §"Escala de unidades"—, así que aquí va la lectura más obvia
- * (a más tier, más rara) solo para que los bocetos enseñen los cinco raíles
- * de color sin inventarse un control aparte.
+ * Rareza por tier. **Ya no se inventa aquí**: desde el 5 de septiembre de 2026
+ * es una regla de V3 y vive en `lib/v3/rarity.ts`, derivada de las 88 unidades
+ * de razas.md. Lo que había antes era un reparto provisional (1-2 · 3-4 · 5-6 ·
+ * 7 · 8) puesto para que los bocetos enseñaran los cinco raíles; se cambia el
+ * corte en dos sitios (el tier 5 sube a poco-común, el 6 baja a raro) y los
+ * sujetos de más abajo se repintan solos.
+ *
+ * Se reexporta con el mismo nombre porque los sujetos la llaman en cada tier y
+ * el resto del archivo no tiene por qué saber de dónde salió.
  */
-export function rarityForTier(tier: number): string {
-  if (tier <= 2) return "comun";
-  if (tier <= 4) return "poco-comun";
-  if (tier <= 6) return "raro";
-  if (tier <= 7) return "epico";
-  return "legendario";
-}
+export { rarityForTier };
 
 /**
  * Lo que va bajo el nombre: el rango de la carta. Es lo único que un boceto
@@ -402,8 +403,12 @@ export const rankOf = (s: Subject) => (s.kind === "heroe" ? "Héroe" : `Tier ${s
  * a mano decía que un Sacerdote es "más legendario" que un Guerrero, que es
  * falso. Los tres comparten raíl y así se leen como lo que son: una familia
  * distinta de las unidades.
+ *
+ * Vive con la regla, en `lib/v3/rarity.ts`, desde que la regla existe
+ * (5-sep-2026): es la otra mitad de la misma pregunta —qué raíl le toca a una
+ * ficha— y tenerlas separadas invitaba a que una se moviera sin la otra.
  */
-export const HERO_RAIL = "heroe";
+export { HERO_RAIL };
 
 // --- Las ocho unidades de 👤 Humanos --------------------------------------
 // razas.md §"Unidades › 👤 Humanos — Progresión de unidades" para el orden y

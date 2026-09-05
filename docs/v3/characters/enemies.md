@@ -1,3 +1,5 @@
+<!-- estado: a-medias -->
+
 # Enemigos — V3
 
 > Esqueleto en casi todo. En V3 los enemigos no son un bestiario aparte: son las propias razas. Escrito ya: **las dos formas de encuentro** y **cuántas fichas trae la máquina** —el espejo, 28 de agosto de 2026—. Sin escribir: la mezcla, el comportamiento y el reparto por zonas.

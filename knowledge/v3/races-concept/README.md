@@ -45,6 +45,18 @@ Recogido de [`docs/v3/status.md`](../../../docs/v3/status.md) §preguntas
 abiertas, que es donde estaban anotadas. Estas son las que este documento tiene
 que responder:
 
+- **Sub-facciones dentro de las razas.** *(Abierto el 3 de septiembre de 2026,
+  anunciado por Dario: «se me ha ocurrido hacer sub-facciones de las propias
+  razas para un futuro próximo».)* No hay nada escrito todavía —ni cuántas por
+  raza, ni si las once las tienen, ni qué cambian: solo identidad, o también
+  unidades y Características—. Se anota aquí porque es de este documento, y
+  porque **ya ha cobrado una consecuencia fuera**: la carta conserva sus **dos
+  huecos de raza** —el emblema del estandarte y la versalita al pie— en vez de
+  borrar uno, que era la decisión que estaba a punto de tomarse
+  ([`../card-concept/README.md`](../card-concept/README.md) §"Qué falta
+  decidir"). Cuál de los dos acaba diciendo la sub-facción está sin repartir, y
+  no se puede repartir hasta saber cuántas son
+  ([`../card-concept/banners.md`](../card-concept/banners.md) §2 y §9).
 - **Valores numéricos de las 8 Habilidades.** Siguen siendo insumo de Dario; no
   se inventan. **Una ya está puesta** *(31-ago-2026)*: **👢 Movimiento, 🗡️ 3 ·
   ✨ 2 · 🏹 1**, banda por tipo de daño y no valor por ficha, decidida sobre el

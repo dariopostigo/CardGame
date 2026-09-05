@@ -80,6 +80,16 @@ $rarity: (
   // Ojo: "enemigo" (#b23b2e) es un rojo vecino. No coinciden en pantalla —ese
   // es del catálogo de v2 y este de los marcos de V3— pero si algún día
   // comparten vista hay que separarlos.
+  //
+  // Y NO SE AÑADEN MÁS CLAVES QUE NO SEAN RAREZA (Dario, 3 de septiembre de
+  // 2026). El raíl de color de una carta de V3 dice la Rareza y nada más; el
+  // héroe es la única excepción y lo es porque SUSTITUYE a un escalón que no
+  // tiene, no porque nombre un tipo de carta. Se descartó que el raíl dijera
+  // también el tipo —clase, unidad, item, maldición, encuentro—, así que las
+  // cuatro cartas sin tier van a pintar la rareza que se les decida
+  // (docs/v3/cards/README.md §"Por definir"), no un color propio. Las tres
+  // claves de arriba que no son rareza son de v2 y del lab: se quedan, no
+  // crecen.
   "heroe": ("base": #d9422c, "soft": rgba(217, 66, 44, 0.45)),
 );
 
@@ -296,20 +306,69 @@ $arena-grid: #a89a63;
 // vea encima del suelo en vez de grabada en él.
 $arena-grid-glow: rgba(216, 199, 116, 0.55);
 
-// LOS DOS BANDOS. Rojo y azul, del muestreo de las peanas de la referencia:
-// allí el bando no está en el suelo —no puede, el suelo es ilustración— sino en
-// la peana de cada criatura. Se usan en dos sitios, y a propósito los mismos
-// dos tonos: el CONTORNO de cada banda de despliegue y el ARO de cada ficha. Que
-// el aro de la ficha y el contorno de su banda sean el mismo color es lo que
-// dice, sin una sola palabra, de quién es esa criatura.
-$arena-side-own: #b8544a;
-$arena-side-enemy: #6b86c4;
+// LOS BANDOS, Y SON TRES TONOS, NO DOS *(Dario, 3 de septiembre de 2026: «para mí
+// azul, para mis enemigos rojo y para mis aliados verde; de esa manera se
+// distinguen y no hace falta el número del jugador»)*. La pregunta que contesta
+// el color pasó de dos valores a tres —YO, MI ALIADO, EL ENEMIGO— y con eso se
+// retira la cifra que se había probado ese mismo día para decir el jugador: si el
+// color ya separa lo mío de lo de mi aliado, un número encima de la ficha repite
+// lo mismo con letra pequeña.
+//
+// El azul y el rojo salen del muestreo de las peanas de la referencia
+// (`public/concepts/oldenEra/3.png`); ese mismo día se intercambiaron —allí el
+// bando propio es rojo— porque el azul es el propio y el rojo el enemigo. El
+// VERDE es el único de los tres que no está medido de la referencia: no hay
+// tercer bando en ella. Va en el mismo registro que sus dos hermanos —tierra en
+// penumbra, no color de saturación plena— y con la saturación deliberadamente
+// baja (~30% contra el 47% del verde de $rarity "poco-comun"), porque tiene dos
+// vecinos de los que separarse y están medidos:
+//
+//   · el raíl de Rareza "poco-comun" (#3fae5a), que es el color del MARCO de las
+//     fichas de tier 3-4, así que una ficha de tier 4 aliada es verde sobre
+//     verde. Lo que los separa no es el tono: es que la casilla es un lavado
+//     grande al 34% y el marco un trazo fino a plena opacidad.
+//   · $arena-move (#79b8ab), el alcance de movimiento, que es verde AGUA. Ese
+//     tira al azul y este al amarillo a propósito.
+//
+// Los tres se usan en dos sitios y a propósito con los mismos tonos: el CONTORNO
+// de cada banda de despliegue y la CASILLA ILUMINADA de cada ficha (_ficha.scss).
+// Que la casilla de una ficha y el contorno de su banda sean el mismo color es lo
+// que dice, sin una sola palabra, de quién es esa criatura.
+//
+// LO QUE ESTO CIERRA Y LO QUE NO. Cierra battle.md §8 —«cómo sabe cada jugador
+// cuáles de esas fichas son suyas»— y de paso se lleva por delante los dos tonos
+// que el 1 de septiembre se habían escrito como candidatos para los jugadores 2 y
+// 3 ($arena-side-ally-2/3, un violeta y un rosa): no hacen falta, porque los dos
+// aliados comparten el verde. Lo que NO dice el color es CUÁL de los dos aliados
+// es cada ficha verde, y eso es la decisión: con el bando en tres tonos la
+// pregunta dejó de merecer un color propio. El dato de que esta paleta está LLENA
+// sigue en pie y por eso se anota aquí: el oro es la rejilla, el oro claro el
+// alcance, el verde agua el movimiento, el hueso la casilla que estás mirando, y
+// el azul, el verde y el rojo los tres bandos.
+$arena-side-own: #6b86c4;
+$arena-side-ally: #5fa85c;
+$arena-side-enemy: #b8544a;
 
 // LA PEANA de una ficha. Casi negra, y eso es cuestión de trabajo, no de gusto:
-// la peana es el fondo sobre el que se lee el glifo, y encima de ella el aro de
-// bando tiene que separarse tanto del suelo claro como del oscuro. En la
-// referencia las peanas son también un disco oscuro con el aro de color.
+// la peana es el fondo sobre el que se lee el glifo, y encima de ella el trazo
+// del marco —el color del tier, desde el 3 de septiembre de 2026— tiene que
+// separarse tanto del suelo claro como del oscuro. En la referencia las peanas
+// son también un disco oscuro con el aro de color.
 $arena-piece: #17140f;
+
+// LA BARRA DE ❤️ VIDA que cuelga de la ficha. Rojo de videojuego y no el
+// $arena-damage de la cifra del golpe, que es otra cosa y tiene otro trabajo: esa
+// cifra sale flotando una vez y se va, y esta barra está siempre puesta, así que
+// no puede llevar el color de "acaba de pasar algo". Sobre su carril oscuro se
+// lee igual encima del suelo claro y del oscuro, que es lo que hace falta cuando
+// hay treinta.
+$arena-life: #d6402f;
+$arena-life-track: rgba(10, 8, 6, 0.82);
+
+// El fondo de la gema de ❤️ Vida: el mismo rojo llevado a la sombra, para que la
+// cifra se lea sobre él sin tocar el rojo de la barra —que es el que tiene que
+// verse de lejos—.
+$arena-life-deep: #6b1d18;
 
 // El contorno del alcance que se está enseñando. Oro CLARO: es el mismo idioma
 // que la rejilla —que también es oro— pero un escalón más brillante, porque en
@@ -338,10 +397,13 @@ $arena-label: rgba(255, 255, 255, 0.88);
 $arena-label-halo: rgba(16, 12, 8, 0.7);
 
 // LA CIFRA DEL GOLPE, la que sale flotando de una ficha al recibir (el banco de
-// animación, /dev/animacion). Blanco tirando a rosa y no el rojo del bando
-// propio: el rojo ya significa "es mía" en este tablero, y un número rojo sobre
-// una ficha enemiga diría lo contrario de lo que pasa. Se lee sobre suelo,
-// ficha y polvo, así que va con el mismo halo que los rótulos.
+// animación, /dev/animacion). Blanco tirando a rosa y no un rojo de bando: desde
+// el 3 de septiembre de 2026 el rojo significa "es del enemigo" en este tablero,
+// así que una cifra roja sobre una ficha propia diría lo contrario de lo que
+// pasa. El argumento era el mismo antes de aquel día y con los bandos al revés,
+// y eso es justo lo que dice: la cifra del golpe no puede salir de la familia de
+// los bandos, le toque a quien le toque. Se lee sobre suelo, ficha y polvo, así
+// que va con el mismo halo que los rótulos.
 $arena-damage: #ffd9d0;
 
 // Los otros dos desenlaces del §4.1, que son un par y hay que moverlos juntos:

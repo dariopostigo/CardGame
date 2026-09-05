@@ -65,6 +65,15 @@
     outline: 2px solid skin("accent");
     outline-offset: 2px;
   }
+
+  // UNA ESCENA, no la arena entera: un retal de pocas casillas para mirar lo que
+  // pasa entre fichas que se tocan (/dev/pieza). El alto de arriba está pensado
+  // para el 14×12; con siete por cinco lo único que añade es mesa vacía.
+  &--escena {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 3 / 2;
+  }
 }
 
 .arena__svg {
@@ -165,9 +174,10 @@
     stroke-linecap: round;
   }
 
-  // La banda propia y la enemiga, en el rojo y el azul de las peanas de la
-  // referencia. Es la única forma que queda de decir el bando ahora que el
-  // suelo no puede llevar color.
+  // La banda propia y la enemiga, en el azul y el rojo de los dos bandos
+  // *(azul la de la mesa desde el 3 de septiembre de 2026)*. Es la única forma
+  // que queda de decir el bando ahora que el suelo no puede llevar color, y es
+  // el mismo par de tonos con el que se ilumina la casilla de cada ficha.
   &[data-kind="propio"] line {
     stroke: $arena-side-own;
   }
@@ -209,6 +219,13 @@
 .arena__pieces {
   pointer-events: none;
   filter: drop-shadow(0 2px 2px $board-shadow);
+}
+
+// La interfaz que cuelga de cada ficha, por encima de todas ellas. Sin sombra, al
+// contrario que la capa de arriba, y ahí está la diferencia: las fichas están EN
+// el suelo y esto está DELANTE de él.
+.arena__pieces-hud {
+  pointer-events: none;
 }
 
 .arena__piece-base {

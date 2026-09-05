@@ -67,6 +67,35 @@
 // una tanda con mala suerte parezca acelerada, y un crítico largo ralentiza una
 // ronda entera. Por eso `evenOut` es un dial y no una decisión tomada: se mira
 // con una tanda de doce y se decide viéndola.
+//
+// LOS TRES TIEMPOS, que es lo que ordena todo lo que viene después. Lo de arriba
+// cuenta lo que YA PASÓ —cayó, golpeó, falló, murió—. Un videojuego necesita
+// otros dos, y son los que EVITAN preguntas en vez de contestarlas:
+//
+//   · ANTES — qué puedo hacer. Al coger una ficha, el terreno al que llega se
+//     levanta. En V3 no es cortesía: 👢 Movimiento va por tipo de daño
+//     (🗡️ 3 · ✨ 2 · 🏹 1, tempo.ts `MOVEMENT_BAND`), así que cada ficha alcanza
+//     un sitio distinto, y con quince por bando nadie va a contar hexágonos de
+//     cabeza. La cuenta ya existe y es del motor —movement.ts `reachable`, que
+//     rodea los cuerpos—: lo que falta es enseñarla.
+//   · MIENTRAS NO PASA NADA — que la mesa esté viva. Las fichas respiran, cada
+//     una en su fase. Es lo más barato del archivo y lo que más cambia la
+//     impresión general, porque un tablero perfectamente quieto no se lee como
+//     un juego parado: se lee como una captura de pantalla.
+//
+// Y LA PROPIEDAD QUE UNE A ESAS DOS, que es la razón de que se construyan
+// juntas y no una detrás de otra: lo que dice que una ficha YA HA ANDADO es que
+// NO RESPIRA. Se lee por ausencia, y una ausencia solo se ve si lo demás está
+// presente. Con el aliento apagado (`idleRise` a 0) el hundimiento y el color no
+// bastan — la ficha gastada solo parece un poco más oscura, y nadie recorre un
+// tablero buscando cuál está más oscura. Se comprueba apagando el dial.
+//
+// La otra propiedad es de reloj, y esa sí se puede medir sin pantalla: LA OFERTA
+// TIENE QUE ESTAR COMPLETA ANTES DE QUE EL JUGADOR HAYA DECIDIDO. Un tablero que
+// tarda medio segundo en decir dónde puedes soltar llega tarde: para cuando
+// termina de abrirse, la mano ya va camino de un hexágono y la ayuda se ha
+// convertido en un parpadeo por detrás del gesto. `offerDuration()` la mide
+// contra `OFFER_BUDGET`.
 // =========================================================================
 
 import type { AttackResult } from "./combat";
@@ -175,6 +204,36 @@ export type Timings = {
    */
   readonly evenOut: boolean;
 
+  // --- La mesa viva: el aliento y lo ya gastado ----------------------------
+
+  /**
+   * Cuánto sube y baja una ficha al respirar, en fracción del hexágono.
+   *
+   * A 0 no hay aliento, y ese es el experimento: apagarlo no deja el tablero
+   * "igual pero quieto", lo deja pareciendo una imagen. Además se lleva por
+   * delante la lectura de lo gastado, que es una ausencia de esto.
+   */
+  readonly idleRise: number;
+  /** Lo que tarda un ciclo completo de respiración. */
+  readonly idleCycle: number;
+  /** Cuánto se hunde una ficha que ya ha andado, en fracción del hexágono. */
+  readonly spentSink: number;
+  /** Cuánto color pierde, de 0 a 1. No es un cadáver: todavía puede atacar. */
+  readonly spentFade: number;
+  /** El escalón entre una ficha y la siguiente al empezar el turno. */
+  readonly wakeStagger: number;
+
+  // --- Ofrecer el terreno y andarlo ----------------------------------------
+
+  /** Cuánto se levanta un hexágono ofrecido, en píxeles. */
+  readonly offerRise: number;
+  /** Retraso por cada hexágono de distancia: es lo que hace la onda. */
+  readonly offerRipple: number;
+  /** Lo que cuesta un paso de hexágono a hexágono (§5). */
+  readonly step: number;
+  /** Cuánto se despega del suelo en cada paso. Andar es una sucesión de saltitos. */
+  readonly stepHop: number;
+
   /** Partículas del reventón al aterrizar. */
   readonly dustCount: number;
   /** Velocidad inicial, en píxeles por segundo. */
@@ -225,6 +284,26 @@ export const TIMINGS: Timings = {
   critFlash: 1.5,
   evenOut: false,
 
+  // Tres píxeles en un hexágono de cuarenta, y ni uno más: el aliento tiene que
+  // estar por debajo de lo que se mira a propósito. Si se ve respirar, es un
+  // globo. El ciclo es largo por lo mismo —una ficha en guardia no jadea— y cada
+  // una entra en su fase (`idlePhase`), porque quince fichas subiendo a la vez
+  // no son quince fichas vivas: es el tablero entero bombeando.
+  idleRise: 0.075,
+  idleCycle: 2600,
+  spentSink: 0.05,
+  spentFade: 0.45,
+  wakeStagger: 70,
+
+  // 26 ms por hexágono en un campo de 14×12 son 340 ms hasta la esquina más
+  // lejana, que ya roza el presupuesto; en el retal del banco son cuatro
+  // hexágonos y sobra de largo. Es justo el número que hay que mirar con el
+  // tablero de verdad delante, y por eso `offerDuration` existe.
+  offerRise: 5,
+  offerRipple: 26,
+  step: 190,
+  stepHop: 14,
+
   // La velocidad no es cosmética: el reventón nace tapado por la propia peana
   // —un disco opaco del tamaño del hexágono— así que si se abre despacio, los
   // primeros cien milisegundos del polvo no se ven. A 210 px/s la corona sale
@@ -249,7 +328,7 @@ export type KnobId = Exclude<keyof Timings, "fallCurve" | "evenOut">;
 
 export type Knob = {
   readonly id: KnobId;
-  readonly group: "despliegue" | "impacto" | "desenlace" | "polvo";
+  readonly group: "despliegue" | "impacto" | "desenlace" | "vida" | "movimiento" | "polvo";
   readonly label: string;
   readonly min: number;
   readonly max: number;
@@ -463,6 +542,98 @@ export const KNOBS: readonly Knob[] = [
   },
 
   {
+    id: "idleRise",
+    group: "vida",
+    label: "Aliento",
+    min: 0,
+    max: 0.3,
+    step: 0.005,
+    unit: "hex",
+    help: "Cuánto sube y baja una ficha parada, en fracción del hexágono. Ponlo a 0: el tablero no se queda quieto, se queda muerto. Y con él se va la lectura de lo ya andado, que es la ausencia de esto.",
+  },
+  {
+    id: "idleCycle",
+    group: "vida",
+    label: "Ciclo del aliento",
+    min: 600,
+    max: 6000,
+    step: 100,
+    unit: "ms",
+    help: "Lo que tarda una respiración entera. Corto es jadeo y llama la atención; largo es guardia. Cada ficha entra en su propia fase, o quince subiendo a la vez serían un tablero bombeando.",
+  },
+  {
+    id: "spentSink",
+    group: "vida",
+    label: "Hundimiento",
+    min: 0,
+    max: 0.25,
+    step: 0.005,
+    unit: "hex",
+    help: "Cuánto se acuclilla la que ya ha andado. Es el más flojo de los tres avisos y el que menos falta hace: quítalo y todavía se lee.",
+  },
+  {
+    id: "spentFade",
+    group: "vida",
+    label: "Color perdido",
+    min: 0,
+    max: 1,
+    step: 0.05,
+    unit: "",
+    help: "Cuánto se apaga. Ojo con subirlo: una ficha que ya ha andado TODAVÍA PUEDE ATACAR (§5), así que si se apaga del todo se lee como muerta y se deja de contar con ella.",
+  },
+  {
+    id: "wakeStagger",
+    group: "vida",
+    label: "Escalón al despertar",
+    min: 0,
+    max: 300,
+    step: 10,
+    unit: "ms",
+    help: "El retraso entre una ficha y la siguiente al empezar el turno. A 0 se levantan todas de golpe y parece un repintado; escalonadas es una cascada, y de paso enseña en pequeño lo que `schedule()` va a tener que aprender a hacer con los estados.",
+  },
+
+  {
+    id: "offerRise",
+    group: "movimiento",
+    label: "Levantada del terreno",
+    min: 0,
+    max: 20,
+    step: 1,
+    unit: "px",
+    help: "Cuánto se despega el hexágono ofrecido. Es lo que hace que el terreno se OFREZCA en vez de solo encenderse: un tinte se lee como decoración y un relieve se lee como una tecla.",
+  },
+  {
+    id: "offerRipple",
+    group: "movimiento",
+    label: "Onda",
+    min: 0,
+    max: 120,
+    step: 2,
+    unit: "ms/hex",
+    help: "Retraso por hexágono de distancia. A 0 se enciende todo a la vez y no se ve de dónde sale; alto, la onda es bonita y llega tarde. Es el dial que hay que vigilar contra el presupuesto de abajo.",
+  },
+  {
+    id: "step",
+    group: "movimiento",
+    label: "Paso",
+    min: 60,
+    max: 600,
+    step: 10,
+    unit: "ms/hex",
+    help: "Lo que cuesta pasar de un hexágono al siguiente. Multiplícalo por 👢 3 y por quince fichas: es el dial que decide si un turno enemigo se puede mirar.",
+  },
+  {
+    id: "stepHop",
+    group: "movimiento",
+    label: "Saltito",
+    min: 0,
+    max: 40,
+    step: 1,
+    unit: "px",
+    help: "Cuánto se despega del suelo en cada paso. A 0 la ficha se desliza, que es lo que hace una pieza de ajedrez arrastrada por el tablero; con salto, anda.",
+  },
+
+  {
     id: "dustCount",
     group: "polvo",
     label: "Partículas",
@@ -606,6 +777,30 @@ export function critDust(t: Timings, direction: number): DustSpec {
   };
 }
 
+/**
+ * El de la pisada: cuatro motas y se acabó.
+ *
+ * Es el reventón más pequeño del catálogo y el que más veces se va a emitir —una
+ * ficha con 👢 3 deja tres por turno, y quince fichas por bando son noventa
+ * pisadas por ronda—, así que aquí la cantidad no es gusto sino presupuesto. Sale
+ * hacia los lados y casi sin fuerza: lo que levanta un pie no es una corona, es
+ * una mancha que se queda donde cae.
+ */
+export function stepDust(t: Timings): DustSpec {
+  return {
+    count: Math.max(1, Math.round(t.dustCount * 0.16)),
+    speed: t.dustSpeed * 0.35,
+    life: t.dustLife * 0.55,
+    size: t.dustSize * 0.7,
+    gravity: t.dustGravity * 0.5,
+    drag: t.dustDrag * 1.4,
+    color: "#c8b795",
+    direction: -Math.PI / 2,
+    // Casi plano: una pisada esparce, no proyecta.
+    spread: Math.PI * 1.5,
+  };
+}
+
 /** El de la muerte: más y más gordas, en todas direcciones y lentas al caer. */
 export function deathDust(t: Timings): DustSpec {
   return {
@@ -654,7 +849,95 @@ export function reduced(t: Timings): Timings {
     missRecovery: 1,
     critStop: 1,
     critShake: 1,
+
+    // El aliento es lo PRIMERO que se apaga, y no por precaución: es movimiento
+    // continuo, sin final y en toda la pantalla a la vez, que es exactamente el
+    // perfil que la preferencia está pidiendo evitar. Quince fichas subiendo y
+    // bajando para siempre no se negocian con "es poquito".
+    //
+    // Y como el aliento se va, la ficha ya andada se queda sin su lectura
+    // principal —la ausencia de algo que ya no está en nadie—, así que aquí
+    // `spentFade` NO se toca: pasa de ser el tercer aviso a ser el único, igual
+    // que el destello carga con los tres desenlaces. El hundimiento sí se va,
+    // que es desplazamiento.
+    idleRise: 0,
+    spentSink: 0,
+    wakeStagger: 0,
+
+    // La oferta se queda, y esto sí es una decisión: es información sobre lo que
+    // se puede hacer, no un adorno. Lo que se va es el relieve y la onda —el
+    // movimiento—, y queda el color, que dice lo mismo sin mover nada.
+    offerRise: 0,
+    offerRipple: 0,
+    stepHop: 0,
   };
+}
+
+// --- La mesa viva -----------------------------------------------------------
+
+/**
+ * En qué punto de su respiración empieza cada ficha.
+ *
+ * Determinista a partir del id y no al azar, por dos motivos que no son el
+ * mismo: al azar, la fase cambiaría en cada repintado de React y la ficha daría
+ * un salto cada vez que cualquier otra cosa cambia; y siendo estable, dos
+ * partidas iguales se ven iguales, que es lo que hace comparable una grabación
+ * con la siguiente.
+ *
+ * @returns {number} Milisegundos dentro del ciclo, de 0 a `cycle`.
+ */
+export function idlePhase(id: string, cycle: number): number {
+  // FNV-1a y luego la mezcla final de MurmurHash3, y las dos mitades hacen
+  // falta. El hash de toda la vida —`h * 31 + carácter`— NO sirve aquí, y no es
+  // teoría: los identificadores de este juego son "propio-1", "propio-2",
+  // "propio-3", que solo se diferencian en el último carácter, así que sus
+  // hashes salen consecutivos y sus fases a MILÉSIMAS de milisegundo unas de
+  // otras. El resultado es exactamente el defecto que esta función existe para
+  // evitar: tres fichas respirando a la vez. Lo que arregla eso es la mezcla de
+  // abajo, que reparte por todo el rango dos entradas que se parecen.
+  let h = 2166136261;
+  for (let i = 0; i < id.length; i++) {
+    h ^= id.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  h ^= h >>> 15;
+  h = Math.imul(h, 2246822507);
+  h ^= h >>> 13;
+  h = Math.imul(h, 3266489909);
+  h ^= h >>> 16;
+  return ((h >>> 0) / 4294967296) * cycle;
+}
+
+// --- La oferta --------------------------------------------------------------
+
+/**
+ * Lo que tarda un hexágono en acabar de levantarse. No es un dial: por debajo de
+ * ~120 ms el relieve aparece de golpe y deja de leerse como que se ofrece, y por
+ * encima la onda se solapa consigo misma. Lo que se ajusta es el retraso ENTRE
+ * hexágonos (`offerRipple`), que es lo que hace la forma.
+ */
+export const OFFER_RISE_MS = 150;
+
+/**
+ * El presupuesto de la oferta: lo que se tarda en pasar de coger una ficha a
+ * haber elegido a dónde va.
+ *
+ * Es una AFIRMACIÓN a comprobar, no una ley, y por eso está aquí con su número a
+ * la vista en vez de escondida en un comentario. Si la oferta tarda más que
+ * esto, el jugador ya ha empezado a mover la mano hacia un hexágono cuando el
+ * tablero termina de decirle cuáles valen: la ayuda llega por detrás del gesto y
+ * lo que se ve es un parpadeo.
+ */
+export const OFFER_BUDGET = 250;
+
+/** Cuándo le toca levantarse a un hexágono que está a `steps` del origen. */
+export function rippleDelay(steps: number, t: Timings): number {
+  return Math.max(0, steps) * t.offerRipple;
+}
+
+/** Lo que tarda la oferta entera en estar puesta, contando la onda. */
+export function offerDuration(maxSteps: number, t: Timings): number {
+  return rippleDelay(maxSteps, t) + OFFER_RISE_MS;
 }
 
 // --- La cola ----------------------------------------------------------------
@@ -672,6 +955,17 @@ export function reduced(t: Timings): Timings {
  */
 export type AnimEvent =
   | { readonly kind: "despliegue"; readonly id: string }
+  | {
+      /**
+       * Andar (§5). Lleva los PASOS y no el destino porque lo que cuesta tiempo
+       * es el camino, no la distancia: rodear a una ficha son más pasos para el
+       * mismo hexágono, y esa diferencia es justo el peaje que el §5 quiere que
+       * se note. Quien cuenta los pasos es movement.ts `pathTo`.
+       */
+      readonly kind: "paso";
+      readonly id: string;
+      readonly steps: number;
+    }
   | {
       readonly kind: "ataque";
       readonly id: string;
@@ -733,6 +1027,8 @@ export function durationOf(event: AnimEvent, t: Timings): number {
   switch (event.kind) {
     case "despliegue":
       return t.flight + t.fall + t.squash;
+    case "paso":
+      return event.steps * t.step;
     case "ataque":
       return attackPhases(event.result, t).total;
     case "muerte":

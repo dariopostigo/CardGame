@@ -1,3 +1,5 @@
+<!-- estado: por-escribir -->
+
 # Mazo de encuentro — V3
 
 > Esqueleto. Nada decidido todavía.

@@ -1,3 +1,5 @@
+<!-- estado: por-escribir -->
+
 # Tablero de exploración — V3
 
 > Esqueleto. El tablero de exploración es uno de los dos tableros del juego *(decidido, [game-design.md](../game-design.md) §2)*; el otro es el [tablero de batalla](battle.md).

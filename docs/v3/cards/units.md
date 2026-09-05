@@ -1,3 +1,5 @@
+<!-- estado: por-escribir -->
+
 # Cartas de unidad — V3
 
 > Esqueleto. Sustituye al tipo de carta "Mercenario", que queda obsoleto.

@@ -1,3 +1,5 @@
+<!-- estado: escrito -->
+
 # Tablero de batalla — V3
 
 > **Escrito el 24 de agosto de 2026**, **reabierto y cerrado el 27 de agosto de 2026** —cuando el bando dejó de ser cinco fichas y pasó a ser de uno a tres jugadores con sus héroes (§2)— y **corregido con lo que midió el laboratorio** ([/dev/tablero](/dev/tablero)): el **28 de agosto de 2026** el presupuesto del bando enemigo se cerró en espejo (§2), la victoria pasó a plural (§6) y desplegar apretado resultó encerrar a las tuyas (§3); el **31 de agosto de 2026** el duelo del arquero se jugó en 2D y **la banda de 👢 Movimiento quedó decidida en 3 · 2 · 1** (§1.1 y §1.2), que es la primera cifra escrita de las 8 Habilidades. El tablero de batalla es uno de los dos tableros del juego *(decidido, [game-design.md](../game-design.md) §2)*; el otro es el [tablero de exploración](board-map.md).
