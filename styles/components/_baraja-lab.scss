@@ -34,6 +34,12 @@
 //   52+. el pie del velo y el rótulo, que tienen que leerse sobre todo
 // =========================================================================
 
+// Cuánto se nota el 3D del arrastre. Es la distancia del ojo a la carta, en el
+// espacio SIN escalar de la carta (300 × 420), así que se lee contra ese ancho:
+// cuanto menor, más brutal el escorzo. El pen original usa 400px y resulta casi
+// caricaturesco a este tamaño; 700 inclina de verdad sin deformar el retrato.
+$baraja-perspective: 700px;
+
 .baraja-lab {
   display: grid;
   gap: 0.75rem;
@@ -238,6 +244,14 @@
   // Un punto de anclaje en el centro de la carta: con el margen negativo, el
   // `translate` que escribe el componente coloca su CENTRO, y el giro y la
   // escala pasan por ahí sin tener que corregir nada.
+  //
+  // SON DOS CAPAS, y no es una por gusto. La de fuera se TRASLADA por el
+  // escenario y la de dentro se INCLINA en 3D mientras se arrastra (ver «La
+  // física del arrastre» en BarajaModule.tsx). En un solo elemento habría que
+  // meter el `perspective()` en la misma lista de transformaciones que el
+  // `translate`, y entonces la perspectiva deformaría también el traslado: una
+  // carta llevada a la esquina del escenario saldría estirada. Partido en dos,
+  // la perspectiva solo alcanza al giro, que es lo que tiene que proyectar.
   &__card {
     position: absolute;
     left: 0;
@@ -248,7 +262,7 @@
     margin-top: -($sketch-height * 0.5);
     transform-origin: center;
     touch-action: none;
-    filter: drop-shadow(0 8px 12px rgba($board-shadow, 0.55));
+    perspective: $baraja-perspective;
     transition:
       transform $deck-flight-duration $deck-ease-out,
       opacity $deck-flight-duration $deck-ease-out;
@@ -275,6 +289,28 @@
       outline: 3px solid $arena-origin;
       outline-offset: 4px;
     }
+  }
+
+  // La capa que se inclina. La sombra vive aquí y no fuera para que se incline
+  // CON la carta: una sombra que se queda plana mientras el naipe se ladea es
+  // lo que delata que el 3D es de mentira. (Y de paso, un `filter` en el
+  // contenedor de fuera lo convertiría en un grupo aplanado y se llevaría por
+  // delante la perspectiva.)
+  &__card-tilt {
+    width: 100%;
+    height: 100%;
+    transform-origin: center;
+    filter: drop-shadow(0 8px 12px rgba($board-shadow, 0.55));
+    transition: transform $deck-flight-duration $deck-ease-out;
+  }
+
+  // Mientras vuela: la sombra se alarga —está más alta— y se enciende el
+  // `will-change`, que aquí SÍ compensa porque la carta se está moviendo. En
+  // fijo no: promociona la carta a una textura y el texto sale lavado estando
+  // quieta, que es cuando se lee (el porqué largo, en _animation-lab.scss).
+  &__card[data-flying="true"] &__card-tilt {
+    will-change: transform;
+    filter: drop-shadow(0 26px 30px rgba($board-shadow, 0.72));
   }
 
   // La chapa de sustituir, sobre la carta de la mano a la que apuntas.
@@ -367,10 +403,19 @@
 
   @include reduced-motion {
     &__card,
+    &__card-tilt,
     &__pile-trigger,
     &__offer polygon,
     &__swap-hint {
       transition: none;
+    }
+
+    // El cinturón. Quien pide que nada se mueva no quiere una carta cabeceando
+    // en 3D bajo el cursor, y de eso ya se encarga el componente: el bucle deja
+    // de perseguir y de inclinar (BarajaModule.tsx, `tick`). Esto es por si
+    // algún día alguien escribe grados desde otro sitio.
+    &__card {
+      perspective: none;
     }
 
     &__veil {

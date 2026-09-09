@@ -52,6 +52,32 @@ export function raceSlug(race: string): string {
     .trim();
 }
 
+/**
+ * Parte un «<glifo> <Etiqueta>» de razas.md en sus dos mitades.
+ *
+ * ESE FORMATO ESTÁ EN TODAS PARTES y hasta ahora nadie lo decía en voz alta:
+ * la raza es «👤 Humanos», el nombre de una ficha es «🗡️ Miliciano», el tipo de
+ * daño es «✨ Mágico» y una Característica es «🛡️ Resistente al daño físico».
+ * `Character` guarda esas cadenas ENTERAS, con su glifo, porque así vienen del
+ * documento.
+ *
+ * Y por eso hace falta esto: quien pinta una carta necesita las dos mitades por
+ * separado —el emblema de raza va en el estandarte y su nombre en el pie, y son
+ * dos huecos distintos del diseño (knowledge/v3/card-concept/)—. Sin partirlas,
+ * el glifo sale DOS VECES: una en su hueco y otra pegada al texto. Pasó el 9 de
+ * septiembre de 2026 en /dev/baraja, y lo vio Dario antes que nadie.
+ *
+ * El glifo nunca lleva espacios internos, así que el primero separa uno de otro
+ * (mismo criterio que `traitIdsFromCell` aquí abajo y que `nameSlug` de
+ * cards.ts). Si no hay glifo, `icon` viene vacío y `label` es el texto tal cual:
+ * una etiqueta sin adornar es un dato válido, no un error.
+ */
+export function splitGlyph(text: string): { readonly icon: string; readonly label: string } {
+  const cut = text.indexOf(" ");
+  if (cut === -1) return { icon: "", label: text.trim() };
+  return { icon: text.slice(0, cut).trim(), label: text.slice(cut + 1).trim() };
+}
+
 /** Un id legible y único: raza + rol + nombre, todo en minúsculas y con guiones. */
 function characterId(race: string, kind: "heroe" | "unidad", name: string): string {
   return `${raceSlug(race)}-${kind}-${name}`

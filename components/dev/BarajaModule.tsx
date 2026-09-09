@@ -73,6 +73,7 @@ import {
   type OteoDraw,
 } from "@/lib/v3/deck";
 import { rarityForTier } from "@/lib/v3/rarity";
+import { splitGlyph } from "@/lib/v3/races";
 import type { Trait } from "@/lib/v3/traits";
 import * as Hex from "@/lib/v3/hex";
 import type { HexCoord, HexKey } from "@/lib/v3/hex";
@@ -116,7 +117,65 @@ const SKETCH_H = 420;
 /** A cuánto se ve la carta en cada sitio. La ampliada la calcula el escenario. */
 const HAND_SCALE = 0.34;
 const PILE_SCALE = 0.26;
-const DRAG_SCALE = 0.32;
+/** Cogida se ve MÁS GRANDE que en la mano: se acerca a ti al levantarla. */
+const DRAG_SCALE = 0.42;
+
+// --- La física del arrastre ------------------------------------------------
+//
+// Calcada del gesto de Hearthstone que Dario pidió (Jack Rugile, codepen
+// zqJdXM, "Hearthstone Card CSS 3D Click/Drag"). LA IDEA ENTERA es que la
+// carta NO va pegada al puntero: lo persigue, y lo que le falta por recorrer
+// es lo que la inclina. Su autor lo describe como que «parece que la carta
+// reacciona a la resistencia del aire», y sale de tres cosas encadenadas:
+//
+//   1. La posición se acerca a la del puntero un tanto por ciento por
+//      fotograma, así que siempre va un poco por detrás y frena sola.
+//   2. El giro en 3D persigue a la VELOCIDAD de la carta, con su propia
+//      constante. No hay rebote: son dos retardos de primer orden encadenados,
+//      así que el giro nunca cruza el cero (comprobado simulando el bucle). Lo
+//      que sí hay, y es lo que se siente, es una ESTELA: al frenar en seco la
+//      carta sigue ladeada un momento y se endereza sola —de 34° a 6° en diez
+//      fotogramas, y a cero poco después—. Sin ese rezago no hay peso, hay un
+//      icono girado.
+//   3. Nada de esto se puede escribir como una `transition` de CSS: una
+//      transición va de A a B en un tiempo dado, y esto no tiene B —el destino
+//      se mueve—. Por eso hay un bucle de `requestAnimationFrame` mientras
+//      dure el gesto, y por eso la carta sigue asentándose cuando el puntero ya
+//      se ha parado.
+//
+// Lo que NO se copia del pen: allí la carta es lo único de la pantalla y el
+// ratón es su único mando. Aquí hay un tablero debajo, así que el hexágono
+// candidato se calcula con la posición del PUNTERO y no con la de la carta —
+// se apunta con el cursor, no con el naipe que va rezagado.
+
+/**
+ * Cuánto del camino que le falta recorre la carta en cada fotograma.
+ *
+ * Con 0,24 alcanza al cursor en unos 25 fotogramas (0,4 s) y en marcha se queda
+ * unos 40 px por detrás a velocidad normal, 104 px arrastrando deprisa. Subirlo
+ * la pega al puntero y se pierde el gesto; bajarlo la deja a rastras.
+ */
+const DRAG_EASE = 0.24;
+/** Lo mismo para el giro y para la escala. */
+const TILT_EASE = 0.3;
+const SCALE_EASE = 0.22;
+/**
+ * Grados de inclinación por píxel de velocidad, y su tope.
+ *
+ * Con 1,1 sale: 5° arrastrando despacio, 14° a velocidad normal y el tope
+ * arrastrando deprisa. El tope existe para el latigazo —un golpe de muñeca pide
+ * casi 80°— y ahí es lo único que separa una carta con peso de un molinillo.
+ */
+const TILT_PER_PX = 1.1;
+const TILT_MAX = 34;
+/**
+ * Cuánto se cuelga la carta por encima del puntero.
+ *
+ * Sale de su propio alto para que el puntero quede justo por debajo del canto
+ * de abajo: si la carta se centrara en él taparía justo el hexágono al que
+ * apuntas, que es lo único que hay que mirar mientras arrastras.
+ */
+const DRAG_LIFT = SKETCH_H * DRAG_SCALE * 0.62;
 
 /** Espejo de $deck-deal-stagger (styles/settings/_motion.scss). */
 const DEAL_STAGGER = 90;
@@ -130,14 +189,27 @@ const PLAY_FALLBACK_MS = 900;
 const PIECE_FIELDS: readonly FieldId[] = ["ataque", "vida"];
 
 // --- Adaptadores Character → lo que pide cada pieza reutilizada -----------
-// Mecánicos, no deciden nada de diseño: cruzan los mismos datos que ya
-// arma /dev/razas con el vocabulario que ya pide cada componente.
-
-/** «👤 Humanos» → «👤». El emoji siempre va antes del primer espacio (races.ts). */
-function raceIconOf(race: string): string {
-  const sp = race.indexOf(" ");
-  return sp === -1 ? race : race.slice(0, sp);
-}
+//
+// Mecánicos, no deciden nada de diseño: cruzan los mismos datos que ya arma
+// /dev/razas con el vocabulario que ya pide cada componente.
+//
+// LO QUE TIENEN QUE PRODUCIR ES UN `Subject` IDÉNTICO a los que están escritos
+// a mano en components/design/v3/races.ts, que son los que se miran en la wiki
+// (/docs/v3/cards/design). Ese es el listón, y el 9 de septiembre de 2026 no se
+// cumplía: `Character` guarda «⛏️ Minero» y «⛏️ Enanos» —con su glifo, tal y
+// como vienen de razas.md— y esto las pasaba enteras, así que la carta escribía
+// el pico en el rótulo del nombre Y otra vez en la línea de raza, cuando el
+// diseño lo quiere una sola vez y en el estandarte. Peor todavía: con la raza
+// llamándose «⛏️ Enanos» en vez de «Enanos», `raceArtFor()` y `raceBannerFor()`
+// (sample.ts) no encontraban archivo y la carta caía al emoji de respaldo, así
+// que ni el emblema dibujado ni el estandarte llegaban a verse. Lo vio Dario.
+//
+// El sujeto de la wiki lo dice sin lugar a dudas y es la referencia de esta
+// tabla — «⛏️ Minero» se reparte en `name: "Minero"` + `icon: "⛏️"`, y
+// «⛏️ Enanos» en `race: "Enanos"` + `raceIcon: "⛏️"`:
+//
+//   { id: "enanos-minero", name: "Minero", race: "Enanos", raceIcon: "⛏️",
+//     icon: "⛏️", tier: 1, … }
 
 const DAMAGE_KEY_OF: Record<DamageTypeId, keyof typeof DAMAGE> = {
   "cuerpo-a-cuerpo": "cuerpo",
@@ -157,9 +229,17 @@ const SKILL_ABILITY_OF: Record<(typeof SKILLS)[number]["key"], keyof Character["
   movimiento: "movimiento",
 };
 
-/** Sin icono propio (razas.md no trae uno por ficha): el mismo respaldo que ya usa CombatModule, el del tipo de daño. */
+/**
+ * El glifo del sujeto: el que encabeza su nombre en razas.md («🗡️ Miliciano»).
+ *
+ * Es exactamente lo que los sujetos de la wiki llevan en `icon`, así que no se
+ * inventa nada. `character.icon` gana si algún día existe; el tipo de daño es el
+ * último recurso, para una ficha cuyo nombre viniera sin glifo.
+ */
 function iconOf(character: Character): string {
-  return character.icon ?? DAMAGE_TYPES[character.damage].icon;
+  return (
+    character.icon ?? (splitGlyph(character.name).icon || DAMAGE_TYPES[character.damage].icon)
+  );
 }
 
 function characterToSubject(
@@ -175,12 +255,18 @@ function characterToSubject(
   for (const key of Object.keys(SKILL_ABILITY_OF) as (typeof SKILLS)[number]["key"][]) {
     skills[key] = character.abilities[SKILL_ABILITY_OF[key]];
   }
+  // Las dos cadenas se parten en sus dos mitades: el glifo va a su hueco del
+  // marco y la etiqueta al texto. Ver la nota de arriba y `splitGlyph`.
+  const race = character.race ? splitGlyph(character.race) : null;
   return {
     id: character.id,
-    name: character.name,
+    name: splitGlyph(character.name).label,
     kind: "unidad",
-    race: character.race ?? "",
-    raceIcon: character.race ? raceIconOf(character.race) : "❔",
+    // Sin glifo: es la CLAVE con la que sample.ts busca el emblema y el
+    // estandarte dibujados (RACE_ART / RACE_BANNERS), y además es el texto que
+    // la carta imprime en su pie.
+    race: race?.label ?? "",
+    raceIcon: race?.icon || "❔",
     tier: character.tier,
     rarity: rarityForTier(character.tier),
     icon: iconOf(character),
@@ -200,7 +286,8 @@ function characterToPieceView(character: Character, illustration: string): Piece
   }
   return {
     id: character.id,
-    name: character.name,
+    // Sin glifo, por lo mismo que en la carta: la ficha lo pinta aparte.
+    name: splitGlyph(character.name).label,
     side: "j1",
     role: "unidad",
     tier: character.tier,
@@ -413,6 +500,10 @@ function poseTransform(p: { x: number; y: number; rotate: number; scale: number 
   return `translate(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px) rotate(${p.rotate.toFixed(2)}deg) scale(${p.scale.toFixed(3)})`;
 }
 
+function clamp(value: number, limit: number): number {
+  return Math.max(-limit, Math.min(limit, value));
+}
+
 // --- El módulo -------------------------------------------------------------
 
 export type BarajaModuleProps = {
@@ -460,9 +551,96 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
     startX: number;
     startY: number;
     dragging: boolean;
-    lastX: number;
-    vx: number;
   } | null>(null);
+
+  /**
+   * La carta en el aire y su física (ver «La física del arrastre», arriba).
+   *
+   * `tx`/`ty` es a dónde quiere ir —el puntero— y `x`/`y` dónde está de verdad;
+   * la diferencia entre las dos es todo el efecto.
+   */
+  const fly = useRef<{
+    el: HTMLDivElement;
+    tilt: HTMLElement;
+    tx: number;
+    ty: number;
+    x: number;
+    y: number;
+    roll: number;
+    scale: number;
+    rx: number;
+    ry: number;
+    raf: number;
+  } | null>(null);
+
+  /** Si el sistema pide que nada se mueva. Se respeta, y aquí se nota mucho. */
+  const still = useRef(false);
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    still.current = query.matches;
+    const listener = (e: MediaQueryListEvent) => {
+      still.current = e.matches;
+    };
+    query.addEventListener("change", listener);
+    return () => query.removeEventListener("change", listener);
+  }, []);
+
+  // Función declarada y no `useCallback`: se llama a sí misma para encadenar el
+  // siguiente fotograma, y una constante no puede referirse a sí misma antes de
+  // estar inicializada. Solo toca referencias, así que da igual de qué render
+  // sea la instancia que quedó dentro del `requestAnimationFrame`.
+  function tick() {
+    const f = fly.current;
+    if (!f) return;
+
+    // Con movimiento reducido no hay persecución ni cabeceo: la carta va pegada
+    // al puntero y se acabó. Es la misma decisión que toma lib/v3/anim.ts al
+    // aplanar los tiempos — se respeta la preferencia en el DATO, no tapando el
+    // resultado con una regla de CSS.
+    if (still.current) {
+      f.x = f.tx;
+      f.y = f.ty;
+      f.roll = 0;
+      f.scale = DRAG_SCALE;
+      f.rx = 0;
+      f.ry = 0;
+      f.el.style.transform = poseTransform({ x: f.x, y: f.y, rotate: 0, scale: f.scale });
+      f.tilt.style.transform = "";
+      f.raf = requestAnimationFrame(tick);
+      return;
+    }
+
+    const wasX = f.x;
+    const wasY = f.y;
+    f.x += (f.tx - f.x) * DRAG_EASE;
+    f.y += (f.ty - f.y) * DRAG_EASE;
+    // La velocidad de la carta, no la del puntero: es la que se para sola
+    // cuando la carta alcanza la mano, y por eso la inclinación se deshace sin
+    // que haya que ordenarlo en ningún sitio.
+    const vx = f.x - wasX;
+    const vy = f.y - wasY;
+    f.scale += (DRAG_SCALE - f.scale) * SCALE_EASE;
+    // El giro de la mano (el que traía del abanico) se deshace a la vez.
+    f.roll += (0 - f.roll) * TILT_EASE;
+    f.ry += (clamp(vx * TILT_PER_PX, TILT_MAX) - f.ry) * TILT_EASE;
+    f.rx += (clamp(-vy * TILT_PER_PX, TILT_MAX) - f.rx) * TILT_EASE;
+    f.el.style.transform = poseTransform({ x: f.x, y: f.y, rotate: f.roll, scale: f.scale });
+    f.tilt.style.transform = `rotateX(${f.rx.toFixed(2)}deg) rotateY(${f.ry.toFixed(2)}deg)`;
+    f.raf = requestAnimationFrame(tick);
+  }
+
+  /** Cierra el vuelo y devuelve la carta al mando de las transiciones de CSS. */
+  const stopFlight = useCallback(() => {
+    const f = fly.current;
+    fly.current = null;
+    if (!f) return;
+    cancelAnimationFrame(f.raf);
+    f.el.style.transition = "";
+    f.tilt.style.transition = "";
+    f.tilt.style.transform = "";
+  }, []);
+
+  useEffect(() => stopFlight, [stopFlight]);
 
   // --- Medida ---------------------------------------------------------------
 
@@ -734,6 +912,8 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
 
   function reset() {
     press.current = null;
+    stopFlight();
+    markCandidate(null);
     setState(initialState(cards));
     setOteo([]);
     setPending(null);
@@ -784,16 +964,50 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
       startX: e.clientX,
       startY: e.clientY,
       dragging: false,
-      lastX: e.clientX,
-      vx: 0,
     };
   }
 
-  function beginDrag(p: NonNullable<typeof press.current>) {
+  /**
+   * Levantar la carta: arranca el bucle y le da su punto de partida.
+   *
+   * La física NO empieza en el puntero sino DONDE ESTÁ LA CARTA —su hueco del
+   * abanico, con el giro que traía—, así que lo primero que hace el bucle es
+   * subirla desde la mano hasta el cursor persiguiéndolo. Arrancar en el
+   * puntero la teletransportaría, que es justo lo que hacía antes.
+   */
+  function beginDrag(p: NonNullable<typeof press.current>, at: { x: number; y: number }): boolean {
+    const el = cardEls.current.get(p.id);
+    const tilt = el?.querySelector<HTMLElement>(".baraja-lab__card-tilt");
+    const from = posesRef.current.get(p.id);
+    // Sin sitio de partida o sin nodo no se empieza NADA: marcar el gesto como
+    // arrastre sin poder pintarlo dejaría una carta quieta que aun así despliega
+    // una ficha al soltar, o sea una jugada invisible.
+    if (!el || !tilt || !from) return false;
+
     p.dragging = true;
     // Con el puntero capturado ya no llega el `pointerleave` de la carta, así
     // que el realce del ratón se apaga aquí o se quedaría puesto para siempre.
     hovered.current = null;
+
+    el.style.transition = "none";
+    el.style.opacity = "1";
+    el.style.zIndex = "60";
+    tilt.style.transition = "none";
+    fly.current = {
+      el,
+      tilt,
+      tx: at.x,
+      ty: at.y - DRAG_LIFT,
+      x: from.x,
+      y: from.y,
+      roll: from.rotate,
+      scale: from.scale,
+      rx: 0,
+      ry: 0,
+      raf: 0,
+    };
+    fly.current.raf = requestAnimationFrame(tick);
+
     setExpandedId(null);
     setDragId(p.id);
     const free = new Set<HexKey>();
@@ -802,6 +1016,7 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
     }
     setOffered(free);
     setNote("Suelta sobre un hexágono libre. Fuera del retal, la carta vuelve a la mano.");
+    return true;
   }
 
   function handleCardPointerMove(e: React.PointerEvent<HTMLDivElement>) {
@@ -809,36 +1024,26 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
     const l = layout;
     if (!p || !l) return;
 
+    const at = pointOf(e);
+
     if (!p.dragging) {
       const far = Math.hypot(e.clientX - p.startX, e.clientY - p.startY);
       if (far < DRAG_THRESHOLD) return;
-      beginDrag(p);
+      if (!beginDrag(p, at)) return;
     }
 
-    const at = pointOf(e);
+    // Se apunta con el CURSOR y no con la carta: la carta va rezagada a
+    // propósito, y hacerle caso a ella pondría la ficha un hexágono por detrás
+    // de donde el jugador está mirando.
     const hex = hexAt(l, at.x, at.y);
     markCandidate(hex && !placed.has(Hex.key(hex)) ? Hex.key(hex) : null);
 
-    // La carta se ladea con la velocidad del gesto: un naipe que se mueve
-    // deprisa se inclina porque lo llevas cogido de una esquina. Se suaviza
-    // contra el valor anterior para que no tiemble.
-    const dx = e.clientX - p.lastX;
-    p.vx = p.vx * 0.72 + dx * 0.28;
-    p.lastX = e.clientX;
-
-    const el = cardEls.current.get(p.id);
-    if (!el) return;
-    el.style.transition = "none";
-    el.style.opacity = "1";
-    el.style.zIndex = "60";
-    el.style.transform = poseTransform({
-      x: at.x,
-      // Colgada POR ENCIMA del puntero: si la carta se centrara en él taparía
-      // justo el hexágono al que apuntas, que es lo único que hay que mirar.
-      y: at.y - SKETCH_H * DRAG_SCALE * 0.58,
-      rotate: Math.max(-14, Math.min(14, p.vx * 1.4)),
-      scale: DRAG_SCALE,
-    });
+    // Lo único que hace el puntero es mover el destino. De ahí a la pantalla ya
+    // se encarga el bucle, que sigue corriendo aunque el ratón se pare.
+    if (fly.current) {
+      fly.current.tx = at.x;
+      fly.current.ty = at.y - DRAG_LIFT;
+    }
   }
 
   function endPress(e: React.PointerEvent<HTMLDivElement>, cancelled: boolean) {
@@ -858,8 +1063,10 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
       return;
     }
 
-    const card = cardEls.current.get(p.id);
-    if (card) card.style.transition = "";
+    // Se para el bucle y las transiciones de CSS recuperan el mando: la carta
+    // sale hacia su destino DESDE DONDE HAYA QUEDADO, no desde el puntero, y el
+    // giro en 3D se deshace por su cuenta con la transición del elemento.
+    stopFlight();
     markCandidate(null);
     setDragId(null);
     setOffered(null);
@@ -1099,6 +1306,9 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
             // significa nada, tampoco se anuncia como botón ni se puede tabular
             // hasta ella: una carta del Mazo que está volando no es un mando.
             const action = picking ? "tomar" : swapping ? "sustituir" : grabbable ? "ampliar" : null;
+            // El nombre SIN el glifo, igual que lo imprime la carta: lo que se
+            // lee en voz alta tiene que ser lo que se ve, no «pico Minero».
+            const name = splitGlyph(d.card.character.name).label;
             return (
               <div
                 key={d.instanceId}
@@ -1109,15 +1319,16 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
                 className="baraja-lab__card"
                 data-zone={poses.get(d.instanceId)?.kind ?? "pile"}
                 data-grabbable={grabbable ? "true" : undefined}
+                data-flying={dragId === d.instanceId ? "true" : undefined}
                 role={action ? "button" : undefined}
                 tabIndex={action ? 0 : undefined}
                 aria-label={
                   action === "tomar"
-                    ? `Tomar ${d.card.character.name}`
+                    ? `Tomar ${name}`
                     : action === "sustituir"
-                      ? `Sustituir ${d.card.character.name}`
+                      ? `Sustituir ${name}`
                       : action === "ampliar"
-                        ? `Ver ${d.card.character.name} en grande`
+                        ? `Ver ${name} en grande`
                         : undefined
                 }
                 onPointerEnter={() => {
@@ -1161,7 +1372,16 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
                   }
                 }}
               >
-                <SketchCard id="lamina" subject={subjectOf(d)} />
+                {/* La capa que se inclina. Va aparte del contenedor que se
+                    mueve porque son dos sistemas distintos: fuera vive el
+                    TRASLADO (en píxeles del escenario) y dentro el GIRO EN 3D
+                    (en grados, proyectado por el `perspective` del padre). En
+                    un solo elemento, un `translate` grande dentro de la
+                    perspectiva se deformaría al alejarse del centro. Es el
+                    mismo reparto de dos capas del pen de Hearthstone. */}
+                <div className="baraja-lab__card-tilt">
+                  <SketchCard id="lamina" subject={subjectOf(d)} />
+                </div>
                 {swapping && <span className="baraja-lab__swap-hint">Sustituir</span>}
               </div>
             );
