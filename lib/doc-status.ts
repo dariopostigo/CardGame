@@ -14,8 +14,13 @@
 // Va en el documento y no en una tabla aparte a propósito: es lo único que
 // no se puede desincronizar de lo que describe, y se edita en el mismo sitio
 // donde se escribe. El precedente es `<!-- cards: … -->` (lib/card-table.ts),
-// que ya se lee así. react-markdown no renderiza HTML crudo, o sea que la
-// línea no se ve en la página.
+// que ya se lee así.
+//
+// LA LÍNEA SE BORRA ANTES DE PINTAR, en preprocess() de lib/docs.ts. Esto se
+// escribió dando por hecho que no hacía falta —"react-markdown no renderiza
+// HTML crudo"—, y es falso: sin rehype-raw no lo *interpreta*, pero lo escapa y
+// lo enseña como texto encima del título. Estuvo un día a la vista en los 14
+// documentos que la declaran.
 //
 // ESTE MÓDULO NO TOCA EL DISCO. Lo importa el menú, que es un componente de
 // cliente; quien lee los .md es lib/docs.ts, que sí usa node:fs y no cruza

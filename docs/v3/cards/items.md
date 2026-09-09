@@ -4,11 +4,7 @@
 
 > Esqueleto. Nada decidido todavía.
 
-## Estado
-
-Los items existen como tipo de carta, pero **el catálogo entero está pendiente de revisión** contra el sistema nuevo: hay que repasarlo en busca de incoherencias y de efectos que ya no tengan sentido *(anotado en [status.md](../status.md))*.
-
-No se hereda nada de [v2/cards/items.md](../../v2/cards/items.md) sin revisar. Buena parte de aquellos items se apoyaba en la CA, en el arma equipada, en pruebas de característica o en estados que V3 no tiene.
+Los items existen como tipo de carta, pero **el catálogo entero está pendiente de revisión** contra el sistema nuevo. No se hereda nada de v2 sin revisar: buena parte de aquellos items se apoyaba en la CA, en el arma equipada o en pruebas de característica.
 
 ## Por definir
 

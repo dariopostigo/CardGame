@@ -60,17 +60,34 @@ export type Doc = {
 type FileRec = { abs: string; rel: string; dir: string; slug: string[] };
 
 // El árbol vive partido en dos versiones, cada una con su propia wiki: v3 es
-// el diseño vigente, v2 la base de conocimiento congelada. Comparten forma
-// —las mismas cuatro carpetas— así que los grupos se generan en vez de
-// escribirse dos veces.
+// el diseño vigente, v2 la base de conocimiento congelada. La forma se declara
+// una vez y se genera para las dos, y los grupos sin documentos se descartan
+// solos en getNavTree(): por eso v2 no enseña "Sistemas" ni "Razas" aunque
+// estén aquí — esas carpetas no existen en su árbol.
 //
 // Los helpers de versión están en lib/docs-version.ts, que sí puede importarse
 // desde el cliente: este módulo usa node:fs y no cruza esa frontera.
-
-// Las cuatro carpetas de cada versión. Los grupos sin documentos se descartan
-// solos en getNavTree(), así que una carpeta vacía no ensucia el menú.
+//
+// --- LOS GRUPOS DEJARON DE SER LOS DE v2 (6 de septiembre de 2026) ----------
+//
+// Hasta hoy eran cuatro —General, Tablero, Personajes, Cartas—, las carpetas
+// de v2, y V3 las heredó por una decisión explícita de la migración: "docs/v3/
+// es espejo estructural de v2, con contenido nuevo" (knowledge/v3/
+// migracion-v2-v3.md, 20 de agosto), para que la estructura existiera antes
+// que el contenido. Dos semanas después el contenido existía y no cabía:
+// 17 de los 18 documentos de V3 tenían contraparte en v2 con el mismo nombre,
+// y el único nativo —razas.md— se llevaba el 43% del texto del árbol metido en
+// "General", con cuatro temas distintos dentro.
+//
+// Se parte en dos grupos nuevos. SISTEMAS es lo que llevan las 132 fichas por
+// igual —la ficha, las Habilidades, las Características, el tipo de daño y los
+// estados—, que no es de nadie en particular y estaba escondido dentro de las
+// razas. RAZAS pasa de archivo a grupo con lo que sí es suyo: las 11 razas con
+// sus clases, y sus 88 unidades.
 const GROUP_SHAPE = [
   { key: "general", label: "General", icon: "pi pi-book", sub: "" },
+  { key: "sistemas", label: "Sistemas", icon: "pi pi-sliders-h", sub: "sistemas" },
+  { key: "razas", label: "Razas", icon: "pi pi-sitemap", sub: "razas" },
   { key: "board", label: "Tablero", icon: "pi pi-map", sub: "board" },
   { key: "characters", label: "Personajes", icon: "pi pi-users", sub: "characters" },
   { key: "cards", label: "Cartas", icon: "pi pi-th-large", sub: "cards" },
@@ -127,11 +144,20 @@ const META: Record<string, { label: string; icon: string; order: number }> = {
   // --- V3 (diseño vigente) ---
   v3: { label: "V3 (índice)", icon: "pi pi-sparkles", order: 0 },
   "v3/game-design": { label: "Diseño del juego", icon: "pi pi-book", order: 1 },
-  "v3/razas": { label: "Razas", icon: "pi pi-sitemap", order: 2 },
-  "v3/glossary": { label: "Glosario", icon: "pi pi-list", order: 3 },
-  "v3/status": { label: "Estado", icon: "pi pi-check-circle", order: 4 },
-  "v3/ideas": { label: "Ideas", icon: "pi pi-lightbulb", order: 5 },
-  "v3/effects": { label: "Efectos / Estados", icon: "pi pi-sparkles", order: 6 },
+  "v3/glossary": { label: "Glosario", icon: "pi pi-list", order: 2 },
+  "v3/status": { label: "Estado", icon: "pi pi-check-circle", order: 3 },
+  "v3/ideas": { label: "Ideas", icon: "pi pi-lightbulb", order: 4 },
+  // Sistemas: de lo general a lo particular. "La ficha" va primera porque es
+  // el marco que dice qué campos existen; las demás son esos campos.
+  "v3/sistemas/ficha": { label: "La ficha", icon: "pi pi-circle-fill", order: 1 },
+  "v3/sistemas/habilidades": { label: "Habilidades", icon: "pi pi-chart-bar", order: 2 },
+  "v3/sistemas/caracteristicas": { label: "Características", icon: "pi pi-tags", order: 3 },
+  "v3/sistemas/dano": { label: "Tipo de daño", icon: "pi pi-bolt", order: 4 },
+  "v3/sistemas/effects": { label: "Efectos / Estados", icon: "pi pi-sparkles", order: 5 },
+  // Razas: el índice conserva el slug /docs/v3/razas del archivo que fue, así
+  // que los enlaces de lib/dev-registry.ts y de los labs siguen valiendo.
+  "v3/razas": { label: "Razas (índice)", icon: "pi pi-sitemap", order: 0 },
+  "v3/razas/unidades": { label: "Unidades", icon: "pi pi-shield", order: 1 },
   "v3/board/board-map": { label: "Tablero y mapa", icon: "pi pi-map", order: 1 },
   "v3/board/battle": { label: "Tablero de batalla", icon: "pi pi-bolt", order: 2 },
   "v3/board/board-map-dev": { label: "Tablero (técnico)", icon: "pi pi-cog", order: 3 },
@@ -140,7 +166,7 @@ const META: Record<string, { label: string; icon: string; order: number }> = {
   "v3/characters/npcs": { label: "NPCs", icon: "pi pi-users", order: 3 },
   "v3/cards": { label: "Cartas (índice)", icon: "pi pi-th-large", order: 0 },
   "v3/cards/class": { label: "Cartas de clase", icon: "pi pi-id-card", order: 1 },
-  "v3/cards/units": { label: "Unidades", icon: "pi pi-users", order: 2 },
+  "v3/cards/units": { label: "Cartas de unidad", icon: "pi pi-users", order: 2 },
   "v3/cards/items": { label: "Items", icon: "pi pi-box", order: 3 },
   "v3/cards/curses": { label: "Maldiciones", icon: "pi pi-exclamation-triangle", order: 4 },
   "v3/cards/encounter": { label: "Mazo de encuentro", icon: "pi pi-clone", order: 5 },
@@ -241,9 +267,31 @@ function metaFor(slug: string[]) {
   );
 }
 
-/** Convierte "- [~] ..." (no es GFM) en un marcador 🟡 legible. */
+/**
+ * Lo que se le quita al markdown antes de pintarlo.
+ *
+ *  - "- [~] ..." (no es GFM) pasa a un marcador 🟡 legible.
+ *  - La directiva de estado SE BORRA. Es metadato del menú, no texto del
+ *    documento, y hay que quitarla a mano: `react-markdown` va sin `rehype-raw`,
+ *    así que no *interpreta* el comentario HTML —pero lo escapa y lo enseña tal
+ *    cual encima del título, que es peor que renderizarlo. Se escribió el 5 de
+ *    septiembre de 2026 dando por hecho lo contrario y estuvo un día a la vista
+ *    en los 14 documentos que la declaran.
+ */
 function preprocess(raw: string): string {
-  return raw.replace(/^(\s*[-*])\s+\[~\]\s+/gm, "$1 🟡 ");
+  // Solo en la cabecera, el mismo trozo que mira readStatus(): así lo que se
+  // borra es exactamente lo que cuenta como estado, y un documento que CITE la
+  // directiva más abajo —como docs/v3/cards/README.md, que explica cómo se
+  // quita un standby— la conserva en el texto.
+  const lines = raw.split("\n");
+  const head = lines
+    .slice(0, STATUS_HEAD_LINES)
+    .join("\n")
+    .replace(STATUS_DIRECTIVE_RE, "")
+    .replace(/^\n+/, "");
+  return [head, ...lines.slice(STATUS_HEAD_LINES)]
+    .join("\n")
+    .replace(/^(\s*[-*])\s+\[~\]\s+/gm, "$1 🟡 ");
 }
 
 function firstH1(raw: string): string | null {
@@ -379,7 +427,9 @@ export const getSearchIndex = cache((): SearchDoc[] => {
       title: firstH1(raw) ?? metaFor(f.slug).label,
       group: groupLabel(f.dir),
       headings,
-      text: stripMarkdown(raw),
+      // preprocess() y no raw: la directiva de estado es metadato, y en el
+      // índice haría que buscar "estado" devolviera los 14 que la declaran.
+      text: stripMarkdown(preprocess(raw)),
     };
   });
 });

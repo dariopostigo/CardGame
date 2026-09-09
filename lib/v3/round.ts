@@ -114,6 +114,7 @@ export function takeTurn(
   actors: readonly Actor[],
   id: string,
   movement: Readonly<Record<DamageTypeId, number>>,
+  rng: () => number = Math.random,
 ): { actor: Actor; log: TurnLog } {
   const self = actors.find((a) => a.id === id);
   if (!self) throw new Error(`No hay ninguna ficha con id ${id}`);
@@ -158,21 +159,36 @@ export function takeTurn(
   // su sitio es quieto (§1.1) y retroceder sería regalar campo.
   if (!crossing && target.distance > type.range) return stay("espera");
 
+  // Empate a azar y no "el primero que se encuentre": `options` llega en el
+  // orden en que reachable() lo descubrió, que es el de Hex.DIRECTIONS —fijo,
+  // empezando por el Este— y NO es neutral con el lado del tablero. Se
+  // comprobó jugando un espejo de 5 contra 5 con cifras idénticas a los dos
+  // bandos (7-sep-2026): quien avanza hacia el Este ganaba más porque sus
+  // empates se resolvían hacia su propia dirección útil antes que los del que
+  // avanza hacia el Oeste (Oeste es la cuarta dirección de la lista, no la
+  // primera). Invertir DIRECTIONS invierte el sesgo, así que la causa está
+  // aquí y no en el combate ni en la ⚡ Iniciativa.
   let bestHex = self.hex;
   let bestDistance = target.distance;
   let bestSteps = 0;
+  let ties: HexCoord[] = [];
   for (const [key, steps] of options) {
     const hex = Hex.fromKey(key);
     const distance = Hex.distance(hex, target.foe.hex);
     const better = crossing
       ? distance < bestDistance || (distance === bestDistance && steps < bestSteps)
       : distance > bestDistance || (distance === bestDistance && steps < bestSteps);
+    const tied = distance === bestDistance && steps === bestSteps;
     if (better) {
       bestHex = hex;
       bestDistance = distance;
       bestSteps = steps;
+      ties = [hex];
+    } else if (tied && ties.length > 0) {
+      ties.push(hex);
     }
   }
+  if (ties.length > 1) bestHex = ties[Math.floor(rng() * ties.length)];
 
   // El que cruza y ya está a tiro no da un paso de más: pegar es lo que quería.
   if (crossing && target.distance <= type.range) return stay("ya está a tiro");
@@ -202,12 +218,13 @@ export function playRound(
   actors: readonly Actor[],
   order: Order,
   movement: Readonly<Record<DamageTypeId, number>>,
+  rng: () => number = Math.random,
 ): { actors: Actor[]; logs: TurnLog[] } {
   let current = [...actors];
   const logs: TurnLog[] = [];
   for (const id of order) {
     if (!current.some((a) => a.id === id)) continue;
-    const { actor, log } = takeTurn(arena, current, id, movement);
+    const { actor, log } = takeTurn(arena, current, id, movement, rng);
     current = current.map((a) => (a.id === id ? actor : a));
     logs.push(log);
   }

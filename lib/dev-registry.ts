@@ -162,28 +162,28 @@ export const DEV_MODULES: readonly DevModule[] = [
     slug: "personaje",
     label: "Estadísticas de personaje",
     summary:
-      "La HOJA DE DATOS común a héroes, unidades y enemigos —que en V3 son las mismas razas—, no la pieza que se pone en el tablero: eso es la ficha, y es el módulo 5. Las 8 Habilidades con su escala y sus topes, el tipo de daño que trae puesto el alcance, y las 41 Características. Construida la ANATOMÍA en lib/v3/character.ts, que es lo que se podía cerrar sin las cifras: la escala de las ocho con el motivo de cada tope, la curva ×10 del tier, el tope de cinco Características y las catorce comprobaciones que dicen por qué un personaje es ilegal. El CATÁLOGO se lee de razas.md y no se copia (traits.ts), y de paso destapa los glifos repetidos, que hasta ahora se encontraban mirando cartas de una en una. Es la raíz de la cadena — no depende de nadie y de ella cuelga todo.",
+      "La HOJA DE DATOS común a héroes, unidades y enemigos —que en V3 son las mismas razas—, no la pieza que se pone en el tablero: eso es la ficha, y es el módulo 5. Las 8 Habilidades con su escala y sus topes, el tipo de daño que trae puesto el alcance, y las 41 Características. Construida la ANATOMÍA en lib/v3/character.ts, que es lo que se podía cerrar sin las cifras: la escala de las ocho con el motivo de cada tope, la curva ×10 del tier, el tope de cinco Características y las catorce comprobaciones que dicen por qué un personaje es ilegal. El CATÁLOGO de Características se lee del documento y no se copia (traits.ts), y de paso destapa los glifos repetidos, que hasta ahora se encontraban mirando cartas de una en una. Es la raíz de la cadena — no depende de nadie y de ella cuelga todo.",
     icon: "pi pi-id-card",
     status: "en-curso",
     layer: "sustrato",
-    doc: { href: "/docs/v3/razas", label: "Razas · Habilidades y Características" },
+    doc: { href: "/docs/v3/sistemas/ficha", label: "La ficha · Habilidades y Características" },
     blocker:
-      "Siguen faltando siete de las 8 Habilidades en valores, y son insumo: 👢 Movimiento es la única puesta (🗡️ 3 · ✨ 2 · 🏹 1, banda por tipo de daño, 31-ago) y no se eligió a dedo sino midiendo el duelo del tablero. Pero eso ya no bloquea a la descendencia: de los cuatro módulos que cuelgan de aquí, tres piden la FORMA —qué rellenan las 132 fichas, qué imprime la carta, qué hay que leer en el disco— y solo el motor de combate necesita cifras. Y EL 5 DE SEPTIEMBRE DE 2026 SE CERRÓ EL MÉTODO, que era el hueco que nadie había nombrado: la escala decía en qué rango va cada número y no quién lo decide, así que «faltan siete» se leía como 1.056 celdas en blanco. Son 122 — once bases de ❤️ y once de ⚔️ por raza con la curva ×10 haciendo los otros siete escalones, una rejilla de tipo de daño × tier para 🛡️ 🔮 🎯 🍀, tres cifras de ⚡ en banda por tipo de daño y el tier al que equivale un héroe (razas.md §«De dónde sale cada número»). De regalo salieron dos topes que no elige nadie porque los impone la curva, y ya se comprueban en lib/v3/character.ts: ⚔️ base ≤ 9 y ❤️ base 10–99. Lo que queda por construir aquí es EL BANCO, y ahora se sabe qué tiene que medir: tres de esas 122 —el tier del héroe, el reparto de ⚡ y el límite de 👢 de ✨, que el duelo dejó vacío—, como se midió 👢.",
+      "EL SISTEMA DE HABILIDADES QUEDÓ CERRADO EL 8 DE SEPTIEMBRE DE 2026 y este módulo ya no espera ninguna decisión. Antes esperaba 39 cifras: una fórmula que las generase —base por tipo de daño + paso por tier + firma de raza + desvío de rol— y que se tiró a petición de Dario («hay cosas que no se deciden por estadísticas sino por asignación aleatoria con sentido»). De las ocho, 👢 Movimiento se midió en el duelo del tablero (🗡️ 3 · ✨ 2 · 🏹 1, 31-ago), y ❤️ Vida y ⚔️ Ataque salen de la base de tier 1 de su raza más la curva ×10: Humanos son 20 y 5, con el héroe equivaliendo al tier 5 (RACE_BASES y HERO_TIER en lib/v3/character.ts). Las cinco restantes —🛡️ 🔮 🎯 🍀 ⚡— se eligen A OJO, ficha a ficha, en cinco escalones con nombre (ABILITY_STEPS), y una ficha corriente se queda en el de en medio: lo que falta de ellas es CATÁLOGO de las 132, no una decisión de sistema, y va con el módulo «razas» y con los héroes. Tampoco hay nada que medir: la lista de «por medir» se vació el 7 de septiembre con lib/v3/battle.ts (100.000 combates por condición: el orden de turno no cambia quién gana, 🗡️ el 41,3% tanto si abre como si cierra) y con el duelo del arquero (👢 de ✨: mínimo 2, sin máximo). Lo único que le queda por construir es LA MESA donde poner esos valores y ver la ficha resultante.",
   },
   {
     slug: "razas",
     label: "Razas y unidades",
     summary:
-      "Las 11 razas con sus 4 clases y su progresión de 8 unidades, en datos: el catálogo que consultan el reclutamiento, el mazo y la composición de enemigos.",
+      "Las 11 razas con sus 4 clases y su progresión de 8 unidades, en datos: el catálogo que consultan el reclutamiento, el mazo y la composición de enemigos. La v1 solo construye dos —Humanos y Enanos—; el resto queda en StandBy (status.md §4).",
     icon: "pi pi-sitemap",
-    status: "planificado",
+    status: "en-curso",
     layer: "sustrato",
     needs: [
       { slug: "personaje", what: "la anatomía que rellenan las 132 fichas" },
     ],
     doc: { href: "/docs/v3/razas", label: "Razas" },
     blocker:
-      "Ya no faltan las estadísticas de personaje: la anatomía está en lib/v3/character.ts, así que el hueco que rellenan las 132 existe. Lo que queda es trabajo escrito y no decisión: los 25 nombres de unidad que colisionan con los de héroe (decidido el 24-ago que se renombra la unidad), y las cifras de cada ficha, que son insumo.",
+      "CONSTRUIDA LA RAZA PILOTO (8-sep-2026): las 12 fichas de Humanos —4 héroes y 8 unidades— salen de razas.md de verdad, no inventadas. `parseRoster` (lib/v3/traits.ts) ya existía pero no lo consumía nadie y descartaba la columna Tipo de daño; con eso capturado, `lib/v3/races.ts` `charactersOfRace()` cruza el roster con la anatomía de /dev/personaje y arma un Character legal por ficha —❤️/⚔️ de la curva de tier de Humanos, 👢 de su tipo de daño—. Lo que sigue sin decidirse no es de aquí: las cinco de escalón (🛡️ 🔮 🎯 🍀 ⚡) salen en su valor por defecto porque razas.md no trae todavía el escalón ficha a ficha, que es insumo de Dario (status.md §2, punto 4). Y esta misma raza ya destapa dos de los 25 renombres pendientes (24-ago): su propio 🏹 Arquero y su propio 🔮 Mago se llaman igual que una unidad de su progresión — se renombra la unidad, y ahora se ve en la propia tabla en vez de esperar a las otras diez. Enanos —la segunda raza piloto (status.md §4, 8-sep-2026)— espera su propio par de RACE_BASES; las otras nueve quedan en StandBy hasta la v1 y `charactersOfRace()` lanza si se les pide, así que el alcance está en el código y no solo en el comentario.",
   },
   {
     slug: "cartas",
@@ -191,7 +191,7 @@ export const DEV_MODULES: readonly DevModule[] = [
     summary:
       "Las cartas de V3 como DATOS, leídas del markdown igual que hace hoy la wiki con v2: clase, unidad, item, maldición y encuentro, cada una con su bloque de Habilidades y Características. No es el objeto —eso es el marco—, es lo que el objeto imprime.",
     icon: "pi pi-list",
-    status: "planificado",
+    status: "en-curso",
     layer: "sustrato",
     needs: [
       { slug: "personaje", what: "el bloque de Habilidades y Características que imprime cada carta" },
@@ -199,7 +199,7 @@ export const DEV_MODULES: readonly DevModule[] = [
     ],
     doc: { href: "/docs/v3/cards", label: "Cartas" },
     blocker:
-      "No hay ninguna carta escrita todavía. Y una decisión abierta que es de aquí: la Rareza de las cartas que no son unidades, que no tienen tier del que derivarla.",
+      "CONSTRUIDAS LAS 16 CARTAS DE UNIDAD DE LAS DOS RAZAS PILOTO (8-sep-2026, Enanos se sumó a Humanos): «cartas» no era un bloque uniforme —son cinco tipos y no estaban igual de listos—, y la de unidad resultó ser la única con anatomía ya cerrada: los 13 datos + tipo de daño de knowledge/v3/card-concept/README.md §\"Contra qué se juzgan\" son el Character que ya arma /dev/razas más UNA ILUSTRACIÓN, y esa ya existe en disco para las dos (public/assets/v3/races/{humanos,enanos}/units/*.png, 8 cada una). `lib/v3/cards.ts` `unitCardsOfRace()` las cruza sin inventar nada — la ruta de archivo se deriva con el mismo slug que ya usó el arte, no se copia a mano. Lo que sigue sin construirse no es código: las cartas de CLASE (Guerrero, Mago, Sacerdote, Arquero, 8 de las dos razas piloto) ya tienen anatomía y vocabulario de efecto cerrados (docs/v3/cards/class.md, 8-sep-2026 — 5 campos; el efecto compone Habilidad/Estado/daño-curación, número fijo por carta, sin fórmula), pero faltan las 40 cartas del piloto en sí (5 por clase) — eso es redactar contenido de juego, no derivarlo de un documento; item, maldición y encuentro están aún menos definidos. Y sigue en pie la pregunta que ya estaba anotada: la Rareza de las cartas que no son unidad, que no tienen tier del que derivarla.",
   },
 
   // ------------------------------------------------------------------ piezas
@@ -213,7 +213,7 @@ export const DEV_MODULES: readonly DevModule[] = [
     layer: "piezas",
     doc: { href: "/docs/v3/board/battle", label: "Tablero de batalla" },
     blocker:
-      "Ninguno de geometría, y no depende de nadie: por eso arrancó primero. Lo que el tablero midió ya está en el documento —el bando enemigo en espejo, la victoria en plural y el despliegue con huecos (28-ago); la banda de 👢 Movimiento, primera cifra de las 8 Habilidades (31-ago)—. Queda por construir la ilustración del campo, la segunda forma del bando enemigo (fauna u horda, §2) y el mismo bucle con quince fichas por bando, que el duelo 1 contra 1 no contesta. ⚡ Iniciativa y el turno siguen esperando las otras siete Habilidades.",
+      "Ninguno de geometría, y no depende de nadie: por eso arrancó primero. Lo que el tablero midió ya está en el documento —el bando enemigo en espejo, la victoria en plural y el despliegue con huecos (28-ago); la banda de 👢 Movimiento, primera cifra de las 8 Habilidades (31-ago)—. Y EL 7 DE SEPTIEMBRE DE 2026 SE CERRÓ EL BUCLE CON QUINCE FICHAS POR BANDO, que el duelo 1 contra 1 dejaba sin contestar. Primero solo movimiento, sin combate: la pantalla natural —9 🗡️ delante, ✨🏹 detrás— se traba en la ronda 3 y se queda congelada para siempre, porque sin bajas nadie vuelve a moverse. Repetido con lib/v3/battle.ts y estadísticas neutras e idénticas a los dos lados, la pantalla resulta porosa: en el 100% de 5.000 combates muere algún ✨🏹, la primera baja hacia la ronda 8, la mayoría con 🗡️ propios todavía en pie — basta un hueco local. Queda por construir la ilustración del campo y la segunda forma del bando enemigo (fauna u horda, §2). ⚡ Iniciativa y el turno siguen esperando las otras siete Habilidades.",
   },
   {
     slug: "pieza",
@@ -269,14 +269,15 @@ export const DEV_MODULES: readonly DevModule[] = [
     summary:
       "Resolución sin dados: una tirada oculta 1..100 contra dos umbrales —🎯 Precisión para acertar y 🍀 Suerte para el crítico—, mitigación porcentual por tipo de daño y orden de actuación por ⚡ Iniciativa.",
     icon: "pi pi-bolt",
-    status: "planificado",
+    status: "en-curso",
     layer: "reglas",
     needs: [
       { slug: "personaje", what: "los valores que entran en la tirada: 🎯 Precisión, 🍀 Suerte, ⚔️ Ataque y las dos mitigaciones" },
+      { slug: "razas", what: "las fichas reales que pelean, no estadísticas inventadas" },
     ],
     doc: { href: "/docs/v3/game-design", label: "Diseño del juego §4" },
     blocker:
-      "Ninguno de diseño: el motor está escrito y con sus diales fijados. Faltan las cifras de las 8 Habilidades que ejecutar, que es lo único de las estadísticas de personaje que sigue en el aire. El primer trozo ya existe y lo pidió la Animación: lib/v3/combat.ts resuelve la tirada del §4.1, que es la parte que no depende de los valores.",
+      "CONSTRUIDO EL PUENTE (8-sep-2026): lib/v3/combat.ts resuelve la tirada del §4.1 y lib/v3/battle.ts `fight()` el golpe entero —daño y mitigación del §4.2, la lista de ⚡ Iniciativa del §4.6 y, desde el 7-sep, los Estados (effects-runtime.ts)— y los dos se escribieron y probaron con estadísticas INVENTADAS, porque hasta ahora no había ninguna ficha real con las 8 Habilidades puestas. Con /dev/razas armando los Character de las dos razas piloto (Humanos y Enanos, 24 fichas), lo único que faltaba era convertir uno en el `Fighter` de seis números que pide battle.ts —lib/v3/fighters.ts `fighterOf()`—, y /dev/combate ya enfrenta dos fichas reales cualesquiera de las 24 (de la misma raza o de las dos) sobre la arena mínima de /dev/tablero, un combate suelto con su registro turno a turno o una tanda de 1.000 para ver la tasa de victoria — Enanos ya midió su base (❤️ 26 · ⚔️ 4, tanque puro) contra el estándar de Humanos y sale parejo (≈50/50 en el duelo de héroes). UN CONTRA UNO A PROPÓSITO, igual que duel.ts: un bando de cuatro es otra decisión (quién lleva qué unidad) que le toca al módulo «baraja», todavía sin escribir. Y desde el 8-sep-2026 ya no todas están inertes: lib/v3/fighters.ts `appliesOf()` cruza las Características que cada ficha ya lleva en razas.md contra la columna \"Lo aplica\" de effects.md —cero insumo nuevo, es mecánico—, y así el 🪓 Berserker de Enanos dispara Sangrado, su 🗿 Gólem de piedra dispara Lentitud y el 🐉 Dragón dorado de Humanos dispara Quemadura; el resto sigue sin ninguno porque no lleva la Característica que lo dispararía. `BattleTurn` ganó `selfDamage` para que el registro del tic al final de turno se pueda pintar sin perder la cuenta de la ❤️ Vida.",
   },
   {
     slug: "estados",
@@ -284,13 +285,15 @@ export const DEV_MODULES: readonly DevModule[] = [
     summary:
       "Los nueve estados temporales con su daño por turno, su duración y su acumulación: los elementales entran siempre, los de control los aplica el crítico, y solo una carta los quita antes de tiempo.",
     icon: "pi pi-sparkles",
-    status: "planificado",
+    status: "en-curso",
     layer: "reglas",
     needs: [
       { slug: "combate", what: "el crítico, que es lo único que aplica los estados de control" },
     ],
-    doc: { href: "/docs/v3/effects", label: "Efectos y estados" },
-    blocker: "Ninguno de diseño: el catálogo está escrito. Depende del motor de combate en código.",
+    doc: { href: "/docs/v3/sistemas/effects", label: "Efectos y estados" },
+    home: { href: "/dev/combate", label: "/dev/combate · Un combate con Estados de verdad" },
+    blocker:
+      "Ninguno de diseño: el catálogo está escrito. Y EL 7 DE SEPTIEMBRE DE 2026 SE ESCRIBIÓ LO QUE UN ESTADO HACE (lib/v3/effects-runtime.ts), que effects.ts explícitamente decía que no era él: aplicar (elementales en cualquier golpe que entre, de control solo con crítico), el tic de daño al final del turno del afectado colgando del ⚔️ Ataque de quien lo aplicó y con la mitigación que toque (🔮 para los tres elementales, 🛡️ para 🩸 Sangrado), la salida temprana de 🍀 Suerte, la expiración por rondas, y el apilado de 🧊 Congelación con su incapacitación a pila llena — probado con node contra el catálogo de verdad: Quemadura tiqueteando 3 turnos y expirando, la mitigación separando Sangrado de Quemadura, Suerte tirando un estado antes de tiempo, Congelación incapacitando en la tercera pila, y Aturdido bloqueando el turno y re-cobrándose cada vez que un crítico lo refresca. Enchufado a lib/v3/battle.ts `fight()` de verdad: un golpe que entra aplica lo que el atacante lleve en `applies`, cada ficha tiquetea sus propios estados al final de su turno —con una baja de estado (`selfDied`) que `toAnimEvents()` ya sabe traducir a un suceso «muerte» sin «ataque» delante—, y quien está incapacitado se salta movimiento y ataque sin dejar de tiquetear. NO SE VE EN /dev/pieza: el toggle de \"Estados encima\" de esa pantalla es cosmético (cuántas chapas caben a la vez en la ficha) y no toca effects-runtime.ts para nada. Donde SÍ se ve de verdad es /dev/combate (8-sep-2026): fighters.ts appliesOf() hace que el 🪓 Berserker de Enanos dispare Sangrado y su 🗿 Gólem de piedra dispare Lentitud, y la tabla de turnos tiene su propia columna \"Tic de Estado\" con el daño y la ❤️ resultante — el mecanismo entero, no solo el catálogo pintado. TRES COSAS QUEDAN FUERA A PROPÓSITO, y están anotadas en la cabecera del propio archivo: los estados que MODIFICAN una Habilidad mientras duran —🌑 Ceguera, 🐌 Lentitud, 🕸️ Inmovilización— no tienen valor efectivo en ningún sitio porque round.ts `takeTurn` recibe un 👢 Movimiento por TIPO de daño compartido por todas las fichas, no uno por ficha; 🌀 Confusión —a quién ataca, no cuánta Vida pierde— vive en la elección de objetivo de round.ts, no aquí; y 😱 Miedo como disparador de Aturdido necesita recordar si la ficha ya bajó de media Vida en este combate, que es estado de la ficha y no del estado. Ninguna de las tres bloquea lo ya construido.",
   },
   {
     slug: "baraja",
@@ -298,16 +301,23 @@ export const DEV_MODULES: readonly DevModule[] = [
     summary:
       "De dónde sale una carta y a dónde vuelve: el mazo, la mano, la zona en juego y el robo de cada turno. Es la economía del turno, y es lo que hoy no tiene dueño — la Animación suelta cartas al aire sin que haya nada detrás de las que las sostenga.",
     icon: "pi pi-clone",
-    status: "planificado",
+    status: "en-curso",
     layer: "reglas",
     needs: [
-      { slug: "cartas", what: "qué se baraja" },
+      { slug: "cartas", what: "qué se baraja", standIn: "las 16 cartas de UNIDAD de Humanos y Enanos, repetidas cíclicamente — Dario, 9-sep-2026: «me da igual que sea real, quiero ver el sistema en sí»" },
+      {
+        slug: "tablero",
+        what: "dónde cae la carta al soltarla",
+        standIn:
+          "el retal de quince hexágonos del banco de animación, escrito por SEGUNDA vez en components/dev/BarajaModule.tsx — misma geometría (lib/v3/hex.ts) y misma compresión, pero copiada. Dario lo pidió así y nombró la deuda en el mismo aliento (9-sep-2026): «el tablero de batalla lo quiero igual que el de Animación […] después lógicamente los dos UNIFICADOS en el contenido del tablero»",
+      },
+      { slug: "pieza", what: "en qué se convierte la carta al desplegarla: la ficha que aparece en el hexágono es la de verdad, no un sustituto" },
       { slug: "marco", what: "cómo se ve una carta en la mano — es lo que decide cuántas caben" },
-      { slug: "combate", what: "cuándo se juega: el turno cuelga del orden por ⚡ Iniciativa" },
+      { slug: "combate", what: "cuándo se juega: el turno cuelga del orden por ⚡ Iniciativa", standIn: "esta vuelta no juega una carta EN un combate, solo la despliega como ficha sobre el retal — el recurso de turno sigue sin construirse" },
     ],
     doc: { href: "/docs/v3/game-design", label: "Diseño del juego §6" },
     blocker:
-      "El único módulo bloqueado por un DOCUMENTO EN BLANCO y no por valores: game-design.md §6, «Turno y economía de cartas», está sin escribir. Y no se hereda de v2 —mazo, tope de 5 en juego y Oteo de 2— sin decidirlo: V3 se escribe de cero.",
+      "CONSTRUIDA LA MECÁNICA, CON CONTENIDO DE RELLENO (9-sep-2026): Dario pidió ver el sistema de Oteo en sí —barajar, otear, la mano, ampliar una carta, arrastrarla al tablero— y dejó explícito que el catálogo no importaba para esta vuelta (\"puedes repetir 10 veces la carta Miliciano\"), así que lib/v3/deck.ts es la traducción directa de lib/v2/rules/deck.ts (Mazo de 20, «en juego» a 5, Oteo con sustitución, jugar siempre vuelve al Mazo) sobre las 16 cartas de UNIDAD ya construidas de Humanos y Enanos en vez de sobre cartas de clase, que siguen en StandBy. LA MESA ES LA DEL BANCO DE ANIMACIÓN: retal de quince hexágonos sobre la mesa, Mazo abajo a la izquierda y la mano EN ABANICO abajo, tal y como la pidió Dario el mismo día al ver el primer intento («la ostia es ESPANTOSO cómo ha quedado»). LA DECISIÓN QUE SOSTIENE EL ARCHIVO es que todas las cartas viven en UNA SOLA CAPA absoluta dentro del escenario: el lab de v2 necesitaba cuatro clones FLIP con `position: fixed` porque allí una carta cambia de contenedor al pasar del Oteo a la bandeja, y aquí no cambia nunca — así el reparto, el vuelo a la mano, el abanico recolocándose, ampliar, cerrar y volver al Mazo son la MISMA transición sobre el mismo nodo, y los cuatro clones (y los cuatro efectos de medida que había que mantener sincronizados) desaparecieron. Arrastrar es un gesto de puntero a mano, sin librería (mismo criterio que use-board-view.ts): un umbral de 6 px separa el clic —que amplía la carta para leer sus cifras— del arrastre, y el hexágono lo da `Hex.fromPixel()` (lib/v3/hex.ts, la inversa de `toPixel`) sobre el punto del escenario. Soltar sobre un hexágono libre coloca una ficha REAL (PieceToken, /dev/pieza) y manda la carta de vuelta al Mazo, que es la regla madre hecha visible. La carta de la mano es la carta real de V3 (SketchCard/L·Lámina, hasta ahora solo wireada al Subject inventado de sample.ts) con un adaptador Character→Subject. LO QUE SIGUE SIN CONSTRUIRSE, y no es un olvido: las cartas de clase reales (StandBy, docs/v3/cards/class.md), cualquier recurso de turno o regla de cuándo se puede jugar una carta, que la carta soltada participe de un combate de verdad, y unificar este retal con el del banco de animación — ver el `standIn` del tablero.",
   },
 
   // --------------------------------------------------------------- sensación
@@ -347,7 +357,7 @@ export const DEV_MODULES: readonly DevModule[] = [
     ],
     doc: { href: "/docs/v3/game-design", label: "Diseño del juego §4.1" },
     blocker:
-      "Ninguno para seguir midiendo: los cuatro sustitutos son deliberados, porque una caída no necesita saber cuánto pega la ficha, y mezclar el movimiento con el aspecto haría que se juzgaran los dos a la vez y mal. Lo que sí espera es al motor de combate, y al revés de lo normal: no lo necesita para funcionar, es el motor el que va a tener que nacer emitiendo SUCESOS en vez de mutando estado, o nada de esto se podrá enseñar (lib/v3/anim.ts, `schedule`). Lo que el banco pide a cambio es que `schedule()` aprenda a solapar: hoy es estrictamente secuencial, y el tic de estados al empezar el turno no cabe en fila. La oferta y el andar ya no piden nada: las cuentas las hace lib/v3/movement.ts, que existía desde el duelo del tablero, así que el banco pregunta y no calcula. Lo que sí queda abierto es si la onda de la oferta entra en presupuesto sobre el 14×12 de verdad —en el retal de quince siempre cabe—, y eso solo se ve mudando esto a la arena.",
+      "Ninguno para seguir midiendo: los cuatro sustitutos son deliberados, porque una caída no necesita saber cuánto pega la ficha, y mezclar el movimiento con el aspecto haría que se juzgaran los dos a la vez y mal. Lo que sí espera es al motor de combate, y al revés de lo normal: no lo necesita para funcionar, es el motor el que va a tener que nacer emitiendo SUCESOS en vez de mutando estado, o nada de esto se podrá enseñar (lib/v3/anim.ts, `schedule`). Y EL 7 DE SEPTIEMBRE DE 2026 SE ESCRIBIÓ EL PUENTE. Dos huecos, y los dos cerrados: `schedule()` ya acepta lotes (`Batch`) además de sucesos sueltos, así que un grupo de sucesos simultáneos —el tic de estados al empezar el turno— se escalona con `stagger` en vez de ponerse en fila, y lo siguiente espera a que termine el último del lote, no el primero. Y lib/v3/battle.ts `toAnimEvents()` traduce lo que jugó `fight()` —paso, ataque, muerte— al vocabulario de aquí, así que un combate real ya se puede convertir en una cola de animación entera (probado con node: un 1 contra 1 completo sale en 11 sucesos y 5,5 segundos de cola). Lo que sigue faltando no es de lib/v3/: es reproducir esa cola contra el estado de una partida en esta pantalla —hoy el puente solo está probado fuera de React— y que los nueve estados existan para tener con qué llenar un lote de verdad. La oferta y el andar ya no piden nada: las cuentas las hace lib/v3/movement.ts, que existía desde el duelo del tablero, así que el banco pregunta y no calcula. Lo que sí queda abierto es si la onda de la oferta entra en presupuesto sobre el 14×12 de verdad —en el retal de quince siempre cabe—, y eso solo se ve mudando esto a la arena.",
   },
 ];
 

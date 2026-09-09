@@ -20,6 +20,4 @@ El mapa por el que se mueve el héroe fuera del combate: geometría, generación
 - **Terrenos → campo de batalla**: el [tablero de batalla](battle.md) §7 decidió *(24-ago-2026)* que **la plantilla de obstáculos de una batalla sale del terreno del hexágono donde se abre**. Este documento es el que tiene que decir qué terrenos hay para que exista ese mapeo. Mientras no lo diga, la batalla se juega a campo abierto y la resta de *cobertura* del motor vale 0.
 - **Las cuatro Características de terreno viven aquí**: 🦅 Volador, 🐾 Ágil, 🌊 Anfibio y 🌲 Explorador hablan de obstáculos y penalizaciones **del mapa**, así que es este tablero el que les da significado — en el de batalla no hacen nada hasta que tenga terreno.
 
-## Relación con v2
-
-El mapa hexagonal, la generación de tablero y los terrenos de [v2/board/board-map.md](../../v2/board/board-map.md) apenas dependían de las 6 estadísticas D&D, así que es de lo más probable de recuperar. Pero se recupera por decisión explícita y reescrito aquí, no por herencia.
+> El mapa hexagonal, la generación y los terrenos de v2 apenas dependían de las 6 estadísticas D&D, así que son de lo más probable de recuperar — **por decisión explícita y reescritos aquí**, no por herencia.

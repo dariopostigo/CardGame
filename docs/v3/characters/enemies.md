@@ -2,28 +2,26 @@
 
 # Enemigos — V3
 
-> Esqueleto en casi todo. En V3 los enemigos no son un bestiario aparte: son las propias razas. Escrito ya: **las dos formas de encuentro** y **cuántas fichas trae la máquina** —el espejo, 28 de agosto de 2026—. Sin escribir: la mezcla, el comportamiento y el reparto por zonas.
+> En V3 los enemigos no son un bestiario aparte: **son las propias razas**. Escrito: las dos formas de encuentro y cuántas fichas trae la máquina. Sin escribir: la mezcla, el comportamiento y el reparto por zonas.
 
 ## Los enemigos son las razas *(decidido)*
 
 Ya no hay un catálogo de monstruos independiente. En una partida pueden aparecer, por zonas, enemigos de una raza concreta, y **una raza entera puede ocupar el papel de Boss final**.
 
-La consecuencia directa: las 8 unidades de cada raza ([razas.md](../razas.md)) tienen **dos caras**. Reclutable, como carta de unidad ([cards/units.md](../cards/units.md)), y hostil, como enemigo con el que te cruzas. Una misma unidad tiene que servir para las dos.
+La consecuencia directa: las 8 unidades de cada raza ([Unidades](../razas/unidades.md)) tienen **dos caras**. Reclutable, como carta de unidad ([cards/units.md](../cards/units.md)), y hostil, como enemigo con el que te cruzas. Una misma unidad tiene que servir para las dos.
 
-## Dos formas de encuentro *(decidido el 24 de agosto de 2026)*
-
-El [tablero de batalla](../board/battle.md) §2 fijó que el bando enemigo puede tener **dos formas**, y de eso depende cómo se gana:
+## Dos formas de encuentro *(decidido)*
 
 | Encuentro | Composición | Cómo se gana |
 |---|---|---|
 | **De facción** | **Un héroe enemigo por jugador**, cada uno con hasta 4 unidades de su raza | **Caen todos sus héroes** |
 | **De fauna u horda** | Criaturas sin héroe, **cinco por jugador** | **Caen todas** |
 
-El de facción **espeja al bando del jugador** y no hay que inventarlo: las 44 cartas de clase de las once razas ya existen. El de horda cubre los encuentros que no tienen líder.
+El de facción no hay que inventarlo: las 44 cartas de clase ya existen. El de horda cubre los encuentros sin líder.
 
-**Cuántas fichas trae la máquina está decidido, y es el espejo** *(28 de agosto de 2026)*: **lo mismo que la mesa**, un héroe y hasta 4 unidades por jugador, así que se juega 5 contra 5, 10 contra 10 o 15 contra 15 según cuántos se sienten ([battle.md](../board/battle.md) §2). Se eligió porque es la única forma en la que la victoria se lee igual por los dos lados; el "tope de 5" que este documento escribía antes era de cuando el bando del jugador eran cinco fichas y no había co-op. **No se hereda** la fórmula de v2 (*héroes-que-entran + 1*).
+**Cuántas fichas trae la máquina es el espejo: lo mismo que la mesa**, un héroe y hasta 4 unidades por jugador — 5 contra 5, 10 contra 10 o 15 contra 15 ([battle.md](../board/battle.md) §2). Es la única forma en la que la victoria se lee igual por los dos lados.
 
-Sale de aquí un requisito que es de pantalla y no de reglas: el jugador tiene que saber **qué forma tiene el encuentro antes de desplegar**, porque cambia a qué apunta y por tanto dónde se coloca.
+De aquí sale un requisito de pantalla, no de reglas: el jugador tiene que saber **qué forma tiene el encuentro antes de desplegar**, porque cambia a qué apunta y dónde se coloca.
 
 ## Por definir
 
@@ -34,6 +32,4 @@ Sale de aquí un requisito que es de pantalla y no de reglas: el jugador tiene q
 - **Comportamiento**: cómo decide un enemigo qué hacer en su turno, y si cada raza tiene un patrón propio.
 - **Qué raza aparece dónde**, y cómo se elige la raza del Boss final de una partida.
 
-## Relación con v2
-
-El bestiario de [v2/characters/enemies.md](../../v2/characters/enemies.md) —lobos, bandidos, trasgos, esqueletos, arañas— desaparece: no eran razas jugables. Su formato de bloque de combate y su patrón de IA sí son referencia útil de estructura, no de contenido.
+> El bestiario de v2 —lobos, bandidos, trasgos, esqueletos— **desaparece**: no eran razas jugables.

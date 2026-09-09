@@ -1,16 +1,41 @@
 # Concepto de razas — V3
 
-> Aquí se **define** el sistema de razas; en [`docs/v3/razas.md`](../../../docs/v3/razas.md)
-> se **publica**. Son dos archivos con el mismo contenido de partida y dos
-> papeles distintos: el de `docs/` lo lee la wiki y las fichas de `/dev`, así
-> que se queda quieto hasta que lo de aquí esté cerrado. Todo el trabajo sucio
-> —renombrar, fundir rasgos que se solapan, meter números, reordenar— pasa
-> primero en esta carpeta.
+> Aquí se **define** el sistema de razas; en [`docs/v3/`](../../../docs/v3/) se
+> **publica**. Dos papeles distintos: lo de `docs/` lo lee la wiki y las fichas
+> de `/dev`, así que se queda quieto hasta que lo de aquí esté cerrado. Todo el
+> trabajo sucio —renombrar, fundir rasgos que se solapan, meter números,
+> reordenar— pasa primero en esta carpeta.
 >
 > Es la misma división que ya usa [`../card-concept/`](../card-concept/) para el
 > marco de carta, y sigue la norma de [`AGENTS.md`](../../../AGENTS.md): lo que
 > vive en `knowledge/` es base de conocimiento, lo que vive en `docs/v3/` es
 > diseño vigente.
+
+## ⚠️ El destino ya no es un archivo, son seis *(6 de septiembre de 2026)*
+
+`razas.md` de esta carpeta empezó siendo copia exacta de `docs/v3/razas.md`. Ese
+día la wiki se reorganizó y **el publicado se partió en seis**, porque tres de
+sus cinco temas no eran de las razas sino de todas las fichas. **El de trabajo
+sigue entero, a propósito**: lo parsean `lib/v3/traits-catalog.ts` (las 41
+Características) y `parseRoster` (las 132 fichas) leyendo un solo archivo, y
+partirlo en mitad de la redefinición cuesta código sin ganar nada hoy.
+
+O sea que **el paso 2 del flujo ya no es «reescribe el bloque equivalente»: hay
+que mirar a cuál de los seis va**.
+
+| Sección de `razas.md` (aquí) | Se publica en |
+|---|---|
+| 🧙‍♂️ Razas y clases · los tres DLC | [`docs/v3/razas/README.md`](../../../docs/v3/razas/README.md) |
+| Habilidades de los personajes · 📏 La escala · 🧮 De dónde sale cada número | [`docs/v3/sistemas/habilidades.md`](../../../docs/v3/sistemas/habilidades.md) |
+| 🎲 Tipo de daño | [`docs/v3/sistemas/dano.md`](../../../docs/v3/sistemas/dano.md) |
+| ✨ Características de los personajes | [`docs/v3/sistemas/caracteristicas.md`](../../../docs/v3/sistemas/caracteristicas.md) |
+| 📐 Cuántas Características lleva una ficha | [`docs/v3/sistemas/ficha.md`](../../../docs/v3/sistemas/ficha.md) |
+| 🦸 Tabla de características de héroes | [`docs/v3/characters/heroes.md`](../../../docs/v3/characters/heroes.md) |
+| Unidades · ⚔️ Características de todas las unidades | [`docs/v3/razas/unidades.md`](../../../docs/v3/razas/unidades.md) |
+
+El día que esta carpeta se parta también, son tres rutas de código las que se
+mueven: `RAZAS_MD` en `traits-catalog.ts`, y las dos lecturas que hoy salen del
+mismo texto.
 
 ## Qué hay
 
@@ -30,14 +55,15 @@ reglas, no de estilo.
 ## El flujo
 
 1. Se discute y se edita `razas.md` **de esta carpeta**.
-2. Cuando un bloque queda cerrado, se reescribe el bloque equivalente de
-   `docs/v3/razas.md` y se actualiza [`docs/v3/status.md`](../../../docs/v3/status.md).
+2. Cuando un bloque queda cerrado, se mira **en cuál de los seis se publica**
+   (tabla de arriba), se reescribe allí y se actualiza
+   [`docs/v3/status.md`](../../../docs/v3/status.md).
 3. La wiki se sirve de `docs/` en vivo, así que se actualiza sola. Las fichas de
    `/dev` ([`lib/dev-registry.ts`](../../../lib/dev-registry.ts)) apuntan a
-   `/docs/v3/razas` y no hay que tocarlas.
+   `/docs/v3/razas` y a `/docs/v3/sistemas/ficha`, y no hay que tocarlas.
 
-No se hace en el otro orden. Si `docs/v3/razas.md` se edita a mano, los dos
-archivos divergen y este deja de servir de nada.
+No se hace en el otro orden. Si lo publicado se edita a mano, los archivos
+divergen y este deja de servir de nada.
 
 ## Qué falta decidir
 

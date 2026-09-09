@@ -1037,8 +1037,29 @@ export function durationOf(event: AnimEvent, t: Timings): number {
 }
 
 /**
+ * Varios sucesos que empiezan casi a la vez, no uno detrás de otro.
+ *
+ * Es el caso que una cola estrictamente secuencial no sabe decir: el tic de
+ * estados al empezar el turno son diez fichas por tres estados, y en fila eso
+ * es una eternidad. `stagger` es el escalón entre uno y el siguiente —a 0
+ * son exactamente a la vez, y eso se lee como un fallo de pintado; con un
+ * escalón pequeño (60 ms, como `wakeStagger`) se lee como una cascada—. Lo que
+ * viene después del lote espera a que **termine el último**, no al que menos
+ * tarde.
+ */
+export type Batch = { readonly events: readonly AnimEvent[]; readonly stagger?: number };
+
+/** Lo que puede llevar la cola: un suceso solo, o un lote en paralelo. */
+export type Cue = AnimEvent | Batch;
+
+function isBatch(cue: Cue): cue is Batch {
+  return "events" in cue;
+}
+
+/**
  * Pone hora a una lista de sucesos: uno detrás de otro, con un respiro entre
- * ellos.
+ * ellos — salvo los que llegan como `Batch`, que se reparten en paralelo entre
+ * sí y solo entonces le ceden el turno al siguiente.
  *
  * Se puede comprobar sin pantalla —"una ronda de 30 fichas atacando dura tanto"—
  * y esa es justo la pregunta que decide si el juego se puede mirar o hay que
@@ -1047,16 +1068,28 @@ export function durationOf(event: AnimEvent, t: Timings): number {
  * por eso `gap` existe y puede ser negativo (solapar).
  */
 export function schedule(
-  events: readonly AnimEvent[],
+  cues: readonly Cue[],
   t: Timings,
   gap = 60,
 ): Beat[] {
   let at = 0;
   const out: Beat[] = [];
-  for (const event of events) {
-    const duration = durationOf(event, t);
-    out.push({ at, duration, event });
-    at += duration + gap;
+  for (const cue of cues) {
+    if (isBatch(cue)) {
+      const stagger = cue.stagger ?? 0;
+      let batchEnd = at;
+      cue.events.forEach((event, i) => {
+        const start = at + i * stagger;
+        const duration = durationOf(event, t);
+        out.push({ at: start, duration, event });
+        batchEnd = Math.max(batchEnd, start + duration);
+      });
+      at = batchEnd + gap;
+    } else {
+      const duration = durationOf(cue, t);
+      out.push({ at, duration, event: cue });
+      at += duration + gap;
+    }
   }
   return out;
 }

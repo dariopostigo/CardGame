@@ -21,10 +21,9 @@
 // solo 👢 Movimiento tiene número, y no se decidió a dedo sino midiendo el duelo
 // del arquero en el laboratorio del tablero (`duel.ts`, 31 de agosto de 2026).
 //
-// Y EL MÉTODO TAMBIÉN ESTÁ CERRADO desde el 5 de septiembre de 2026, que era el
-// hueco que nadie había nombrado: la escala decía en qué rango va cada número y
-// no QUIÉN LO DECIDE, así que «faltan siete Habilidades» se leía como 1.056
-// celdas en blanco. Son 122, y el reparto está en `BASE_LIMITS` más abajo.
+// Y CUÁNTAS FALTAN TAMBIÉN ESTÁ CERRADO: «faltan siete Habilidades» se leía como
+// 1.056 celdas en blanco, y son TRES cifras más los escalones de la raza piloto.
+// El reparto, más abajo.
 //
 // POR QUÉ EXISTE ESTE ARCHIVO Y NO SE USA EL DE LOS BOCETOS. La anatomía ya
 // estaba escrita a medias en `components/design/v3/sample.ts`: sus propias 8
@@ -66,7 +65,7 @@ export type AbilityId =
 
 /**
  * Qué clase de número es. **Las ocho no viven en la misma escala** y eso no es
- * un descuido (razas.md §"La escala"): cuatro son umbrales o porcentajes que el
+ * un descuido (habilidades.md §"La escala"): cuatro son umbrales o porcentajes que el
  * motor ya acota, dos son cantidades libres, una solo se compara y otra la fija
  * el tipo de daño. De aquí sale cómo se valida y cómo se lee cada una.
  */
@@ -85,7 +84,7 @@ export type Ability = {
   readonly id: AbilityId;
   readonly label: string;
   readonly icon: string;
-  /** Qué es el número (razas.md §"La escala", columna "Qué es el número"). */
+  /** Qué es el número (habilidades.md §"La escala", columna "Qué es el número"). */
   readonly what: string;
   readonly scale: AbilityScale;
   /**
@@ -197,13 +196,11 @@ export const ABILITIES: Readonly<Record<AbilityId, Ability>> = {
       // El §4.6 dice "sin escala propia: solo se compara", así que las reglas no
       // ponen tope. El que hay es del hueco de la carta, y va dicho así.
       //
-      // Desde el 5 de septiembre de 2026 sí tiene de dónde salir: BANDA POR TIPO
-      // DE DAÑO, como el alcance y como 👢 (razas.md §"De dónde sale cada
-      // número"). Las tres cifras no están porque se MIDEN —el orden intuitivo
-      // (🏹 abre, 🗡️ cierra) le carga al 🗡️ el peaje del alcance y el del turno
-      // encima del 👢 3 que ya paga, que es el desequilibrio que el duelo
-      // destapó con 👢—, así que no hay `INITIATIVE_BAND` hasta que haya banco.
-      why: "Sin escala de reglas: solo se compara, y los empates los rompe 🍀 Suerte (§4.6). Su número sale de una banda por tipo de daño, pendiente de medir. El límite de dos cifras es del hueco de la carta, no del motor",
+      // Y no hay banda ni fórmula que la genere: desde el 8 de septiembre de 2026
+      // se elige POR FICHA, en tres escalones (lento · normal · rápido). El banco
+      // ya midió que da igual —100.000 combates, el orden de turno no mueve quién
+      // gana—, así que no hay nada que compensar con un número fino.
+      why: "Sin escala de reglas: solo se compara, y los empates los rompe 🍀 Suerte (§4.6). Se elige por ficha en tres escalones. El límite de dos cifras es del hueco de la carta, no del motor",
     },
     scalesWithTier: false,
   },
@@ -234,12 +231,16 @@ export const ABILITY_IDS: readonly AbilityId[] = [
 ];
 
 /**
- * Las que todavía no tienen número. **Siete de ocho**, y es el bloqueo del
- * módulo: `status.md` §2 las tiene como insumo pendiente de Dario. La escala en
- * la que van sí está cerrada, así que rellenarlas no es un folio en blanco.
+ * Las que no traen número puesto de ningún sitio. **Cinco de ocho**: 👢 se midió
+ * en duelo *(31-ago)* y ❤️/⚔️ salen de la base de su raza más la curva
+ * *(8-sep, `RACE_BASES`)*.
+ *
+ * Y "sin número" no es "sin decidir": estas cinco **se eligen a ojo, ficha a
+ * ficha**, en los escalones de `ABILITY_STEPS`. Lo que falta es catálogo —el
+ * valor de cada una de las 132—, no una decisión de sistema.
  */
 export const ABILITIES_WITHOUT_VALUES: readonly AbilityId[] = ABILITY_IDS.filter(
-  (id) => id !== "movimiento",
+  (id) => id !== "movimiento" && id !== "vida" && id !== "ataque",
 );
 
 // --- El tier --------------------------------------------------------------
@@ -248,7 +249,7 @@ export const TIERS = 8;
 
 /**
  * La curva de potencia de una raza: ×10 del tier 1 al tier 8, unos ×1,4 por
- * escalón (razas.md §"La escala"). Es 10^((t−1)/7) redondeado a un decimal, y
+ * escalón (habilidades.md §"La escala"). Es 10^((t−1)/7) redondeado a un decimal, y
  * se guarda la tabla tal cual está escrita en vez de la fórmula porque lo que
  * manda es el documento.
  *
@@ -273,25 +274,31 @@ export function scaleByTier(base: number, tier: number): number {
 
 // --- La base de raza ------------------------------------------------------
 //
-// DE DÓNDE SALE CADA NÚMERO (razas.md, 5 de septiembre de 2026). La escala decía
-// en qué rango va cada Habilidad y no quién decide su valor, y esa era la
-// diferencia entre 122 cifras y 1.056 celdas en blanco. Lo que decidió Dario:
+// DE DÓNDE SALE CADA NÚMERO (habilidades.md §3). Solo dos de las ocho se calculan:
 //
 //   · ❤️ Vida y ⚔️ Ataque      → una base de tier 1 POR RAZA; la curva de arriba
-//                                da los otros siete escalones. 22 cifras.
-//   · 🛡️ 🔮 🎯 🍀              → una rejilla TIPO DE DAÑO × TIER (3×8) por
-//                                Habilidad; la raza y las Características
-//                                desvían. 96 cifras.
-//   · ⚡ Iniciativa            → BANDA POR TIPO DE DAÑO, como el alcance y
-//                                como 👢. 3 cifras, y se miden.
+//                                da los otros siete escalones. 2 cifras por raza.
 //   · Un héroe                 → equivale a un TIER FIJO, el mismo para los 44,
-//                                sobre la base de su raza. 1 cifra, y se mide.
+//                                para poder darle ❤️/⚔️ con la curva de su raza.
+//                                1 cifra, y no se imprime en la carta.
+//   · Las otras seis           → NO SE CALCULAN. 👢 ya está (banda por tipo de
+//                                daño, medida en duelo); 🛡️ 🔮 🎯 🍀 ⚡ se eligen
+//                                A OJO, ficha a ficha, en cinco escalones con
+//                                nombre. Ver `ABILITY_STEPS`.
 //
-// Aquí solo está lo que ya se puede comprobar sin ninguna cifra decidida: los
-// topes de la base, que no los eligió nadie. La rejilla y las bandas viven con
-// el roster (módulo «razas»), que es quien las tendrá; y las tres que se miden
-// no se escriben hasta que el banco las mida, igual que 👢 no se escribió hasta
-// que `duel.ts` la midió.
+// NO HAY FÓRMULA, Y ES UNA DECISIÓN (8 de septiembre de 2026). Hubo una: base por
+// tipo de daño + paso por tier + firma de raza (±X, suma cero) + desvío de rol,
+// cuatro capas de aritmética apiladas para producir un número. Se cayó entera
+// —35 de las 39 cifras que pedía eran de la máquina de generar el juego, no del
+// juego— porque los valores que salían eran todos primos hermanos: ninguna ficha
+// podía ser rara sin salirse de la cuenta. El rol y la raza siguen existiendo
+// como DESCRIPCIÓN: te dicen qué escalón elegir, no suman nada. Con ellos decae
+// la regla de "dos clases de la misma raza no comparten tipo de daño Y rol", que
+// solo existía porque la fórmula las sacaba idénticas.
+//
+// Aquí solo está lo que se puede comprobar sin ninguna cifra decidida: los topes
+// de la base, que no los eligió nadie, y los escalones. Los valores viven con el
+// roster (módulo «razas»), que es quien los tendrá.
 
 /**
  * Hasta dónde puede llegar la base de tier 1 de una Habilidad que escala.
@@ -311,6 +318,81 @@ export const BASE_LIMITS: Readonly<Record<"vida" | "ataque", { min: number; max:
     max: Math.floor(ABILITIES.ataque.scale.max / TIER_CURVE[TIERS - 1]),
   },
 };
+
+/** Los cinco escalones, de menos a más. `null` = ese escalón no existe. */
+export type StepName = "nada" | "poco" | "normal" | "mucho" | "bestial";
+
+export const STEP_NAMES: readonly StepName[] = ["nada", "poco", "normal", "mucho", "bestial"];
+
+/**
+ * Los valores que puede tomar una Habilidad que se elige a ojo.
+ *
+ * **Cinco escalones con nombre en vez de una fórmula** (habilidades.md §3,
+ * 8-sep-2026). No es una tabla de balance: es la lista de la compra. Se asigna
+ * el escalón que le pega a la ficha, y una ficha corriente se queda en `normal`
+ * sin que nadie decida nada.
+ *
+ * ⚡ Iniciativa solo tiene los tres de en medio porque no tiene tope de reglas
+ * —solo se compara—, así que "nada" y "bestial" no querrían decir nada.
+ *
+ * 🎯 Precisión empieza en 65 y acaba en 95 porque esos son los bordes de su
+ * banda (game-design.md §4), la misma que comparten la cobertura y 💨 Evasivo.
+ */
+export const ABILITY_STEPS: Readonly<
+  Record<"defensa" | "resistencia-magica" | "precision" | "suerte" | "iniciativa", readonly (number | null)[]>
+> = {
+  defensa: [0, 20, 40, 60, 75],
+  "resistencia-magica": [0, 20, 40, 60, 75],
+  precision: [65, 72, 80, 88, 95],
+  suerte: [0, 6, 12, 18, 25],
+  iniciativa: [null, 3, 5, 8, null],
+};
+
+/** El escalón por defecto de cualquier ficha: el de en medio. */
+export const DEFAULT_STEP: StepName = "normal";
+
+/**
+ * A qué tier equivale un héroe por dentro, **el mismo para los 44**
+ * (habilidades.md §4, 8-sep-2026). Solo sirve para darle ❤️/⚔️ con la curva de
+ * su raza: **no se imprime en la carta** y no es un tier de verdad — el héroe es
+ * el que no tiene tier (ficha.md).
+ *
+ * El 5 y no otro porque el héroe es el líder y no el campeón —sus tres unidades
+ * más altas le superan en ❤️ y ⚔️—, y porque es el que cuadra con su tope de 3
+ * Características, que es el de los tiers 3, 4 y 5.
+ */
+export const HERO_TIER = 5;
+
+/**
+ * La base de tier 1 de las dos Habilidades que escalan, por raza.
+ *
+ * **Las dos razas piloto** (habilidades.md §4 y status.md §4, 8-sep-2026):
+ * Humanos va bajo y en redondo porque es el estándar de las once, con el
+ * ⚔️ 5 en el centro de 1–9 para que quepan arriba los brutos y abajo los
+ * frágiles. Enanos es tanque puro —más ❤️ que el estándar, menos ⚔️—, que es
+ * lo que ya decía su progresión: 🛡️ Resistente al daño físico en seis de sus
+ * ocho unidades y ninguna de daño ✨ mágico. Las otras nueve quedan en
+ * StandBy hasta la v1 (status.md §4) y no ponen su par hasta que les toque.
+ *
+ * El día que exista el módulo «razas» esto se muda con el roster: aquí está
+ * porque es lo que la mesa de /dev/personaje necesita para pintar una ficha de
+ * verdad, y porque `BASE_LIMITS` lo comprueba.
+ */
+export const RACE_BASES: Readonly<Record<string, { vida: number; ataque: number }>> = {
+  humanos: { vida: 20, ataque: 5 },
+  enanos: { vida: 26, ataque: 4 },
+};
+
+/**
+ * El valor de una Habilidad de escalones, o `null` si ese escalón no existe
+ * para ella (⚡ en los extremos).
+ */
+export function stepValue(
+  ability: keyof typeof ABILITY_STEPS,
+  step: StepName,
+): number | null {
+  return ABILITY_STEPS[ability][STEP_NAMES.indexOf(step)] ?? null;
+}
 
 /**
  * En qué tier la ❤️ Vida de una raza pasa a tener tres cifras, o `null` si no
@@ -364,7 +446,7 @@ export type Character = {
   /** Emoji de la ficha. Hace de ilustración mientras no haya arte. */
   readonly icon?: string;
   /**
-   * Uno y solo uno, obligatorio y sin defecto (razas.md §"Tipo de daño"). Trae
+   * Uno y solo uno, obligatorio y sin defecto (dano.md). Trae
    * puesto el alcance, así que la ficha NO lleva campo de alcance.
    */
   readonly damage: DamageTypeId;
@@ -390,18 +472,23 @@ export const MAX_TRAITS = 5;
 
 /**
  * Los límites de 👢 Movimiento por tipo de daño, MEDIDOS y no supuestos
- * (razas.md §"La escala", del duelo de `duel.ts`): con el mismo 👢 para todos,
+ * (habilidades.md §"La escala", del duelo de `duel.ts`): con el mismo 👢 para todos,
  * el 🏹 dispara y retrocede dando la vuelta al campo y el 🗡️ tarda 16 rondas
  * comiendo 11 disparos en alcanzarlo.
  *
- * ✨ Mágico no tiene límite escrito porque es el del medio y el duelo no lo
- * probó: su banda es 2 y lo que se midió son los dos extremos.
+ * ✨ Mágico se midió el 7 de septiembre de 2026 con el mismo duelo, contra el
+ * 🏹 y con 🗡️ y 🏹 fijos en su banda: a 👢 2 —su banda— el peaje es un disparo,
+ * y a 👢 1 se duplica a dos y empieza a acorralarse, el mismo quiebre que ya
+ * partía a 🗡️ un escalón más arriba. **No tiene máximo escrito, y no es que
+ * falte medir**: el de 🏹 sale de SU PROPIO 👢 al huir, algo que ✨ no hace
+ * nunca en este duelo —solo persigue—, así que esa pregunta no tiene caso que
+ * la conteste con el modelo que existe hoy.
  */
 export const MOVEMENT_LIMITS: Readonly<
   Record<DamageTypeId, { readonly min?: number; readonly max?: number }>
 > = {
   "cuerpo-a-cuerpo": { min: 3 },
-  magico: {},
+  magico: { min: 2 },
   "a-distancia": { max: 2 },
 };
 
@@ -601,7 +688,7 @@ export function checks(c: Character, catalog?: readonly Trait[]): readonly Check
     reading: `👢 ${movement} · banda ${MOVEMENT_BAND[c.damage]}`,
     ok: !overMax && !underMin,
     message: underMin
-      ? `Ninguna ficha ${type.icon} ${type.label} puede bajar de 👢 ${limit.min}: es la que paga la aproximación, y sin eso vuelve el bucle del arquero — 16 rondas comiendo 11 disparos (battle.md §1.2).`
+      ? `Ninguna ficha ${type.icon} ${type.label} puede bajar de 👢 ${limit.min}: por debajo, el peaje contra el 🏹 que retrocede se duplica y empieza a acorralarse (battle.md §1.2, duel.ts).`
       : overMax
         ? `Ninguna ficha ${type.icon} ${type.label} puede pasar de 👢 ${limit.max}: con más, dispara y retrocede dando la vuelta al campo (battle.md §1.2).`
         : undefined,

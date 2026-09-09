@@ -1,5 +1,5 @@
 // =========================================================================
-// Los nueve estados de docs/v3/effects.md §5, leídos del documento
+// Los nueve estados de docs/v3/sistemas/effects.md §5, leídos del documento
 //
 // SE PARSEA, NO SE COPIA, por lo mismo que las 41 Características de
 // `traits.ts` (ARCHITECTURE.md §7): el catálogo está escrito y cerrado en un

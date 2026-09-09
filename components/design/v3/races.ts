@@ -38,7 +38,7 @@ import {
 // razas.md no tiene ni una cifra de Enanos, y las 1.056 de las 132 fichas
 // siguen siendo insumo de Dario. Lo que aquí importa es la FORMA (cuántas
 // cifras entran en cada hueco del marco), no el valor. Lo que sí se ha
-// respetado, porque está cerrado (razas.md §"La escala", 23-ago-2026): Vida
+// respetado, porque está cerrado (habilidades.md §"La escala", 23-ago-2026): Vida
 // 2-3 cifras, Ataque 1-2, 🛡️/🔮 por debajo de 75, 🎯 Precisión en 65-95,
 // 🍀 Suerte por debajo de 25 y nunca por encima de Precisión, y la curva de
 // ×10 de Vida y Ataque del tier 1 al 8 —del ⛏️ Minero al ⛰️ Coloso hay ×12 de
@@ -390,7 +390,7 @@ const DWARF_UNITS: readonly Subject[] = [
   },
 ];
 
-// Los cuatro héroes de ⛏️ Enanos, en el orden de razas.md §"Razas y clases":
+// Los cuatro héroes de ⛏️ Enanos, en el orden de razas/README.md §"Razas y clases":
 // ⚔️ Guerrero, ⚙️ Ingeniero, 🪓 Berserker y 🔯 Maestro de runas. Sin tier y con
 // HERO_RAIL, igual que los de Humanos: el color de héroe es su propio raíl y no
 // un escalón prestado de la escala de rareza.
@@ -713,7 +713,7 @@ const UNDEAD_UNITS: readonly Subject[] = [
     rarity: rarityForTier(7),
     icon: "☠️",
     // Tiene MÁS 🛡️ Defensa que el 🐉 Dragón esquelético que va detrás, y no es
-    // un descuido: solo ❤️ Vida y ⚔️ Ataque escalan con el tier (razas.md §"La
+    // un descuido: solo ❤️ Vida y ⚔️ Ataque escalan con el tier (habilidades.md §"La
     // escala"), así que un tier 8 no es un tier 7 con todo más alto. Es la
     // primera ficha de la página que lo enseña de frente.
     skills: {
@@ -1267,12 +1267,12 @@ export type DeckRace = {
 };
 
 /**
- * Las razas que hoy se pueden pintar, en el orden de razas.md §"Razas y clases"
+ * Las razas que hoy se pueden pintar, en el orden de razas/README.md §"Razas y clases"
  * —que es el de las cinco bases y luego los tres DLC, no el de entrada aquí—.
  *
  * CUATRO DE ONCE, y las que faltan no faltan por descuido: 🧝 Elfos cierra las
  * cinco bases y las seis de DLC quedan fuera de alcance hasta que las bases
- * estén jugables (razas.md §Alcance). Cada una entra con un bloque como los de
+ * estén jugables (status.md §Alcance). Cada una entra con un bloque como los de
  * aquí y una línea en esta lista, y nada más — la página no se toca.
  *
  * Con cuatro, la baraja son 48 cartas y ya no es una muestra: es donde se ven

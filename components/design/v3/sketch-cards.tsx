@@ -195,7 +195,7 @@ function Rail({ subject }: { subject: Subject }) {
  * una Característica. Se dibuja aquí a propósito —y no como un chip más del
  * raíl— porque un dato que llevan todas las cartas no informa de nada en la
  * fila de las excepciones, y porque pegado al número dice de un golpe cuánto
- * pega y de qué manera sin gastar un pixel de marco. Ver razas.md §"Tipo de
+ * pega y de qué manera sin gastar un pixel de marco. Ver dano.md §"Tipo de
  * daño".
  */
 function Stat({ subject, skill, base }: { subject: Subject; skill: SkillKey; base: string }) {

@@ -14,7 +14,7 @@
 // LEE knowledge/ Y NO docs/, y conviene que quede escrito porque es lo
 // contrario de lo que hace `lib/docs.ts`. Las razas se están redefiniendo en
 // `knowledge/v3/races-concept/razas.md`, que es el archivo que se edita;
-// `docs/v3/razas.md` está congelado y solo se reescribe cuando un bloque del
+// `docs/v3/razas/` está congelado y solo se reescribe cuando un bloque del
 // concepto se cierra, porque lo lee la wiki (AGENTS.md). Los dos apartados de
 // Características son idénticos hoy, así que lo que cambia no es el resultado:
 // es de cuál de los dos se enteraría este laboratorio el día que se muevan.
@@ -23,7 +23,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { cache } from "react";
-import { parseTraits, type Trait } from "./traits";
+import { parseRoster, parseTraits, type RosterEntry, type Trait } from "./traits";
 
 const RAZAS_MD = path.join(
   process.cwd(),
@@ -32,6 +32,7 @@ const RAZAS_MD = path.join(
   "races-concept",
   "razas.md",
 );
+const RAZAS_MD_LABEL = "knowledge/v3/races-concept/razas.md";
 
 /**
  * Las 41 Características de razas.md.
@@ -41,5 +42,16 @@ const RAZAS_MD = path.join(
  * validando contra rasgos que no existen.
  */
 export const getTraitCatalog = cache((): readonly Trait[] =>
-  parseTraits(fs.readFileSync(RAZAS_MD, "utf8"), "knowledge/v3/races-concept/razas.md"),
+  parseTraits(fs.readFileSync(RAZAS_MD, "utf8"), RAZAS_MD_LABEL),
+);
+
+/**
+ * Las 132 fichas de razas.md: la tabla de héroes y las 11 tablas de unidades.
+ *
+ * Mismo archivo que el catálogo, mismo motivo para vivir aquí y no en
+ * `traits.ts`: `parseRoster` es puro, pero traerlo del disco es `node:fs`, y
+ * eso no puede cruzar al cliente (módulo «razas», lib/dev-registry.ts).
+ */
+export const getRoster = cache((): readonly RosterEntry[] =>
+  parseRoster(fs.readFileSync(RAZAS_MD, "utf8"), RAZAS_MD_LABEL),
 );

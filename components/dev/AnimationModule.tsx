@@ -560,10 +560,11 @@ export default function AnimationModule() {
             el polvo.
           </li>
           <li>
-            <b className="text-[var(--wiki-text)]">La cola de verdad</b>: `schedule()` pone hora,
-            pero no hay todavía quien la reproduzca contra el estado de una partida. Entra con el
-            motor de combate, y es lo que hay que tener escrito ANTES de que el motor crezca:
-            meterla después, sobre reglas que mutan estado a la primera, es rehacerlas.
+            <b className="text-[var(--wiki-text)]">La cola de verdad</b>: `schedule()` pone hora, y
+            desde el 7 de septiembre de 2026 ya hay quien la rellena con hechos de verdad —
+            `battle.ts` `toAnimEvents()` traduce lo que jugó `fight()` (paso, ataque, muerte) al
+            vocabulario de aquí—. Lo que sigue faltando es reproducirla contra el estado de una
+            partida en esta pantalla: hoy el traductor solo está probado fuera de React.
           </li>
           <li>
             <b className="text-[var(--wiki-text)]">Las secuencias que faltan</b>: los nueve estados
@@ -587,11 +588,12 @@ export default function AnimationModule() {
             ) porque una ficha hace las dos cosas en el mismo turno.
           </li>
           <li>
-            <b className="text-[var(--wiki-text)]">Beats en paralelo en `schedule()`</b>: hoy la cola
-            es estrictamente secuencial. El tic de estados al empezar el turno son diez fichas por
-            tres estados, y en fila eso es una eternidad; escalonados 60 ms se lee como una cascada
-            y a la vez se lee como un fallo de pintado. Es el cambio que más decide si un turno se
-            puede mirar.
+            <b className="text-[var(--wiki-text)]">Beats en paralelo en `schedule()`</b>: cerrado el
+            7 de septiembre de 2026. La cola acepta lotes (`Batch`) además de sucesos sueltos —el
+            tic de estados al empezar el turno son diez fichas por tres estados, y en fila eso era
+            una eternidad—: escalonados con `stagger` se leen como una cascada en vez de como un
+            fallo de pintado, y lo que viene después espera a que termine el último del lote. Falta
+            que los nueve estados existan para tener con qué llenar un lote de verdad.
           </li>
           <li>
             <b className="text-[var(--wiki-text)]">El sonido</b>, que no está en esta pantalla y es

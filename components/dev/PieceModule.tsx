@@ -475,7 +475,7 @@ export default function PieceModule({ catalog }: PieceModuleProps) {
           </span>
           <span className="text-xs text-[var(--wiki-muted)]">
             Los {catalog.length} de{" "}
-            <Link href="/docs/v3/effects" className="text-[var(--wiki-accent)] hover:underline">
+            <Link href="/docs/v3/sistemas/effects" className="text-[var(--wiki-accent)] hover:underline">
               effects.md §5
             </Link>
             , leídos del documento. Se los pone a TODAS las fichas a la vez: el caso que hay que

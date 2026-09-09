@@ -1,7 +1,7 @@
 // =========================================================================
 // El catálogo de Características — V3
 //
-// Las 41 Características de razas.md §"Características de los personajes", en
+// Las 41 Características de caracteristicas.md, en
 // seis grupos. Son la mitad no numérica de una ficha: las 8 Habilidades dicen
 // cuánto, el tipo de daño dice de qué clase, y estas dicen QUÉ TIENE DE RARO
 // esta ficha y no las otras 131.
@@ -17,7 +17,7 @@
 //
 // LA FUENTE ES knowledge/, NO docs/. Las razas se están redefiniendo en
 // `knowledge/v3/races-concept/razas.md`, que es el archivo que se edita;
-// `docs/v3/razas.md` está congelado porque lo lee la wiki (AGENTS.md). Hoy los
+// `docs/v3/razas/` está congelado porque lo lee la wiki (AGENTS.md). Hoy los
 // dos apartados de Características son idénticos byte a byte, así que la
 // elección no cambia nada de lo que sale — cambia de quién se entera este
 // laboratorio cuando el catálogo se mueva, y tiene que ser del que se edita.
@@ -319,6 +319,8 @@ export type RosterEntry = {
   readonly kind: "heroe" | "unidad";
   /** De 1 a 8 en una unidad; `null` en un héroe, que no tiene tier. */
   readonly tier: number | null;
+  /** La celda «Tipo de daño» tal cual está escrita: `🗡️ Cuerpo a cuerpo`. */
+  readonly damage: string;
   /** Las Características que lleva, con su emoji, como están escritas. */
   readonly traits: readonly string[];
 };
@@ -378,7 +380,14 @@ export function parseRoster(md: string, source = "razas.md"): readonly RosterEnt
       // `| Raza | Héroe | Tipo de daño | Características |`, y su encabezado.
       if (c.length !== 4) continue;
       if (norm(c[0]) === "raza") continue;
-      out.push({ race: c[0], name: c[1], kind: "heroe", tier: null, traits: traitCell(c[3]) });
+      out.push({
+        race: c[0],
+        name: c[1],
+        kind: "heroe",
+        tier: null,
+        damage: c[2],
+        traits: traitCell(c[3]),
+      });
       continue;
     }
 
@@ -397,7 +406,7 @@ export function parseRoster(md: string, source = "razas.md"): readonly RosterEnt
         `${at}: ${race} tiene más de ${TRAIT_CAP_BY_TIER.length} unidades. La progresión es de ${TRAIT_CAP_BY_TIER.length} tiers, así que la de más no tendría escalón.`,
       );
     }
-    out.push({ race, name: c[0], kind: "unidad", tier, traits: traitCell(c[2]) });
+    out.push({ race, name: c[0], kind: "unidad", tier, damage: c[1], traits: traitCell(c[2]) });
   }
 
   const short = [...unitsPerRace.entries()].filter(([, n]) => n !== TRAIT_CAP_BY_TIER.length);

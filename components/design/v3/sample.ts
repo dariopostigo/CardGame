@@ -51,14 +51,14 @@
 // propósito —compara nueve marcos, y con veinticuatro cartas por marco deja de
 // comparar—, así que el Dragón sigue siendo su techo.
 //
-// LOS NÚMEROS DE LAS HABILIDADES SON INVENTADOS. docs/v3/razas.md avisa de que
+// LOS NÚMEROS DE LAS HABILIDADES SON INVENTADOS. docs/v3/razas/ avisa de que
 // los valores siguen pendientes; aquí solo importa su FORMA (una, dos o tres
 // cifras), que es lo que decide si el hueco del número se rompe. Lo que NO es
 // inventado es todo lo demás: nombres, emojis, orden, raza y Características
 // salen de razas.md tal cual.
 //
 // PERO YA NO SON LIBRES: el 23-ago-2026 se cerró la ESCALA de las ocho
-// (docs/v3/razas.md §"La escala"), así que los inventados tienen que caber en
+// (docs/v3/habilidades.md §"La escala"), así que los inventados tienen que caber en
 // ella o el marco se estaría juzgando con números imposibles. Al cotejarlos
 // salió un desajuste real y está corregido: 🎯 Precisión iba de 7 a 18 cuando
 // es un UMBRAL sobre 1..100 y su banda es 65-95. Ahora va de 66 a 90 — mismas
@@ -84,7 +84,7 @@ const ICONS = "/assets/v3/icons";
 const BANNERS = "/assets/v3/banners";
 
 /**
- * Las 8 Habilidades, en el orden de docs/v3/razas.md §"Habilidades".
+ * Las 8 Habilidades, en el orden de docs/v3/habilidades.md.
  *
  * `art` entró el 26 de agosto de 2026 con la primera tanda de pictogramas
  * (knowledge/v3/icon-concept/icons.md §5): relieve de metal dorado, monocromo,
@@ -150,7 +150,7 @@ export const SKILLS = [
 export type SkillKey = (typeof SKILLS)[number]["key"];
 
 /**
- * El tipo de daño (docs/v3/razas.md §"Tipo de daño"). Campo obligatorio de toda
+ * El tipo de daño (docs/v3/dano.md). Campo obligatorio de toda
  * ficha, uno y solo uno — no es una Característica: lo llevan las 132, y un
  * rasgo que lleva todo el mundo no dice nada en la fila de glifos.
  *
@@ -411,7 +411,7 @@ export const rankOf = (s: Subject) => (s.kind === "heroe" ? "Héroe" : `Tier ${s
 export { HERO_RAIL };
 
 // --- Las ocho unidades de 👤 Humanos --------------------------------------
-// razas.md §"Unidades › 👤 Humanos — Progresión de unidades" para el orden y
+// razas/unidades.md para el orden y
 // los nombres, y §"Características de todas las unidades › 👤 Humanos" para
 // los chips. El tier es la posición en esa progresión.
 export const UNITS: readonly Subject[] = [
@@ -668,7 +668,7 @@ export const UNITS: readonly Subject[] = [
 ];
 
 // --- Los cuatro héroes de 👤 Humanos ---------------------------------------
-// razas.md §"Razas y clases › 👤 Humanos" y §"Tabla de características de
+// razas/README.md §"Razas y clases › 👤 Humanos" y §"Tabla de características de
 // héroes", en su orden: ⚔️ Guerrero, 🔮 Mago, ✝️ Sacerdote y 🏹 Arquero. Están
 // los cuatro y los cuatro tienen ilustración — el Arquero era el que faltaba y
 // llegó el 25-ago-2026—, así que la clase de héroe ya se juzga entera y no por
@@ -779,7 +779,7 @@ export const HEROES: readonly Subject[] = [
       resistencia: 9,
       // La 🎯 Precisión más alta de los cuatro, y no por gusto: es el único que
       // lleva 👁️ Percepción y 💥 Golpe crítico a la vez. Sigue dentro de la
-      // banda 65-95 que fija razas.md §"La escala".
+      // banda 65-95 que fija habilidades.md §"La escala".
       precision: 88,
       suerte: 8,
       iniciativa: 11,

@@ -170,33 +170,71 @@ por tanto, **toda la curva de potencia que tiene una raza**: no hay ningún otro
 que suba a nadie
 ([`docs/v3/game-design.md`](../../../docs/v3/game-design.md) §3).
 
-### 🧮 De dónde sale cada número *(5 de septiembre de 2026)*
+### 🧮 De dónde sale cada número *(5 de septiembre de 2026, recortado el 7)*
 
 La escala decía **en qué rango** va cada número. Esto dice **quién lo decide**, que
 es lo que faltaba: sin ello, rellenar las 132 fichas eran 1.056 celdas en blanco y
-ninguna forma de saber si dos razas se parecían demasiado. Son 122.
+ninguna forma de saber si dos razas se parecían demasiado. **Son 59.**
 
 | Habilidad | De dónde sale su número | Cifras que decidir |
 |---|---|---|
-| ❤️ **Vida** | Base de tier 1 **por raza**; la curva ×10 da los otros siete escalones | 11 |
-| ⚔️ **Ataque** | Base de tier 1 **por raza**; la curva ×10 da los otros siete | 11 |
-| 🛡️ **Defensa** | Rejilla **tipo de daño × tier** (3×8); la raza y las Características desvían | 24 |
-| 🔮 **Resistencia mágica** | La misma rejilla | 24 |
-| 🎯 **Precisión** | La misma rejilla | 24 |
-| 🍀 **Suerte** | La misma rejilla | 24 |
+| ❤️ **Vida** | Base de tier 1 **por raza**; la curva ×10 da los otros siete escalones | **1 por raza** |
+| ⚔️ **Ataque** | Base de tier 1 **por raza**; la curva ×10 da los otros siete | **1 por raza** |
+| 🛡️ **Defensa** | **Base por tipo de daño + un paso por tier**; la raza y las Características desvían | 4 |
+| 🔮 **Resistencia mágica** | La misma forma | 4 |
+| 🎯 **Precisión** | La misma forma | 4 |
+| 🍀 **Suerte** | La misma forma | 4 |
 | ⚡ **Iniciativa** | **Banda por tipo de daño**, como el alcance y como 👢 | 3 |
 | 👢 **Movimiento** | Banda por tipo de daño *(31-ago-2026)* | 0 — ya puestas |
 
-Más **una** cifra suelta: el tier al que equivale un héroe (abajo).
+Más tres cifras sueltas: el **tier al que equivale un héroe**, los **16 desvíos de
+rol** que llevan los 44 héroes y **cuánto vale la firma de una raza**. El reparto que
+importa no es 59, es **37 compartidas por todo el juego y 2 por raza**: las diez
+razas que no son la piloto no son Habilidades pendientes, son razas pendientes, y sus
+dos cifras se ponen cuando se escriba esa raza mirando a la anterior.
 
-**Las cuatro topadas van en rejilla y no por ficha** porque son justo las que
+**Y ESO OBLIGA A UNA COSA AL ESCRIBIR CADA RAZA** *(7 de septiembre de 2026)*. Los
+cuatro héroes de una raza entran en la fórmula con la misma raza y el mismo tier
+—un héroe no tiene tier, equivale a uno fijo—, así que dos clases que compartan tipo
+de daño salían con **las ocho Habilidades idénticas**: ⚔️ Guerrero y 🪓 Berserker de
+los Enanos, los dos cuerpo a cuerpo. Se tapa dando **un rol a cada clase** —🛡️
+Tanque, ⚔️ Daño, 🌀 Control, ✨ Apoyo— que **desvía** las cuatro topadas. Los roles ya
+están escritos en el descriptor de cada clase; lo que hay que respetar es la regla:
+**dentro de una raza, no puede haber dos clases con el mismo tipo de daño Y el mismo
+rol.** Con cuatro roles y tres tipos hay doce casillas para cuatro clases, así que
+nunca aprieta, pero unas cuantas razas obligan a elegir: en Feéricos, 💫 Hechicero
+feérico e 🦋 Ilusionista son los dos ✨ y los dos suenan a control. Las 88 unidades no
+tienen el problema —cada una es la única de su raza en su tier—. Detalle completo en
+[`docs/v3/sistemas/habilidades.md`](../../../docs/v3/sistemas/habilidades.md) §🎭.
+
+**Y CADA RAZA ELIGE SU FIRMA** *(mismo día)*. El agujero gemelo: sin nada de la raza
+en las cuatro topadas, un 🗡️ tier 3 enano y un 🗡️ tier 3 humano salían con la misma
+🛡️, 🔮, 🎯 y 🍀. Ahora **cada raza sube una topada y baja otra**, con un desvío del
+mismo tamaño para las once —una sola cifra, porque lo que cambia de raza a raza es
+*qué* sube y *qué* baja—. **Suma cero**, así que ninguna raza es mejor en global.
+Elegir esos dos es parte de escribir la raza, y es el sitio donde su identidad se
+vuelve número: unos enanos que van de resistencia suben 🛡️, y algo tienen que bajar.
+Detalle en §🩸 del mismo documento.
+
+**Las cuatro topadas van por fórmula y no ficha a ficha** porque son justo las que
 sobreviven al tier: son lo que hace que un tier 8 pegue diez veces más pero no
 acierte diez veces mejor, así que dejarlas libres por ficha era dejar suelto lo
 único que mantiene comparables a las 132. La textura de una ficha —lo que la
 distingue de otra de su mismo tier y su mismo tipo— la ponen sus **Características**,
-que es donde ya vivía. Y la rejilla no se la inventa nadie para 🎯 Precisión: sus
-treinta puntos ya tenían dicho que se reparten entre **los 8 tiers, la cobertura y
-💨 Evasivo**.
+que es donde ya vivía. Y el paso por tier no se lo inventa nadie para 🎯 Precisión:
+sus treinta puntos ya tenían dicho que se reparten entre **los 8 tiers, la cobertura
+y 💨 Evasivo**.
+
+**Base más paso, no una tabla** *(7 de septiembre de 2026)*. Estas cuatro se
+escribieron el 5-sep como una **rejilla de tipo de daño × tier, celda a celda**:
+96 de las 122 cifras eran eso — el 79% del insumo pendiente, para las cuatro
+Habilidades que este mismo documento describe como topadas o que no escalan. El
+resto del diseño ya decía que no hacía falta: **❤️ y ⚔️ sacan sus ocho escalones de
+UN número** y una curva, y **👢 y ⚡ son bandas de tres** que salieron de jugar un
+duelo, no de rellenar una tabla. Una base por tipo de daño más un paso por tier da
+los mismos 24 valores con **4 cifras**, y no pierde nada de lo que la rejilla
+protegía: el tier sigue moviendo estas cuatro, solo que por una cuesta y no celda a
+celda.
 
 **Dos topes que no se eligen: los impone la curva.** El ×10 del tier 1 al 8 contra
 los rangos de cifras de la tabla de arriba deja esto atado sin que nadie decida:
@@ -219,8 +257,11 @@ escala** —🛡️ 🔮 🎯 🍀 ⚡ y sus Características—, que es lo que 
 el diseño. El héroe sigue **sin tier en la carta**: es una equivalencia interna, no un
 dato que se imprima.
 
-**Tres de las 122 se miden, no se eligen**, y el precedente es 👢: su reparto no salió
-del gusto, salió de jugar el duelo del arquero.
+**Tres se planteó medirlas en vez de elegirlas**, y el precedente es 👢: su reparto no
+salió del gusto, salió de jugar el duelo del arquero. *(Las tres se cerraron el 7 de
+septiembre de 2026 — dos medidas y una reclasificada a insumo. El relato completo está
+en [`docs/v3/sistemas/habilidades.md`](../../../docs/v3/sistemas/habilidades.md), que
+es la copia publicada; aquí quedan enunciadas.)*
 
 1. **El tier equivalente del héroe.** Decide si un héroe aguanta al bando enemigo en
    espejo ([`docs/v3/board/battle.md`](../../../docs/v3/board/battle.md) §2), y eso se
@@ -238,12 +279,14 @@ número al lado. Son 41 cifras de una vez y no cientos, y parte del trabajo est�
 varias ya tienen dial en
 [`docs/v3/game-design.md`](../../../docs/v3/game-design.md) §4 (🗡️ Perforante 15), y
 las que aplican un Estado no inventan nada, porque sus turnos y su daño están en
-[`docs/v3/effects.md`](../../../docs/v3/effects.md) §5. Lo que falta es **atarlas por
+[`docs/v3/sistemas/effects.md`](../../../docs/v3/sistemas/effects.md) §5. Lo que falta es **atarlas por
 id** en vez de por nombre en texto.
 
 > **Lo que sigue siendo insumo son los valores, no el método.** Cerrada la escala
-> *(23-ago)* y cerrado de dónde sale cada número *(5-sep)*, lo que queda son **122
-> cifras y tres medidas**, no 1.056 celdas en blanco.
+> *(23-ago)*, cerrado de dónde sale cada número *(5-sep)* y recortada la forma de las
+> cuatro topadas y añadidos el rol de clase y la firma de raza *(7-sep)*, esto se
+> cierra con **39 cifras**: las 37 que comparte todo el juego más las 2 de la raza
+> piloto. Ninguna tiene medida pendiente.
 
 ## 🎲 Tipo de daño
 

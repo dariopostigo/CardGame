@@ -7,7 +7,7 @@
 // navegador rompe el build (ARCHITECTURE.md §7 y §10).
 //
 // LEE docs/ Y NO knowledge/, al contrario que el catálogo de Características.
-// Los estados no están en revisión: `docs/v3/effects.md` es el documento vigente
+// Los estados no están en revisión: `docs/v3/sistemas/effects.md` es el documento vigente
 // y cerrado del §5, y no hay ningún concepto paralelo donde se estén
 // redefiniendo. Cuando lo haya, este archivo es el que cambia de ruta.
 // =========================================================================
@@ -17,7 +17,13 @@ import path from "node:path";
 import { cache } from "react";
 import { parseEffects, type Effect } from "./effects";
 
-const EFFECTS_MD = path.join(process.cwd(), "docs", "v3", "effects.md");
+const EFFECTS_MD = path.join(
+  process.cwd(),
+  "docs",
+  "v3",
+  "sistemas",
+  "effects.md",
+);
 
 /**
  * Los nueve estados de effects.md §5.
@@ -27,5 +33,5 @@ const EFFECTS_MD = path.join(process.cwd(), "docs", "v3", "effects.md");
  * existe cuando lo que falla es el parseo.
  */
 export const getEffectCatalog = cache((): readonly Effect[] =>
-  parseEffects(fs.readFileSync(EFFECTS_MD, "utf8"), "docs/v3/effects.md"),
+  parseEffects(fs.readFileSync(EFFECTS_MD, "utf8"), "docs/v3/sistemas/effects.md"),
 );

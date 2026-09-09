@@ -140,15 +140,17 @@ export default function CharacterModule({ catalog }: CharacterModuleProps) {
         : no depende de nadie y de ella cuelga todo lo demás.
       </p>
       <p className="mb-5 max-w-3xl rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm text-[var(--wiki-muted)]">
-        <b className="text-[var(--wiki-text)]">La anatomía está cerrada y los valores no.</b> De las
-        ocho, solo <b className="text-[var(--wiki-text)]">👢 Movimiento</b> tiene número —🗡️ 3 · ✨ 2 ·
-        🏹 1, banda por tipo de daño— y no se eligió a dedo: lo midió el duelo del arquero en el{" "}
+        <b className="text-[var(--wiki-text)]">La anatomía está cerrada y el sistema también.</b>{" "}
+        <b className="text-[var(--wiki-text)]">👢 Movimiento</b> lo midió el duelo del arquero en el{" "}
         <Link href="/dev/tablero" className="text-[var(--wiki-accent)] hover:underline">
           laboratorio del tablero
-        </Link>
-        . Las otras <b className="text-[var(--wiki-text)]">{ABILITIES_WITHOUT_VALUES.length}</b>{" "}
-        siguen siendo insumo pendiente, así que aquí son diales: lo que se construye es la escala en
-        la que caben, no las 1.056 cifras. Un personaje en blanco arranca en el suelo de cada
+        </Link>{" "}
+        —🗡️ 3 · ✨ 2 · 🏹 1—, y <b className="text-[var(--wiki-text)]">❤️ 20 y ⚔️ 5</b> son la base
+        de tier 1 de Humanos, con la curva ×10 haciendo los otros siete escalones. Las{" "}
+        <b className="text-[var(--wiki-text)]">{ABILITIES_WITHOUT_VALUES.length}</b> restantes{" "}
+        <b className="text-[var(--wiki-text)]">se eligen a ojo, ficha a ficha</b>, en cinco escalones
+        con nombre: no las genera ninguna fórmula —se tiró el 8 de septiembre— y lo que falta de
+        ellas es catálogo, no una decisión. Un personaje en blanco arranca en el suelo de cada
         escala, y el suelo <b className="text-[var(--wiki-text)]">ya es legal</b>.
       </p>
 

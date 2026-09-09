@@ -17,7 +17,7 @@
 // dónde, y se midieron las 88 unidades de razas.md buscándolas en las dos
 // curvas que recorren la progresión.
 //
-// LA POTENCIA NO DA NINGUNA. El ×10 de razas.md §"La escala" (1 · 1,4 · 1,9 ·
+// LA POTENCIA NO DA NINGUNA. El ×10 de habilidades.md §"La escala" (1 · 1,4 · 1,9 ·
 // 2,7 · 3,7 · 5,2 · 7,2 · 10) sube con pasos de ×1,357 a ×1,421: es una
 // geométrica pura. Ningún escalón destaca sobre otro, así que cortarla por
 // ahí habría sido elegir, no medir.

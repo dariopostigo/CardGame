@@ -8,7 +8,7 @@
 
 El mazo de encuentro se mantiene como concepto, pero **está pendiente de revisión** contra el sistema nuevo *(anotado en [status.md](../status.md))*.
 
-Es de los documentos más acoplados al resto: sus cartas disparan combates (que dependen de [characters/enemies.md](../characters/enemies.md)), aplican estados (que dependen de [effects.md](../effects.md)) y reparten recompensas (que dependen de la economía). Se escribe al final.
+Es de los documentos más acoplados al resto: sus cartas disparan combates (que dependen de [characters/enemies.md](../characters/enemies.md)), aplican estados (que dependen de [effects.md](../sistemas/effects.md)) y reparten recompensas (que dependen de la economía). Se escribe al final.
 
 ## Por definir
 

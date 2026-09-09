@@ -80,7 +80,7 @@ export default function CharacterSheet({
             const ability = ABILITIES[id];
             // El glifo de ⚔️ Ataque en una carta es el del TIPO DE DAÑO y no el
             // genérico: la carta dice cuánto pega y de qué manera en el mismo
-            // hueco (razas.md §"Tipo de daño").
+            // hueco (dano.md).
             const icon = id === "ataque" ? type.icon : ability.icon;
             return (
               <div

@@ -221,6 +221,20 @@ export function toPixel(hex: HexCoord, size: number, tilt = 1): { x: number; y: 
   };
 }
 
+/**
+ * El hexágono bajo un punto en píxeles — la inversa de `toPixel`, deshaciendo
+ * su misma fórmula y redondeando al hexágono más cercano con `cubeRound`
+ * (§"Interpolación en cúbicas" más abajo, que ya existía para la línea de
+ * visión). Hace falta para saber dónde suelta el jugador una carta arrastrada
+ * (`/dev/baraja`): sin esto no hay forma de convertir un punto de ratón en un
+ * hexágono, solo al revés.
+ */
+export function fromPixel(x: number, y: number, size: number, tilt = 1): HexCoord {
+  const r = y / (size * 1.5 * tilt);
+  const q = x / (size * SQRT3) - r / 2;
+  return cubeRound(q, r);
+}
+
 /** Los 6 vértices de un hexágono centrado en (cx, cy), listos para <polygon>. */
 export function polygonPoints(cx: number, cy: number, size: number, tilt = 1): string {
   const points: string[] = [];
