@@ -27,7 +27,8 @@
 //   1. EL CARTÓN, el hexágono de fuera, con el color DEL TIER en su contorno
 //      —el mismo raíl de Rareza con el que se imprime su carta—, que es la otra
 //      decisión del mismo día. De quién es la ficha ya no vive aquí.
-//   2. LA CARA, el retrato recortado dentro, a ras del marco y sin trazo propio.
+//   2. LA CARA, el retrato recortado dentro, sin trazo propio y metido 0,06
+//      radios del marco: lo que queda entre los dos es cartón desnudo.
 //   3. Lo que se lee: cifras en las esquinas y estados sobre la punta. La barra
 //      de ❤️ Vida NO va aquí: es interfaz y se pinta en una capa por encima de
 //      todas las fichas (ver `PieceLifeBar`, al final de este archivo).
@@ -37,7 +38,7 @@
 // el módulo (ARCHITECTURE.md §6).
 // =========================================================================
 
-import { useId } from "react";
+import { useId, type CSSProperties } from "react";
 import * as Hex from "@/lib/v3/hex";
 import {
   FIELD_BY_ID,
@@ -121,6 +122,11 @@ export default function PieceToken({
   return (
     <g
       className="ficha"
+      // LOS GROSORES DE TRAZO NO SON PÍXELES FIJOS: los pone _ficha.scss en
+      // píxeles de tamaño de partida y aquí se le dice a qué escala se está
+      // pintando, para que la hoja de calibre sea esta misma ficha de cerca y no
+      // una con el marco más fino. Lo demás ya escala solo, porque sale del radio.
+      style={{ "--ficha-escala": g.scale } as CSSProperties}
       data-side={piece.side}
       data-role={piece.role}
       data-rarity={piece.rarity}

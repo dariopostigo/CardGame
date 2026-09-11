@@ -322,14 +322,29 @@ export default function AnimationModule() {
             )}
 
             {group.id === "vida" && (
-              <p className="mt-3 text-xs text-[var(--wiki-muted)]">
-                Con el <b className="text-[var(--wiki-text)]">aliento</b> a 0 no queda un tablero
-                quieto: queda una captura de pantalla. Y de paso desaparece la mitad de la lectura
-                de <b className="text-[var(--wiki-text)]">lo ya andado</b>, porque lo que dice que
-                una ficha ya se movió no es que esté hundida, es que es la única que{" "}
-                <b className="text-[var(--wiki-text)]">no respira</b> — y una ausencia solo se ve
-                si lo demás está. Es la razón de que estas dos se hayan construido juntas.
-              </p>
+              <>
+                <p className="mt-3 text-xs text-[var(--wiki-muted)]">
+                  El <b className="text-[var(--wiki-text)]">aliento entra a 0</b>, y no solo aquí:
+                  viene apagado de{" "}
+                  <code className="rounded bg-[var(--wiki-code-bg)] px-1 text-[0.85em]">
+                    anim.ts
+                  </code>{" "}
+                  para todo <code className="rounded bg-[var(--wiki-code-bg)] px-1 text-[0.85em]">
+                    /dev
+                  </code>, porque es el único bucle que no para nunca y con él puesto se mete por
+                  debajo de cualquier otra cosa que estés juzgando. Esta es la única pantalla donde
+                  se enciende: sube el dial. El valor que tenía —0.075— está escrito en el
+                  comentario de al lado para no tener que volver a deducirlo.
+                </p>
+                <p className="mt-2 text-xs text-[var(--wiki-muted)]">
+                  Con el <b className="text-[var(--wiki-text)]">aliento</b> a 0 no queda un tablero
+                  quieto: queda una captura de pantalla. Y de paso desaparece la mitad de la
+                  lectura de <b className="text-[var(--wiki-text)]">lo ya andado</b>, porque lo que
+                  dice que una ficha ya se movió no es que esté hundida, es que es la única que{" "}
+                  <b className="text-[var(--wiki-text)]">no respira</b> — y una ausencia solo se ve
+                  si lo demás está. Es la razón de que estas dos se hayan construido juntas.
+                </p>
+              </>
             )}
 
             {group.id === "movimiento" && (

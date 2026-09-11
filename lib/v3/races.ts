@@ -90,6 +90,41 @@ function characterId(race: string, kind: "heroe" | "unidad", name: string): stri
     .replace(/^-|-$/g, "");
 }
 
+/** «🗡️ Miliciano» → «miliciano»; «🐉 Dragón dorado» → «dragon-dorado». */
+function nameSlug(name: string): string {
+  return splitGlyph(name)
+    .label.normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/**
+ * Dónde vive el retrato de una ficha: `/assets/v3/races/<raza>/<ficha>.png`,
+ * y las unidades un piso más abajo, en `units/`.
+ *
+ * LA RUTA NO SE INVENTA: se deriva del nombre con el mismo criterio que ya usó
+ * el arte (public/assets/v3/README.md §"Nombre de archivo" — slug español, sin
+ * acentos ni paréntesis), así que reproduce las 24 rutas que hay en disco en vez
+ * de copiarlas a mano.
+ *
+ * ESTUVO SOLO EN `cards.ts` Y SOLO PARA UNIDADES hasta el 11 de septiembre de
+ * 2026, que es el día que /dev/pieza dejó de comer de los sujetos escritos a
+ * mano de `components/design/v3/` y pasó a este roster: esa pantalla pone en el
+ * tablero las 24 fichas de las dos razas piloto, héroes incluidos, y un héroe
+ * también tiene retrato aunque no tenga carta. Vive aquí y no allí porque
+ * `cards.ts` es de CARTAS —y una carta de héroe es de clase, anatomía que sigue
+ * sin cerrar—, mientras que una ruta de retrato es de la ficha.
+ */
+export function illustrationOf(character: Character): string {
+  if (!character.race) {
+    throw new Error(`«${character.name}» no tiene raza puesta: no se puede derivar su retrato.`);
+  }
+  const folder = character.role === "unidad" ? "units/" : "";
+  return `/assets/v3/races/${raceSlug(character.race)}/${folder}${nameSlug(character.name)}.png`;
+}
+
 /**
  * El `DamageTypeId` de una celda «Tipo de daño» tal y como la escribe
  * razas.md: `🗡️ Cuerpo a cuerpo`, `✨ Mágico`, `🏹 A distancia`.

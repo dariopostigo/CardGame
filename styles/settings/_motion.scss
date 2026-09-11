@@ -35,6 +35,14 @@ $deck-fall-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
 $deck-fall-hold: 160ms;
 $deck-expand-duration: 0.24s;
 $deck-deal-stagger: 90ms;
+// El turno de cada carta en el reparto del Oteo de V3 (/dev/baraja): el Mazo
+// suelta de una en una y la siguiente no sale hasta que la anterior se ha
+// posado, así que el turno es el vuelo entero más un respiro. Mismo patrón que
+// $deck-deal-stagger: el valor real vive en TS (DEAL_STEP en
+// components/dev/BarajaModule.tsx), esto es la fuente documentada.
+// Es OTRO número y no el mismo porque el lab de v2 reparte a la vez a
+// propósito y no se toca.
+$deck-deal-step: $deck-flight-duration + 90ms;
 
 // --- Pantalla de carga (GameLoadingScreen) --------------------------------
 // Los 4 puntos rebotan en cascada, uno tras otro: el desfase entre puntos es

@@ -357,6 +357,14 @@
       pointer-events: none;
     }
 
+    // Ni la que todavía no ha salido de él. Lo escribe el componente mientras
+    // la carta espera su turno en la cola del reparto (BarajaModule.tsx): su
+    // `data-zone` ya dice «oteo» aunque siga sobre el montón y a opacidad cero,
+    // así que sin esto sería un naipe invisible tapando el mando de Otear.
+    &[data-dealing="true"] {
+      pointer-events: none;
+    }
+
     &[data-zone="oteo"] {
       cursor: pointer;
     }

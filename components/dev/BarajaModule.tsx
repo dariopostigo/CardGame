@@ -59,7 +59,7 @@ import { gameFontVars } from "@/components/game/ui/game-fonts";
 import { DAMAGE, SKILLS, type Subject } from "@/components/design/v3/sample";
 import type { Character } from "@/lib/v3/character";
 import type { UnitCard } from "@/lib/v3/cards";
-import { DAMAGE_TYPES, type DamageTypeId } from "@/lib/v3/damage";
+import type { DamageTypeId } from "@/lib/v3/damage";
 import {
   buildDeck,
   drawOteo,
@@ -78,6 +78,7 @@ import type { Trait } from "@/lib/v3/traits";
 import * as Hex from "@/lib/v3/hex";
 import type { HexCoord, HexKey } from "@/lib/v3/hex";
 import PieceToken, { type PieceView } from "./PieceToken";
+import { characterToPieceView, iconOf } from "./piece-view";
 import { pieceGeometry, DEFAULT_FRAMING, type FieldId } from "@/lib/v3/piece";
 import { OFFER_RISE_MS, TIMINGS, idlePhase, reduced, type Timings } from "@/lib/v3/anim";
 import { DustField } from "./dust";
@@ -189,18 +190,40 @@ const TILT_SMOOTH = 0.72;
  */
 const DRAG_LIFT = SKETCH_H * DRAG_SCALE * 0.62;
 
-/** Espejo de $deck-deal-stagger (styles/settings/_motion.scss). */
-const DEAL_STAGGER = 90;
+// --- El reparto: una carta detrás de otra ----------------------------------
+//
+// EL MAZO SUELTA DE UNA EN UNA *(Dario, 11 de septiembre de 2026: «que salga
+// la primera carta con animación y se muestre en la pantalla, y así con la
+// segunda»)*. Hasta esa fecha las dos salían con 90 ms de diferencia sobre un
+// vuelo de 460, o sea prácticamente a la vez: dos naipes saliendo del mismo
+// punto hacia dos destinos, cruzándose por el camino y llegando juntos. No se
+// leía como «el Mazo reparte», se leía como un borrón.
+//
+// Ahora el turno de cada una empieza cuando la anterior YA SE HA POSADO, y el
+// reparto es una COLA con su propio reloj (`dealClock`): la carta que entra se
+// pone detrás de la última encolada, no en el instante en que React la pintó.
+// Eso es lo que lo hace valer para dos, tres o las que sean.
+const DEAL_FLIGHT = 460; // espejo de $deck-flight-duration
+/** El respiro entre que una se posa y la siguiente sale: el gesto del repartidor. */
+const DEAL_BEAT = 90;
+/** Espejo de $deck-deal-step (styles/settings/_motion.scss): el turno de cada carta. */
+const DEAL_STEP = DEAL_FLIGHT + DEAL_BEAT;
 
 /** Cuánto hay que mover el puntero para que un clic pase a ser un arrastre. */
 const DRAG_THRESHOLD = 6;
 
 const PIECE_FIELDS: readonly FieldId[] = ["ataque", "vida"];
 
-// --- Adaptadores Character → lo que pide cada pieza reutilizada -----------
+// --- Adaptador Character → carta -------------------------------------------
 //
-// Mecánicos, no deciden nada de diseño: cruzan los mismos datos que ya arma el
-// roster (lib/v3/races.ts) con el vocabulario que ya pide cada componente.
+// Mecánico, no decide nada de diseño: cruza los mismos datos que ya arma el
+// roster (lib/v3/races.ts) con el vocabulario que ya pide `SketchCard`.
+//
+// EL DE LA FICHA YA NO ESTÁ AQUÍ: se fue a `piece-view.ts` el 11 de septiembre
+// de 2026 para que /dev/pieza y esta pantalla dibujen la misma ficha del mismo
+// roster, que es lo que hasta ese día no pasaba. Este se queda porque es de la
+// CARTA, y la carta la dibuja el laboratorio del marco con su propio vocabulario
+// (`Subject`), no el de la ficha.
 //
 // LO QUE TIENEN QUE PRODUCIR ES UN `Subject` IDÉNTICO a los que están escritos
 // a mano en components/design/v3/races.ts, que son los que se miran en la wiki
@@ -237,19 +260,6 @@ const SKILL_ABILITY_OF: Record<(typeof SKILLS)[number]["key"], keyof Character["
   iniciativa: "iniciativa",
   movimiento: "movimiento",
 };
-
-/**
- * El glifo del sujeto: el que encabeza su nombre en razas.md («🗡️ Miliciano»).
- *
- * Es exactamente lo que los sujetos de la wiki llevan en `icon`, así que no se
- * inventa nada. `character.icon` gana si algún día existe; el tipo de daño es el
- * último recurso, para una ficha cuyo nombre viniera sin glifo.
- */
-function iconOf(character: Character): string {
-  return (
-    character.icon ?? (splitGlyph(character.name).icon || DAMAGE_TYPES[character.damage].icon)
-  );
-}
 
 function characterToSubject(
   character: Character,
@@ -289,27 +299,18 @@ function characterToSubject(
   };
 }
 
-function characterToPieceView(character: Character, illustration: string): PieceView {
-  if (character.tier === undefined) {
-    throw new Error(`«${character.name}» no tiene tier: este lab solo coloca fichas de unidad.`);
-  }
-  return {
-    id: character.id,
-    // Sin glifo, por lo mismo que en la carta: la ficha lo pinta aparte.
-    name: splitGlyph(character.name).label,
-    side: "j1",
-    role: "unidad",
-    tier: character.tier,
-    rarity: rarityForTier(character.tier),
-    icon: iconOf(character),
-    art: illustration,
-    damage: character.damage,
-    vida: character.abilities.vida,
-    vidaMax: character.abilities.vida,
-    ataque: character.abilities.ataque,
-    movimiento: character.abilities.movimiento,
-    states: [],
-  };
+/**
+ * La ficha que sale de una carta al desplegarla. Siempre mía —esto no es una
+ * partida, es el lab del Mazo— y siempre entera de ❤️ Vida: aquí acaba de caer
+ * en el tablero.
+ *
+ * LA FICHA ES LA DE /dev/pieza, y desde el 11 de septiembre de 2026 lo es de
+ * verdad: el adaptador es el mismo (`piece-view.ts`) y come del mismo roster, así
+ * que el ⛏️ Minero que se despliega aquí es exactamente el que se calibra allí.
+ * Antes eran dos conversiones distintas sobre dos catálogos distintos.
+ */
+function pieceOf(card: UnitCard): PieceView {
+  return characterToPieceView(card.character, { side: "j1" });
 }
 
 // --- El escenario ----------------------------------------------------------
@@ -588,6 +589,17 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
   const [pending, setPending] = useState<DeckCard | null>(null);
   /** Las que se están yendo al Mazo sin haberse jugado: las que rechazas al otear. */
   const [discarding, setDiscarding] = useState<readonly DeckCard[]>([]);
+  /**
+   * Si el Mazo todavía está soltando cartas del Oteo.
+   *
+   * Es lo único de la cola de reparto que sí es ESTADO, y es porque cambia lo
+   * que un clic significa: mientras quede una carta por salir, el Oteo no se
+   * puede decidir —ni tomar una, ni decir «Ninguna»—. Sin esto, tomar la
+   * primera en cuanto se posa dejaría a la segunda sin salir nunca: se
+   * descartaría estando aún encima del montón, y lo que se vería es que el Mazo
+   * ha repartido UNA carta y ha prometido dos.
+   */
+  const [revealing, setRevealing] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [dragId, setDragId] = useState<string | null>(null);
   /**
@@ -635,6 +647,28 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
   const candidate = useRef<HexKey | null>(null);
   const posesRef = useRef<ReadonlyMap<string, Pose>>(new Map());
   const born = useRef(new Set<string>());
+  /**
+   * Las cartas que ya están pintadas pero TODAVÍA NO HAN SALIDO del Mazo.
+   *
+   * Una carta encolada está en su sitio de partida —sobre el montón, a opacidad
+   * cero— y nadie puede moverla de ahí hasta que le toque: ni el repintado de
+   * React, ni el realce del ratón, ni nada. Por eso el candado está dentro de
+   * `writeCard`, que es por donde pasan todos, y no en cada uno de sus sitios.
+   */
+  const dealing = useRef(new Set<string>());
+  /** Los relojes y los fotogramas del reparto en curso, para poder pararlo en seco. */
+  const dealTimers = useRef(new Set<number>());
+  const dealFrames = useRef(new Set<number>());
+  /**
+   * Cuándo le toca salir a la SIGUIENTE carta.
+   *
+   * El reparto es una cola y no un lote, y este número es la cola: una carta
+   * que llega mientras el Mazo todavía está soltando se pone detrás de la
+   * última: `max(dealClock, ahora)`. Sin esto, un Oteo pedido a mitad del
+   * anterior volvería a sacar dos cartas a la vez, que es justo lo que se
+   * quitó.
+   */
+  const dealClock = useRef(0);
   const hovered = useRef<string | null>(null);
   /** El aliento de cada ficha puesta: su animación infinita, para poder pararla. */
   const idles = useRef(new Map<HexKey, Animation[]>());
@@ -885,6 +919,10 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
     const el = cardEls.current.get(id);
     const pose = posesRef.current.get(id);
     if (!el || !pose) return;
+    // La que espera su turno en el Mazo no se coloca: su sitio es el montón
+    // hasta que la cola la suelte, y este es el único candado que hace falta
+    // porque todo lo que mueve una carta quieta pasa por aquí.
+    if (dealing.current.has(id)) return;
     const lift =
       hovered.current === id && (pose.kind === "hand" || pose.kind === "oteo");
     const shown = lift
@@ -913,6 +951,52 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
     el.style.zIndex = String(shown.z);
   }, []);
 
+  /**
+   * Suelta una carta encolada: le devuelve la transición y la manda a su sitio.
+   *
+   * Quitarla de `dealing` ANTES de escribirla no es un orden cualquiera: el
+   * candado de `writeCard` la ignoraría si siguiera dentro, y la carta se
+   * quedaría en el Mazo para siempre.
+   */
+  const dealOut = useCallback(
+    (id: string) => {
+      dealing.current.delete(id);
+      const el = cardEls.current.get(id);
+      if (el) {
+        delete el.dataset.dealing;
+        el.style.transition = "";
+        writeCard(id);
+      }
+      if (dealing.current.size === 0) setRevealing(false);
+    },
+    [writeCard],
+  );
+
+  /**
+   * Para el reparto en seco y devuelve al Mazo lo que quedara a medias.
+   *
+   * Hace falta en dos sitios y en los dos por lo mismo: al reiniciar y al
+   * desmontar, un reloj que sobreviva soltaría una carta que ya no existe —o,
+   * peor, una que existe y está en otro sitio— medio segundo después.
+   */
+  const stopDealing = useCallback(() => {
+    for (const frame of dealFrames.current) cancelAnimationFrame(frame);
+    dealFrames.current.clear();
+    for (const timer of dealTimers.current) window.clearTimeout(timer);
+    dealTimers.current.clear();
+    for (const id of dealing.current) {
+      const el = cardEls.current.get(id);
+      if (!el) continue;
+      delete el.dataset.dealing;
+      el.style.transition = "";
+    }
+    dealing.current.clear();
+    dealClock.current = 0;
+    setRevealing(false);
+  }, []);
+
+  useEffect(() => stopDealing, [stopDealing]);
+
   useLayoutEffect(() => {
     posesRef.current = poses;
     const l = layout;
@@ -925,6 +1009,7 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
       // devolvería a la mano a mitad del gesto.
       if (press.current?.dragging && press.current.id === id) continue;
       if (born.current.has(id)) {
+        // La que espera su turno se salta sola: el candado está en writeCard.
         writeCard(id);
       } else {
         born.current.add(id);
@@ -935,15 +1020,29 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
 
     if (fresh.length === 0 || !l) return;
 
-    // El reparto: la carta se PINTA primero en el Mazo y se suelta un instante
-    // después, para que la transición la lleve volando hasta su sitio en vez
-    // de aparecer ya puesta. El doble rAF no es superstición: con uno solo, el
-    // navegador puede fundir la posición de partida y la de destino en el
-    // mismo fotograma y no hay vuelo (es el mismo hallazgo que anota
-    // components/lab/DeckLab.tsx). El escalón entre las dos es lo que hace que
-    // se lea que son DOS cartas y no una parpadeando.
+    // El reparto: la carta se PINTA primero en el Mazo y se suelta cuando le
+    // toca, para que la transición la lleve volando hasta su sitio en vez de
+    // aparecer ya puesta.
+    //
+    // EL TURNO DE CADA UNA SALE DE LA COLA Y NO DE SU ÍNDICE en este lote, y es
+    // lo que hace que el reparto sea de verdad seguido: `dealClock` dice cuándo
+    // se posará la última encolada, y la que entra se pone detrás. Así dan
+    // igual los repintados —una carta puede aparecer en un pase y la siguiente
+    // en otro— y da igual cuántas se oteen.
+    //
+    // Y NO HAY LIMPIEZA que cancele nada al re-ejecutarse el efecto, que es lo
+    // que rompía el reparto antes: basta con que `forget` quite una carta vieja
+    // del montón a mitad del vuelo para que este efecto vuelva a pasar, y la
+    // limpieza se llevaba por delante los relojes de las cartas que aún no
+    // habían salido. Ahora el reparto se lo guardan las referencias y solo lo
+    // para `stopDealing`, que es quien tiene motivo para pararlo.
     const start = pilePose(l, 46);
-    for (const { el } of fresh) {
+    for (const { id, el } of fresh) {
+      dealing.current.add(id);
+      // Mientras espera no existe para el puntero: está a opacidad cero encima
+      // del montón, justo sobre el mando de Otear, y sin esto se comería sus
+      // clics (styles/components/_baraja-lab.scss).
+      el.dataset.dealing = "true";
       el.style.transition = "none";
       el.style.transform = poseTransform({ ...start, scale: PILE_SCALE * 0.9 });
       el.style.opacity = "0";
@@ -951,31 +1050,39 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
       void el.getBoundingClientRect();
     }
 
-    const timers: number[] = [];
-    let raf2 = 0;
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => {
-        fresh.forEach(({ id, el }, i) => {
-          timers.push(
-            window.setTimeout(() => {
-              el.style.transition = "";
-              writeCard(id);
-            }, i * DEAL_STAGGER),
-          );
-        });
-      });
+    const now = performance.now();
+    // Sin movimiento no hay reparto que escalonar: esperar medio segundo por
+    // carta para que aparezcan de golpe es tiempo muerto, no una animación.
+    const step = stillRef.current ? 0 : DEAL_STEP;
+    let turn = Math.max(dealClock.current, now);
+    const queue = fresh.map(({ id }) => {
+      const delay = Math.max(0, turn - now);
+      turn += step;
+      return { id, delay };
     });
+    dealClock.current = turn;
 
-    return () => {
-      cancelAnimationFrame(raf1);
-      if (raf2) cancelAnimationFrame(raf2);
-      for (const t of timers) window.clearTimeout(t);
-      // Si el reparto se interrumpe a mitad, las cartas no se quedan clavadas
-      // en el Mazo sin transición: se les devuelve y el siguiente pase las
-      // coloca donde toque.
-      for (const { el } of fresh) el.style.transition = "";
-    };
-  }, [poses, layout, writeCard]);
+    // El doble rAF no es superstición: con uno solo, el navegador puede fundir
+    // la posición de partida y la de destino en el mismo fotograma y no hay
+    // vuelo (es el mismo hallazgo que anota components/lab/DeckLab.tsx). Solo
+    // le hace falta a la primera de la cola —las demás esperan de sobra—, pero
+    // se paga una vez por lote y no por carta.
+    const raf1 = requestAnimationFrame(() => {
+      dealFrames.current.delete(raf1);
+      const raf2 = requestAnimationFrame(() => {
+        dealFrames.current.delete(raf2);
+        for (const { id, delay } of queue) {
+          const timer = window.setTimeout(() => {
+            dealTimers.current.delete(timer);
+            dealOut(id);
+          }, delay);
+          dealTimers.current.add(timer);
+        }
+      });
+      dealFrames.current.add(raf2);
+    });
+    dealFrames.current.add(raf1);
+  }, [poses, layout, writeCard, dealOut]);
 
   // --- Otear, tomar, rechazar -----------------------------------------------
 
@@ -989,6 +1096,12 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
     if (state.deck.length === 0 || oteo.length > 0 || pending) return;
     setExpandedId(null);
     setOteo(drawOteo(state));
+    // El Oteo nace REPARTIÉNDOSE, y se dice aquí y no en el efecto que encola
+    // las cartas: este es el único sitio de donde salen cartas nuevas —a la
+    // mano y al descarte solo llegan cartas ya oteadas—, y así el pie del velo
+    // no llega a parpadear con la decisión antes de que haya nada que decidir.
+    // Lo apaga `dealOut` cuando sale la última de la cola.
+    setRevealing(true);
     setNote(
       isInPlayFull(state)
         ? "La mano está llena: si tomas una, tendrás que decir a cuál sustituye."
@@ -1048,6 +1161,7 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
   function reset() {
     press.current = null;
     stopFlight();
+    stopDealing();
     markCandidate(null);
     dustRef.current?.clear();
     setState(initialState(cards));
@@ -1649,7 +1763,7 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
                       }}
                     >
                       <PieceToken
-                        piece={characterToPieceView(d.card.character, d.card.illustration)}
+                        piece={pieceOf(d.card)}
                         cx={at.x}
                         cy={at.y}
                         geometry={geometry}
@@ -1712,7 +1826,11 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
               clon volante (ver la cabecera). */}
           {onTable.map((d) => {
             const isHand = state.inPlay.some((c) => c.instanceId === d.instanceId);
-            const picking = oteo.length > 0 && !pending;
+            // Mientras el Mazo siga soltando no hay nada que decidir: una
+            // carta que todavía no ha salido no se puede comparar con la que
+            // ya está puesta, y tomar la primera dejaría a la segunda sin
+            // salir (ver `revealing`).
+            const picking = oteo.length > 0 && !pending && !revealing;
             const swapping = !!pending && isHand;
             const grabbable = isHand && !overlay && !deploying;
             const flying = dragId === d.instanceId || deploying?.id === d.instanceId;
@@ -1812,10 +1930,7 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
                     aria-hidden
                   >
                     <PieceToken
-                      piece={characterToPieceView(
-                        deploying.card.card.character,
-                        deploying.card.card.illustration,
-                      )}
+                      piece={pieceOf(deploying.card.card)}
                       cx={SKETCH_W / 2}
                       cy={SKETCH_H / 2}
                       geometry={flyingGeometry}
@@ -1833,7 +1948,10 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
               cartas porque no se mueve con ellas. */}
           {overlay && (
             <div className="baraja-lab__veil-foot">
-              {oteo.length > 0 && !pending && (
+              {/* Mientras se reparte, el pie calla: lo que hay que mirar son
+                  las cartas saliendo, y ofrecer «Ninguna» antes de haberlas
+                  visto las dos es ofrecer una decisión que no se puede tomar. */}
+              {oteo.length > 0 && !pending && !revealing && (
                 <>
                   <p className="baraja-lab__veil-text">
                     Dos cartas del Mazo: haz clic en la que te quedas.

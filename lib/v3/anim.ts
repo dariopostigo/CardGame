@@ -88,7 +88,9 @@
 // NO RESPIRA. Se lee por ausencia, y una ausencia solo se ve si lo demás está
 // presente. Con el aliento apagado (`idleRise` a 0) el hundimiento y el color no
 // bastan — la ficha gastada solo parece un poco más oscura, y nadie recorre un
-// tablero buscando cuál está más oscura. Se comprueba apagando el dial.
+// tablero buscando cuál está más oscura. Se comprueba apagando el dial — que hoy
+// es el estado de partida: `TIMINGS.idleRise` viene a 0 a propósito y el dial de
+// /dev/animacion es el único sitio donde se enciende.
 //
 // La otra propiedad es de reloj, y esa sí se puede medir sin pantalla: LA OFERTA
 // TIENE QUE ESTAR COMPLETA ANTES DE QUE EL JUGADOR HAYA DECIDIDO. Un tablero que
@@ -284,12 +286,22 @@ export const TIMINGS: Timings = {
   critFlash: 1.5,
   evenOut: false,
 
-  // Tres píxeles en un hexágono de cuarenta, y ni uno más: el aliento tiene que
-  // estar por debajo de lo que se mira a propósito. Si se ve respirar, es un
-  // globo. El ciclo es largo por lo mismo —una ficha en guardia no jadea— y cada
-  // una entra en su fase (`idlePhase`), porque quince fichas subiendo a la vez
-  // no son quince fichas vivas: es el tablero entero bombeando.
-  idleRise: 0.075,
+  // EL ALIENTO ENTRA APAGADO, y vale para todo /dev: es el único bucle INFINITO
+  // del proyecto y corre en todas las fichas puestas a la vez, así que mirando
+  // cualquier otra cosa —una caída, una embestida, el polvo, el reparto de un
+  // mazo— se cuela por debajo de lo que se está juzgando. Decidido el 11 de
+  // septiembre de 2026, y por eso se apaga AQUÍ y no en cada pantalla: los dos
+  // sitios que respiran leen este número.
+  //
+  // El valor queda escrito para no tener que volver a deducirlo: era 0.075,
+  // tres píxeles en un hexágono de cuarenta y ni uno más, porque el aliento
+  // tiene que estar por debajo de lo que se mira a propósito —si se ve
+  // respirar, es un globo—. El ciclo se queda puesto por lo mismo: 2600 ms es
+  // guardia, no jadeo, y cada ficha entra en su fase (`idlePhase`) porque
+  // quince subiendo a la vez no son quince fichas vivas, es el tablero entero
+  // bombeando. Se vuelve a encender con el dial de /dev/animacion, que es donde
+  // vive el experimento; el día que se cierre, el número se escribe aquí.
+  idleRise: 0,
   idleCycle: 2600,
   spentSink: 0.05,
   spentFade: 0.45,

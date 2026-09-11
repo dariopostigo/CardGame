@@ -22,6 +22,7 @@
 // hexágono. Si se juzgara con un dibujo aparte no se estaría juzgando la ficha.
 // =========================================================================
 
+import type { CSSProperties } from "react";
 import * as Hex from "@/lib/v3/hex";
 import {
   pieceGeometry,
@@ -69,6 +70,9 @@ export default function PieceCalibre({
   return (
     <svg
       className={className}
+      // La misma escala que llevan las fichas de dentro, para el trazo de la
+      // rejilla: a ×3,2 un `stroke-width` fijo se queda en un hilo.
+      style={{ "--ficha-escala": g.scale } as CSSProperties}
       viewBox={stageViewBox(g, [front, back])}
       role="img"
       aria-label={`Ficha de ${piece.name}`}

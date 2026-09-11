@@ -42,9 +42,10 @@
 //     fallo, «la de los héroes es distinta que las demás»—, porque con el color
 //     del tier en el marco ya tiene raíl propio y no hay nada que añadir. Lo que
 //     cambia de una ficha a otra es el COLOR, nunca la forma ni el grosor.
-//   · LA CARA — el retrato recortado dentro, a ras del marco. Es lo que se cambia
-//     el día que la vía 3D decida algo (/lab/character), y por eso está aparte:
-//     una figura se pondría de pie SOBRE esta ficha sin tocar su lectura.
+//   · LA CARA — el retrato recortado dentro, metido 0,06 radios del marco. Es lo
+//     que se cambia el día que la vía 3D decida algo (/lab/character), y por eso
+//     está aparte: una figura se pondría de pie SOBRE esta ficha sin tocar su
+//     lectura.
 //
 // EL COLOR DEL MARCO ES EL DEL TIER, NO EL DEL BANDO *(Dario, 3 de septiembre de
 // 2026: «quiero que la ficha tenga el color del tier del personaje»)*. Y eso no
@@ -500,10 +501,14 @@ export function gemFontRatio(maxDigits: number): number {
 // Los dos números son ESPEJO de styles/components/_ficha.scss, como `lib/rarity.ts`
 // lo es de `$rarity`: los pinta la hoja, y aquí están para poder medir lo que el
 // halo le come a la casilla. Si cambian allí, cambian aquí.
+//
+// Son los de TAMAÑO DE PARTIDA (`GAME_HEX`): a cualquier otro radio se multiplican
+// por `scale`, que es lo que hace que la hoja de calibre sea la misma ficha y no
+// una parecida con el marco más fino.
 
-/** Grosor del trazo de color del marco, en píxeles. */
+/** Grosor del trazo de color del marco, en píxeles a tamaño de partida. */
 export const FRAME_STROKE = 2.2;
-/** Lo que el halo asoma por fuera de ese trazo, en píxeles. */
+/** Lo que el halo asoma por fuera de ese trazo, en píxeles a tamaño de partida. */
 export const FRAME_HALO = 1;
 
 /**
@@ -512,7 +517,7 @@ export const FRAME_HALO = 1;
  * que de cada anchura solo estorba la mitad.
  */
 export function litCellGap(g: PieceGeometry): number {
-  return (g.hexWidth - g.tileW) / 2 - FRAME_STROKE / 2 - FRAME_HALO;
+  return (g.hexWidth - g.tileW) / 2 - (FRAME_STROKE / 2 + FRAME_HALO) * g.scale;
 }
 
 /**
@@ -549,35 +554,48 @@ export const DEFAULT_FIELDS: readonly FieldId[] = [];
 
 // --- La geometría ----------------------------------------------------------
 // Todo sale del radio del hexágono, que lo manda el tablero y no el gusto
-// (ArenaBoard: `hexSize` 34 y `ARENA_TILT` 0,67). Las tres fracciones de abajo
-// son los diales de esta pantalla.
+// (ArenaBoard: `hexSize` GAME_HEX y `ARENA_TILT` 0,67). Las tres fracciones de
+// abajo son los diales de esta pantalla.
 
 /**
- * La ficha, en radios de casilla: DEJA VER LA REJILLA POR DEBAJO, y desde el 3
- * de septiembre de 2026 un poco más *(Dario: «por defecto la ficha un poco más
+ * EL RADIO AL QUE SE JUEGA, en píxeles: el del hexágono de la arena, y el que
+ * `ArenaBoard` usa por defecto.
+ *
+ * Está aquí y no allí porque es el PATRÓN contra el que se mide cualquier otra
+ * hoja: la de calibre pinta la misma ficha a 108 y la tira a 46, y las dos dicen
+ * ser «la escala de verdad multiplicada». Para que eso sea cierto tiene que
+ * escalar TODO lo que se dibuja, grosores de trazo incluidos —ver `scale`—.
+ */
+export const GAME_HEX = 34;
+
+/**
+ * La ficha, en radios de casilla: DEJA VER LA REJILLA POR DEBAJO, y cada vez un
+ * poco más *(Dario, 3 de septiembre de 2026: «por defecto la ficha un poco más
  * pequeña, solo un poco»)*.
  *
- * Bajó de 0,82 a 0,78 —un 5% de diámetro— y lo que gana es AIRE: contra el borde
- * de su casilla pasa de 5,30 a 6,48 px por lado a tamaño de partida (el hexágono
- * de 34 de la arena). Ese aire dejó de ser estética el mismo día: es por donde
- * asoma la CASILLA ILUMINADA, o sea lo único que dice de quién es la ficha, así
- * que ensancharlo es darle más voz al azul, al verde y al rojo. De paso la barra
- * de ❤️ Vida se despega del borde de su hexágono, donde cabía por 0,43 px: ahora
- * le sobran 1,34.
+ * Va por el tercer escalón: 0,82 → 0,78 (3-sep) → **0,74** (11-sep). Lo que gana
+ * en cada bajada es AIRE: contra el borde de su casilla pasa de 5,30 a 6,48 y de
+ * ahí a 7,66 px por lado a tamaño de partida (el hexágono de 34 de la arena).
+ * Ese aire dejó de ser estética el 3 de septiembre: es por donde asoma la CASILLA
+ * ILUMINADA, o sea lo único que dice de quién es la ficha, así que ensancharlo es
+ * darle más voz al azul, al verde y al rojo. De paso la barra de ❤️ Vida se
+ * despega del borde de su hexágono, donde cabía por 0,43 px.
  */
-export const TILE_RADIUS = 0.78;
+export const TILE_RADIUS = 0.74;
 
 /**
- * El retrato dentro, en radios de casilla: EL MISMO que la ficha, o sea que
- * llega hasta el marco *(3 de septiembre de 2026: «solo un marco»)*.
+ * El retrato dentro, en radios de casilla: **0,68**, o sea 0,06 metido hacia
+ * dentro del marco *(Dario, 11 de septiembre de 2026)*.
  *
- * Antes se quedaba en 0,70 y entre el retrato y el borde quedaba una banda de
- * cartón. Con el marco de color repetido en el retrato eso eran tres trazos; sin
- * él, la banda sigue leyéndose como un segundo borde, así que el retrato sube a
- * ras del marco y la ficha queda con una sola línea. El dial lo puede volver a
- * meter hacia dentro para verlo.
+ * El 3 de septiembre iba a ras del marco —el mismo radio que la ficha— para que
+ * la pieza quedara con UNA SOLA LÍNEA: el filete del retrato era uno de los tres
+ * trazos del mismo color que se fueron ese día *(«solo un marco»)*. Volver a
+ * meterlo hacia dentro devuelve entre el retrato y el borde una banda de cartón;
+ * lo que ya no vuelve es el filete, así que sigue habiendo un solo trazo con
+ * color y la banda es cartón desnudo, no un segundo borde. El dial lo sube a ras
+ * otra vez para compararlo.
  */
-export const FACE_RADIUS = TILE_RADIUS;
+export const FACE_RADIUS = 0.68;
 
 export type PieceDials = {
   /** Radio de la ficha, en radios de casilla. */
@@ -605,6 +623,18 @@ export type PieceGeometry = {
   readonly size: number;
   readonly tilt: number;
   readonly dials: PieceDials;
+  /**
+   * A qué escala se está pintando, contra el tamaño de partida (`GAME_HEX`). Es
+   * 1 en la arena, ×3,2 en la hoja de calibre y ×1,4 en la tira.
+   *
+   * Existe porque las medidas de este archivo escalan solas —todas salen del
+   * radio— pero los GROSORES DE TRAZO los pone la hoja de estilos en píxeles, y
+   * un número fijo no es la misma ficha vista de cerca: a 108 el marco se queda
+   * en un pelo y la banda de cartón del retrato se abre sola, o sea que la hoja
+   * de calibre enseñaría una ficha que en la arena no existe. El TSX lo pasa a
+   * SCSS en `--ficha-escala` y allí multiplica cada `stroke-width`.
+   */
+  readonly scale: number;
   /** Radio de la ficha y de la cara, en píxeles del viewBox. */
   readonly tileR: number;
   readonly faceR: number;
@@ -690,6 +720,7 @@ export function pieceGeometry(
     size,
     tilt,
     dials,
+    scale: size / GAME_HEX,
     tileR,
     faceR,
     tileW,

@@ -25,6 +25,7 @@
 // juzgara con otro dibujo no se estaría juzgando la ficha.
 // =========================================================================
 
+import type { CSSProperties } from "react";
 import * as Hex from "@/lib/v3/hex";
 import {
   pieceGeometry,
@@ -96,6 +97,7 @@ export default function PieceTierStrip({
               >
                 <svg
                   className="ficha-calibre"
+                  style={{ "--ficha-escala": g.scale } as CSSProperties}
                   viewBox={viewBox}
                   role="img"
                   aria-label={`Ficha de ${view.name}`}

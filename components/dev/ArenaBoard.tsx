@@ -68,6 +68,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import * as Hex from "@/lib/v3/hex";
 import type { HexCoord, HexEdge, HexKey } from "@/lib/v3/hex";
 import type { Arena, Side } from "@/lib/v3/arena";
+import { GAME_HEX } from "@/lib/v3/piece";
 import { useBoardView } from "@/components/game/board/use-board-view";
 import Button from "@/components/ui/Button";
 
@@ -191,7 +192,7 @@ export type ArenaBoardProps = {
 export default function ArenaBoard({
   arena,
   className,
-  hexSize = 34,
+  hexSize = GAME_HEX,
   tilt = ARENA_TILT,
   groundImage,
   regions = [],

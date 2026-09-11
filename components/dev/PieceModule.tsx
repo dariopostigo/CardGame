@@ -49,14 +49,26 @@
 // dos fichas de jugadores distintos pegadas, una enemiga enfrente, y las de la
 // fila de delante tapando a las de detrás.
 //
-// EL SUJETO ES PRESTADO Y ESO ES DEUDA DECLARADA. Los sujetos de las dos razas
-// dibujadas —con su arte y sus cifras— salen de `components/design/v3/` —el
+// LAS FICHAS SON LAS DEL ROSTER, las mismas que reparte /dev/baraja *(Dario, 11
+// de septiembre de 2026: «las fichas que hay en Baraja y Oteo son las mismas que
+// en Fichas? porque creo que no»)*. No lo eran: hasta ese día los sujetos de esta
+// pantalla —con su arte y sus cifras— salían de `components/design/v3/` —el
 // laboratorio del marco de carta—, donde las 8 Habilidades están escritas otra
-// vez y los números son inventados. Es el mismo sustituto que el marco tiene
-// apuntado en el registro: cuando exista el módulo «Catálogo de cartas», los dos
-// cambian de fuente. Para lo que esta pantalla mide da igual el valor y no da
-// igual la FORMA —tres dígitos de ❤️ Vida no caben donde caben dos—, y eso sí es
-// real.
+// vez y los números son inventados ficha a ficha, mientras que el Mazo repartía
+// las de razas.md. El mismo ⛏️ Minero salía con ❤️ 22 en una pantalla y ❤️ 26 en
+// la otra, y eso es lo peor que puede pasar con un sustituto: que no se note que
+// lo es. Ahora las dos leen `pilotCharacters()` y las dos convierten con el mismo
+// adaptador (`piece-view.ts`), así que la ficha que se calibra aquí es la que se
+// despliega allí.
+//
+// LO QUE LA DEUDA ERA DE VERDAD, ahora que se ve: no era de dónde salen los
+// sujetos, era que razas.md no tiene cifras. De las 8 Habilidades solo ❤️ Vida y
+// ⚔️ Ataque son propias de cada ficha —base de raza × curva de tier—; las otras
+// cinco salen todas en el escalón "normal" hasta que Dario las escriba, así que
+// en la tira se repiten. Para lo que esta pantalla mide da igual el valor y no da
+// igual la FORMA —tres dígitos de ❤️ Vida no caben donde caben dos—, y la que
+// cambia de forma es justo la que sí varía: ❤️ Vida, de dos cifras en el tier 1 a
+// tres en el 8.
 //
 // Ninguna regla vive aquí: la geometría es de lib/v3/piece.ts y el catálogo de
 // estados se lee de effects.md (ARCHITECTURE.md §6).
@@ -76,6 +88,7 @@ import {
   FIELDS,
   FRAMINGS,
   FRAMING_BY_ID,
+  GAME_HEX,
   HEARTHSTONE_FIELDS,
   PIECE_SIDES,
   pieceChecks,
@@ -86,10 +99,11 @@ import {
   type PieceSideId,
 } from "@/lib/v3/piece";
 import type { Effect } from "@/lib/v3/effects";
-import { DECK_RACES, type DeckRace } from "@/components/design/v3/races";
-import type { Subject } from "@/components/design/v3/sample";
+import type { Character } from "@/lib/v3/character";
+import { splitGlyph } from "@/lib/v3/races";
 import ArenaBoard, { ARENA_TILT, type ArenaPiece } from "./ArenaBoard";
 import PieceToken, { PieceLifeBar, type PieceView } from "./PieceToken";
+import { characterToPieceView } from "./piece-view";
 import PieceCalibre from "./PieceCalibre";
 import PieceTierStrip, { type TierGroup } from "./PieceTierStrip";
 import Button, { buttonClass } from "@/components/ui/Button";
@@ -97,7 +111,7 @@ import Button, { buttonClass } from "@/components/ui/Button";
 /** Cuántos estados puede llevar una ficha a la vez en esta pantalla. */
 const MAX_STATES = 3;
 
-/** El radio del hexágono de la hoja de calibre: la arena usa 34. */
+/** El radio del hexágono de la hoja de calibre: la arena usa `GAME_HEX`. */
 const CALIBRE_HEX = 108;
 
 /** Y el de la tira de tiers, donde caben doce fichas seguidas. */
@@ -160,18 +174,30 @@ type SceneFicha = {
   readonly id: string;
   readonly side: PieceSideId;
   readonly boardSide: Side;
-  readonly role: "heroe" | "unidad";
   readonly hex: HexCoord;
-  readonly subject: Subject;
+  readonly character: Character;
   readonly lifePct: number;
+};
+
+/** Las fichas de una raza, partidas como las pide la escena y la tira. */
+type RaceGroup = {
+  /** Tal y como la escribe razas.md, con su glifo: «⛏️ Enanos». */
+  readonly race: string;
+  readonly icon: string;
+  readonly label: string;
+  readonly heroes: readonly Character[];
+  /** La progresión, del tier 1 al 8. */
+  readonly units: readonly Character[];
 };
 
 export type PieceModuleProps = {
   /** Los nueve estados de effects.md §5, leídos por el Server Component. */
   catalog: readonly Effect[];
+  /** Las 24 fichas de las dos razas piloto, leídas de razas.md por el Server Component. */
+  roster: readonly Character[];
 };
 
-export default function PieceModule({ catalog }: PieceModuleProps) {
+export default function PieceModule({ catalog, roster }: PieceModuleProps) {
   const [players, setPlayers] = useState(2);
   const [framing, setFraming] = useState<FramingId>(DEFAULT_FRAMING);
   const [fields, setFields] = useState<readonly FieldId[]>(DEFAULT_FIELDS);
@@ -181,7 +207,7 @@ export default function PieceModule({ catalog }: PieceModuleProps) {
   const [pickedId, setPickedId] = useState<string | null>(null);
 
   const arena = useMemo(() => buildArena(SCENE), []);
-  const races = useMemo(() => drawnRaces(), []);
+  const races = useMemo(() => drawnRaces(roster), [roster]);
   const scene = useMemo(() => buildScene(players, races), [players, races]);
 
   const chosenStates = useMemo(
@@ -196,10 +222,9 @@ export default function PieceModule({ catalog }: PieceModuleProps) {
     for (const f of scene) {
       out.set(
         f.id,
-        toView(f.subject, {
+        characterToPieceView(f.character, {
           id: f.id,
           side: f.side,
-          role: f.role,
           lifePct: f.lifePct,
           states: chosenStates,
         }),
@@ -210,18 +235,24 @@ export default function PieceModule({ catalog }: PieceModuleProps) {
 
   const pieces = useMemo<ArenaPiece[]>(
     () =>
-      scene.map((f) => ({
-        id: f.id,
-        hex: f.hex,
-        side: f.boardSide,
-        role: f.role,
-        icon: f.subject.icon,
-        label: `${f.subject.name} · ${PIECE_SIDES.find((s) => s.id === f.side)?.label ?? ""}`,
-      })),
-    [scene],
+      scene.map((f) => {
+        // El rótulo de la casilla sale de la VISTA y no del personaje: así el
+        // emoji y el nombre que escribe el tablero son literalmente los que
+        // lleva la ficha dibujada encima, sin partir el glifo por segunda vez.
+        const view = views.get(f.id);
+        return {
+          id: f.id,
+          hex: f.hex,
+          side: f.boardSide,
+          role: f.character.role,
+          icon: view?.icon ?? "",
+          label: `${view?.name ?? ""} · ${PIECE_SIDES.find((s) => s.id === f.side)?.label ?? ""}`,
+        };
+      }),
+    [scene, views],
   );
 
-  const boardGeometry = useMemo(() => pieceGeometry(34, ARENA_TILT, dials), [dials]);
+  const boardGeometry = useMemo(() => pieceGeometry(GAME_HEX, ARENA_TILT, dials), [dials]);
   const checks = useMemo(
     () => pieceChecks(boardGeometry, fields, FRAMING_BY_ID[framing]),
     [boardGeometry, fields, framing],
@@ -574,7 +605,7 @@ export default function PieceModule({ catalog }: PieceModuleProps) {
               step={0.02}
               unit="radios"
               onChange={(tile) => setDials((d) => ({ ...d, tile }))}
-              hint="El hexágono de fuera. De partida va a 0,78 —bajó de 0,82 el 3 de septiembre de 2026— porque el aire que deja es por donde asoma la casilla iluminada, o sea lo que dice de quién es la ficha. A 1 llena la casilla y la rejilla desaparece debajo de las fichas: parecen losetas, no fichas encima de un tablero."
+              hint="El hexágono de fuera. De partida va a 0,74 —0,82 al principio, 0,78 el 3 de septiembre de 2026 y 0,74 el 11— porque el aire que deja es por donde asoma la casilla iluminada, o sea lo que dice de quién es la ficha. A 1 llena la casilla y la rejilla desaparece debajo de las fichas: parecen losetas, no fichas encima de un tablero."
             />
             <Dial
               label="Retrato"
@@ -584,7 +615,7 @@ export default function PieceModule({ catalog }: PieceModuleProps) {
               step={0.02}
               unit="radios"
               onChange={(face) => setDials((d) => ({ ...d, face }))}
-              hint="La ventana de la ilustración. De partida va a ras del marco: si se mete hacia dentro, entre el retrato y el marco aparece una banda de cartón, que es la que se leía como un segundo borde."
+              hint="La ventana de la ilustración. De partida va a 0,68, o sea 0,06 metida hacia dentro del marco (11 de septiembre de 2026): entre el retrato y el borde queda una banda de cartón desnudo. Subiéndola hasta el tope va a ras del marco, que es como estuvo del 3 al 11 de septiembre."
             />
             <Button
               size="sm"
@@ -634,9 +665,10 @@ export default function PieceModule({ catalog }: PieceModuleProps) {
           <p className={`${label} shrink-0`}>Al calibre</p>
           <p className="text-xs text-[var(--wiki-muted)]">
             La misma ficha y el mismo componente, con otro radio de hexágono: al ×
-            {(CALIBRE_HEX / 34).toFixed(1)} para mirarla de cerca, y al ×
-            {(STRIP_HEX / 34).toFixed(1)} las veinticuatro seguidas para ver si el encuadre vale
-            para todas.
+            {(CALIBRE_HEX / GAME_HEX).toFixed(1)} para mirarla de cerca, y al ×
+            {(STRIP_HEX / GAME_HEX).toFixed(1)} las veinticuatro seguidas para ver si el encuadre
+            vale para todas. Los grosores de trazo se multiplican con ella, así que lo que se ve
+            aquí es esta misma ficha de cerca y no otra con el marco más fino.
           </p>
         </div>
 
@@ -753,23 +785,50 @@ function Dial({
 // --- El reparto -------------------------------------------------------------
 
 /**
+ * El roster partido por razas: cada una con sus héroes y su progresión de ocho,
+ * que es como lo piden la escena y la tira. El roster llega en una sola lista y
+ * en el orden en que está escrito en razas.md.
+ *
  * 👤 HUMANOS CONTRA ⛏️ ENANOS, y no es una elección de sabor *(Dario, 1 de
  * septiembre de 2026)*: son las dos únicas razas DIBUJADAS ENTERAS —doce
  * archivos cada una, public/assets/v3/README.md— y esta pantalla se mira, así
  * que una raza a emoji no enseña nada de lo que hay que juzgar. Las otras nueve
- * entran cuando tengan arte.
+ * entran cuando tengan arte. Ya no hace falta elegirlas aquí: son exactamente
+ * las que `pilotCharacters()` devuelve (`PILOT_RACES`, lib/v3/races.ts), y esa
+ * lista es la misma frontera —la v1 se juega con estas dos, el resto en StandBy
+ * (status.md §4)—.
  */
-function drawnRaces(): readonly DeckRace[] {
-  const humanos = DECK_RACES.find((r) => r.name === "Humanos");
-  const enanos = DECK_RACES.find((r) => r.name === "Enanos");
-  if (!humanos || !enanos) {
-    // Si a `races.ts` le cambian los nombres, mejor reventar aquí que pintar
-    // fichas a emoji sin decir por qué (ARCHITECTURE.md §7: fallar alto).
+function drawnRaces(roster: readonly Character[]): readonly RaceGroup[] {
+  const byRace = new Map<string, Character[]>();
+  for (const c of roster) {
+    if (!c.race) continue;
+    const list = byRace.get(c.race);
+    if (list) list.push(c);
+    else byRace.set(c.race, [c]);
+  }
+
+  const groups = [...byRace].map(([race, fichas]): RaceGroup => {
+    const { icon, label } = splitGlyph(race);
+    return {
+      race,
+      icon,
+      label,
+      heroes: fichas.filter((c) => c.role === "heroe"),
+      units: fichas
+        .filter((c) => c.role === "unidad")
+        .sort((a, b) => (a.tier ?? 0) - (b.tier ?? 0)),
+    };
+  });
+
+  // Hacen falta DOS: la escena enfrenta un bando contra otro, y con una sola
+  // raza no hay enemigo que pintar. Mejor reventar aquí que dibujar media
+  // pantalla sin decir por qué (ARCHITECTURE.md §7: fallar alto).
+  if (groups.length < 2) {
     throw new Error(
-      "PieceModule: faltan 👤 Humanos o ⛏️ Enanos en DECK_RACES, que son las dos razas dibujadas.",
+      `PieceModule: el roster trae ${groups.length} raza(s) y esta pantalla necesita dos enfrentadas. Mira PILOT_RACES (lib/v3/races.ts) y la tabla de razas.md.`,
     );
   }
-  return [humanos, enanos];
+  return groups;
 }
 
 /**
@@ -778,7 +837,7 @@ function drawnRaces(): readonly DeckRace[] {
  * bueno del reparto: lo único que separa las de uno de las de otro es la marca de
  * bando, que es exactamente el caso que battle.md §8 tiene pendiente.
  */
-function buildScene(players: number, races: readonly DeckRace[]): readonly SceneFicha[] {
+function buildScene(players: number, races: readonly RaceGroup[]): readonly SceneFicha[] {
   const [allies, foes] = races;
   const out: SceneFicha[] = [];
 
@@ -787,19 +846,15 @@ function buildScene(players: number, races: readonly DeckRace[]): readonly Scene
     const slots = boardSide === "propio" ? ALLY_SLOTS : FOE_SLOTS;
     for (let group = 1; group <= players; group++) {
       const unit = race.units[UNIT_BY_GROUP[(group - 1) % UNIT_BY_GROUP.length]];
-      const roles = [
-        { role: "heroe" as const, subject: race.heroes[(group - 1) % race.heroes.length] },
-        { role: "unidad" as const, subject: unit },
-      ];
-      roles.forEach(({ role, subject }, i) => {
+      const fichas = [race.heroes[(group - 1) % race.heroes.length], unit];
+      fichas.forEach((character, i) => {
         const slot = slots[(group - 1) * 2 + i];
         out.push({
-          id: `${boardSide === "propio" ? "j" : "e"}${group}-${role}`,
+          id: `${boardSide === "propio" ? "j" : "e"}${group}-${character.role}`,
           side: boardSide === "enemigo" ? "enemigo" : (`j${group}` as PieceSideId),
           boardSide,
-          role,
           hex: Hex.offsetToAxial(slot),
-          subject,
+          character,
           lifePct: LIFE_PATTERN[out.length % LIFE_PATTERN.length],
         });
       });
@@ -809,66 +864,17 @@ function buildScene(players: number, races: readonly DeckRace[]): readonly Scene
 }
 
 /** Las doce fichas de una raza en su orden de progresión, más sus héroes. */
-function tierGroupOf(
-  race: DeckRace,
-  side: PieceSideId,
-  states: readonly Effect[],
-): TierGroup {
-  const units = [...race.units].sort((a, b) => (a.tier ?? 0) - (b.tier ?? 0));
-  const cells = [...units, ...race.heroes].map((subject, i) => ({
-    view: toView(subject, {
-      id: `tira-${subject.id}`,
+function tierGroupOf(race: RaceGroup, side: PieceSideId, states: readonly Effect[]): TierGroup {
+  const cells = [...race.units, ...race.heroes].map((character, i) => ({
+    view: characterToPieceView(character, {
+      id: `tira-${character.id}`,
       side,
-      role: subject.kind === "heroe" ? ("heroe" as const) : ("unidad" as const),
       lifePct: LIFE_PATTERN[i % LIFE_PATTERN.length],
       states,
     }),
-    rank: subject.tier === undefined ? "Héroe" : `Tier ${subject.tier}`,
+    rank: character.tier === undefined ? "Héroe" : `Tier ${character.tier}`,
   }));
-  return { id: race.name, label: `${race.icon} ${race.name}`, cells };
-}
-
-/** El sujeto en la vista que pinta PieceToken. */
-function toView(
-  subject: Subject,
-  meta: {
-    id: string;
-    side: PieceSideId;
-    role: "heroe" | "unidad";
-    lifePct: number;
-    states: readonly Effect[];
-  },
-): PieceView {
-  const vidaMax = subject.skills.vida;
-  return {
-    id: meta.id,
-    name: subject.name,
-    side: meta.side,
-    role: meta.role,
-    tier: subject.tier,
-    icon: subject.icon,
-    art: subject.art,
-    // El tipo de daño lo pone el SUJETO y no el reparto de la escena: aquí se
-    // juzga la ficha de una unidad concreta, y su tipo de daño es un dato de
-    // razas.md. El reparto de tipos por bando es cosa del §3, no de esta pieza.
-    damage:
-      subject.damage === "cuerpo"
-        ? "cuerpo-a-cuerpo"
-        : subject.damage === "distancia"
-          ? "a-distancia"
-          : "magico",
-    // EL COLOR DE LA FICHA, y viene del sujeto ya resuelto: `races.ts` guarda en
-    // cada uno el raíl de $rarity que le da `rarityForTier()` —o el del héroe, que
-    // no tiene tier—, o sea el mismo con el que se imprime su carta. Aquí no se
-    // vuelve a calcular a propósito: si la carta y la ficha sacaran el color de
-    // dos sitios, podrían dejar de coincidir sin que nadie se enterara.
-    rarity: subject.rarity,
-    vida: Math.max(1, Math.round((vidaMax * meta.lifePct) / 100)),
-    vidaMax,
-    ataque: subject.skills.ataque,
-    movimiento: subject.skills.movimiento,
-    states: meta.states.map((e) => ({ id: e.id, icon: e.icon })),
-  };
+  return { id: race.race, label: `${race.icon} ${race.label}`, cells };
 }
 
 function sameDials(a: PieceDials, b: PieceDials): boolean {
