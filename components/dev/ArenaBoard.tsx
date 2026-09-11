@@ -66,6 +66,7 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import * as Hex from "@/lib/v3/hex";
+import { ARENA_TILT } from "@/lib/v3/patch";
 import type { HexCoord, HexEdge, HexKey } from "@/lib/v3/hex";
 import type { Arena, Side } from "@/lib/v3/arena";
 import { GAME_HEX } from "@/lib/v3/piece";
@@ -73,22 +74,12 @@ import { useBoardView } from "@/components/game/board/use-board-view";
 import Button from "@/components/ui/Button";
 
 /**
- * La compresión vertical de la arena: cuánto se aplasta el eje Y para que el
- * campo se vea desde delante en vez de a plomo.
- *
- * 0,67 y no el 0,85 del tablero de exploración, y el número está MEDIDO, no
- * elegido a ojo: se superpuso esta misma geometría puntiaguda-arriba sobre
- * `public/concepts/oldenEra/3.png` a varias compresiones, y a 0,67 las
- * columnas y las filas caen encima de las de la referencia. A 0,85 los
- * hexágonos salen demasiado altos y las filas se separan a la vista.
- *
- * No cuadra exacto y no puede: la referencia usa una cámara en PERSPECTIVA —los
- * hexágonos de delante son mayores que los del fondo— y esto es una compresión
- * ortográfica uniforme. A cambio, la geometría no se deforma y un hexágono
- * mide lo mismo en todo el tablero, que es lo que necesita un juego por
- * casillas.
+ * La compresión vertical de la arena, que es la misma del retal de los bancos y
+ * por eso ya no se define aquí: vive en lib/v3/patch.ts desde el 11 de
+ * septiembre de 2026, con su medida y su porqué. Se re-exporta para no cambiar
+ * de puerta a quien ya la pedía a este componente.
  */
-export const ARENA_TILT = 0.67;
+export { ARENA_TILT } from "@/lib/v3/patch";
 
 /** Aire alrededor del tablero, en píxeles del viewBox. */
 const PADDING = 10;

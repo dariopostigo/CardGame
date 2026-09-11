@@ -1,30 +1,17 @@
 // =========================================================================
-// Soltar una carta en un tablero de hexágonos — el gesto, escrito UNA vez
+// DESPLEGAR — la carta vuela, se convierte en ficha y cae
 //
-// Aquí vive lo que pasa entre que sueltas una carta y la ficha está puesta: el
-// vuelo, el cruce de carta a ficha en el aire, la caída con su curva, el polvo,
-// el temblor y el aplastado. Y vive aquí, y no dentro del componente que lo
-// enseña, porque LO PIDEN DOS TABLEROS Y TIENEN QUE HACER LO MISMO. Dario, el
-// 10 de septiembre de 2026, después de arrastrar una carta en los dos retales:
-// «tenemos dos minitableros en Baraja y Oteo y en Animaciones, los dos —menos
-// en apariencia— actúan diferente cuando se arrastra una carta a su interior.
-// Quiero que los dos minitableros tengan ABSOLUTAMENTE el mismo
-// comportamiento».
+// El gesto que Dario mandó escribir UNA vez, el 10 de septiembre de 2026,
+// después de arrastrar una carta en los dos retales: «tenemos dos minitableros
+// en Baraja y Oteo y en Animaciones, los dos —menos en apariencia— actúan
+// diferente cuando se arrastra una carta a su interior. Quiero que los dos
+// minitableros tengan ABSOLUTAMENTE el mismo comportamiento».
 //
 // Y no eran dos copias del mismo código con una cifra distinta: eran DOS
 // RESPUESTAS a la misma pregunta. En /dev/animacion la carta volaba hasta el
 // hexágono, se convertía en ficha a mitad del vuelo, caía, levantaba polvo,
 // hacía temblar la escena un poco y se aplastaba contra el suelo; en /dev/baraja
-// la ficha simplemente aparecía y la carta se iba al Mazo. Con los dos llamando
-// aquí ya no hay dos respuestas que mantener afinadas: hay una, y los diales de
-// lib/v3/anim.ts la mueven en los dos sitios a la vez.
-//
-// LO QUE NO ENTRA, y es lo que permite que sirva a los dos: nada que sepa de
-// React, ni de qué es una ficha, ni de qué hexágonos hay. Se le pasan NODOS y
-// PUNTOS ya medidos. Cada tablero mide con su propia geometría —el banco tiene
-// diales en vivo y la baraja usa los tiempos por defecto— y cada uno dibuja lo
-// que quiera dentro del nodo que vuela: allí un rectángulo con un rótulo y un
-// disco con un glifo, aquí la carta de verdad y la ficha de verdad.
+// la ficha simplemente aparecía y la carta se iba al Mazo.
 //
 // LAS DOS CARAS SON HIJAS DEL MISMO ELEMENTO, y esa es la decisión que sostiene
 // el archivo. El nodo que vuela lleva dentro la cara de CARTA y la cara de
@@ -36,12 +23,16 @@
 // nodo cuando lo llevas cogido y a qué escala se queda al aterrizar.
 // =========================================================================
 
-import { CURVES, cubic, landingDust, rippleDelay, type Timings } from "@/lib/v3/anim";
-import type { DustField } from "./dust";
-
-/** Curvas que no son diales porque no se discuten. */
-export const EASE_FLIGHT: readonly [number, number, number, number] = [0.3, 0.1, 0.2, 1];
-export const EASE_BACK: readonly [number, number, number, number] = [0.3, 0, 0.3, 1];
+import { CURVES, cubic, landingDust, type Timings } from "@/lib/v3/anim";
+import {
+  EASE_BACK,
+  EASE_FLIGHT,
+  run,
+  settleAnimations,
+  shake,
+  transform,
+  type Ground,
+} from "./core";
 
 /**
  * Lo que tarda una carta en volver a su sitio cuando la sueltas donde no vale.
@@ -53,169 +44,6 @@ export const EASE_BACK: readonly [number, number, number, number] = [0.3, 0, 0.3
  */
 const RETURN_MS = 240;
 
-/**
- * El `transform` de una pieza. La ALTURA se resta de la `y` porque en un
- * tablero inclinado subir es ir hacia arriba en pantalla; lo que dice que es
- * altura y no profundidad es la sombra, que se queda en el suelo.
- */
-export function transform(
-  x: number,
-  y: number,
-  height: number,
-  scaleX: number,
-  scaleY = scaleX,
-  rotate = 0,
-): string {
-  const r = rotate ? ` rotate(${rotate.toFixed(2)}deg)` : "";
-  return `translate(${x.toFixed(2)}px, ${(y - height).toFixed(2)}px) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})${r}`;
-}
-
-/**
- * Lanza una animación y espera a que acabe, dejando el estado final escrito.
- *
- * `fill: "forwards"` + `commitStyles()` + `cancel()` es el trío obligatorio: sin
- * el primero la pieza vuelve de un salto a donde estaba; sin el segundo, el
- * salto ocurre al cancelar; y sin el tercero cada animación se queda viva para
- * siempre y a las cien caídas el navegador está manteniendo cien.
- *
- * Además marca la pieza con `data-moving` mientras dura, y solo mientras dura:
- * es lo que le enciende el `will-change`. Dejarlo puesto en el CSS parecía
- * gratis y no lo era —la carta quieta salía emborronada—; el porqué está en
- * styles/components/_animation-lab.scss, junto a la regla.
- */
-export async function run(
-  el: HTMLElement,
-  frames: Keyframe[],
-  duration: number,
-  easing = "linear",
-): Promise<void> {
-  el.dataset.moving = "true";
-  const anim = el.animate(frames, { duration: Math.max(1, duration), easing, fill: "forwards" });
-  try {
-    await anim.finished;
-    if (el.isConnected) {
-      try {
-        anim.commitStyles();
-      } catch {
-        // Firefox lanza si el elemento no está pintado. El fill ya lo sostiene.
-      }
-    }
-    anim.cancel();
-  } catch {
-    // Cancelada porque el componente se ha desmontado a mitad. No es un error.
-  } finally {
-    delete el.dataset.moving;
-  }
-}
-
-/**
- * Cierra las animaciones que corrieron EN PARALELO a la principal (la sombra,
- * el cruce de carta a ficha) con la misma disciplina que `run`.
- *
- * Sin esto se quedan vivas con su `fill: forwards`, y una animación rellenando
- * gana al `style` en línea: se escribiría la posición nueva de la sombra al
- * cambiar el tamaño de la ventana y la sombra no se movería, clavada por una
- * animación que terminó hace diez minutos. Además se acumulan —tres por
- * despliegue— y el navegador las mantiene todas.
- */
-export function settleAnimations(list: readonly Animation[]): void {
-  for (const anim of list) {
-    const target = (anim.effect as KeyframeEffect | null)?.target ?? null;
-    if (target instanceof HTMLElement && target.isConnected) {
-      try {
-        anim.commitStyles();
-      } catch {
-        // El elemento ya no se pinta. No hay nada que fijar.
-      }
-    }
-    anim.cancel();
-  }
-}
-
-export function wait(ms: number): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
-}
-
-/** La sombra en el suelo de algo que llevas cogido: grande y clara. */
-export function moveShadow(
-  shadow: HTMLElement | null,
-  x: number,
-  y: number,
-  height: number,
-): void {
-  if (!shadow) return;
-  shadow.style.transform = `translate(${x}px, ${y}px) scale(${1.4 + height / 120})`;
-  shadow.style.opacity = "0.16";
-}
-
-/** Coger una ficha sin sacarla de su casilla: sube a la altura de un salto. */
-export function pickUp(
-  el: HTMLElement,
-  shadow: HTMLElement | null,
-  at: { x: number; y: number },
-  hop: number,
-): Animation[] {
-  const options: KeyframeAnimationOptions = {
-    duration: 130,
-    easing: cubic(EASE_BACK),
-    fill: "forwards",
-  };
-  const list = [el.animate([{ transform: transform(at.x, at.y, hop, 1.05, 0.97) }], options)];
-  if (shadow) {
-    list.push(
-      shadow.animate(
-        [
-          {
-            transform: `translate(${at.x}px, ${at.y}px) scale(${(1 + hop / 120).toFixed(3)})`,
-            opacity: 0.4,
-          },
-        ],
-        options,
-      ),
-    );
-  }
-  return list;
-}
-
-/** El temblor de cámara: una oscilación que se apaga. */
-export function shake(scene: HTMLElement | null, amount: number, duration: number): void {
-  if (!scene || amount <= 0 || duration <= 0) return;
-  const steps = 7;
-  const frames: Keyframe[] = [];
-  for (let i = 0; i <= steps; i++) {
-    const decay = 1 - i / steps;
-    const m = amount * decay;
-    frames.push({
-      transform:
-        i === steps
-          ? "translate(0px, 0px)"
-          : `translate(${(Math.random() * 2 - 1) * m}px, ${(Math.random() * 2 - 1) * m * 0.6}px)`,
-    });
-  }
-  scene.animate(frames, { duration, easing: "linear" });
-}
-
-/**
- * El estilo de un hexágono del terreno ofrecido, según a cuántos pasos esté.
- *
- * Los pasos son lo que ordena la ONDA: el hexágono de al lado se levanta antes
- * que el de tres más allá, y eso es lo que hace que la oferta parezca salir de
- * donde está el gesto en vez de encenderse toda de golpe. La duración de un
- * levantarse va en el CSS (`--offer-rise-ms`); lo que se escribe aquí es el
- * retraso de CADA UNO, que no se puede poner en una hoja de estilos porque
- * depende del hexágono.
- */
-export function offerCell(
-  steps: number | undefined,
-  t: Timings,
-): { transform: string | undefined; transitionDelay: string } {
-  if (steps === undefined) return { transform: undefined, transitionDelay: "0ms" };
-  return {
-    transform: `translateY(${-t.offerRise}px)`,
-    transitionDelay: `${rippleDelay(steps, t)}ms`,
-  };
-}
-
 /** Las dos caras de lo que vuela, y su sombra en el suelo. */
 export type Flyer = {
   /** El nodo que viaja. Lo único que se traslada. */
@@ -226,15 +54,6 @@ export type Flyer = {
   readonly token: HTMLElement | null;
   /** Su mancha en el suelo, si el tablero tiene capa de sombras. */
   readonly shadow: HTMLElement | null;
-};
-
-/** El tablero donde cae: lo justo para el polvo y el temblor. */
-export type Ground = {
-  /** El nodo que tiembla al aterrizar. */
-  readonly scene: HTMLElement | null;
-  readonly dust: DustField | null;
-  /** El radio de la casilla. De él cuelga de dónde sale el polvo. */
-  readonly size: number;
 };
 
 /**
@@ -359,19 +178,38 @@ export async function flyAndLand(
   ground.dust?.emit(target.x, target.y + ground.size * 0.42, landingDust(t));
   shake(ground.scene, t.shake * 0.5, t.shakeTime * 0.6);
 
+  // EL APLASTADO EMPIEZA DE PIE, y ese primer fotograma es todo el arreglo del
+  // 11 de septiembre de 2026. Antes esta lista empezaba YA achatada: el primer
+  // fotograma clave iba a 118 % de ancho por 82 % de alto, así que la pieza
+  // llegaba al suelo y al fotograma siguiente estaba deformada del todo, sin
+  // nada por medio. Lo vio Dario: «al llegar la ficha a tocar el tablero hace
+  // como un parpadeo, un flash, y ya está al 100 %, no queda natural». Medido en
+  // Chrome, la escala saltaba de 0,400 a 0,473 entre dos fotogramas seguidos.
+  //
+  // Achatarse es un MOVIMIENTO, no un cambio de dibujo: lo que golpea se comprime
+  // contra el suelo, y esa compresión ocupa tiempo aunque sea poco. Ahora la
+  // lista sale de la postura en la que la dejó la caída —la misma matriz con la
+  // que acaba, así que las dos animaciones empalman sin escalón— y llega al
+  // achatamiento máximo en el 28 % del tiempo: con los 110 ms de partida son
+  // 31 ms, o sea dos fotogramas. Sigue siendo un golpe seco, pero es un golpe.
+  //
+  // Lo que NO cambia es cuánto aplasta ni cuánto dura: `squashAmount` sigue
+  // llegando entero a su fotograma y el dial mide lo mismo que medía.
   if (t.squash > 0) {
     const s = t.squashAmount;
     const r = carry.rested;
     await run(
       el,
       [
+        { transform: transform(target.x, target.y, 0, r, r), easing: "ease-out" },
         {
           transform: transform(target.x, target.y, 0, r * (1 + s), r * (1 - s)),
-          easing: "ease-out",
+          offset: 0.28,
+          easing: "ease-in-out",
         },
         {
           transform: transform(target.x, target.y, 0, r * (1 - s * 0.35), r * (1 + s * 0.35)),
-          offset: 0.55,
+          offset: 0.64,
           easing: "ease-in-out",
         },
         { transform: transform(target.x, target.y, 0, r, r) },
@@ -415,5 +253,25 @@ export async function returnHome(
     RETURN_MS,
     cubic(EASE_BACK),
   );
+  settleAnimations(parallel);
+}
+
+/** Posar de nuevo lo que se cogió sin llegar a moverlo de casilla. */
+export async function putDown(
+  flyer: Pick<Flyer, "el" | "shadow">,
+  at: { x: number; y: number },
+  scale = 1,
+): Promise<void> {
+  const { el, shadow } = flyer;
+  const parallel = shadow
+    ? [
+        shadow.animate([{ transform: `translate(${at.x}px, ${at.y}px) scale(1)`, opacity: 0.55 }], {
+          duration: 170,
+          easing: "ease-out",
+          fill: "forwards",
+        }),
+      ]
+    : [];
+  await run(el, [{ transform: transform(at.x, at.y, 0, scale) }], 170, "ease-out");
   settleAnimations(parallel);
 }

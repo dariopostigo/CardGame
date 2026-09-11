@@ -1,0 +1,246 @@
+@use "../abstracts" as *;
+
+// =========================================================================
+// EL RETAL — el suelo que comparten /dev/animacion y /dev/baraja
+//
+// Ver components/dev/HexPatch.tsx y lib/v3/patch.ts. Aquí está lo que las dos
+// pantallas pintan IGUAL: la lámina de suelo, el terreno que se ofrece, la
+// rejilla, el lienzo del polvo, las manchas de sombra y el número que sale
+// flotando de un golpe.
+//
+// POR QUÉ EXISTE: eran unas 145 líneas casi idénticas repartidas entre
+// _animation-lab.scss y _baraja-lab.scss, cada una con su prefijo de clase
+// (`anim__` y `baraja-lab__`), y su única diferencia real era el z-index.
+// Arreglar el color del suelo eran dos sitios y acordarse de los dos.
+//
+// COMPARTE PALETA CON LA ARENA (_arena.scss) y no la hereda: es la misma mesa,
+// así que los tokens tienen que ser los mismos, pero la arena tiene cámara,
+// bandas y alcances y esto no. Un parcial común con la arena obligaría a
+// parametrizar por lo que difieren, que es la estructura entera.
+//
+// AQUÍ NO HAY NI UNA `transition` DE LAS SECUENCIAS, y es a propósito: todo el
+// movimiento lo lleva la Web Animations API desde components/dev/motion/,
+// porque los tiempos son diales que se mueven en vivo con sliders y una regla de
+// CSS no se puede mover en vivo (el porqué completo, en lib/v3/anim.ts).
+//
+// LA ÚNICA EXCEPCIÓN es el TERRENO QUE SE OFRECE, y tiene su motivo: no es una
+// secuencia, es un estado —«estos hexágonos te aceptan»— que se enciende y se
+// apaga con el gesto. Eso en CSS es una transición, y hacerlo con la Web
+// Animations API obligaría a lanzar y cancelar quince animaciones cada vez que
+// se coge una ficha. La duración se la pasa el componente en `--offer-rise-ms`
+// (de lib/v3/anim.ts) y el retraso de cada hexágono va en su propio estilo, así
+// que sigue sin haber un número de tiempo escrito aquí.
+//
+// EL APILADO NO SE DECIDE AQUÍ. Cada pantalla lo pone en su parcial, porque lo
+// que va encima del suelo no es lo mismo en las dos: el banco tiene fichas de
+// DOM y la baraja tiene un Mazo, un velo y cartas. Lo único que este archivo
+// asegura es que las capas del suelo estén en el orden correcto ENTRE SÍ —la
+// oferta va entre el suelo y la rejilla, porque es el terreno encendiéndose y no
+// una chapa por encima—, y eso lo garantiza el orden del marcado.
+// =========================================================================
+
+// --- Suelo y rejilla -------------------------------------------------------
+
+.patch__ground {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  // La sombra sale de la silueta del retal entero y no hexágono a hexágono: si
+  // cada uno tuviera la suya se sombrearían entre ellos, estando todos a la
+  // misma altura. Y un filtro se rasteriza una vez, no quince.
+  filter: drop-shadow(0 6px 7px $board-shadow);
+  pointer-events: none;
+}
+
+.patch__soil-far {
+  stop-color: $arena-ground-far;
+}
+
+.patch__soil-mid {
+  stop-color: $arena-ground-mid;
+}
+
+.patch__soil-near {
+  stop-color: $arena-ground-near;
+}
+
+.patch__soil polygon {
+  // Un filete del mismo tono cierra las juntas: los polígonos se tocan exacto,
+  // pero el suavizado de bordes deja una hebra de un píxel por la que se vería
+  // la mesa.
+  stroke: $arena-ground-far;
+  stroke-width: 1;
+}
+
+.patch__mesh line {
+  stroke: $arena-grid;
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: 0.28;
+}
+
+// --- El terreno que se ofrece ----------------------------------------------
+
+// Verde agua, que es el color que la arena ya usa para lo que alcanza una ficha
+// al moverse (_colors.scss, $arena-move). No se le inventa uno propio ni se
+// reutiliza el oro del alcance de ataque: en el mismo turno una ficha mueve Y
+// ataca, así que las dos cosas se van a enseñar a la vez y tienen que poder
+// distinguirse. Que el despliegue de una carta use este mismo verde es
+// deliberado — la pregunta es la misma, «aquí puedes soltar esto», aunque
+// detrás haya dos reglas distintas.
+//
+// SE LEVANTA EN ONDA: cada hexágono sube unos píxeles y el retraso de cada uno
+// lo escribe el componente según a cuántos PASOS esté del origen (`offerCell`,
+// motion/offer.ts). Encenderlos todos a la vez y encenderlos por orden no
+// cuestan lo mismo de leer: en onda se ve que la oferta SALE de donde viene el
+// gesto.
+.patch__offer polygon {
+  fill: rgba($arena-move, 0.16);
+  stroke: rgba($arena-move, 0.5);
+  stroke-width: 1.5;
+  opacity: 0;
+  pointer-events: none;
+  // El levantarse se dibuja desde el CENTRO del hexágono y no desde la esquina
+  // del lienzo: sin esto, el `translateY` iría bien pero cualquier escalado
+  // futuro tiraría el polígono al otro lado del tablero.
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--offer-rise-ms) ease-out,
+    transform var(--offer-rise-ms) ease-out;
+
+  &[data-offered="true"] {
+    opacity: 1;
+  }
+
+  // El candidato: al que va a caer si sueltas ahora. Sube de golpe y sin esperar
+  // a la onda —es respuesta al puntero, no parte de la oferta— y por eso se le
+  // quita el retraso con `!important`: el retraso escalonado lo escribe el
+  // componente en el estilo en línea, y aquí hay que ganarle.
+  &[data-candidate="true"] {
+    fill: rgba($arena-move, 0.34);
+    stroke: $arena-origin;
+    stroke-width: 2.5;
+    transition-delay: 0ms !important;
+  }
+}
+
+// --- El polvo y las sombras de suelo ---------------------------------------
+
+.patch__dust {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+// Todas las manchas juntas y POR DEBAJO de cualquier ficha: si cada una fuera al
+// lado de la suya, una ficha alta proyectaría su sombra encima de la ficha de al
+// lado.
+.patch__shadows {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+// El punto que se mueve. No se ve: mide 0×0 y solo lleva el `translate` que le
+// escribe el componente. La mancha va dentro y se centra sobre él con su propio
+// -50 %, así el tamaño puede depender del hexágono sin que ninguna de las dos
+// transformaciones tenga que saber de la otra.
+.patch__shadow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  // Aquí sí va en fijo, y no es una incoherencia con la ficha: lo que emborrona
+  // una capa permanente es el detalle fino, y esto es un degradado sin un solo
+  // borde duro. Remuestrear una mancha difusa no se ve.
+  will-change: transform, opacity;
+}
+
+// La mancha que sí se ve. Un degradado radial y no un color plano con `blur`: el
+// desenfoque es un filtro y se recalcularía en cada fotograma de la caída; el
+// degradado se compone en la GPU y sale gratis.
+.patch__blot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba($board-shadow, 0.62) 0%,
+    rgba($board-shadow, 0.34) 45%,
+    rgba($board-shadow, 0) 72%
+  );
+}
+
+// --- El número del golpe ----------------------------------------------------
+
+// Marcador de posición hasta que exista el motor de combate: la cifra la pone
+// quien llama y hoy es aleatoria a propósito, para que no se lea como un dato.
+.patch__damage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: -0.7rem 0 0 -1.2rem;
+  width: 2.4rem;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: $arena-damage;
+  // El número cae sobre suelo, ficha o polvo, así que se apoya en su propio
+  // contorno y no en el color de debajo.
+  paint-order: stroke;
+  -webkit-text-stroke: 3px $arena-label-halo;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+// El crítico: más grande y hacia el blanco. El tamaño hace aquí más que el
+// color — un número que ocupa el doble se ve con el rabillo del ojo, y un
+// crítico tiene que verse aunque estés mirando otra esquina del tablero.
+.patch__damage--critico {
+  width: 4rem;
+  margin-left: -2rem;
+  font-size: 1.9rem;
+  color: $arena-crit;
+  -webkit-text-stroke: 4px $arena-label-halo;
+}
+
+// El fallo: la única cosa de este tablero que se pinta SIN halo. No es descuido.
+// El halo existe para que algo se lea sobre cualquier fondo, y un fallo es justo
+// lo que no tiene que reclamar la vista: se lee si lo miras y se pierde si no.
+// Más pequeño que el daño, en versalitas y apagado.
+.patch__damage--fallo {
+  width: 4.5rem;
+  margin-left: -2.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $arena-miss;
+  -webkit-text-stroke: 0;
+}
+
+// Nada se mueve para quien ha pedido que nada se mueva. El componente ya aplana
+// los tiempos (anim.ts, `reduced`), y esto es el cinturón.
+@include reduced-motion {
+  .patch__shadow,
+  .patch__damage {
+    transition: none !important;
+  }
+
+  // La oferta NO se apaga, y es la única de la lista que se queda: es
+  // información sobre lo que se puede hacer, no un adorno. Lo que se le quita es
+  // el relieve y la onda —el componente ya pone `offerRise` y `offerRipple` a 0
+  // (anim.ts, `reduced`)— y lo que queda es el color, que dice lo mismo sin
+  // mover nada.
+  .patch__offer polygon {
+    transition-property: opacity;
+  }
+}

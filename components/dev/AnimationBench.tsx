@@ -5,13 +5,28 @@
 //
 // ESTO NO ES EL TABLERO, y la distinción importa: ArenaBoard es la arena de
 // verdad —14×12, con cámara arrastrable, bandas, alcances y una lámina de
-// suelo— y este banco son quince hexágonos quietos cuyo único trabajo es que
-// se pueda mirar una caída de cerca y repetirla cien veces. Comparte la
-// GEOMETRÍA (lib/v3/hex.ts) y la misma compresión de cámara medida, pero no
-// comparte el componente a propósito: meter esto en ArenaBoard obligaría a
-// darle un canvas, una capa de fichas en DOM y un modo "sin cámara", y todo eso
-// para poder ver un aplastado de 110 ms. Cuando los números estén decididos, lo
-// que se muda a ArenaBoard son las CIFRAS (lib/v3/anim.ts), no este archivo.
+// suelo— y este banco son quince hexágonos quietos cuyo único trabajo es que se
+// pueda mirar una caída de cerca y repetirla cien veces. Cuando los números
+// estén decididos, lo que se muda a ArenaBoard son las CIFRAS (lib/v3/anim.ts),
+// no este archivo.
+//
+// LO QUE YA NO ESTÁ AQUÍ *(11 de septiembre de 2026)*, y es más de la mitad de
+// lo que había:
+//
+//   · LA GEOMETRÍA del retal —cuántos hexágonos, de qué tamaño salen, dónde cae
+//     cada centro y cuál está bajo el puntero— es lib/v3/patch.ts. Era la misma
+//     fórmula escrita otra vez en BarajaModule.tsx, con dos márgenes distintos.
+//   · EL SUELO que se pinta —lámina, oferta, rejilla, polvo y manchas— es
+//     HexPatch.tsx y su parcial _hex-patch.scss. Lo mismo: dos copias con dos
+//     prefijos de clase.
+//   · LAS SECUENCIAS —el despliegue, el paso, el aliento, la embestida con sus
+//     tres desenlaces y la baja— son components/dev/motion/, una por archivo.
+//     Vivían aquí, unas 560 líneas, y mientras vivieran aquí no se podía mirar
+//     una sola sin montar la pantalla entera: es lo que impedía que existiera un
+//     banco por animación (`ANIMATIONS` en lib/v3/anim.ts).
+//
+// Lo que QUEDA es lo que solo sabe esta pantalla: qué fichas hay, quién puede
+// coger qué, adónde llega cada una y qué se escribe debajo de cada gesto.
 //
 // LAS FICHAS SON DOM Y NO SVG, que es la decisión que manda en todo lo demás.
 // Motivos, por orden:
@@ -35,55 +50,53 @@
 // `box-shadow`: tiene que poder escalar y opacarse por su cuenta.
 //
 // Ninguna regla de juego vive aquí (ARCHITECTURE.md §6). Los tiempos llegan por
-// props desde lib/v3/anim.ts, y lo único que este componente decide es el
-// `transform` de cada fotograma.
+// props desde lib/v3/anim.ts, y lo único que este componente decide es a quién
+// le toca moverse.
 // =========================================================================
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as Hex from "@/lib/v3/hex";
 import type { HexCoord, HexKey } from "@/lib/v3/hex";
-import {
-  CURVES,
-  OFFER_RISE_MS,
-  attackPhases,
-  critDust,
-  cubic,
-  deathDust,
-  hitDust,
-  idlePhase,
-  stepDust,
-  type Timings,
-} from "@/lib/v3/anim";
+import { CURVES, OFFER_RISE_MS, cubic, type Timings } from "@/lib/v3/anim";
 import { resolveAttack, type AttackResult } from "@/lib/v3/combat";
 import { DAMAGE_TYPES, type DamageTypeId } from "@/lib/v3/damage";
 import { buildArena, type Side } from "@/lib/v3/arena";
 import { moveProblem, pathTo, reachable } from "@/lib/v3/movement";
 import { MOVEMENT_BAND } from "@/lib/v3/tempo";
-import { DustField } from "./dust";
-// El gesto de soltar una carta en un hexágono NO se escribe aquí: lo comparten
-// este banco y /dev/baraja, y tienen que hacer exactamente lo mismo (la
-// cabecera de deploy-motion.ts cuenta por qué y de qué fecha viene).
+import { PATCH, handEntry, cellAt, type PatchLayout } from "@/lib/v3/patch";
+// El SUELO no se pinta aquí: la lámina, la oferta, la rejilla, el polvo y las
+// manchas los comparte con /dev/baraja desde el 11 de septiembre de 2026.
+import {
+  PatchDust,
+  PatchGround,
+  PatchShadow,
+  useDustField,
+  usePatchLayout,
+} from "./HexPatch";
+// NI EL MOVIMIENTO. Cada secuencia es una función de components/dev/motion/, y
+// las dos pantallas llaman a las mismas: es lo que Dario pidió el 10 de
+// septiembre —«los dos minitableros, ABSOLUTAMENTE el mismo comportamiento»— y
+// lo que el 11 se partió en piezas para que se pudiera mirar una sola.
 import {
   EASE_BACK,
+  IdleChorus,
+  attackMotion,
   flyAndLand,
+  idleKeyOf,
   moveShadow,
-  offerCell,
   pickUp,
+  putDown,
   returnHome,
-  run,
   settleAnimations,
-  shake,
+  slump,
+  tokenRest,
   transform,
+  vanish,
+  walkPath,
   wait,
-} from "./deploy-motion";
+  type Ground,
+} from "./motion";
 import { buttonClass } from "@/components/ui/Button";
-
-/** La misma compresión medida en ArenaBoard sobre la referencia de arte. */
-const TILT = 0.67;
-
-/** El retal de tablero. Cinco por tres es lo justo para que quepa una embestida. */
-const COLS = 5;
-const ROWS = 3;
 
 /**
  * El retal, pero como ARENA de verdad.
@@ -91,35 +104,30 @@ const ROWS = 3;
  * Existe para no reimplementar aquí ni una sola regla de movimiento: quién llega
  * a dónde lo contesta lib/v3/movement.ts (`reachable`, que rodea los cuerpos
  * porque no se atraviesa a nadie, §5) y por qué no se puede lo contesta
- * `moveProblem`. `buildArena` acepta estas medidas —dos columnas de banda caben
- * en cinco y las tres filas dan sitio para las cinco fichas del §2—, así que el
- * banco puede pedirle las cuentas al motor en vez de inventárselas con un
- * `distance <= n` que ignoraría a quien haya en medio.
- */
-const ARENA_PATCH = buildArena({ cols: COLS, rows: ROWS, bandDepth: 2 });
-
-/**
- * De dónde sale la onda cuando lo que se ofrece es un DESPLIEGUE.
+ * `moveProblem`. `buildArena` acepta las medidas del retal —dos columnas de
+ * banda caben en cinco y las tres filas dan sitio para las cinco fichas del §2—,
+ * así que el banco puede pedirle las cuentas al motor en vez de inventárselas
+ * con un `distance <= n` que ignoraría a quien haya en medio.
  *
- * Al mover una ficha la onda nace de ella y no hay nada que elegir, pero una
- * carta no está en el tablero: viene de la mano, que está abajo y en el centro.
- * Así el terreno se abre hacia el fondo, en la misma dirección en la que va el
- * gesto, en vez de encenderse desde una esquina cualquiera.
+ * La GEOMETRÍA del retal (cuántos hexágonos, de qué tamaño salen y dónde cae
+ * cada centro) no está aquí desde el 11 de septiembre de 2026: es lib/v3/patch.ts
+ * y la comparte con /dev/baraja, donde estaba escrita por segunda vez.
  */
-const HAND_ENTRY = Hex.offsetToAxial({ col: Math.floor(COLS / 2), row: ROWS - 1 });
+const ARENA_PATCH = buildArena({ cols: PATCH.cols, rows: PATCH.rows, bandDepth: 2 });
 
-/** Lo que tarda una ficha en acuclillarse tras andar, o en volver a levantarse. */
-const SPENT_MS = 240;
-
-const SQRT3 = Math.sqrt(3);
+/** De dónde sale la onda cuando lo que se ofrece es un DESPLIEGUE: de la mano. */
+const HAND_ENTRY = handEntry(PATCH);
 
 /**
- * Qué parte del alto del escenario ocupa el suelo, y cuánto se le deja a la
- * mano por debajo. La mano necesita el alto de una carta ENTERA con su aire: si
- * se le da menos, las cartas se salen por abajo y el escenario las recorta.
+ * Cómo se encaja el retal en este escenario.
+ *
+ * `groundShare` es qué parte del alto ocupa el suelo, y lo que queda es para la
+ * mano: necesita el alto de una carta ENTERA con su aire, o las cartas se salen
+ * por abajo y el escenario las recorta.
  */
-const GROUND_SHARE = 0.55;
-const TOP_PAD = 18;
+const FIT = { gutter: 48, groundShare: 0.55, topPad: 18, minSize: 16 } as const;
+
+/** A qué altura del borde de abajo se abre el abanico. */
 const HAND_BOTTOM = 100;
 
 /**
@@ -128,9 +136,6 @@ const HAND_BOTTOM = 100;
  * que sonará la cola de verdad, o mediría otra cosa.
  */
 const QUEUE_GAP = 60;
-
-/** La curva de la embestida. Las del vuelo y la vuelta viven en deploy-motion. */
-const EASE_LUNGE: readonly [number, number, number, number] = [0.4, 0, 0.2, 1];
 
 type Piece = {
   readonly id: string;
@@ -160,17 +165,6 @@ type Piece = {
 /** El glifo que deja un crítico. 💫 Aturdimiento, del catálogo de control. */
 const CRIT_STATE = "💫";
 
-type Box = { readonly w: number; readonly h: number };
-
-type Layout = {
-  readonly size: number;
-  readonly cells: readonly { hex: HexCoord; key: HexKey; x: number; y: number; points: string }[];
-  readonly centers: ReadonlyMap<HexKey, { x: number; y: number }>;
-  readonly mesh: readonly { x1: number; y1: number; x2: number; y2: number }[];
-  /** El centro de la mano. Las cartas se abren en abanico alrededor. */
-  readonly hand: { x: number; y: number };
-};
-
 /**
  * El sitio de una carta en la mano: abanico, no montón.
  *
@@ -179,13 +173,14 @@ type Layout = {
  * está abierta, y ese gesto —el abanico ligeramente girado— es la mitad de lo
  * que hace que un juego de cartas parezca un juego de cartas.
  */
-function handSlot(l: Layout, index: number, count: number, cardScale: number) {
+function handSlot(l: PatchLayout, index: number, count: number, cardScale: number) {
   const step = Math.min(l.size * 1.9 * cardScale * 0.5, (l.size * 5) / Math.max(count, 1));
   const offset = (index - (count - 1) / 2) * step;
+  const center = { x: l.box.w / 2, y: l.box.h - HAND_BOTTOM };
   return {
-    x: l.hand.x + offset,
+    x: center.x + offset,
     // Las de los lados caen un poco: el abanico es un arco, no una fila.
-    y: l.hand.y + Math.abs(offset) * 0.06,
+    y: center.y + Math.abs(offset) * 0.06,
     rotate: count > 1 ? offset * 0.055 : 0,
   };
 }
@@ -216,7 +211,7 @@ function initialPieces(dummy: HexCoord | null): Piece[] {
 }
 
 /** Dónde se planta el muñeco: a la derecha, en la fila de en medio. */
-const DUMMY_HEX = Hex.offsetToAxial({ col: COLS - 1, row: 1 });
+const DUMMY_HEX = Hex.offsetToAxial({ col: PATCH.cols - 1, row: 1 });
 
 type Props = {
   timings: Timings;
@@ -235,10 +230,8 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   const stageRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const dustRef = useRef<DustField | null>(null);
   const elements = useRef(new Map<string, HTMLDivElement>());
 
-  const [box, setBox] = useState<Box>({ w: 0, h: 0 });
   const [pieces, setPieces] = useState<readonly Piece[]>(() => initialPieces(DUMMY_HEX));
   const [busy, setBusy] = useState(false);
 
@@ -257,15 +250,22 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   const cellNodes = useRef(new Map<HexKey, SVGPolygonElement>());
   const candidate = useRef<HexKey | null>(null);
 
-  /** El aliento de cada ficha: su animación infinita, para poder pararla. */
-  const idles = useRef(new Map<string, Animation[]>());
+  /** El coro: quién respira ahora mismo. La secuencia está en motion/idle.ts. */
+  const idles = useRef(new IdleChorus());
 
-  // Los tiempos se leen desde dentro de secuencias asíncronas que empezaron
-  // hace medio segundo: con la prop a secas, mover un slider a mitad de una
-  // caída usaría el valor viejo en el tramo que falta. La referencia siempre
-  // apunta al último.
+  // Los tiempos y la geometría se leen desde dentro de secuencias asíncronas que
+  // empezaron hace medio segundo: con la prop a secas, mover un slider a mitad
+  // de una caída usaría el valor viejo en el tramo que falta. Las referencias
+  // apuntan siempre al último.
+  //
+  // Se sincronizan en un EFECTO y no en el cuerpo del componente —escribir una
+  // `ref` durante el render es de las cosas que React pide no hacer— y llega de
+  // sobra: un efecto corre tras el pintado, o sea mucho antes de que nadie pueda
+  // pulsar ni arrastrar nada. El efecto va declarado aquí arriba a propósito,
+  // porque los efectos corren en orden de declaración y `settle()` lee la
+  // geometría desde el suyo.
   const t = useRef(timings);
-  t.current = timings;
+  const layoutRef = useRef<PatchLayout | null>(null);
 
   // `odds` NO lleva referencia, al contrario que los tiempos, y la diferencia
   // es intencionada: un tiempo movido a mitad de una caída tiene que afectar al
@@ -289,84 +289,31 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     };
   }, []);
 
-  // --- Medida y geometría ---------------------------------------------------
+  // --- Medida, geometría y polvo --------------------------------------------
+  //
+  // Las tres, en tres líneas. La cuenta de encajar quince hexágonos en la caja
+  // medida está en lib/v3/patch.ts (`fitPatch`) desde el 11 de septiembre de
+  // 2026, donde se puede comprobar sin pintar un píxel; estaba escrita aquí y
+  // otra vez en BarajaModule.tsx, con dos márgenes distintos.
 
-  useLayoutEffect(() => {
-    const el = stageRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      setBox({ w: Math.round(width), h: Math.round(height) });
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const layout = useMemo<Layout | null>(() => {
-    if (box.w < 80 || box.h < 80) return null;
-
-    const hexes: HexCoord[] = [];
-    for (let row = 0; row < ROWS; row++) {
-      for (let col = 0; col < COLS; col++) hexes.push(Hex.offsetToAxial({ col, row }));
-    }
-
-    // El tamaño sale de encajar el retal en la caja, no de un número elegido:
-    // el banco tiene que verse igual de cerca en una pantalla ancha que en una
-    // estrecha. Se mide con radio 1 y luego se escala.
-    const unit = hexes.map((h) => Hex.toPixel(h, 1, TILT));
-    const minX = Math.min(...unit.map((p) => p.x));
-    const maxX = Math.max(...unit.map((p) => p.x));
-    const minY = Math.min(...unit.map((p) => p.y));
-    const maxY = Math.max(...unit.map((p) => p.y));
-    const spanX = maxX - minX + SQRT3;
-    const spanY = maxY - minY + 2 * TILT;
-    const size = Math.max(
-      16,
-      Math.min((box.w - 48) / spanX, (box.h * GROUND_SHARE - TOP_PAD) / spanY),
-    );
-
-    const offsetX = (box.w - spanX * size) / 2 + (SQRT3 / 2) * size - minX * size;
-    const offsetY = TOP_PAD + TILT * size - minY * size;
-
-    const cells = hexes.map((hex, i) => {
-      const x = unit[i].x * size + offsetX;
-      const y = unit[i].y * size + offsetY;
-      return { hex, key: Hex.key(hex), x, y, points: Hex.polygonPoints(x, y, size, TILT) };
-    });
-
-    const centers = new Map(cells.map((c) => [c.key, { x: c.x, y: c.y }]));
-
-    // Cada arista una sola vez: si no, el lado que comparten dos hexágonos se
-    // pintaría dos veces y saldría al doble de opacidad (misma razón que en
-    // ArenaBoard).
-    const mesh = Hex.uniqueEdges(hexes).map((edge) => {
-      const { x, y } = centers.get(Hex.key(edge.hex)) ?? { x: 0, y: 0 };
-      const [a, b] = Hex.edgeEndpoints(x, y, size, edge.dir, TILT);
-      return { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
-    });
-
-    return { size, cells, centers, mesh, hand: { x: box.w / 2, y: box.h - HAND_BOTTOM } };
-  }, [box]);
-
-  const layoutRef = useRef<Layout | null>(null);
-  layoutRef.current = layout;
-
-  // --- El polvo -------------------------------------------------------------
+  const { box, layout } = usePatchLayout(stageRef, PATCH, FIT);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const field = new DustField(canvas);
-    dustRef.current = field;
-    return () => {
-      field.destroy();
-      dustRef.current = null;
-    };
-  }, []);
+    layoutRef.current = layout;
+    t.current = timings;
+  }, [layout, timings]);
 
-  useEffect(() => {
-    if (layout && dustRef.current) dustRef.current.resize(box.w, box.h);
-  }, [layout, box]);
+  const dustRef = useDustField(canvasRef, box);
+
+  /** Lo que las secuencias necesitan saber del tablero: polvo, temblor y radio. */
+  const groundOf = useCallback(
+    (l: PatchLayout): Ground => ({
+      scene: sceneRef.current,
+      dust: dustRef.current,
+      size: l.size,
+    }),
+    [dustRef],
+  );
 
   // --- Dónde va cada ficha --------------------------------------------------
 
@@ -401,7 +348,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
         // estilo en línea. Mientras el aliento corre, su animación gana a esto y
         // esto es solo el valor de debajo — que es exactamente lo que hace falta
         // para que al pararla la ficha se quede donde tiene que quedarse.
-        const rest = tokenRest(piece.moved, l.size, t.current);
+        const rest = tokenRest(piece.moved, l.size, t.current, TOKEN_BASE);
         token.style.transform = rest.transform;
         token.style.filter = rest.filter;
       }
@@ -480,80 +427,46 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   );
 
   // --- El aliento -----------------------------------------------------------
-
-  /**
-   * La respiración de una ficha parada: sube, se hace un pelo más grande —está
-   * más cerca de la cámara— y baja, para siempre.
-   *
-   * Va sobre el TOKEN y no sobre la ficha, y ese es el detalle que hace que todo
-   * lo demás siga funcionando: el `transform` de `.anim__piece` lo lleva JS en
-   * cada secuencia, así que una animación infinita ahí pelearía con la caída,
-   * con la embestida y con el arrastre. El token no lo toca nadie más, de modo
-   * que el aliento y las secuencias se SUMAN en vez de pisarse: una ficha
-   * respirando embiste igual, y respirando la llevas cogida.
-   *
-   * La sombra respira al revés —se encoge y se aclara cuando la ficha sube—,
-   * porque es lo único que dice que ha subido y no que ha crecido.
-   */
-  const startIdle = useCallback((piece: Piece) => {
-    const l = layoutRef.current;
-    const c = t.current;
-    if (!l || !piece.hex || piece.moved || c.idleRise <= 0) return;
-    if (idles.current.has(piece.id)) return;
-    const el = elements.current.get(piece.id);
-    const token = el?.querySelector<HTMLElement>(".anim__token");
-    if (!el || !token) return;
-
-    const rise = l.size * c.idleRise;
-    const rest = tokenRest(false, l.size, c);
-    const options: KeyframeAnimationOptions = {
-      duration: Math.max(200, c.idleCycle),
-      easing: "ease-in-out",
-      iterations: Infinity,
-      // Negativo: la animación empieza YA EMPEZADA, en el punto de su ciclo que
-      // le toca a esta ficha. Sin esto todas arrancan abajo a la vez y lo que se
-      // ve no son quince fichas vivas, es el tablero entero bombeando.
-      delay: -idlePhase(piece.id, c.idleCycle),
-    };
-
-    const list = [
-      token.animate(
-        [
-          { transform: rest.transform },
-          { transform: `${TOKEN_BASE} translateY(${-rise.toFixed(2)}px) scale(1.015, 1.015)`, offset: 0.5 },
-          { transform: rest.transform },
-        ],
-        options,
-      ),
-    ];
-
-    const blot = shadowOf(el)?.querySelector<HTMLElement>(".anim__blot");
-    if (blot) {
-      list.push(
-        blot.animate(
-          [
-            { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
-            { transform: "translate(-50%, -50%) scale(0.93)", opacity: 0.78, offset: 0.5 },
-            { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
-          ],
-          options,
-        ),
-      );
-    }
-
-    idles.current.set(piece.id, list);
-  }, []);
-
-  const stopIdle = useCallback((id: string) => {
-    for (const anim of idles.current.get(id) ?? []) anim.cancel();
-    idles.current.delete(id);
-  }, []);
-
-  // Quién respira y quién no se deriva del estado, no se ordena a mano: una
-  // ficha respira si está en el campo y no ha andado. Las secuencias paran el
-  // aliento de quien se mueve —dos movimientos sumados en el mismo cuerpo se
-  // leen como un temblor— y lo vuelven a arrancar al terminar.
   //
+  // La secuencia ya no está aquí: es motion/idle.ts, y la comparte con
+  // /dev/baraja desde el 11 de septiembre de 2026. Estaba escrita dos veces y
+  // las dos copias YA HABÍAN DIVERGIDO —una animaba el disco con su centrado y
+  // la otra el grupo sin él—, que es el argumento entero para haberla sacado.
+  //
+  // Lo que queda aquí es QUIÉN respira, que sí es de esta pantalla: una ficha
+  // respira si está en el campo y no ha andado. Las secuencias paran el aliento
+  // de quien se mueve —dos movimientos sumados en el mismo cuerpo se leen como
+  // un temblor— y lo vuelven a arrancar al terminar.
+
+  /** El disco de una ficha, que es lo que respira (nunca la ficha entera). */
+  const tokenOf = useCallback(
+    (id: string) => elements.current.get(id)?.querySelector<HTMLElement>(".anim__token") ?? null,
+    [],
+  );
+
+  const startIdle = useCallback(
+    (piece: Piece) => {
+      const l = layoutRef.current;
+      if (!l || !piece.hex || piece.moved) return;
+      const el = elements.current.get(piece.id);
+      idles.current.start(
+        piece.id,
+        {
+          el: tokenOf(piece.id),
+          blot: el ? shadowOf(el)?.querySelector<HTMLElement>(".patch__blot") : null,
+          // El disco está centrado por CSS y ese `translate` tiene que seguir en
+          // la cadena, o el aliento lo tiraría a la esquina del hexágono.
+          prefix: TOKEN_BASE,
+        },
+        t.current,
+        l.size,
+      );
+    },
+    [tokenOf],
+  );
+
+  const stopIdle = useCallback((id: string) => idles.current.stop(id), []);
+
   // Los que YA respiran no se tocan, y por eso el reinicio va aparte: una
   // animación infinita relanzada vuelve al mismo punto de su ciclo (la fase es
   // fija por ficha), así que rearrancarla a mitad de una inspiración da un
@@ -561,28 +474,23 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   // que hace que el slider se vea funcionar — sin esto, mover la amplitud no
   // cambiaría nada hasta la siguiente jugada, que es la peor forma de que un
   // mando esté roto.
-  const idleKey = `${timings.idleRise}|${timings.idleCycle}|${layout?.size ?? 0}`;
+  const idleKey = idleKeyOf(timings, layout?.size ?? 0);
   const idleKeyRef = useRef(idleKey);
   useEffect(() => {
     if (idleKeyRef.current !== idleKey) {
       idleKeyRef.current = idleKey;
-      for (const id of [...idles.current.keys()]) stopIdle(id);
+      idles.current.stopAll();
     }
     for (const piece of pieces) {
       if (piece.hex && !piece.moved) startIdle(piece);
       else stopIdle(piece.id);
     }
-    for (const id of [...idles.current.keys()]) {
-      if (!pieces.some((p) => p.id === id)) stopIdle(id);
-    }
+    idles.current.keepOnly(pieces.map((p) => p.id));
   }, [pieces, idleKey, startIdle, stopIdle]);
 
   useEffect(() => {
-    const running = idles.current;
-    return () => {
-      for (const list of running.values()) for (const anim of list) anim.cancel();
-      running.clear();
-    };
+    const chorus = idles.current;
+    return () => chorus.stopAll();
   }, []);
 
   // --- Coger algo: la carta que se despliega y la ficha que anda -------------
@@ -716,7 +624,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     if (!el) return;
 
     const { x, y } = toStage(event, stageRef.current);
-    const cell = nearestCell(l, { x, y });
+    const cell = cellAt(l, x, y);
     markCandidate(cell && offer?.has(cell.key) ? cell.key : null);
 
     // La ficha ya puesta no se mueve: lo único que la sigue es el candidato.
@@ -750,7 +658,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     if (el.hasPointerCapture(event.pointerId)) el.releasePointerCapture(event.pointerId);
 
     const from = toStage(event, stageRef.current);
-    const cell = nearestCell(l, from);
+    const cell = cellAt(l, from.x, from.y);
 
     // --- Una ficha que ya estaba en el campo: andar ---
     if (state.from) {
@@ -759,7 +667,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
 
       if (!cell || Hex.equals(cell.hex, origin)) {
         note("Se queda donde estaba. Andar es opcional: el §5 dice «hasta» 👢 Movimiento.");
-        void putDown(piece, el, l, origin);
+        void rest(piece, el, l, origin);
         return;
       }
 
@@ -774,7 +682,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
       const path = problem ? null : pathTo(ARENA_PATCH, origin, cell.hex, boots, taken);
       if (!path) {
         note(problem ?? "No hay camino hasta ahí.");
-        void putDown(piece, el, l, origin);
+        void rest(piece, el, l, origin);
         return;
       }
       void walk(piece, path);
@@ -824,7 +732,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
         token: el.querySelector<HTMLElement>(".anim__token"),
         shadow: shadowOf(el),
       },
-      { scene: sceneRef.current, dust: dustRef.current, size: l.size },
+      groundOf(l),
       from,
       target,
       { scale: c.cardScale, lift: c.hover, rested: 1 },
@@ -840,7 +748,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   }
 
   /** La carta vuelve a su hueco de la mano: sin peso, porque no cae — la recoges. */
-  async function returnToHand(piece: Piece, el: HTMLElement, l: Layout, from: { x: number; y: number }) {
+  async function returnToHand(piece: Piece, el: HTMLElement, l: PatchLayout, from: { x: number; y: number }) {
     const hand = pieces.filter((p) => !p.hex);
     const slot = handSlot(l, hand.indexOf(piece), hand.length, t.current.cardScale);
     await returnHome(
@@ -852,36 +760,21 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   }
 
   /** La ficha cogida que se vuelve a posar en su casilla, y respira otra vez. */
-  async function putDown(piece: Piece, el: HTMLElement, l: Layout, hex: HexCoord) {
+  async function rest(piece: Piece, el: HTMLElement, l: PatchLayout, hex: HexCoord) {
     const at = l.centers.get(Hex.key(hex));
     if (!at) return;
-    const shadow = shadowOf(el);
-    const parallel = shadow
-      ? [
-          shadow.animate([{ transform: `translate(${at.x}px, ${at.y}px) scale(1)`, opacity: 0.55 }], {
-            duration: 170,
-            easing: "ease-out",
-            fill: "forwards",
-          }),
-        ]
-      : [];
-    await run(el, [{ transform: transform(at.x, at.y, 0, 1) }], 170, "ease-out");
-    settleAnimations(parallel);
+    await putDown({ el, shadow: shadowOf(el) }, at);
     startIdle(piece);
   }
 
   /**
-   * ANDAR: de hexágono en hexágono, con un saltito y una pisada en cada uno.
+   * ANDAR. La secuencia es motion/step.ts; lo que queda aquí es lo que solo sabe
+   * el banco: quién anda, por dónde y qué se escribe debajo.
    *
    * El camino lo da movement.ts `pathTo` y puede tener más pasos que la
    * distancia en línea recta, porque no se atraviesa a nadie (§5). Eso es
    * exactamente lo que la animación tiene que enseñar: el rodeo se ve andando, y
-   * es lo que convierte "no llegas" en "llegas, pero te cuesta". Por eso los
-   * pasos se animan uno a uno en vez de deslizar la ficha hasta el destino —un
-   * deslizamiento recto atravesaría al que estorba y contaría una mentira.
-   *
-   * Empieza en el punto más alto del salto y no en el suelo: la ficha viene de
-   * estar cogida, y estar cogida es justo esa postura.
+   * es lo que convierte «no llegas» en «llegas, pero te cuesta».
    */
   async function walk(piece: Piece, path: readonly HexCoord[]) {
     const l = layoutRef.current;
@@ -899,64 +792,15 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     stopIdle(piece.id);
 
     const c = t.current;
-    const steps = way.length - 1;
-    const total = Math.max(1, steps * c.step);
-    const apex = (at: { x: number; y: number }) =>
-      `translate(${at.x}px, ${at.y}px) scale(${(1 + c.stepHop / 120).toFixed(3)})`;
+    const total = await walkPath({ el, shadow: shadowOf(el) }, way, groundOf(l), c);
 
-    const frames: Keyframe[] = [
-      { transform: transform(way[0].x, way[0].y, c.stepHop, 1.05, 0.97), offset: 0, easing: "ease-in" },
-    ];
-    const shadowFrames: Keyframe[] = [
-      { transform: apex(way[0]), opacity: 0.4, offset: 0, easing: "ease-in" },
-    ];
-
-    for (let i = 1; i <= steps; i++) {
-      const last = i === steps;
-      frames.push({
-        transform: transform(way[i].x, way[i].y, 0, last ? 1 : 1.02, last ? 1 : 0.98),
-        offset: i / steps,
-        easing: "ease-out",
-      });
-      shadowFrames.push({
-        transform: `translate(${way[i].x}px, ${way[i].y}px) scale(1)`,
-        opacity: 0.55,
-        offset: i / steps,
-        easing: "ease-out",
-      });
-      if (last) break;
-      const mid = { x: (way[i].x + way[i + 1].x) / 2, y: (way[i].y + way[i + 1].y) / 2 };
-      frames.push({
-        transform: transform(mid.x, mid.y, c.stepHop, 1.03, 0.97),
-        offset: (i + 0.5) / steps,
-        easing: "ease-in",
-      });
-      shadowFrames.push({ transform: apex(mid), opacity: 0.4, offset: (i + 0.5) / steps, easing: "ease-in" });
-    }
-
-    // Una mota de polvo por pisada, en el momento de cada aterrizaje. Es el
-    // reventón más pequeño del catálogo a propósito: con quince fichas por bando
-    // andando, esto se emite noventa veces por ronda.
-    for (let i = 1; i <= steps; i++) {
-      window.setTimeout(
-        () => dustRef.current?.emit(way[i].x, way[i].y + l.size * 0.42, stepDust(c)),
-        (i / steps) * total,
-      );
-    }
-
-    const shadow = shadowOf(el);
-    const parallel = shadow
-      ? [shadow.animate(shadowFrames, { duration: total, easing: "linear", fill: "forwards" })]
-      : [];
-    await run(el, frames, total);
-    settleAnimations(parallel);
-
-    await slump([piece.id], true);
+    await slumpPieces([piece.id], true);
     const to = path[path.length - 1];
     setPieces((prev) => prev.map((p) => (p.id === piece.id ? { ...p, hex: to, moved: true } : p)));
     busyRef.current = false;
     setBusy(false);
 
+    const steps = way.length - 1;
     const straight = Hex.distance(path[0], to);
     note(
       `${steps} paso${steps === 1 ? "" : "s"} × ${c.step} ms = ${total} ms` +
@@ -965,28 +809,14 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     );
   }
 
-  /** Se agacha porque ya ha andado, o se endereza porque hay turno nuevo. */
-  async function slump(ids: readonly string[], moved: boolean, stagger = 0): Promise<void> {
+  /**
+   * Quiénes se agachan porque ya han andado, o se enderezan porque hay turno
+   * nuevo. La animación es motion/idle.ts: aquí solo se eligen los discos.
+   */
+  async function slumpPieces(ids: readonly string[], moved: boolean, stagger = 0): Promise<void> {
     const l = layoutRef.current;
     if (!l) return;
-    const c = t.current;
-    const list: Animation[] = [];
-    ids.forEach((id, i) => {
-      const token = elements.current.get(id)?.querySelector<HTMLElement>(".anim__token");
-      if (!token) return;
-      list.push(
-        token.animate([tokenRest(!moved, l.size, c), tokenRest(moved, l.size, c)], {
-          duration: SPENT_MS,
-          delay: i * stagger,
-          // Al agacharse, se deja caer; al levantarse, se pasa un poco. Un turno
-          // nuevo tiene que sentirse como que algo se te devuelve.
-          easing: moved ? "ease-out" : cubic(EASE_BACK),
-          fill: "forwards",
-        }),
-      );
-    });
-    await Promise.allSettled(list.map((a) => a.finished));
-    settleAnimations(list);
+    await slump(ids.map(tokenOf), moved, t.current, l.size, TOKEN_BASE, stagger);
   }
 
   /**
@@ -1006,7 +836,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     }
     busyRef.current = true;
     setBusy(true);
-    await slump(
+    await slumpPieces(
       asleep.map((p) => p.id),
       false,
       t.current.wakeStagger,
@@ -1047,131 +877,30 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     const b = l.centers.get(Hex.key(target.hex));
     if (!a || !b) return;
 
-    const c = t.current;
-    const p = attackPhases(result, c);
-    const miss = result === "fallo";
-    const crit = result === "critico";
-
     // El aliento se para durante la embestida y vuelve al final: sumado al
     // gesto, lo que se ve no es una ficha viva embistiendo, es un temblor.
     stopIdle(attacker.id);
 
-    const dx = (b.x - a.x) * c.lungeDistance;
-    const dy = (b.y - a.y) * c.lungeDistance;
-    const angle = Math.atan2(b.y - a.y, b.x - a.x);
-    const shadow = shadowOf(el);
-
-    // La sombra acompaña a la embestida. No es un detalle: una ficha que se
-    // lanza hacia delante dejando su sombra clavada en la casilla de origen no
-    // se lee como que embiste, se lee como que se ha despegado del tablero.
-    const lungeShadow = (frames: Keyframe[], duration: number, easing: string) =>
-      shadow ? [shadow.animate(frames, { duration, easing, fill: "forwards" })] : [];
-
-    // Un salto de nada durante la ida: golpear es empujar hacia arriba y hacia
-    // delante, no deslizarse.
-    const out = lungeShadow(
-      [
-        { transform: `translate(${a.x}px, ${a.y}px) scale(1)`, opacity: 0.55 },
-        {
-          transform: `translate(${a.x + dx * 0.4}px, ${a.y + dy * 0.4}px) scale(1.12)`,
-          opacity: 0.4,
-          offset: 0.6,
-        },
-        { transform: `translate(${a.x + dx}px, ${a.y + dy}px) scale(1)`, opacity: 0.55 },
-      ],
-      Math.max(1, p.lunge),
-      cubic(EASE_LUNGE),
+    const p = await attackMotion(
+      { el, shadow: shadowOf(el) },
+      { el: victim, shadow: shadowOf(victim) },
+      a,
+      b,
+      groundOf(l),
+      result,
+      t.current,
+      // La cifra es marcador de posición hasta que exista el motor (§4.2). Lo
+      // que NO es de mentira es la RELACIÓN entre ella y la del crítico, que la
+      // dobla: un crítico que enseñara un número parecido al normal no se
+      // leería como tal por muchas chispas que llevara.
+      { damage: 4 + Math.floor(Math.random() * 8) },
     );
-
-    await run(
-      el,
-      [
-        { transform: transform(a.x, a.y, 0, 1) },
-        { transform: transform(a.x + dx * 0.4, a.y + dy * 0.4, 10, 1.04), offset: 0.6 },
-        { transform: transform(a.x + dx, a.y + dy, 0, 1.06, 0.96) },
-      ],
-      p.lunge,
-      cubic(EASE_LUNGE),
-    );
-    settleAnimations(out);
-
-    // --- El fotograma del contacto: aquí y solo aquí se separan los tres ---
-    const hit = { x: a.x + (b.x - a.x) * 0.68, y: a.y + (b.y - a.y) * 0.68 };
-
-    // El respingo del objetivo arranca EN el contacto, no antes. Un esquive que
-    // empieza a mitad de la ida es un aviso: se ve venir el fallo con el
-    // suficiente tiempo como para leerlo, y eso es exactamente lo que la ida
-    // idéntica estaba evitando. Empezando aquí, lo que se lee es que el golpe
-    // llegó y el objetivo ya no estaba, que es lo que pasa.
-    const dodge = miss ? dodgeAside(victim, l, b, angle, c.missDodge, p) : [];
-
-    if (miss) {
-      // Ni destello, ni polvo, ni temblor. La ausencia de las tres ES la
-      // información: lo que dice que no ha entrado es que no pasa nada de lo
-      // que siempre pasa.
-      floatText(hit.x, hit.y, "Fallo", "fallo");
-    } else {
-      dustRef.current?.emit(hit.x, hit.y, crit ? critDust(c, angle) : hitDust(c, angle));
-      shake(sceneRef.current, c.shake * (crit ? c.critShake : 1), c.shakeTime);
-      flash(victim, c.flash * (crit ? c.critFlash : 1), crit ? 7 : 4);
-      // El crítico dobla el daño (§4.2). La cifra sigue siendo de mentira hasta
-      // que exista el motor, pero la RELACIÓN entre las dos no lo es: un
-      // crítico que enseñara un número parecido al normal no se leería como tal
-      // por muchas chispas que llevara.
-      const damage = 4 + Math.floor(Math.random() * 8);
-      floatText(hit.x, hit.y, `−${crit ? damage * 2 : damage}`, crit ? "critico" : "impacto");
-    }
-
-    if (p.stop > 0) {
-      dustRef.current?.pause();
-      await wait(p.stop);
-      dustRef.current?.resume();
-    }
-
-    // La vuelta. La del fallo lleva un tramo de más: el que se ha vaciado en un
-    // golpe que no estaba se pasa de largo antes de recomponerse, y ese
-    // sobrepaso va DESPUÉS del contacto —nunca en la ida, que sería el aviso.
-    const end = { x: a.x + dx * c.missOvershoot, y: a.y + dy * c.missOvershoot };
-    const back = lungeShadow(
-      miss
-        ? [
-            { transform: `translate(${a.x + dx}px, ${a.y + dy}px) scale(1)`, opacity: 0.55 },
-            {
-              transform: `translate(${end.x}px, ${end.y}px) scale(1.06)`,
-              opacity: 0.5,
-              offset: 0.22,
-            },
-            { transform: `translate(${a.x}px, ${a.y}px) scale(1)`, opacity: 0.55 },
-          ]
-        : [
-            { transform: `translate(${a.x + dx}px, ${a.y + dy}px) scale(1)`, opacity: 0.55 },
-            { transform: `translate(${a.x}px, ${a.y}px) scale(1)`, opacity: 0.55 },
-          ],
-      Math.max(1, p.back),
-      cubic(EASE_BACK),
-    );
-
-    await run(
-      el,
-      miss
-        ? [
-            { transform: transform(a.x + dx, a.y + dy, 0, 1.06, 0.96) },
-            { transform: transform(end.x, end.y, 6, 1.04, 0.98, 9), offset: 0.22 },
-            { transform: transform(a.x, a.y, 0, 1) },
-          ]
-        : [
-            { transform: transform(a.x + dx, a.y + dy, 0, 1.06, 0.96) },
-            { transform: transform(a.x, a.y, 0, 1) },
-          ],
-      p.back,
-      cubic(EASE_BACK),
-    );
-    settleAnimations(back);
-    settleAnimations(dodge);
 
     // El relevo: en V3 los estados de control los aplica el crítico (§4.5), así
     // que un crítico no termina en sí mismo — deja algo puesto.
-    if (crit) setPieces((prev) => prev.map((x) => (x.id === target.id ? { ...x, state: CRIT_STATE } : x)));
+    if (result === "critico") {
+      setPieces((prev) => prev.map((x) => (x.id === target.id ? { ...x, state: CRIT_STATE } : x)));
+    }
 
     startIdle(attacker);
     return p;
@@ -1236,188 +965,29 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   }
 
   /**
-   * El respingo del que esquiva: se aparta de lado y vuelve.
-   *
-   * De lado y no hacia atrás: retroceder por el eje del golpe se confunde con
-   * el empuje de haberlo recibido, que es justo lo contrario de lo que hay que
-   * decir. Y corto —una fracción de hexágono— porque medio hexágono deja a la
-   * ficha pisando la casilla de al lado, y en un tablero de hexágonos esa
-   * mentira se ve.
-   */
-  function dodgeAside(
-    victim: HTMLElement,
-    l: Layout,
-    at: { x: number; y: number },
-    angle: number,
-    amount: number,
-    p: { back: number },
-  ): Animation[] {
-    if (amount <= 0) return [];
-    const d = l.size * SQRT3 * amount;
-    const px = Math.cos(angle + Math.PI / 2) * d;
-    const py = Math.sin(angle + Math.PI / 2) * d;
-    const options: KeyframeAnimationOptions = {
-      duration: Math.max(1, p.back * 0.85),
-      easing: cubic(EASE_LUNGE),
-      fill: "forwards",
-    };
-    const list = [
-      victim.animate(
-        [
-          { transform: transform(at.x, at.y, 0, 1) },
-          { transform: transform(at.x + px, at.y + py, 5, 1, 1, -8), offset: 0.3 },
-          { transform: transform(at.x, at.y, 0, 1) },
-        ],
-        options,
-      ),
-    ];
-    const shadow = shadowOf(victim);
-    if (shadow) {
-      list.push(
-        shadow.animate(
-          [
-            { transform: `translate(${at.x}px, ${at.y}px) scale(1)`, opacity: 0.55 },
-            {
-              transform: `translate(${at.x + px}px, ${at.y + py}px) scale(1.08)`,
-              opacity: 0.45,
-              offset: 0.3,
-            },
-            { transform: `translate(${at.x}px, ${at.y}px) scale(1)`, opacity: 0.55 },
-          ],
-          options,
-        ),
-      );
-    }
-    return list;
-  }
-
-  /**
-   * MUERTE: fogonazo, la ficha crece, y se deshace hacia abajo dejando polvo.
-   *
-   * Lo que NO puede ser es un fundido: una ficha que se desvanece se lee como
-   * un fallo de la pantalla, no como una baja. Tiene que pasar algo violento
-   * primero —el fogonazo— y tiene que quedar algo después —el polvo.
+   * MUERTE. La secuencia es motion/attack.ts `vanish`: fogonazo, la ficha crece,
+   * y se deshace hacia abajo dejando polvo. Lo que NO puede ser es un fundido —
+   * una ficha que se desvanece se lee como un fallo de la pantalla, no como una
+   * baja.
    */
   async function kill(piece: Piece) {
     const l = layoutRef.current;
     const el = elements.current.get(piece.id);
     if (!l || !el || !piece.hex) return;
-    const c = l.centers.get(Hex.key(piece.hex));
-    if (!c) return;
+    const at = l.centers.get(Hex.key(piece.hex));
+    if (!at) return;
 
     busyRef.current = true;
     setBusy(true);
     stopIdle(piece.id);
     const cfg = t.current;
-    const shadow = shadowOf(el);
 
-    const parallel = shadow
-      ? [
-          shadow.animate(
-            [{ opacity: 0.55 }, { opacity: 0, transform: `translate(${c.x}px, ${c.y}px) scale(0.4)` }],
-            { duration: cfg.death, easing: "ease-in", fill: "forwards" },
-          ),
-        ]
-      : [];
+    await vanish({ el, shadow: shadowOf(el) }, at, groundOf(l), cfg);
 
-    // El polvo sale cuando la ficha se rompe, no cuando empieza el fogonazo.
-    window.setTimeout(() => {
-      dustRef.current?.emit(c.x, c.y, deathDust(cfg));
-      shake(sceneRef.current, cfg.shake * 0.7, cfg.shakeTime);
-    }, cfg.death * 0.34);
-
-    await run(
-      el,
-      [
-        { transform: transform(c.x, c.y, 0, 1), filter: "brightness(1)", opacity: 1 },
-        {
-          transform: transform(c.x, c.y, 8, 1.18),
-          filter: "brightness(3.2)",
-          opacity: 1,
-          offset: 0.24,
-        },
-        {
-          transform: transform(c.x, c.y, 0, 1.05, 0.9),
-          filter: "brightness(1.6)",
-          opacity: 1,
-          offset: 0.4,
-        },
-        {
-          transform: transform(c.x, c.y, -4, 0.72, 0.3),
-          filter: "brightness(0.5)",
-          opacity: 0,
-        },
-      ],
-      cfg.death,
-      "ease-in",
-    );
-
-    settleAnimations(parallel);
     setPieces((prev) => prev.filter((p) => p.id !== piece.id));
     busyRef.current = false;
     setBusy(false);
     note(`Baja en ${cfg.death} ms. Lo que queda en el campo es el polvo, no la ficha.`);
-  }
-
-  // --- Efectos sueltos ------------------------------------------------------
-
-  /**
-   * El destello del que recibe: es lo que dice CUÁL de las dos se ha llevado el
-   * golpe, y con movimiento reducido es lo ÚNICO que lo dice.
-   */
-  function flash(el: HTMLElement, duration: number, brightness = 4) {
-    if (duration <= 0) return;
-    el.animate(
-      [
-        { filter: "brightness(1)" },
-        { filter: `brightness(${brightness})`, offset: 0.15 },
-        { filter: "brightness(1)" },
-      ],
-      { duration, easing: "ease-out" },
-    );
-  }
-
-  /**
-   * El texto que sale flotando del contacto: la cifra, o la palabra del fallo.
-   *
-   * Las cifras son un marcador de posición —saldrán del motor cuando exista
-   * (§4.2)— pero el MOVIMIENTO de cada una no lo es, y es donde está el trabajo:
-   * el golpe sale disparado hacia arriba y frena, que es un impacto; el fallo no
-   * sube, se escurre de lado y se apaga, que es algo que no llegó a pasar. Si
-   * los tres subieran igual, el color sería lo único que los separa y el color
-   * es lo primero que se pierde de reojo.
-   */
-  function floatText(x: number, y: number, text: string, kind: AttackResult) {
-    const scene = sceneRef.current;
-    if (!scene) return;
-    const el = document.createElement("div");
-    el.className = `anim__damage${kind === "impacto" ? "" : ` anim__damage--${kind}`}`;
-    el.textContent = text;
-    el.style.transform = `translate(${x}px, ${y}px)`;
-    scene.append(el);
-
-    const frames: Keyframe[] =
-      kind === "fallo"
-        ? [
-            { transform: `translate(${x}px, ${y}px) scale(0.9)`, opacity: 0 },
-            { transform: `translate(${x + 10}px, ${y - 6}px) scale(1)`, opacity: 0.85, offset: 0.2 },
-            { transform: `translate(${x + 30}px, ${y - 16}px) scale(1)`, opacity: 0 },
-          ]
-        : [
-            { transform: `translate(${x}px, ${y}px) scale(0.6)`, opacity: 0 },
-            {
-              transform: `translate(${x}px, ${y - (kind === "critico" ? 22 : 14)}px) scale(${kind === "critico" ? 1.35 : 1.15})`,
-              opacity: 1,
-              offset: 0.18,
-            },
-            { transform: `translate(${x}px, ${y - 52}px) scale(1)`, opacity: 0 },
-          ];
-
-    const anim = el.animate(frames, {
-      duration: kind === "fallo" ? 620 : 720,
-      easing: "ease-out",
-    });
-    anim.finished.finally(() => el.remove()).catch(() => el.remove());
   }
 
   // --- Mandos del banco -----------------------------------------------------
@@ -1449,93 +1019,32 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
           ref={sceneRef}
           style={{ ["--offer-rise-ms" as string]: `${OFFER_RISE_MS}ms` }}
         >
+          {/* EL SUELO, sus tres capas y el lienzo del polvo: los pinta
+              HexPatch, y son exactamente los mismos que los de /dev/baraja. El
+              lienzo va SIEMPRE montado y nunca dentro del `layout &&` — de él
+              cuelga el campo de partículas, y si no existe en el primer pintado
+              el efecto se queda sin lienzo y no vuelve a intentarlo. */}
           {layout && (
-            <svg
-              className="anim__ground"
-              viewBox={`0 0 ${box.w} ${box.h}`}
-              width={box.w}
-              height={box.h}
-              aria-hidden
-            >
-              {/* El suelo es una LÁMINA y no un color por casilla: el degradado
-                  va en coordenadas de usuario, así que los quince hexágonos
-                  comparten una sola pintura y la unión se lee como una
-                  superficie sola. Es la misma decisión que ArenaBoard toma
-                  desde la dirección de arte, y aquí hace falta por lo mismo:
-                  sin ella el polvo cae sobre un mosaico. */}
-              <defs>
-                <linearGradient
-                  id="anim-soil"
-                  gradientUnits="userSpaceOnUse"
-                  x1="0"
-                  y1={TOP_PAD}
-                  x2="0"
-                  y2={box.h * GROUND_SHARE}
-                >
-                  <stop offset="0" className="anim__soil-far" />
-                  <stop offset="0.55" className="anim__soil-mid" />
-                  <stop offset="1" className="anim__soil-near" />
-                </linearGradient>
-              </defs>
-              <g className="anim__soil" fill="url(#anim-soil)">
-                {layout.cells.map((c) => (
-                  <polygon key={c.key} points={c.points} />
-                ))}
-              </g>
-              {/* EL TERRENO QUE SE OFRECE. Los quince polígonos están SIEMPRE
-                  puestos y lo que cambia es un atributo, no la lista: un
-                  elemento que acaba de nacer no puede hacer una transición
-                  —React lo monta ya en su estado final—, así que montarlos y
-                  desmontarlos daría un encendido seco y ninguna onda.
-
-                  Van entre el suelo y la rejilla a propósito: la oferta es el
-                  terreno iluminándose, no una chapa por encima, así que las
-                  líneas de la rejilla tienen que seguir viéndose sobre ella. */}
-              <g className="anim__offer">
-                {layout.cells.map((c) => {
-                  const steps = offer?.get(c.key);
-                  return (
-                    <polygon
-                      key={c.key}
-                      ref={setCellNode(c.key)}
-                      points={c.points}
-                      data-offered={steps !== undefined ? "true" : "false"}
-                      style={offerCell(steps, timings)}
-                    />
-                  );
-                })}
-              </g>
-              <g className="anim__mesh">
-                {layout.mesh.map((s, i) => (
-                  <line key={i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} />
-                ))}
-              </g>
-            </svg>
+            <PatchGround
+              layout={layout}
+              offered={offer}
+              timings={timings}
+              cellRef={setCellNode}
+            />
           )}
 
-          <canvas className="anim__dust" ref={canvasRef} aria-hidden />
+          <PatchDust canvasRef={canvasRef} />
 
-          {/* Las sombras van en su propia capa, POR DEBAJO de todas las fichas:
-              si cada ficha llevara la suya al lado, una ficha alta proyectaría
-              su sombra encima de la ficha de al lado. */}
-          {layout &&
-            pieces.map((p) => (
-              <div key={`s-${p.id}`} className="anim__shadow" data-for={p.id}>
-                {/* El punto que se mueve y la mancha que se ve son dos
-                    elementos: el de fuera lo lleva JS con un `translate` puro y
-                    el de dentro se centra sobre él con su propio -50 %. Así el
-                    tamaño de la mancha puede depender del hexágono sin que
-                    ninguna de las dos transformaciones tenga que saber de la
-                    otra. */}
-                <div
-                  className="anim__blot"
-                  style={{
-                    width: `${layout.size * 1.5}px`,
-                    height: `${layout.size * 1.5 * TILT * 0.62}px`,
-                  }}
-                />
-              </div>
-            ))}
+          {/* Las manchas, TODAS juntas y por debajo de cualquier ficha: si cada
+              ficha llevara la suya al lado, una ficha alta proyectaría su sombra
+              encima de la ficha de al lado. */}
+          {layout && (
+            <div className="patch__shadows">
+              {pieces.map((p) => (
+                <PatchShadow key={`s-${p.id}`} layout={layout} dataFor={p.id} />
+              ))}
+            </div>
+          )}
 
           {layout &&
             pieces.map((p) => {
@@ -1557,7 +1066,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
                 >
                   <div
                     className="anim__token"
-                    style={{ width: `${w}px`, height: `${w * TILT}px`, fontSize: `${layout.size * 0.6}px` }}
+                    style={{ width: `${w}px`, height: `${w * layout.tilt}px`, fontSize: `${layout.size * 0.6}px` }}
                   >
                     {type.icon}
                   </div>
@@ -1681,8 +1190,8 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
 // --- Ayudas sin estado -------------------------------------------------------
 //
 // Las que no son de aquí —`transform`, `run`, `settleAnimations`, `wait`,
-// `pickUp`, `moveShadow` y `shake`— viven en deploy-motion.ts desde el 10 de
-// septiembre de 2026, porque /dev/baraja tiene que hacer lo mismo con ellas.
+// `pickUp`, `moveShadow` y `shake`— viven en components/dev/motion/core.ts,
+// porque /dev/baraja tiene que hacer lo mismo con ellas.
 
 /**
  * El centrado del disco sobre el punto de la ficha. Va aquí como cadena y no en
@@ -1694,25 +1203,6 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
  */
 const TOKEN_BASE = "translate(-50%, -50%)";
 
-/**
- * La postura de reposo del disco: recto y con su color, o acuclillado y apagado
- * si ya ha andado.
- *
- * El filtro se emite SIEMPRE completo, incluso cuando no hace nada
- * (`saturate(1) brightness(1)`), por lo mismo que la lista de transformaciones:
- * interpolar desde `none` no está garantizado y lo que se ve es un corte.
- */
-function tokenRest(moved: boolean, size: number, c: Timings): { transform: string; filter: string } {
-  const sink = moved ? size * c.spentSink : 0;
-  const fade = moved ? c.spentFade : 0;
-  return {
-    transform: `${TOKEN_BASE} translateY(${sink.toFixed(2)}px) scale(1, 1)`,
-    // El brillo baja bastante menos que el color: una ficha que ya ha andado
-    // tiene que seguir viéndose sobre el suelo, porque todavía puede atacar.
-    filter: `saturate(${(1 - fade).toFixed(2)}) brightness(${(1 - fade * 0.3).toFixed(2)})`,
-  };
-}
-
 /** Cómo se nombra a quien ocupa un hexágono, para que el motor pueda explicarse. */
 function nameAt(pieces: readonly Piece[], hex: HexCoord): string | null {
   const piece = pieces.find((p) => p.hex && Hex.equals(p.hex, hex));
@@ -1720,9 +1210,15 @@ function nameAt(pieces: readonly Piece[], hex: HexCoord): string | null {
   return `la ficha ${DAMAGE_TYPES[piece.damage].icon} ${piece.side === "propio" ? "tuya" : "enemiga"}`;
 }
 
-/** La sombra de una ficha vive en la capa de sombras, emparejada por `data-for`. */
+/**
+ * La sombra de una ficha vive en la capa de sombras, emparejada por `data-for`.
+ *
+ * Se busca desde el PADRE de la ficha —la escena— y no desde la capa de manchas:
+ * la capa es hija de la escena igual que las fichas, así que `querySelector`
+ * llega a ella sin que este código tenga que saber que existe.
+ */
 function shadowOf(el: HTMLElement): HTMLElement | null {
-  const id = el.parentElement?.querySelector<HTMLElement>(`.anim__shadow[data-for="${cssId(el)}"]`);
+  const id = el.parentElement?.querySelector<HTMLElement>(`.patch__shadow[data-for="${cssId(el)}"]`);
   return id ?? null;
 }
 
@@ -1738,20 +1234,4 @@ function toStage(
   if (!stage) return { x: 0, y: 0 };
   const rect = stage.getBoundingClientRect();
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
-}
-
-/** El hexágono más cercano al punto, si el punto cae razonablemente dentro. */
-function nearestCell(l: Layout, point: { x: number; y: number }) {
-  let best: (typeof l.cells)[number] | null = null;
-  let bestDistance = Infinity;
-  for (const cell of l.cells) {
-    const d = (cell.x - point.x) ** 2 + (cell.y - point.y) ** 2;
-    if (d < bestDistance) {
-      bestDistance = d;
-      best = cell;
-    }
-  }
-  // El radio de tolerancia: dentro del hexágono con holgura, pero no medio
-  // tablero más allá. Se compara al cuadrado para no sacar raíces.
-  return best && bestDistance <= (l.size * 1.05) ** 2 ? best : null;
 }

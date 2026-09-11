@@ -52,7 +52,7 @@
 // esta pantalla añade es la mecánica de arrastrar, que es interacción.
 // =========================================================================
 
-import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import SketchCard from "@/components/design/v3/sketch-cards";
 import { sketchFontVars } from "@/components/design/v3/sketch-fonts";
 import { gameFontVars } from "@/components/game/ui/game-fonts";
@@ -80,40 +80,44 @@ import type { HexCoord, HexKey } from "@/lib/v3/hex";
 import PieceToken, { type PieceView } from "./PieceToken";
 import { characterToPieceView, iconOf } from "./piece-view";
 import { pieceGeometry, DEFAULT_FRAMING, type FieldId } from "@/lib/v3/piece";
-import { OFFER_RISE_MS, TIMINGS, idlePhase, reduced, type Timings } from "@/lib/v3/anim";
-import { DustField } from "./dust";
+import { OFFER_RISE_MS, TIMINGS, reduced, type Timings } from "@/lib/v3/anim";
+import { ARENA_TILT, PATCH, cellAt, fitPatch, handEntry, type PatchLayout } from "@/lib/v3/patch";
+// El SUELO y el MOVIMIENTO no se escriben aquí: los comparte con /dev/animacion.
 // El despliegue —vuelo, cruce de carta a ficha, caída, polvo, temblor y
-// aplastado— NO se escribe aquí: es el mismo que ejecuta /dev/animacion y vive
-// en un solo sitio desde el 10 de septiembre de 2026, por orden de Dario («los
-// dos minitableros, ABSOLUTAMENTE el mismo comportamiento»). Ver la cabecera de
-// deploy-motion.ts.
-import { flyAndLand, moveShadow, offerCell, returnHome } from "./deploy-motion";
+// aplastado— desde el 10 de septiembre de 2026, por orden de Dario («los dos
+// minitableros, ABSOLUTAMENTE el mismo comportamiento»); el retal, la lámina de
+// suelo, la oferta, la rejilla, las manchas y el ALIENTO desde el 11, que es
+// cuando se midió cuánto de esto seguía escrito dos veces. El aliento era el
+// caso grave: las dos copias ya habían divergido.
+import {
+  PatchDust,
+  PatchGround,
+  PatchShadow,
+  useDustField,
+  usePatchBox,
+} from "./HexPatch";
+import { IdleChorus, flyAndLand, idleKeyOf, moveShadow, returnHome } from "./motion";
 import { buttonClass } from "@/components/ui/Button";
 
 // --- Medidas del escenario ------------------------------------------------
-// El retal y su compresión son los mismos que los de AnimationBench, que a su
-// vez copia los de ArenaBoard (ARENA_TILT). Se repiten aquí y no se importan
-// de allí porque el banco de animación no exporta su geometría: es la deuda
-// que Dario nombró al pedir esta pantalla, y unificar los dos retales es un
-// trabajo del módulo «tablero», no de este.
-const COLS = 5;
-const ROWS = 3;
-const TILT = 0.67;
-const SQRT3 = Math.sqrt(3);
+//
+// EL RETAL YA NO SE MIDE AQUÍ *(11 de septiembre de 2026)*: la cuenta de cuántos
+// hexágonos hay, de qué tamaño salen y dónde cae cada centro es
+// lib/v3/patch.ts, y es la misma que usa el banco de animación. Estaba escrita
+// dos veces con dos márgenes distintos —96 píxeles aquí y 48 allí— y esa era
+// toda la diferencia; lo que unifica no es el estilo, es que el número no pueda
+// separarse otra vez.
+//
+// Lo que queda aquí son las medidas de ESTA pantalla, que el banco no tiene: el
+// sitio del Mazo, el ancho del abanico y la banda de lectura del velo.
 
-/**
- * De dónde sale la onda cuando lo que se ofrece es un DESPLIEGUE.
- *
- * La misma decisión que en AnimationBench, y por el mismo motivo: una carta no
- * está en el tablero, viene de la mano, que está abajo y en el centro. Así el
- * terreno se abre hacia el fondo, en la dirección en la que va el gesto, en vez
- * de encenderse desde una esquina cualquiera.
- */
-const HAND_ENTRY = Hex.offsetToAxial({ col: Math.floor(COLS / 2), row: ROWS - 1 });
+/** Cómo se encaja el retal en este escenario, que es más bajo que el del banco. */
+const FIT = { gutter: 96, groundShare: 0.5, topPad: 22, minSize: 18, minBox: 320 } as const;
 
-/** Qué parte del alto se lleva el suelo; el resto es para el Mazo y la mano. */
-const GROUND_SHARE = 0.5;
-const TOP_PAD = 22;
+/** De dónde sale la onda cuando lo que se ofrece es un DESPLIEGUE: de la mano. */
+const HAND_ENTRY = handEntry(PATCH);
+
+/** A qué altura del borde de abajo se abre el abanico. */
 const HAND_BOTTOM = 104;
 const PILE_LEFT = 78;
 const PILE_BOTTOM = 112;
@@ -199,8 +203,9 @@ const DRAG_LIFT = SKETCH_H * DRAG_SCALE * 0.62;
 // punto hacia dos destinos, cruzándose por el camino y llegando juntos. No se
 // leía como «el Mazo reparte», se leía como un borrón.
 //
-// Ahora el turno de cada una empieza cuando la anterior YA SE HA POSADO, y el
-// reparto es una COLA con su propio reloj (`dealClock`): la carta que entra se
+// Ahora el turno de cada una empieza cuando la anterior YA SE HA POSADO —posada
+// de verla, no de reloj: ver el acelerón de más abajo— y el reparto es una COLA
+// con su propio reloj (`dealClock`): la carta que entra se
 // pone detrás de la última encolada, no en el instante en que React la pintó.
 // Eso es lo que lo hace valer para dos, tres o las que sean.
 const DEAL_FLIGHT = 460; // espejo de $deck-flight-duration
@@ -208,6 +213,34 @@ const DEAL_FLIGHT = 460; // espejo de $deck-flight-duration
 const DEAL_BEAT = 90;
 /** Espejo de $deck-deal-step (styles/settings/_motion.scss): el turno de cada carta. */
 const DEAL_STEP = DEAL_FLIGHT + DEAL_BEAT;
+
+// Y A PARTIR DE LA SEGUNDA EL MAZO COGE CARRERILLA *(Dario, 11 de septiembre de
+// 2026: «a partir de la segunda carta aumentarle la velocidad, me parece muy
+// lento, tarda mucho en aparecer»)*. Con el turno entero para las dos, la
+// segunda carta de un Oteo no acababa de posarse hasta el milisegundo 1010, y
+// eso es una espera mirando una carta que ya has leído.
+//
+// SE ACELERAN LAS DOS COSAS, porque son dos esperas distintas y las dos se
+// notan: cuándo SALE (el paso que la separa de la anterior, 550 → 413) y cuánto
+// tarda en LLEGAR (su vuelo, 460 → 345). Solo con lo primero la carta cruza la
+// pantalla igual de despacio; solo con lo segundo sigue sin salir hasta medio
+// segundo después. Con las dos, la segunda carta de un Oteo está puesta en el
+// milisegundo 758 en vez del 1010.
+//
+// LA CIFRA ESTUVO EN 0,6 UNA TARDE y duró un pase: con ella la segunda se posaba
+// en el 606 y Dario lo cortó en seco —«lo has aumentado demasiado, un poco más
+// lento»—. Este dial no busca el reparto más corto posible, busca el que aún se
+// lee como repartir.
+//
+// Lo que NO se toca es el vuelo de la primera: es la que abre el reparto y es la
+// que Dario da por buena. Y lo que se conserva de la regla de arriba —una detrás
+// de otra, no dos a la vez— es la LECTURA, no el reloj: con `$deck-ease-out`
+// (cubic-bezier(0.16, 1, 0.3, 1)) una carta lleva el 99,9 % del camino a los
+// 413 ms de sus 460, o sea que la primera está visualmente posada cuando sale la
+// segunda. Lo que se recorta es cola muerta, no movimiento.
+const DEAL_RUSH = 0.75;
+const DEAL_RUSH_FLIGHT = Math.round(DEAL_FLIGHT * DEAL_RUSH);
+const DEAL_RUSH_STEP = Math.round(DEAL_STEP * DEAL_RUSH);
 
 /** Cuánto hay que mover el puntero para que un clic pase a ser un arrastre. */
 const DRAG_THRESHOLD = 6;
@@ -317,22 +350,14 @@ function pieceOf(card: UnitCard): PieceView {
 
 type Box = { readonly w: number; readonly h: number };
 
-type Cell = {
-  readonly hex: HexCoord;
-  readonly key: HexKey;
-  readonly x: number;
-  readonly y: number;
-  readonly points: string;
-};
-
-type Layout = {
-  readonly size: number;
-  readonly cells: readonly Cell[];
-  readonly centers: ReadonlyMap<HexKey, { x: number; y: number }>;
-  readonly mesh: readonly { x1: number; y1: number; x2: number; y2: number }[];
-  /** Origen del retal: lo que hay que restar a un punto para deshacer `toPixel`. */
-  readonly originX: number;
-  readonly originY: number;
+/**
+ * El retal, más los sitios que solo existen en esta mesa.
+ *
+ * El retal lo mide lib/v3/patch.ts y llega entero; lo que se le añade es lo que
+ * el banco de animación no tiene: dónde está el Mazo, cuánto ancho le queda al
+ * abanico y cuál es la banda en la que se lee una carta.
+ */
+type Layout = PatchLayout & {
   /** El Mazo, abajo a la izquierda; la mano, en lo que queda a su derecha. */
   readonly pile: { x: number; y: number };
   readonly hand: { x: number; y: number };
@@ -345,53 +370,17 @@ type Layout = {
 };
 
 /**
- * El retal medido contra la caja de la que dispone.
+ * La mesa medida contra la caja de la que dispone.
  *
- * El tamaño de hexágono sale de encajarlo, no de un número elegido: la mesa
- * tiene que verse igual de cerca en una pantalla ancha que en una estrecha. Se
- * mide con radio 1 y se escala, igual que en AnimationBench.
+ * El retal es `fitPatch` y no se vuelve a calcular aquí; lo que se calcula es lo
+ * de esta pantalla. La mano se reparte lo que el Mazo le deja y no el escenario
+ * entero: en una ventana estrecha, un abanico centrado en la mitad se monta
+ * encima del Mazo.
  */
 function measure(box: Box): Layout | null {
-  if (box.w < 320 || box.h < 320) return null;
+  const patch = fitPatch(PATCH, box, FIT);
+  if (!patch) return null;
 
-  const hexes: HexCoord[] = [];
-  for (let row = 0; row < ROWS; row++) {
-    for (let col = 0; col < COLS; col++) hexes.push(Hex.offsetToAxial({ col, row }));
-  }
-
-  const unit = hexes.map((h) => Hex.toPixel(h, 1, TILT));
-  const minX = Math.min(...unit.map((p) => p.x));
-  const maxX = Math.max(...unit.map((p) => p.x));
-  const minY = Math.min(...unit.map((p) => p.y));
-  const maxY = Math.max(...unit.map((p) => p.y));
-  const spanX = maxX - minX + SQRT3;
-  const spanY = maxY - minY + 2 * TILT;
-  const size = Math.max(
-    18,
-    Math.min((box.w - 96) / spanX, (box.h * GROUND_SHARE - TOP_PAD) / spanY),
-  );
-
-  const originX = (box.w - spanX * size) / 2 + (SQRT3 / 2) * size - minX * size;
-  const originY = TOP_PAD + TILT * size - minY * size;
-
-  const cells = hexes.map((hex, i) => {
-    const x = unit[i].x * size + originX;
-    const y = unit[i].y * size + originY;
-    return { hex, key: Hex.key(hex), x, y, points: Hex.polygonPoints(x, y, size, TILT) };
-  });
-
-  const centers = new Map(cells.map((c) => [c.key, { x: c.x, y: c.y }]));
-
-  // Cada arista una sola vez: el lado que comparten dos hexágonos se pintaría
-  // dos veces y saldría al doble de opacidad (misma razón que en ArenaBoard).
-  const mesh = Hex.uniqueEdges(hexes).map((edge) => {
-    const { x, y } = centers.get(Hex.key(edge.hex)) ?? { x: 0, y: 0 };
-    const [a, b] = Hex.edgeEndpoints(x, y, size, edge.dir, TILT);
-    return { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
-  });
-
-  // La mano se reparte lo que el Mazo le deja, no el escenario entero: en una
-  // ventana estrecha, un abanico centrado en la mitad se monta encima del Mazo.
   const pileRight = PILE_LEFT + (SKETCH_W * PILE_SCALE) / 2;
   const handLeft = pileRight + HAND_GUTTER;
   const handRight = box.w - HAND_GUTTER;
@@ -400,17 +389,12 @@ function measure(box: Box): Layout | null {
   // velo. Es contra ESTO y no contra el alto del escenario contra lo que se
   // mide una carta ampliada, o con el escenario en su alto mínimo se comería
   // el botón de abajo.
-  const readTop = TOP_PAD;
+  const readTop = FIT.topPad;
   const readBottom = box.h - FOOT_SPACE;
   const readHeight = readBottom - readTop;
 
   return {
-    size,
-    cells,
-    centers,
-    mesh,
-    originX,
-    originY,
+    ...patch,
     pile: { x: PILE_LEFT, y: box.h - PILE_BOTTOM },
     hand: { x: (handLeft + handRight) / 2, y: box.h - HAND_BOTTOM },
     handSpan: handRight - handLeft,
@@ -445,26 +429,6 @@ function readScale(needW: number, roomW: number, roomH: number): number {
   if (roomW >= needW && roomH >= SKETCH_H) return 1;
   const AIR = 16;
   return Math.min(roomW / needW, (roomH - AIR) / SKETCH_H);
-}
-
-/**
- * El hexágono bajo un punto del escenario, o null si el punto cae fuera.
- *
- * `Hex.fromPixel` deshace la fórmula de `toPixel` y redondea al hexágono más
- * cercano, así que SIEMPRE devuelve uno: quien dice que el punto está fuera es
- * la comprobación de que ese hexágono pertenece al retal, más un radio de
- * tolerancia para que soltar dos píxeles por debajo del borde no cuente como
- * haber acertado en la última fila.
- */
-function hexAt(l: Layout, x: number, y: number): HexCoord | null {
-  const hex = Hex.fromPixel(x - l.originX, y - l.originY, l.size, TILT);
-  const center = l.centers.get(Hex.key(hex));
-  if (!center) return null;
-  const dx = x - center.x;
-  // El alto va comprimido por el tablero: sin deshacerlo, la tolerancia sería
-  // una elipse y la fila de abajo aceptaría clics de mucho más lejos.
-  const dy = (y - center.y) / TILT;
-  return dx * dx + dy * dy <= (l.size * 1.05) ** 2 ? hex : null;
 }
 
 // --- Dónde está cada carta -------------------------------------------------
@@ -581,9 +545,6 @@ function initialState(cards: readonly UnitCard[]): DeckState {
 }
 
 export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
-  const uid = useId().replace(/[^\w-]/g, "");
-  const soilId = `baraja-soil-${uid}`;
-
   const [state, setState] = useState<DeckState>(() => initialState(cards));
   const [oteo, setOteo] = useState<OteoDraw>([]);
   const [pending, setPending] = useState<DeckCard | null>(null);
@@ -618,7 +579,7 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
    * Es estado y no una referencia porque LA FICHA HAY QUE PINTARLA antes de
    * poder animarla: la cara de ficha vive dentro de la carta que vuela (así el
    * cruce es una opacidad y no dos animaciones sincronizadas, ver
-   * deploy-motion.ts), y ese nodo tiene que existir en el DOM cuando la
+   * motion/deploy.ts), y ese nodo tiene que existir en el DOM cuando la
    * secuencia arranca. Por eso el gesto solo apunta aquí lo que va a pasar y la
    * secuencia la lanza un efecto, ya con la ficha pintada.
    */
@@ -628,14 +589,12 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
     hex: HexCoord;
     from: { x: number; y: number };
   } | null>(null);
-  const [box, setBox] = useState<Box>({ w: 0, h: 0 });
   const [note, setNote] = useState("Otea para empezar: el Mazo reparte dos y te quedas con una.");
 
   const stageRef = useRef<HTMLDivElement>(null);
   /** El nodo que TIEMBLA al aterrizar una ficha. Lleva el tablero y las cartas. */
   const sceneRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const dustRef = useRef<DustField | null>(null);
   const cardEls = useRef(new Map<string, HTMLDivElement>());
   /** La mancha de suelo de cada carta, emparejada por `data-for`. */
   const shadowEls = useRef(new Map<string, HTMLDivElement>());
@@ -670,8 +629,8 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
    */
   const dealClock = useRef(0);
   const hovered = useRef<string | null>(null);
-  /** El aliento de cada ficha puesta: su animación infinita, para poder pararla. */
-  const idles = useRef(new Map<HexKey, Animation[]>());
+  /** El coro: qué fichas respiran ahora. La secuencia está en motion/idle.ts. */
+  const idles = useRef(new IdleChorus());
 
   /** El gesto en curso. Vive en una referencia porque cambia con cada movimiento del puntero. */
   const press = useRef<{
@@ -752,23 +711,14 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
 
   // --- Medida ---------------------------------------------------------------
 
-  useLayoutEffect(() => {
-    const el = stageRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      setBox({ w: Math.round(width), h: Math.round(height) });
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const box = usePatchBox(stageRef);
 
   // El escenario medido. Los gestos lo leen del cierre de su render y no de una
   // referencia: durante un arrastre no hay repintados, así que el que había al
   // empezar el gesto es el bueno hasta que termine.
   const layout = useMemo(() => measure(box), [box]);
 
-  const geometry = useMemo(() => (layout ? pieceGeometry(layout.size, TILT) : null), [layout]);
+  const geometry = useMemo(() => (layout ? pieceGeometry(layout.size, ARENA_TILT) : null), [layout]);
 
   /**
    * A qué escala se queda la carta al aterrizar: la que la deja del ANCHO DE LA
@@ -793,28 +743,15 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
    * banco dibuja su carta al inverso de `cardScale`.
    */
   const flyingGeometry = useMemo(
-    () => (layout && endScale > 0 ? pieceGeometry(layout.size / endScale, TILT) : null),
+    () => (layout && endScale > 0 ? pieceGeometry(layout.size / endScale, ARENA_TILT) : null),
     [layout, endScale],
   );
 
   // --- El polvo -------------------------------------------------------------
   // Un lienzo y no elementos: un aterrizaje suelta veintitantas partículas y
   // veintitantos nodos con su propia animación es lo que hace que el navegador
-  // empiece a tirar fotogramas. La clase la comparte con el banco (dust.ts).
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const field = new DustField(canvas);
-    dustRef.current = field;
-    return () => {
-      field.destroy();
-      dustRef.current = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (layout && dustRef.current) dustRef.current.resize(box.w, box.h);
-  }, [layout, box.w, box.h]);
+  // empiece a tirar fotogramas. El campo lo monta el mismo hook que en el banco.
+  const dustRef = useDustField(canvasRef, box);
 
   // Un Subject por PERSONAJE y no por carta: el Mazo repite las mismas 16
   // unidades hasta veinte veces, y resolver sus rasgos contra el catálogo en
@@ -959,12 +896,27 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
    * quedaría en el Mazo para siempre.
    */
   const dealOut = useCallback(
-    (id: string) => {
+    (id: string, flight = 0) => {
       dealing.current.delete(id);
       const el = cardEls.current.get(id);
       if (el) {
         delete el.dataset.dealing;
         el.style.transition = "";
+        // Y si esta va acelerada, su vuelo dura lo que le toque a ella y no lo
+        // que dice la hoja de estilos. Se escribe SOLO la duración —la lista de
+        // propiedades y la curva siguen siendo las del CSS— y se le devuelve la
+        // suya en cuanto se posa: la duración del reparto no tiene por qué ser
+        // también la de un realce al pasar el puntero, que es lo próximo que le
+        // va a pasar a esta carta.
+        if (flight > 0) {
+          el.style.transitionDuration = `${flight}ms`;
+          const back = window.setTimeout(() => {
+            dealTimers.current.delete(back);
+            const node = cardEls.current.get(id);
+            if (node) node.style.transitionDuration = "";
+          }, flight + 40);
+          dealTimers.current.add(back);
+        }
         writeCard(id);
       }
       if (dealing.current.size === 0) setRevealing(false);
@@ -991,6 +943,10 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
       el.style.transition = "";
     }
     dealing.current.clear();
+    // Y la duración acelerada se le quita a TODAS y no solo a las de `dealing`:
+    // la que ya salió volando no está ahí dentro, y el reloj que iba a
+    // devolverle la suya acaba de morir con los demás.
+    for (const el of cardEls.current.values()) el.style.transitionDuration = "";
     dealClock.current = 0;
     setRevealing(false);
   }, []);
@@ -1051,14 +1007,26 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
     }
 
     const now = performance.now();
-    // Sin movimiento no hay reparto que escalonar: esperar medio segundo por
-    // carta para que aparezcan de golpe es tiempo muerto, no una animación.
-    const step = stillRef.current ? 0 : DEAL_STEP;
     let turn = Math.max(dealClock.current, now);
+    // QUIÉN ES LA PRIMERA LO DICE EL RELOJ, no el índice en este lote: si la
+    // cola ya va por delante del ahora es que hay una carta saliendo, así que
+    // esta no abre el reparto ni aunque sea la primera de su pase. Es la misma
+    // razón por la que el turno sale de `dealClock` y no de un `forEach`.
+    let rushed = dealClock.current > now;
     const queue = fresh.map(({ id }) => {
       const delay = Math.max(0, turn - now);
-      turn += step;
-      return { id, delay };
+      // Sin movimiento no hay reparto que escalonar —ni acelerón que aplicar—:
+      // esperar medio segundo por carta para que aparezcan de golpe es tiempo
+      // muerto, no una animación.
+      const flight = stillRef.current || !rushed ? 0 : DEAL_RUSH_FLIGHT;
+      // EL PASO ES EL ACELERADO SIEMPRE, también detrás de la primera, y ahí
+      // está la mitad del arreglo: lo que hace esperar a la segunda no es su
+      // vuelo, es el turno de la que va delante. Un paso de DEAL_STEP con un
+      // vuelo acelerado dejaría a la segunda saliendo igual de tarde y llegando
+      // un poco antes, que es justo lo que Dario dice que no basta.
+      turn += stillRef.current ? 0 : DEAL_RUSH_STEP;
+      rushed = true;
+      return { id, delay, flight };
     });
     dealClock.current = turn;
 
@@ -1071,10 +1039,10 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
       dealFrames.current.delete(raf1);
       const raf2 = requestAnimationFrame(() => {
         dealFrames.current.delete(raf2);
-        for (const { id, delay } of queue) {
+        for (const { id, delay, flight } of queue) {
           const timer = window.setTimeout(() => {
             dealTimers.current.delete(timer);
-            dealOut(id);
+            dealOut(id, flight);
           }, delay);
           dealTimers.current.add(timer);
         }
@@ -1305,7 +1273,7 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
     // El candidato lo sigue diciendo el PUNTERO, aunque ahora la carta vaya con
     // él: lo que se mira al soltar es el hexágono, y la carta se cuelga por
     // encima (`DRAG_LIFT`) justo para no taparlo.
-    const hex = hexAt(l, at.x, at.y);
+    const hex = cellAt(l, at.x, at.y)?.hex ?? null;
     markCandidate(hex && !placed.has(Hex.key(hex)) ? Hex.key(hex) : null);
 
     flyCard(p, at, e.clientX);
@@ -1338,7 +1306,7 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
 
     const at = pointOf(e);
     const carried = { x: at.x, y: at.y - DRAG_LIFT };
-    const hex = l && !cancelled ? hexAt(l, at.x, at.y) : null;
+    const hex = l && !cancelled ? (cellAt(l, at.x, at.y)?.hex ?? null) : null;
     if (!hex || placed.has(Hex.key(hex))) {
       // Vuelve a su sitio, y con la misma animación que en el banco: sin peso,
       // porque no cae — la recoges.
@@ -1451,92 +1419,52 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
 
   // --- El aliento -----------------------------------------------------------
   //
-  // Una ficha puesta RESPIRA: sube, se hace un pelo más grande —está más cerca
-  // de la cámara— y baja, para siempre. Y su mancha respira al revés, se encoge
-  // y se aclara cuando la ficha sube, porque es lo único que dice que ha subido
-  // y no que ha crecido.
+  // La secuencia ya no está aquí: es motion/idle.ts, y la comparte con el banco
+  // de animación desde el 11 de septiembre de 2026. Estaba escrita dos veces y
+  // las dos copias YA HABÍAN DIVERGIDO —allí se animaba el disco con su centrado
+  // y aquí el grupo sin él, con distinta escala en el fotograma alto—. Nadie lo
+  // rompió: se escribió dos veces y cada una evolucionó con su pantalla.
   //
-  // Es el final del despliegue y no un adorno aparte: en el banco de animación
-  // la ficha que acaba de aterrizar empieza a respirar, y una mesa donde unas
+  // Lo que queda aquí es QUIÉN respira: toda ficha desplegada, mientras esté.
+  // Es el final del despliegue y no un adorno aparte — una mesa donde unas
   // fichas respiran y otras no es exactamente la diferencia que había entre los
-  // dos tableros. La FASE la reparte `idlePhase` por identidad de la ficha: sin
-  // eso todas arrancan abajo a la vez y lo que se ve no son fichas vivas, es el
-  // tablero entero bombeando.
+  // dos tableros.
 
   const startIdle = useCallback((key: HexKey, l: Layout, t: Timings) => {
-    if (t.idleRise <= 0 || idles.current.has(key)) return;
-    const piece = pieceEls.current.get(key);
-    if (!piece) return;
-
-    const rise = l.size * t.idleRise;
-    const options: KeyframeAnimationOptions = {
-      duration: Math.max(200, t.idleCycle),
-      easing: "ease-in-out",
-      iterations: Infinity,
-      // Negativo: la animación empieza YA EMPEZADA, en el punto de su ciclo que
-      // le toca a esta ficha.
-      delay: -idlePhase(key, t.idleCycle),
-    };
-
-    const list = [
-      piece.animate(
-        [
-          { transform: "translateY(0px) scale(1)" },
-          { transform: `translateY(${-rise.toFixed(2)}px) scale(1.015)`, offset: 0.5 },
-          { transform: "translateY(0px) scale(1)" },
-        ],
-        options,
-      ),
-    ];
-
-    const blot = blotEls.current.get(key);
-    if (blot) {
-      list.push(
-        blot.animate(
-          [
-            { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
-            { transform: "translate(-50%, -50%) scale(0.93)", opacity: 0.78, offset: 0.5 },
-            { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
-          ],
-          options,
-        ),
-      );
-    }
-
-    idles.current.set(key, list);
+    idles.current.start(
+      key,
+      // El grupo se coloca por coordenadas (PieceToken pinta sus hijos con
+      // `cx`/`cy`), así que aquí no hay centrado que conservar: el prefijo va
+      // vacío y el aliento es toda la cadena.
+      { el: pieceEls.current.get(key), blot: blotEls.current.get(key) },
+      t,
+      l.size,
+    );
   }, []);
 
-  const stopIdle = useCallback((key: HexKey) => {
-    for (const anim of idles.current.get(key) ?? []) anim.cancel();
-    idles.current.delete(key);
-  }, []);
+  const stopIdle = useCallback((key: HexKey) => idles.current.stop(key), []);
 
   useEffect(() => {
     if (!layout) return;
     for (const key of placed.keys()) startIdle(key, layout, timings);
-    for (const key of [...idles.current.keys()]) {
-      if (!placed.has(key)) stopIdle(key);
-    }
+    idles.current.keepOnly(placed.keys());
   }, [placed, layout, timings, startIdle, stopIdle]);
 
   // Los tiempos cambiados o el escenario redimensionado piden empezar de nuevo:
   // una animación infinita relanzada vuelve al mismo punto de su ciclo, así que
   // rearrancarla a mitad de una inspiración daría un tirón — se para todo y el
   // efecto de arriba las vuelve a montar con la medida nueva.
-  const idleKey = `${timings.idleRise}|${timings.idleCycle}|${layout?.size ?? 0}`;
+  const idleKey = idleKeyOf(timings, layout?.size ?? 0);
   const idleKeyRef = useRef(idleKey);
   useEffect(() => {
     if (idleKeyRef.current === idleKey) return;
     idleKeyRef.current = idleKey;
-    for (const key of [...idles.current.keys()]) stopIdle(key);
-  }, [idleKey, stopIdle]);
+    idles.current.stopAll();
+  }, [idleKey]);
 
   useEffect(() => {
-    const running = idles.current;
-    return () => {
-      for (const list of running.values()) for (const anim of list) anim.cancel();
-      running.clear();
-    };
+    const chorus = idles.current;
+    return () => chorus.stopAll();
   }, []);
 
   // --- Lo que se pinta -------------------------------------------------------
@@ -1604,135 +1532,67 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
           >
           {/* EL POLVO, en un lienzo. Va por encima del suelo y por debajo de
               las fichas: se levanta del suelo, así que la ficha que lo levanta
-              tiene que quedar delante. La clase es la misma que usa el banco
-              (dust.ts) — un aterrizaje suelta veintitantas partículas y
-              veintitantos nodos animados es lo que hace que el navegador empiece
-              a tirar fotogramas.
+              tiene que quedar delante.
 
               FUERA del `layout &&`, y esto no es colocación libre: el lienzo
               tiene que EXISTIR cuando se monta el componente, porque de él
-              cuelga el `DustField`. Metido dentro de la condición, en el primer
-              pintado todavía no hay medida, así que el nodo no existe, el efecto
-              se queda sin lienzo y no vuelve a intentarlo — y no se ve el polvo
-              nunca más. Es donde lo tiene el banco de animación, y ahora se sabe
-              por qué. */}
-          <canvas className="baraja-lab__dust" ref={canvasRef} aria-hidden />
+              cuelga el campo de partículas. Metido dentro de la condición, en el
+              primer pintado todavía no hay medida, así que el nodo no existe, el
+              efecto se queda sin lienzo y no vuelve a intentarlo — y no se ve el
+              polvo nunca más. */}
+          <PatchDust canvasRef={canvasRef} />
 
           {layout && geometry && (
             <>
-              {/* El suelo. Una LÁMINA y no un color por casilla: el degradado
-                  va en coordenadas de usuario, así que los quince hexágonos
-                  comparten una sola pintura y la unión se lee como una
-                  superficie sola (misma decisión que ArenaBoard). */}
-              <svg
-                className="baraja-lab__ground"
-                viewBox={`0 0 ${box.w} ${box.h}`}
-                width={box.w}
-                height={box.h}
-                aria-hidden
-              >
-                <defs>
-                  <linearGradient
-                    id={soilId}
-                    gradientUnits="userSpaceOnUse"
-                    x1="0"
-                    y1={TOP_PAD}
-                    x2="0"
-                    y2={box.h * GROUND_SHARE}
-                  >
-                    <stop offset="0" className="baraja-lab__soil-far" />
-                    <stop offset="0.55" className="baraja-lab__soil-mid" />
-                    <stop offset="1" className="baraja-lab__soil-near" />
-                  </linearGradient>
-                </defs>
-                <g className="baraja-lab__soil" fill={`url(#${soilId})`}>
-                  {layout.cells.map((c) => (
-                    <polygon key={c.key} points={c.points} />
-                  ))}
-                </g>
-                {/* El terreno que se ofrece va ENTRE el suelo y la rejilla: es
-                    el terreno encendiéndose, no una chapa por encima, así que
-                    las líneas tienen que seguir viéndose sobre él. Los quince
-                    polígonos están siempre puestos y lo que cambia es un
-                    atributo — un elemento recién montado no puede hacer una
-                    transición. */}
-                <g className="baraja-lab__offer">
-                  {layout.cells.map((c) => {
-                    const steps = offered?.get(c.key);
-                    return (
-                      <polygon
-                        key={c.key}
-                        ref={(node) => {
-                          if (node) cellNodes.current.set(c.key, node);
-                          else cellNodes.current.delete(c.key);
-                        }}
-                        points={c.points}
-                        data-offered={steps !== undefined ? "true" : "false"}
-                        style={offerCell(steps, timings)}
-                      />
-                    );
-                  })}
-                </g>
-                <g className="baraja-lab__mesh">
-                  {layout.mesh.map((s, i) => (
-                    <line key={i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} />
-                  ))}
-                </g>
-              </svg>
+              {/* EL SUELO, sus tres capas y sus manchas: los pinta HexPatch, y
+                  son exactamente los mismos que los de /dev/animacion. A qué
+                  altura va cada capa lo dice _baraja-lab.scss, porque eso sí
+                  cambia — aquí hay un Mazo, un velo y cartas por encima. */}
+              <PatchGround
+                layout={layout}
+                offered={offered}
+                timings={timings}
+                cellRef={(key) => (node) => {
+                  if (node) cellNodes.current.set(key, node);
+                  else cellNodes.current.delete(key);
+                }}
+              />
 
-              {/* LAS SOMBRAS, en su propia capa y por debajo de TODO lo que
+              {/* LAS MANCHAS, en su propia capa y por debajo de TODO lo que
                   vuela: si cada carta llevara la suya al lado, una carta alta
-                  proyectaría su sombra encima de la ficha de al lado. Es lo
-                  mismo que hace el banco de animación, y por lo mismo.
+                  proyectaría su sombra encima de la ficha de al lado.
 
-                  Hay dos juegos porque hay dos dueños: la de cada CARTA la
-                  mueve el gesto —al cogerla, al volar y al volver— y la de cada
-                  FICHA PUESTA se queda quieta bajo ella y respira con ella. En
-                  el momento del relevo las dos están en el mismo punto y del
-                  mismo tamaño, así que el cambio no se ve. */}
-              <div className="baraja-lab__shadows" aria-hidden>
+                  Hay dos juegos porque hay dos dueños: la de cada CARTA la mueve
+                  el gesto —al cogerla, al volar y al volver— y la de cada FICHA
+                  PUESTA se queda quieta bajo ella y respira con ella. En el
+                  momento del relevo las dos están en el mismo punto y del mismo
+                  tamaño, así que el cambio no se ve. */}
+              <div className="patch__shadows" aria-hidden>
                 {[...placed.keys()].map((key) => {
                   const at = layout.centers.get(key);
                   if (!at) return null;
                   return (
-                    <div
+                    <PatchShadow
                       key={`ps-${key}`}
-                      className="baraja-lab__shadow"
-                      data-rest="true"
+                      layout={layout}
                       style={{ transform: `translate(${at.x}px, ${at.y}px)`, opacity: 0.55 }}
-                    >
-                      <div
-                        className="baraja-lab__blot"
-                        ref={(node) => {
-                          if (node) blotEls.current.set(key, node);
-                          else blotEls.current.delete(key);
-                        }}
-                        style={{
-                          width: `${layout.size * 1.5}px`,
-                          height: `${layout.size * 1.5 * TILT * 0.62}px`,
-                        }}
-                      />
-                    </div>
+                      blotRef={(node) => {
+                        if (node) blotEls.current.set(key, node);
+                        else blotEls.current.delete(key);
+                      }}
+                    />
                   );
                 })}
                 {onTable.map((d) => (
-                  <div
+                  <PatchShadow
                     key={`cs-${d.instanceId}`}
-                    className="baraja-lab__shadow"
-                    data-for={d.instanceId}
-                    ref={(node) => {
+                    layout={layout}
+                    dataFor={d.instanceId}
+                    nodeRef={(node) => {
                       if (node) shadowEls.current.set(d.instanceId, node);
                       else shadowEls.current.delete(d.instanceId);
                     }}
-                  >
-                    <div
-                      className="baraja-lab__blot"
-                      style={{
-                        width: `${layout.size * 1.5}px`,
-                        height: `${layout.size * 1.5 * TILT * 0.62}px`,
-                      }}
-                    />
-                  </div>
+                  />
                 ))}
               </div>
 
@@ -1916,7 +1776,7 @@ export default function BarajaModule({ cards, catalog }: BarajaModuleProps) {
                     capa de fichas a propósito: siendo hija del nodo que vuela,
                     el cruce es una opacidad sobre dos hermanas y el vuelo un
                     solo `transform`, en vez de dos animaciones sobre dos nodos
-                    que habría que mantener en fase (deploy-motion.ts lo cuenta
+                    que habría que mantener en fase (motion/deploy.ts lo cuenta
                     largo). Se dibuja al ancho de la carta —de ahí
                     `flyingGeometry`— para que al encogerse el padre hasta
                     `endScale` acabe midiendo lo que mide en el tablero. */}

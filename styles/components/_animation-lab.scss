@@ -3,34 +3,27 @@
 // -------------------------------------------------------------------------
 // El banco de animación de V3 — ver components/dev/AnimationBench.tsx
 //
-// Comparte PALETA con la arena (_arena.scss) y no la hereda: son el mismo
-// campo, así que los tokens tienen que ser los mismos, pero el banco no tiene
-// bandas, ni alcances, ni cámara, y sus fichas son DOM en vez de SVG. Un
-// parcial común obligaría a parametrizar por lo que difieren, que es la
-// estructura entera.
+// AQUÍ YA SOLO VIVE LO SUYO *(11 de septiembre de 2026)*: sus fichas, que son
+// DOM y no SVG; su carta de mentira; el glifo que deja un crítico; y sus mandos.
+// El SUELO —la lámina, el terreno que se ofrece, la rejilla, el polvo, las
+// sombras y el número del golpe— se fue a _hex-patch.scss, porque lo compartía
+// con /dev/baraja y estaba escrito dos veces con dos prefijos distintos.
+//
+// Comparte PALETA con la arena (_arena.scss) y no la hereda: son el mismo campo,
+// así que los tokens tienen que ser los mismos, pero el banco no tiene bandas,
+// ni alcances, ni cámara. Un parcial común con ella obligaría a parametrizar por
+// lo que difieren, que es la estructura entera.
 //
 // LO QUE ESTE ARCHIVO NO HACE, y es lo importante: aquí no hay ni una
-// `transition` ni un `@keyframes` de las secuencias. Todo el movimiento lo
-// lleva la Web Animations API desde el componente, porque los tiempos son
-// diales que se mueven en vivo con sliders y una regla de CSS no se puede
-// mover en vivo (el porqué completo, en lib/v3/anim.ts). Lo que hay aquí es
-// dónde está cada capa y de qué color es.
-//
-// LA ÚNICA EXCEPCIÓN a lo anterior es el TERRENO QUE SE OFRECE, y tiene su
-// motivo: no es una secuencia, es un estado —"estos hexágonos te aceptan"— que
-// se enciende y se apaga con el gesto. Eso en CSS es una transición, y hacerlo
-// con la Web Animations API obligaría a lanzar y cancelar quince animaciones por
-// cada vez que se coge una ficha. La duración se la pasa el componente en
-// `--offer-rise-ms` (de lib/v3/anim.ts) y el retraso de cada hexágono va en su
-// propio estilo, así que sigue sin haber un número de tiempo escrito aquí.
+// `transition` ni un `@keyframes` de las secuencias. Todo el movimiento lo lleva
+// la Web Animations API desde components/dev/motion/, porque los tiempos son
+// diales que se mueven en vivo con sliders y una regla de CSS no se puede mover
+// en vivo (el porqué completo, en lib/v3/anim.ts). Lo que hay aquí es dónde está
+// cada capa y de qué color es.
 //
 // EL APILADO, de abajo arriba, y el orden es la mitad del efecto:
 //   1. la mesa (fondo de .anim__stage)
-//   2. el suelo (SVG)
-//   3. el terreno ofrecido — ENTRE el suelo y la rejilla: la oferta es el
-//      terreno encendiéndose, no una chapa por encima, así que las líneas de la
-//      rejilla tienen que seguir viéndose sobre ella
-//   4. la rejilla
+//   2-4. el suelo, la oferta y la rejilla (_hex-patch.scss, en ese orden)
 //   5. el polvo (canvas) — por encima del suelo, por debajo de las fichas: una
 //      nube tiene que tapar el terreno pero pasar por detrás de quien la
 //      levanta, o la ficha parece estar dentro de la nube en vez de encima
@@ -68,130 +61,6 @@
 .anim__scene {
   position: absolute;
   inset: 0;
-}
-
-// --- Suelo y rejilla -------------------------------------------------------
-
-.anim__ground {
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: block;
-  // La sombra sale de la silueta del retal entero, no hexágono a hexágono: si
-  // cada uno tuviera la suya se sombrearían entre ellos, estando todos a la
-  // misma altura. Y un filtro se rasteriza una vez, no quince.
-  filter: drop-shadow(0 6px 7px $board-shadow);
-  pointer-events: none;
-}
-
-.anim__soil-far {
-  stop-color: $arena-ground-far;
-}
-
-.anim__soil-mid {
-  stop-color: $arena-ground-mid;
-}
-
-.anim__soil-near {
-  stop-color: $arena-ground-near;
-}
-
-.anim__soil polygon {
-  // Un filete del mismo tono cierra las juntas: los polígonos se tocan exacto,
-  // pero el suavizado de bordes deja una hebra de un píxel por la que se vería
-  // la mesa.
-  stroke: $arena-ground-far;
-  stroke-width: 1;
-}
-
-.anim__mesh line {
-  stroke: $arena-grid;
-  stroke-width: 1;
-  stroke-linecap: round;
-  opacity: 0.28;
-}
-
-// --- El terreno que se ofrece ----------------------------------------------
-
-// Verde agua, que es el color que la arena ya usa para lo que alcanza una ficha
-// al moverse (_colors.scss, $arena-move). No se le inventa uno propio ni se
-// reutiliza el oro del alcance de ataque: en el mismo turno una ficha mueve Y
-// ataca, así que las dos cosas se van a enseñar a la vez y tienen que poder
-// distinguirse. Que el despliegue de una carta use este mismo verde es
-// deliberado — la pregunta es la misma, "aquí puedes soltar esto", aunque
-// detrás haya dos reglas distintas.
-.anim__offer polygon {
-  fill: rgba($arena-move, 0.16);
-  stroke: rgba($arena-move, 0.5);
-  stroke-width: 1.5;
-  opacity: 0;
-  pointer-events: none;
-  // El levantarse se dibuja desde el CENTRO del hexágono y no desde la esquina
-  // del lienzo: sin esto, el `translateY` iría bien pero cualquier escalado
-  // futuro tiraría el polígono al otro lado del tablero.
-  transform-box: fill-box;
-  transform-origin: center;
-  transition:
-    opacity var(--offer-rise-ms) ease-out,
-    transform var(--offer-rise-ms) ease-out;
-
-  &[data-offered="true"] {
-    opacity: 1;
-  }
-
-  // El candidato: al que va a caer la ficha si sueltas ahora. Sube de golpe y
-  // sin esperar a la onda —es respuesta al puntero, no parte de la oferta— y
-  // por eso se le quita el retraso con `!important`: el retraso escalonado lo
-  // escribe el componente en el estilo en línea, y aquí hay que ganarle.
-  &[data-candidate="true"] {
-    fill: rgba($arena-move, 0.34);
-    stroke: $arena-origin;
-    stroke-width: 2.5;
-    transition-delay: 0ms !important;
-  }
-}
-
-// --- El polvo --------------------------------------------------------------
-
-.anim__dust {
-  position: absolute;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-}
-
-// --- Sombras ---------------------------------------------------------------
-
-// El punto que se mueve. No se ve: mide 0×0 y solo lleva el `translate` que le
-// escribe el componente.
-.anim__shadow {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-  // Aquí sí va en fijo, y no es una incoherencia con `.anim__piece`: lo que
-  // emborrona una capa permanente es el detalle fino, y esto es un degradado
-  // sin un solo borde duro. Remuestrear una mancha difusa no se ve.
-  will-change: transform, opacity;
-}
-
-// La mancha que sí se ve, centrada sobre ese punto. Un degradado radial y no un
-// color plano con `blur`: el desenfoque es un filtro y se recalcularía en cada
-// fotograma de la caída; el degradado se compone en la GPU y sale gratis.
-.anim__blot {
-  position: absolute;
-  left: 0;
-  top: 0;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba($board-shadow, 0.62) 0%,
-    rgba($board-shadow, 0.34) 45%,
-    rgba($board-shadow, 0) 72%
-  );
 }
 
 // --- Las fichas ------------------------------------------------------------
@@ -318,55 +187,6 @@
   color: rgba($arena-origin, 0.6);
 }
 
-// --- El número del golpe ----------------------------------------------------
-
-// Marcador de posición hasta que exista el motor de combate: la cifra es
-// aleatoria a propósito para que no se lea como un dato.
-.anim__damage {
-  position: absolute;
-  left: 0;
-  top: 0;
-  margin: -0.7rem 0 0 -1.2rem;
-  width: 2.4rem;
-  text-align: center;
-  font-size: 1.15rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  color: $arena-damage;
-  // El número cae sobre suelo, ficha o polvo, así que se apoya en su propio
-  // contorno y no en el color de debajo.
-  paint-order: stroke;
-  -webkit-text-stroke: 3px $arena-label-halo;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-
-// El crítico: más grande y hacia el blanco. El tamaño hace aquí más que el
-// color — un número que ocupa el doble se ve con el rabillo del ojo, y un
-// crítico tiene que verse aunque estés mirando otra esquina del tablero.
-.anim__damage--critico {
-  width: 4rem;
-  margin-left: -2rem;
-  font-size: 1.9rem;
-  color: $arena-crit;
-  -webkit-text-stroke: 4px $arena-label-halo;
-}
-
-// El fallo: la única cosa de este tablero que se pinta SIN halo. No es
-// descuido. El halo existe para que algo se lea sobre cualquier fondo, y un
-// fallo es justo lo que no tiene que reclamar la vista: se lee si lo miras y
-// se pierde si no. Más pequeño que el daño, en versalitas y apagado.
-.anim__damage--fallo {
-  width: 4.5rem;
-  margin-left: -2.25rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: $arena-miss;
-  -webkit-text-stroke: 0;
-}
-
 // --- El relevo del crítico --------------------------------------------------
 
 // El estado que el crítico deja puesto (§4.5: los de control los aplica el
@@ -462,22 +282,315 @@
   color: skin("text");
 }
 
-// Nada se mueve para quien ha pedido que nada se mueva. El componente ya
-// aplana los tiempos (anim.ts, `reduced`), y esto es el cinturón por si algún
-// día algo de aquí vuelve a ser una transición de CSS.
-@include reduced-motion {
-  .anim__piece,
-  .anim__shadow,
-  .anim__damage {
-    transition: none !important;
-  }
+// --- El catálogo: un banco por animación ------------------------------------
+//
+// Ver components/dev/AnimationPreview.tsx. Cada tarjeta es el mismo suelo, las
+// mismas fichas y las mismas secuencias que el banco grande, con UNA cosa
+// moviéndose y solo los diales que la mueven.
+//
+// La rejilla es de dos columnas anchas y no de tres o cuatro: un retal de tres
+// por dos por debajo de unos 320 px deja el hexágono tan pequeño que el
+// aplastado —que dura 110 ms y mide un 18 %— deja de poder verse, y un preview
+// en el que no se ve lo que mide no es un preview.
+.anim-catalog {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+}
 
-  // La oferta NO se apaga aquí, y es la única de la lista que se queda: es
-  // información sobre lo que se puede hacer, no un adorno. Lo que se le quita es
-  // el relieve y la onda —el componente ya pone `offerRise` y `offerRipple` a 0
-  // (anim.ts, `reduced`)— y lo que queda es el color, que dice lo mismo sin
-  // mover nada. Esto es el cinturón para el encendido en sí.
-  .anim__offer polygon {
-    transition-property: opacity;
+.anim-preview {
+  display: grid;
+  gap: 0.6rem;
+  align-content: start;
+  padding: 0.85rem;
+  border: 1px solid skin("border");
+  border-radius: radius("lg");
+  background: skin("surface");
+}
+
+.anim-preview__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.anim-preview__title {
+  font-weight: 600;
+  color: skin("text");
+}
+
+// La pregunta y no una descripción: es lo que hace que el preview se pueda
+// aislar sin perder el sentido. Si una tarjeta no contesta una sola pregunta,
+// no debería ser una tarjeta.
+.anim-preview__question {
+  font-size: 0.78rem;
+  color: skin("muted");
+}
+
+// Alto fijo y no proporción: lo que tiene que caber es un retal de tres por dos
+// con sitio para una embestida, y eso no encoge con el ancho de la ventana.
+.anim-preview__stage {
+  position: relative;
+  overflow: hidden;
+  height: 13rem;
+
+  // La escena de la CARTA es la única que tiene algo debajo del suelo, y ese
+  // algo mide 9,8 rem de alto: con los 13 de las demás, el naipe asoma por el
+  // canto de abajo. El retal se retira además hacia arriba (FIT_CARD).
+  &[data-scene="carta"] {
+    height: 17rem;
+  }
+  border-radius: radius("md");
+  background:
+    radial-gradient(125% 95% at 50% 40%, rgba($board-table-edge, 0) 30%, $board-table-edge 100%),
+    $board-table;
+  touch-action: none;
+  user-select: none;
+}
+
+// El rótulo que ocupa el sitio del botón donde no hay nada que reproducir: el
+// aliento es el estado de reposo, así que lo que se mira es el dial.
+.anim-preview__still {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: skin("muted");
+}
+
+.anim-preview__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+// Una sola columna de diales aunque quepan dos: son pocos —dos, cuatro— y en
+// dos columnas quedan huérfanos a la derecha.
+.anim-preview__knobs {
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
+}
+
+.anim-preview__try {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: skin("muted");
+}
+
+// Lo que el retal NO puede contestar, medido al lado de la secuencia de la que
+// habla: el presupuesto de la oferta —que aquí siempre cabe, y en la arena de
+// verdad no— y los tres relojes del desenlace. Van con borde discontinuo porque
+// no son parte del banco: son una CUENTA sobre él, hecha sin pintar un píxel.
+.anim-preview__aside {
+  padding: 0.65rem;
+  border: 1px dashed skin("border");
+  border-radius: radius("md");
+}
+
+.anim-preview__aside-head {
+  margin-bottom: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: skin("muted");
+}
+
+.anim-preview__aside-note {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: skin("muted");
+}
+
+// Nada se mueve para quien ha pedido que nada se mueva. El componente ya aplana
+// los tiempos (anim.ts, `reduced`), y esto es el cinturón por si algún día algo
+// de aquí vuelve a ser una transición de CSS. Lo del suelo —la oferta incluida,
+// que es la única que NO se apaga— está en _hex-patch.scss.// --- «Otras animaciones»: la lista de las que no existen -------------------
+//
+// Una lista larga que se lee de arriba abajo, así que todo aquí está al
+// servicio de dos cosas: que se pueda barrer con la vista buscando un veredicto
+// concreto, y que el identificador (A1, C3) se vea, porque es el nombre con el
+// que se pide una.
+//
+// LOS CUATRO VEREDICTOS NO SE DISTINGUEN SOLO POR COLOR: cada uno lleva su
+// palabra escrita y además un tratamiento distinto de borde y fondo. No hay
+// tokens de "correcto" y "aviso" en el skin —solo accent, danger y los grises—,
+// y en vez de inventarlos para cuatro insignias se usan los que hay con
+// densidades distintas. Sale mejor: el único que grita es el que dice que no.
+
+.anim-backlog__tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.anim-backlog__families {
+  display: grid;
+  gap: 1rem;
+
+  // Dos columnas en cuanto caben: las familias son independientes entre sí y en
+  // una sola columna la lista mide media pantalla de largo.
+  @media (min-width: 60rem) {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.anim-backlog__family {
+  padding: 0.85rem;
+  border: 1px solid skin("border");
+  border-radius: radius("md");
+  background: skin("surface");
+}
+
+.anim-backlog__family-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.3rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: skin("text");
+}
+
+.anim-backlog__count {
+  padding: 0.05rem 0.4rem;
+  border-radius: radius("sm");
+  background: skin("surface-2");
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: skin("muted");
+}
+
+.anim-backlog__family-note {
+  margin: 0 0 0.7rem;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: skin("muted");
+}
+
+.anim-backlog__list {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.anim-backlog__row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 0.5rem;
+  align-items: start;
+  padding-top: 0.55rem;
+  border-top: 1px solid skin("border");
+
+  &:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+.anim-backlog__id {
+  padding: 0.1rem 0.35rem;
+  border-radius: radius("sm");
+  background: skin("code-bg");
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: skin("muted");
+}
+
+.anim-backlog__body {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.anim-backlog__label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: skin("text");
+}
+
+// Las que salieron de Dario. Discreta a propósito: marca de dónde vino la idea,
+// no la importancia que tiene.
+.anim-backlog__asked {
+  padding: 0.02rem 0.3rem;
+  border: 1px solid skin("border");
+  border-radius: radius("sm");
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: skin("muted");
+}
+
+.anim-backlog__note {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: skin("muted");
+}
+
+.anim-backlog__verdict {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 0.1rem;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid transparent;
+  border-radius: radius("sm");
+  font-size: 0.65rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+// Ya está lo que hace falta: es el que se busca primero, así que es el único de
+// los tres viables que lleva tinta de acento.
+.anim-backlog__verdict--listo {
+  border-color: skin("accent");
+  background: skin("accent-soft");
+  color: skin("accent");
+}
+
+.anim-backlog__verdict--directo {
+  border-color: skin("border");
+  background: skin("surface-2");
+  color: skin("text");
+}
+
+// Discontinuo: lo mismo que dice el borde de las cajas de cuenta del catálogo
+// —esto no está cerrado—, y aquí además es literal: falta algo.
+.anim-backlog__verdict--condicion {
+  border-style: dashed;
+  border-color: skin("muted");
+  color: skin("muted");
+}
+
+.anim-backlog__verdict--no {
+  border-color: skin("danger");
+  background: skin("danger-soft");
+  color: skin("danger");
+}
+
+.anim-backlog__tally .anim-backlog__verdict {
+  grid-column: auto;
+  margin-top: 0;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+}
+
+@include reduced-motion {
+  .anim__piece {
+    transition: none !important;
   }
 }

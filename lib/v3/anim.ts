@@ -335,12 +335,18 @@ export const TIMINGS: Timings = {
  * Fuera quedan los dos que no son un número en una escala: la curva de caída
  * —que es una elección entre cuatro físicas, no un continuo— y `evenOut`, que
  * es un sí o un no.
+ *
+ * Y fuera queda la FAMILIA, que hasta el 11 de septiembre de 2026 era un campo
+ * `group` aquí mismo. Quién enseña cada dial lo dice ahora `ANIMATIONS`, más
+ * abajo: un dial se ve en la secuencia que lo mueve. Mantener las dos listas era
+ * mantener dos taxonomías de lo mismo —una por parentesco y otra por la pregunta
+ * que contesta cada secuencia— y la que sobraba era esta, porque un dial suelto
+ * no se puede mirar y una animación sí.
  */
 export type KnobId = Exclude<keyof Timings, "fallCurve" | "evenOut">;
 
 export type Knob = {
   readonly id: KnobId;
-  readonly group: "despliegue" | "impacto" | "desenlace" | "vida" | "movimiento" | "polvo";
   readonly label: string;
   readonly min: number;
   readonly max: number;
@@ -352,7 +358,6 @@ export type Knob = {
 export const KNOBS: readonly Knob[] = [
   {
     id: "flight",
-    group: "despliegue",
     label: "Vuelo",
     min: 0,
     max: 700,
@@ -362,7 +367,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "fall",
-    group: "despliegue",
     label: "Caída",
     min: 40,
     max: 600,
@@ -372,7 +376,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "hover",
-    group: "despliegue",
     label: "Altura",
     min: 0,
     max: 220,
@@ -382,7 +385,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "squash",
-    group: "despliegue",
     label: "Aplastado",
     min: 0,
     max: 260,
@@ -392,17 +394,15 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "squashAmount",
-    group: "despliegue",
     label: "Cuánto aplasta",
     min: 0,
     max: 0.4,
     step: 0.01,
     unit: "",
-    help: "0,18 significa 82 % de alto y 118 % de ancho en el fotograma del golpe. A 0 no hay squash y se nota lo muerto que queda.",
+    help: "0,18 significa 82 % de alto y 118 % de ancho en lo más hondo del golpe, al que se llega en los dos primeros fotogramas del aplastado. A 0 no hay squash y se nota lo muerto que queda.",
   },
   {
     id: "cardScale",
-    group: "despliegue",
     label: "Tamaño de la carta",
     min: 1,
     max: 4,
@@ -413,7 +413,6 @@ export const KNOBS: readonly Knob[] = [
 
   {
     id: "lunge",
-    group: "impacto",
     label: "Embestida",
     min: 60,
     max: 500,
@@ -423,7 +422,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "lungeBack",
-    group: "impacto",
     label: "Vuelta",
     min: 60,
     max: 600,
@@ -433,7 +431,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "lungeDistance",
-    group: "impacto",
     label: "Recorrido",
     min: 0.1,
     max: 0.9,
@@ -443,7 +440,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "hitStop",
-    group: "impacto",
     label: "Congelado",
     min: 0,
     max: 300,
@@ -453,7 +449,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "flash",
-    group: "impacto",
     label: "Destello",
     min: 0,
     max: 400,
@@ -463,7 +458,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "shake",
-    group: "impacto",
     label: "Temblor",
     min: 0,
     max: 16,
@@ -473,7 +467,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "shakeTime",
-    group: "impacto",
     label: "Duración del temblor",
     min: 60,
     max: 600,
@@ -483,7 +476,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "death",
-    group: "impacto",
     label: "Muerte",
     min: 150,
     max: 1200,
@@ -494,7 +486,6 @@ export const KNOBS: readonly Knob[] = [
 
   {
     id: "missDodge",
-    group: "desenlace",
     label: "Esquive",
     min: 0,
     max: 0.6,
@@ -504,7 +495,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "missOvershoot",
-    group: "desenlace",
     label: "Pasarse de largo",
     min: 1,
     max: 2,
@@ -514,7 +504,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "missRecovery",
-    group: "desenlace",
     label: "Recuperación",
     min: 1,
     max: 2.5,
@@ -524,7 +513,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "critStop",
-    group: "desenlace",
     label: "Congelado del crítico",
     min: 1,
     max: 5,
@@ -534,7 +522,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "critShake",
-    group: "desenlace",
     label: "Temblor del crítico",
     min: 1,
     max: 4,
@@ -544,7 +531,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "critFlash",
-    group: "desenlace",
     label: "Destello del crítico",
     min: 1,
     max: 3,
@@ -555,7 +541,6 @@ export const KNOBS: readonly Knob[] = [
 
   {
     id: "idleRise",
-    group: "vida",
     label: "Aliento",
     min: 0,
     max: 0.3,
@@ -565,7 +550,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "idleCycle",
-    group: "vida",
     label: "Ciclo del aliento",
     min: 600,
     max: 6000,
@@ -575,7 +559,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "spentSink",
-    group: "vida",
     label: "Hundimiento",
     min: 0,
     max: 0.25,
@@ -585,7 +568,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "spentFade",
-    group: "vida",
     label: "Color perdido",
     min: 0,
     max: 1,
@@ -595,7 +577,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "wakeStagger",
-    group: "vida",
     label: "Escalón al despertar",
     min: 0,
     max: 300,
@@ -606,7 +587,6 @@ export const KNOBS: readonly Knob[] = [
 
   {
     id: "offerRise",
-    group: "movimiento",
     label: "Levantada del terreno",
     min: 0,
     max: 20,
@@ -616,7 +596,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "offerRipple",
-    group: "movimiento",
     label: "Onda",
     min: 0,
     max: 120,
@@ -626,7 +605,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "step",
-    group: "movimiento",
     label: "Paso",
     min: 60,
     max: 600,
@@ -636,7 +614,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "stepHop",
-    group: "movimiento",
     label: "Saltito",
     min: 0,
     max: 40,
@@ -647,7 +624,6 @@ export const KNOBS: readonly Knob[] = [
 
   {
     id: "dustCount",
-    group: "polvo",
     label: "Partículas",
     min: 0,
     max: 120,
@@ -657,7 +633,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "dustSpeed",
-    group: "polvo",
     label: "Velocidad",
     min: 10,
     max: 400,
@@ -667,7 +642,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "dustLife",
-    group: "polvo",
     label: "Vida",
     min: 100,
     max: 2000,
@@ -677,7 +651,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "dustSize",
-    group: "polvo",
     label: "Tamaño",
     min: 2,
     max: 40,
@@ -687,7 +660,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "dustGravity",
-    group: "polvo",
     label: "Gravedad",
     min: -200,
     max: 400,
@@ -697,7 +669,6 @@ export const KNOBS: readonly Knob[] = [
   },
   {
     id: "dustDrag",
-    group: "polvo",
     label: "Rozamiento",
     min: 0,
     max: 8,
@@ -706,6 +677,648 @@ export const KNOBS: readonly Knob[] = [
     help: "Cuánta velocidad pierde por segundo. Es lo que hace que el reventón se abra de golpe y luego se quede quieto flotando, en vez de irse recto.",
   },
 ];
+
+// --- El catálogo de secuencias ----------------------------------------------
+//
+// QUÉ ANIMACIONES EXISTEN, y de qué diales cuelga cada una. Es la lista que
+// faltaba: `KNOBS` agrupa los mandos por FAMILIA —«impacto» mete en la misma
+// caja la embestida, el contacto y la muerte, que son tres secuencias
+// distintas—, y eso vale para una caja de sliders pero no para contestar «quiero
+// mirar solo la caída». De aquí salen los bancos por animación del catálogo de
+// /dev/animacion, los diales que enseña cada uno y el índice.
+//
+// NO SUSTITUYE AL BANCO GRANDE y esto es lo que hay que no olvidar al leer esta
+// lista: aislada, cada secuencia parece bien. Lo que no se ve de una en una es
+// la MEZCLA, y la mezcla es donde están las dos cosas que esta pantalla
+// descubrió — que lo gastado se lee por AUSENCIA del aliento (y una ausencia
+// solo se ve si lo demás está presente), y que el ritmo de una tanda de doce no
+// se juzga mirando un ataque. El preview afina UNA propiedad; el banco juzga el
+// conjunto. Hacen falta los dos.
+
+/** Qué tiene que haber en el retal para poder ver una secuencia. */
+export type Scene =
+  /** Una carta en la mano y sitio donde soltarla. */
+  | "carta"
+  /** Una ficha puesta, y nada más. */
+  | "ficha"
+  /** Dos: quien pega y quien recibe. */
+  | "duelo"
+  /** Una ficha y sitio para andar. */
+  | "camino";
+
+export type AnimationId =
+  | "despliegue"
+  | "oferta"
+  | "paso"
+  | "aliento"
+  | "gastado"
+  | "embestida"
+  | "desenlace"
+  | "muerte"
+  | "polvo";
+
+export type AnimationSpec = {
+  readonly id: AnimationId;
+  readonly label: string;
+  /** La pregunta que contesta mirarla. Una sola, y por eso se puede aislar. */
+  readonly question: string;
+  readonly scene: Scene;
+  /** Los diales que la mueven. El orden es el de mirarlos, no el de `KNOBS`. */
+  readonly knobs: readonly KnobId[];
+  /** Si además hay que elegir la curva de caída (no es un número en una escala). */
+  readonly curve?: boolean;
+  /** Lo que hay que hacer con ella para que enseñe lo que tiene que enseñar. */
+  readonly try: string;
+};
+
+export const ANIMATIONS: readonly AnimationSpec[] = [
+  {
+    id: "despliegue",
+    label: "Soltar la carta",
+    question: "¿Pesa lo que cae?",
+    scene: "carta",
+    knobs: ["flight", "fall", "hover", "squash", "squashAmount", "cardScale"],
+    curve: true,
+    try: "Pon la curva en «Suave» —la que usa hoy todo el proyecto— y compárala con «Peso». La suave frena al llegar, así que la ficha no cae: se posa. Luego sube la ALTURA a 200 px sin tocar la duración: la caída dura lo mismo y pesa el doble, porque lo que pesa es el recorrido y no el reloj.",
+  },
+  {
+    id: "oferta",
+    label: "Ofrecer el terreno",
+    question: "¿Llega la ayuda antes que la decisión?",
+    scene: "camino",
+    knobs: ["offerRise", "offerRipple"],
+    try: "Pon la onda a 0 y vuelve a subirla. A 0 se enciende todo a la vez y no se ve de dónde sale; alta, la onda es bonita y llega tarde. El presupuesto son 250 ms —lo que se tarda en pasar de coger una ficha a haber elegido a dónde va— y está medido abajo.",
+  },
+  {
+    id: "paso",
+    label: "Andar",
+    question: "¿Anda, o se desliza?",
+    scene: "camino",
+    knobs: ["step", "stepHop"],
+    try: "Baja el SALTITO a 0: la ficha se desliza, que es lo que hace una pieza de ajedrez arrastrada por el tablero. Y multiplica el PASO por 👢 3 y por quince fichas antes de subirlo: es el dial que decide si un turno enemigo se puede mirar.",
+  },
+  {
+    id: "aliento",
+    label: "Respirar",
+    question: "¿Está viva la mesa cuando no pasa nada?",
+    scene: "ficha",
+    knobs: ["idleRise", "idleCycle"],
+    try: "Viene a 0, que es el estado de partida de todo /dev: es el único bucle que no para nunca y con él puesto se cuela por debajo de cualquier otra cosa que estés juzgando. Súbelo aquí. El valor que tenía era 0,075 —tres píxeles en un hexágono de cuarenta— porque el aliento tiene que estar por debajo de lo que se mira a propósito: si se ve respirar, es un globo.",
+  },
+  {
+    id: "gastado",
+    label: "Ya ha andado",
+    question: "¿Se distingue la que ya se movió?",
+    scene: "ficha",
+    knobs: ["spentSink", "spentFade", "wakeStagger", "idleRise"],
+    try: "Con el ALIENTO puesto, la gastada es la única que no respira y se encuentra sola. Bájalo a 0 y búscala otra vez: sigue hundida y sigue apagada, y aun así hay que recorrer el tablero mirando fichas de una en una. Esa es toda la diferencia entre las dos animaciones más baratas del catálogo, y es la razón de que estas dos no se puedan juzgar por separado.",
+  },
+  {
+    id: "embestida",
+    label: "Golpear",
+    question: "¿Pega, o se acerca?",
+    scene: "duelo",
+    knobs: ["lunge", "lungeBack", "lungeDistance", "hitStop", "flash", "shake", "shakeTime"],
+    try: "Suéltalo con el CONGELADO a 0 y luego a 70 ms. Es el mismo golpe, y no lo parece: es el efecto más barato del catálogo y el que más contundencia da.",
+  },
+  {
+    id: "desenlace",
+    label: "Fallar y criticar",
+    question: "¿Se distinguen los tres sin leer el texto?",
+    scene: "duelo",
+    knobs: ["missDodge", "missOvershoot", "missRecovery", "critStop", "critShake", "critFlash"],
+    try: "Encadena los tres. Los primeros milisegundos son idénticos y TIENEN que serlo: sin dados en pantalla, si el fallo se notara en la embestida el resultado se leería en el gesto. Todo lo que cambia empieza en el contacto.",
+  },
+  {
+    id: "muerte",
+    label: "Caer",
+    question: "¿Se lee como una baja o como un fallo de la pantalla?",
+    scene: "duelo",
+    knobs: ["death"],
+    try: "Es de lo más largo del catálogo a propósito: perder una ficha tiene que verse. Lo que no puede ser es un fundido — tiene que pasar algo violento primero y tiene que quedar algo después.",
+  },
+  {
+    id: "polvo",
+    label: "El polvo",
+    question: "¿Es tierra o es niebla?",
+    scene: "carta",
+    knobs: ["dustCount", "dustSpeed", "dustLife", "dustSize", "dustGravity", "dustDrag"],
+    try: "Los mandos son los del reventón al aterrizar; el del golpe, el del crítico y el de la muerte se derivan de él para que no se desafinen entre sí. Con 120 partículas en el campo entero y quince fichas por bando ya son miles: el lienzo aguanta, pero lo que se ve deja de ser polvo.",
+  },
+];
+
+/** Los diales de una secuencia, ya resueltos contra `KNOBS`. */
+export function knobsOf(id: AnimationId): readonly Knob[] {
+  const spec = ANIMATIONS.find((a) => a.id === id);
+  if (!spec) return [];
+  return spec.knobs
+    .map((k) => KNOBS.find((knob) => knob.id === k))
+    .filter((k): k is Knob => k !== undefined);
+}
+
+// --- Otras animaciones: las que todavía no existen ---------------------------
+
+/**
+ * Si una animación se puede hacer con lo que hay montado, y a qué precio.
+ *
+ * No es una prioridad ni una estimación: es una RESPUESTA TÉCNICA, y por eso
+ * vive en el código y no en un documento. El día que el emisor de partículas
+ * gane algo, o que el tablero deje de ser SVG, lo que cambia son estos
+ * veredictos —y cambiarlos aquí es cambiarlos en la pantalla que los enseña—.
+ */
+export type Feasibility =
+  /** La infraestructura ya está puesta: es rellenar datos o componer lo que hay. */
+  | "listo"
+  /** Código nuevo, pero nada que inventar y nada que pueda salir mal. */
+  | "directo"
+  /** Se puede, pero pide un dato que hoy no viaja, o tiene un coste que respetar. */
+  | "condicion"
+  /** No con este tablero: pediría WebGL o fotogramas dibujados a mano. */
+  | "no";
+
+export const FEASIBILITY_LABEL: Record<Feasibility, string> = {
+  listo: "Ya está lo que hace falta",
+  directo: "Directo",
+  condicion: "Con condición",
+  no: "No con este tablero",
+};
+
+/**
+ * Se agrupan por LO QUE SE VE, no por el sistema que las mueve: la pregunta que
+ * contesta esta lista es «¿cuál hacemos ahora?», y esa se contesta mirando el
+ * tablero, no el código.
+ */
+export type BacklogFamily =
+  | "polvo"
+  | "impacto"
+  | "muerte"
+  | "estados"
+  | "ataque"
+  | "camara"
+  | "carta";
+
+export const BACKLOG_FAMILIES: readonly {
+  readonly id: BacklogFamily;
+  readonly label: string;
+  readonly note: string;
+}[] = [
+  {
+    id: "polvo",
+    label: "Polvo y partículas",
+    note: "El emisor ya existe y acepta un `DustSpec` distinto en cada reventón, con la física guardada en la partícula y no en el emisor: por eso conviven nubes con gravedades opuestas y por eso esta familia entera es rellenar datos.",
+  },
+  {
+    id: "impacto",
+    label: "El golpe",
+    note: "Lo que pasa entre que una ficha pega y la otra lo acusa. Es donde el catálogo ya tiene más puesto —congelado, destello, temblor— y donde lo que falta se nota más.",
+  },
+  {
+    id: "muerte",
+    label: "La muerte",
+    note: "Siete formas de caer, y ninguna se puede elegir mientras el suceso no diga de qué murió.",
+  },
+  {
+    id: "estados",
+    label: "Los estados",
+    note: "La familia a la que hay que tenerle respeto: no son golpes, son BUCLES que viven mientras dure el estado, siguen a la ficha cuando embiste y pueden coincidir diez a la vez. Lo que aquí se elija mal se paga treinta veces.",
+  },
+  {
+    id: "ataque",
+    label: "El ataque, según el tipo de daño",
+    note: "Hoy la única animación de ataque es una embestida, que es literalmente acercarse: describe a 70 fichas de 132. Las otras 62 —21 🏹 y 41 ✨— no se acercan.",
+  },
+  {
+    id: "camara",
+    label: "La cámara y el tablero",
+    note: "Todo lo que no es una ficha. Hoy no existe ningún verbo de cámara: se mueven las fichas y nada más, así que es donde más se gana por menos código.",
+  },
+  {
+    id: "carta",
+    label: "La carta y el mazo",
+    note: "La otra mitad de la pantalla. Es la única familia que no se dibuja en SVG —la carta es DOM— y eso cambia cómo se hacen algunas cosas, no si se pueden.",
+  },
+];
+
+export type BacklogEntry = {
+  /** Corto y estable, para poder decir «hazme la C1» y que no haga falta nada más. */
+  readonly id: string;
+  readonly family: BacklogFamily;
+  readonly label: string;
+  readonly feasibility: Feasibility;
+  /** Qué la hace fácil, o qué le falta. Una línea: la lista se lee de un vistazo. */
+  readonly note: string;
+  /** Las que salieron de Dario. Una lista de ideas sin dueño se discute peor. */
+  readonly asked?: boolean;
+};
+
+/**
+ * LO QUE TODAVÍA NO EXISTE.
+ *
+ * `ANIMATIONS` son las nueve que hay; esta es la lista de las que no, y están
+ * en el mismo archivo a propósito: el día que una se construye se borra su fila
+ * de aquí y se escribe su `AnimationSpec` ahí arriba, en el mismo diff. Así no
+ * hay forma de que una animación exista en dos sitios, ni de que la lista de
+ * pendientes se quede mintiendo — que es exactamente lo que le pasó a la caja
+ * de «Todos los diales» antes de borrarla.
+ *
+ * Lo que esta lista NO es: un orden de trabajo ni una estimación. Es un
+ * catálogo de ideas con una respuesta técnica pegada, para que elegir la
+ * siguiente sea mirar y no investigar.
+ *
+ * DOS COSAS BLOQUEAN FAMILIAS ENTERAS y no animaciones sueltas, así que no son
+ * filas: el suceso `muerte` solo lleva `id` —sin saber qué la mató, las siete
+ * muertes no se pueden repartir— y el daño se calcula en `resolveHit` y se tira
+ * en `toAnimEvents`. Las dos se arreglan añadiendo un campo, no rediseñando.
+ */
+export const BACKLOG: readonly BacklogEntry[] = [
+  // --- Polvo -------------------------------------------------------------
+  {
+    id: "A1",
+    family: "polvo",
+    label: "Distintos tipos de polvo",
+    feasibility: "listo",
+    asked: true,
+    note: "Un `DustSpec` por tipo, que son diez campos. El emisor ya acepta uno distinto en cada reventón.",
+  },
+  {
+    id: "A2",
+    family: "polvo",
+    label: "Ceniza que cae",
+    feasibility: "listo",
+    note: "La muerte por 🔥: gravedad positiva y sin luz añadida, que es justo lo contrario del polvo del aterrizaje.",
+  },
+  {
+    id: "A3",
+    family: "polvo",
+    label: "Vaho frío",
+    feasibility: "listo",
+    note: "🧊: lenta, sin gravedad y con mucho rozamiento, para que se quede flotando.",
+  },
+  {
+    id: "A4",
+    family: "polvo",
+    label: "Burbujas de veneno",
+    feasibility: "listo",
+    note: "☠️: pocas, grandes y subiendo. El veneno se distingue por durar, así que su nube tiene que durar.",
+  },
+  {
+    id: "A5",
+    family: "polvo",
+    label: "Salpicadura de agua",
+    feasibility: "condicion",
+    asked: true,
+    note: "El reventón es de los fáciles; lo que no existe es la casilla de agua. `arena.ts` dice que se juega a campo abierto: ni terreno, ni obstáculos, ni cobertura.",
+  },
+  {
+    id: "A6",
+    family: "polvo",
+    label: "Briznas al andar",
+    feasibility: "listo",
+    note: "Un reventón pequeño en cada `paso`. Ojo con el caso peor: quince fichas andando son quince reventones por hexágono recorrido.",
+  },
+  {
+    id: "A7",
+    family: "polvo",
+    label: "Chispazo al rebotar en mucha 🛡️",
+    feasibility: "condicion",
+    note: "El mismo golpe hace menos daño contra mucha Defensa, y hoy eso no se ve. Pide que la mitigación suba al suceso.",
+  },
+
+  // --- El golpe ----------------------------------------------------------
+  {
+    id: "B1",
+    family: "impacto",
+    label: "Explosión al pegar",
+    feasibility: "directo",
+    asked: true,
+    note: "El reventón de chispas ya está; lo que falta es la onda de choque y el humo que viene detrás. El congelado ya sabe esperar a que la corona esté abierta.",
+  },
+  {
+    id: "B2",
+    family: "impacto",
+    label: "Onda de choque",
+    feasibility: "directo",
+    note: "Una sola forma que escala y se desvanece. No es polvo: no van al lienzo de partículas, va en el SVG.",
+  },
+  {
+    id: "B3",
+    family: "impacto",
+    label: "El número de daño",
+    feasibility: "condicion",
+    note: "`resolveHit` lo calcula ya, con la mitigación aplicada, y `toAnimEvents` lo tira. Es el único que puede contar que el mismo golpe duele distinto según a quién.",
+  },
+  {
+    id: "B4",
+    family: "impacto",
+    label: "Rechazo del golpeado",
+    feasibility: "directo",
+    note: "Media casilla hacia atrás y vuelta. Es la mitad del golpe que hoy no existe: solo se mueve quien pega.",
+  },
+  {
+    id: "B5",
+    family: "impacto",
+    label: "El tajo del arma",
+    feasibility: "directo",
+    note: "Un trazo que se dibuja solo y se borra. En SVG es un `stroke-dasharray` animado, sin nada más.",
+  },
+  {
+    id: "B6",
+    family: "impacto",
+    label: "Líneas de velocidad en la embestida",
+    feasibility: "directo",
+    note: "El truco más viejo del dibujo animado y el más barato de todos: unas rayas detrás del que se lanza.",
+  },
+  {
+    id: "B7",
+    family: "impacto",
+    label: "La grieta que queda en el suelo",
+    feasibility: "directo",
+    note: "Solo del crítico. Se pinta en el suelo y se borra sola: sería lo único que sobrevive al golpe que lo hizo.",
+  },
+  {
+    id: "B8",
+    family: "impacto",
+    label: "El golpeado parpadea en rojo",
+    feasibility: "listo",
+    note: "Es el dial `flash` aplicado al que RECIBE en vez de al que pega. Cero código nuevo, otro nodo.",
+  },
+  {
+    id: "B9",
+    family: "impacto",
+    label: "La ❤️ Vida bajando, con su fantasma detrás",
+    feasibility: "directo",
+    note: "La barra ya se pinta (`PieceLifeBar`). Lo que falta es que tarde en bajar y que una segunda capa la persiga.",
+  },
+  {
+    id: "B10",
+    family: "impacto",
+    label: "Explosión con volumen y humo iluminado",
+    feasibility: "no",
+    note: "Pide una capa de WebGL. `three` está instalado y el lab de dados de v2 prueba que el patrón funciona, pero eso es otro tablero y no un efecto encima de este.",
+  },
+
+  // --- La muerte ---------------------------------------------------------
+  {
+    id: "C1",
+    family: "muerte",
+    label: "Explotar en cascotes",
+    feasibility: "directo",
+    asked: true,
+    note: "La ficha ya se dibuja como un retrato recortado por un `clipPath`; un cascote es ese mismo recorte doce veces, cada uno con su giro. Doce nodos durante medio segundo y solo cuando alguien muere.",
+  },
+  {
+    id: "C2",
+    family: "muerte",
+    label: "Derretirse",
+    feasibility: "directo",
+    asked: true,
+    note: "Con una máscara que baja es directo. Con deformación de verdad (`feDisplacementMap`) es un filtro SVG, y un filtro solo vale para lo que pasa de una en una: una muerte sí, diez a la vez no.",
+  },
+  {
+    id: "C3",
+    family: "muerte",
+    label: "Deshacerse en ceniza de abajo arriba",
+    feasibility: "directo",
+    note: "La misma máscara que el derretido, al revés y con A2 saliendo por el borde que se come.",
+  },
+  {
+    id: "C4",
+    family: "muerte",
+    label: "Desinflarse",
+    feasibility: "directo",
+    note: "☠️: escala no uniforme y sin girar. La muerte del que llevaba cinco turnos muriéndose.",
+  },
+  {
+    id: "C5",
+    family: "muerte",
+    label: "Hundirse en el suelo",
+    feasibility: "directo",
+    note: "`spentSink` ya hunde una ficha que ha andado; esta es la misma idea llevada hasta el final.",
+  },
+  {
+    id: "C6",
+    family: "muerte",
+    label: "Congelarse y hacerse añicos",
+    feasibility: "directo",
+    note: "Los cascotes de C1 en otro color y sin giro: el hielo no vuela, se desmorona.",
+  },
+  {
+    id: "C7",
+    family: "muerte",
+    label: "Volarse en pedazos de papel",
+    feasibility: "directo",
+    note: "C1 con más trozos, más planos y más flotación. Es la muerte que recuerda que esto son cartas.",
+  },
+  {
+    id: "C8",
+    family: "muerte",
+    label: "La luz de su casilla apagándose",
+    feasibility: "directo",
+    note: "La casilla iluminada ya se pinta y ya viaja con la ficha; solo hay que apagarla cuando la ficha se va, en vez de que desaparezca con ella.",
+  },
+  {
+    id: "C9",
+    family: "muerte",
+    label: "Elegir la muerte según lo que la mató",
+    feasibility: "condicion",
+    note: "El suceso `muerte` lleva `{ id }` y nada más. Sin saber qué la mató —🔥 ceniza, 🧊 añicos, ☠️ desinflarse— las siete de arriba no se pueden repartir y todas tienen que ser la misma.",
+  },
+
+  // --- Los estados -------------------------------------------------------
+  {
+    id: "D1",
+    family: "estados",
+    label: "Llamita sobre la ficha",
+    feasibility: "condicion",
+    note: "Con partículas, diez a la vez no cuestan nada. Con un filtro SVG, diez a la vez tumban los 60 fps. La condición es elegir bien, no que no se pueda.",
+  },
+  {
+    id: "D2",
+    family: "estados",
+    label: "Escarcha creciendo por el borde",
+    feasibility: "directo",
+    note: "Un trazo que se dibuja sobre el contorno del hexágono. Se queda mientras dure y se retira cuando se cae.",
+  },
+  {
+    id: "D3",
+    family: "estados",
+    label: "Las tres pilas de 🧊",
+    feasibility: "directo",
+    note: "Congelación es la única que acumula, y a pila llena no actúa: la escalera 1-2-3 tiene que verse llegar.",
+  },
+  {
+    id: "D4",
+    family: "estados",
+    label: "El tic de daño, en cascada",
+    feasibility: "listo",
+    note: "`Batch` y `stagger` ya existen en la cola y no los usa nadie. El escalón pequeño es lo que separa una cascada de un fallo de pintado.",
+  },
+  {
+    id: "D5",
+    family: "estados",
+    label: "Aura de 🌀 Confusión",
+    feasibility: "directo",
+    note: "Y con ella la animación que tiene que decir «esto era el plan y no ha pasado»: mirar al objetivo elegido y girarse a otro.",
+  },
+  {
+    id: "D6",
+    family: "estados",
+    label: "😵 Aturdido dando vueltas",
+    feasibility: "condicion",
+    note: "Lo que falta es el dibujo, no el código: los pictogramas de estado son iconografía y viven en `knowledge/v3/icon-concept/`.",
+  },
+  {
+    id: "D7",
+    family: "estados",
+    label: "🌑 Ceguera: la ficha apagada",
+    feasibility: "directo",
+    note: "Bajar el color de una ficha ya se hace para la que ya ha andado (`spentFade`); aquí es lo mismo con otra intención.",
+  },
+  {
+    id: "D8",
+    family: "estados",
+    label: "🕸️ Inmovilizada: raíces o anclas",
+    feasibility: "condicion",
+    note: "Igual que el Aturdido: pide dibujo. Y es la única que clava a alguien en el sitio, así que merece leerse de lejos.",
+  },
+  {
+    id: "D9",
+    family: "estados",
+    label: "El estado que se cae por 🍀",
+    feasibility: "directo",
+    note: "La tirada oculta del final del turno es la única buena noticia del sistema de estados y hoy no tiene imagen.",
+  },
+  {
+    id: "D10",
+    family: "estados",
+    label: "Fuego de verdad lamiendo la ficha",
+    feasibility: "no",
+    note: "Shader. Lo procedural llega a una llamita convincente; a esto, no.",
+  },
+
+  // --- El ataque ---------------------------------------------------------
+  {
+    id: "E1",
+    family: "ataque",
+    label: "Proyectil con arco 🏹",
+    feasibility: "directo",
+    note: "21 fichas. Rompe el reparto ida/congelado/vuelta, porque un arquero no tiene ida: pide su propio reparto —salida, vuelo, impacto— donde lo que es idéntico en los tres desenlaces pasa a ser el VUELO.",
+  },
+  {
+    id: "E2",
+    family: "ataque",
+    label: "Estela del proyectil",
+    feasibility: "listo",
+    note: "Emitir polvo a lo largo del vuelo. Es el emisor de siempre, movido.",
+  },
+  {
+    id: "E3",
+    family: "ataque",
+    label: "Círculo mágico bajo la ficha ✨",
+    feasibility: "directo",
+    note: "41 fichas, que son casi un tercio del catálogo. Y es la que mejor dice «esto no es un arma» sin escribirlo.",
+  },
+  {
+    id: "E4",
+    family: "ataque",
+    label: "Rayo que serpentea",
+    feasibility: "directo",
+    note: "Un trazo generado que se redibuja cada fotograma. Va en el SVG y no cuesta nada mientras sea uno.",
+  },
+  {
+    id: "E5",
+    family: "ataque",
+    label: "El impacto, lejos de quien tiró",
+    feasibility: "directo",
+    note: "El congelado tiene que caer cuando el tiro LLEGA, no cuando sale. Es lo que hace que un disparo se sienta como un golpe.",
+  },
+  {
+    id: "E6",
+    family: "ataque",
+    label: "Fichas que andan con las piernas y pegan con los brazos",
+    feasibility: "no",
+    note: "Son fotogramas dibujados y no hay pipeline de arte animado: ni formato, ni carpeta, ni quien los dibuje. Este es el techo de verdad, y no se sube programando.",
+  },
+
+  // --- Cámara y tablero --------------------------------------------------
+  {
+    id: "F1",
+    family: "camara",
+    label: "Empujón de cámara en el crítico",
+    feasibility: "condicion",
+    note: "Un 2-3 % durante el congelado. Probablemente lo más vistoso por línea de código de toda la lista; la condición es que componga con el zoom del tablero en vez de pelearse con él.",
+  },
+  {
+    id: "F2",
+    family: "camara",
+    label: "Sacudida de cámara en la muerte",
+    feasibility: "condicion",
+    note: "Lo mismo que el empujón, y con el mismo cuidado. Hoy el temblor es de la ficha golpeada, no de la pantalla.",
+  },
+  {
+    id: "F3",
+    family: "camara",
+    label: "Foco: todo oscuro menos los dos del duelo",
+    feasibility: "directo",
+    note: "Un rectángulo con una máscara que abre dos huecos. Quieto durante el golpe, así que no cuesta nada.",
+  },
+  {
+    id: "F4",
+    family: "camara",
+    label: "Ralentí en el golpe mortal",
+    feasibility: "directo",
+    note: "Es multiplicar los tiempos, y aquí ya está todo en milisegundos y en un solo sitio.",
+  },
+  {
+    id: "F5",
+    family: "camara",
+    label: "El hexágono del objetivo, marcado antes del golpe",
+    feasibility: "directo",
+    note: "La oferta ya sabe encender casillas con una onda; esto es la misma herramienta contestando otra pregunta.",
+  },
+  {
+    id: "F6",
+    family: "camara",
+    label: "La estela del camino andado",
+    feasibility: "directo",
+    note: "Para poder mirar un turno enemigo de quince fichas y saber por dónde ha pasado cada una.",
+  },
+
+  // --- La carta ----------------------------------------------------------
+  {
+    id: "G1",
+    family: "carta",
+    label: "La carta se consume al desplegar",
+    feasibility: "directo",
+    note: "La carta es DOM y no SVG, pero `clip-path: polygon()` la trocea igual de bien sobre copias absolutas.",
+  },
+  {
+    id: "G2",
+    family: "carta",
+    label: "Barrido de luz por el marco según Rareza",
+    feasibility: "directo",
+    note: "El raíl de color por Rareza ya existe y es el mismo del que se sirve la ficha. Aquí solo se mueve.",
+  },
+  {
+    id: "G3",
+    family: "carta",
+    label: "Robar del mazo",
+    feasibility: "directo",
+    note: "El lab de v2 ya reparte cartas escalonadas; lo que falta es la mano de V3 recolocándose al recibirla.",
+  },
+  {
+    id: "G4",
+    family: "carta",
+    label: "Temblor de negación al no poder jugarla",
+    feasibility: "directo",
+    note: "La respuesta a una acción imposible. Sin ella, soltar una carta donde no cabe no dice nada.",
+  },
+];
+
+/** Las entradas de una familia, en el orden en el que están escritas. */
+export function backlogOf(family: BacklogFamily): readonly BacklogEntry[] {
+  return BACKLOG.filter((entry) => entry.family === family);
+}
 
 // --- Las tres nubes ---------------------------------------------------------
 

@@ -3,18 +3,23 @@
 // =========================================================================
 // /dev/baraja — la mesa de Mazo y Oteo, sobre la carta real de V3
 //
-// COMPARTE PALETA CON LA ARENA Y CON EL BANCO DE ANIMACIÓN, y no la hereda de
-// ninguno de los dos: es la misma mesa y el mismo suelo, así que los tokens
-// tienen que ser los mismos, pero la estructura no se parece —aquí no hay
-// cámara, ni bandas, ni polvo, ni fichas de DOM: hay cartas—. Es el mismo
-// criterio con el que _animation-lab.scss convive con _arena.scss.
+// EL RETAL YA NO ESTÁ ESCRITO DOS VECES *(11 de septiembre de 2026)*. El suelo
+// —la lámina, el terreno que se ofrece, la rejilla, el polvo y las manchas de
+// sombra— vive en _hex-patch.scss y lo comparte con /dev/animacion; aquí queda
+// lo que sí es de esta pantalla: el Mazo, las cartas, el velo del Oteo y la capa
+// de fichas. Lo que había antes eran unas 145 líneas casi idénticas en los dos
+// parciales, con dos prefijos de clase distintos y cuya única diferencia real
+// era el z-index — o sea, dos respuestas a la misma pregunta esperando a
+// divergir, que es justo lo que le pasó al aliento.
 //
-// EL RETAL DE QUINCE HEXÁGONOS ESTÁ ESCRITO DOS VECES, aquí y en
-// _animation-lab.scss, y es deuda declarada: Dario pidió esta pantalla con el
-// tablero del banco de animación y dijo a la vez que los dos acabarán
-// unificados en el contenido del tablero (9 de septiembre de 2026). Unificarlos
-// es trabajo del módulo «tablero», no de este; está apuntado como `standIn` en
-// lib/dev-registry.ts para que el hub de /dev lo enseñe.
+// LO QUE SIGUE PENDIENTE es fundir ese retal con la arena de verdad
+// (ArenaBoard), que es trabajo del módulo «tablero» y está apuntado como
+// `standIn` en lib/dev-registry.ts. Lo que se ha quitado es la duplicación
+// literal, no la abstracción que falta.
+//
+// COMPARTE PALETA CON LA ARENA, y no la hereda: es la misma mesa, así que los
+// tokens tienen que ser los mismos, pero la estructura no se parece —aquí no hay
+// cámara, ni bandas, ni fichas de DOM: hay cartas—.
 //
 // NO HAY NI UNA POSICIÓN DE CARTA EN ESTE ARCHIVO, y es a propósito. Dónde está
 // cada carta lo escribe el componente como `transform` (BarajaModule.tsx): las
@@ -22,7 +27,9 @@
 // abanico de la mano, ampliar y volver al Mazo son LA MISMA transición sobre el
 // mismo nodo. Lo que hay aquí es el tamaño de la caja y cuánto tarda el viaje.
 //
-// EL APILADO, de abajo arriba:
+// EL APILADO, de abajo arriba. Las capas 2 y 2,5 las pinta _hex-patch.scss; lo
+// que este archivo dice de ellas es a qué altura van, que es lo único que
+// cambiaba entre las dos pantallas:
 //   1. la mesa (fondo de .baraja-lab__stage)
 //   2. el suelo, el terreno ofrecido y la rejilla (un SVG)
 //   2,5. el polvo del aterrizaje (un lienzo) y las sombras de suelo
@@ -79,136 +86,26 @@
     inset: 0;
   }
 
-  // --- Suelo, terreno y rejilla ---------------------------------------------
-  &__ground {
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 1;
-    display: block;
-    // La sombra sale de la silueta del retal entero y no hexágono a hexágono:
-    // si cada uno tuviera la suya se sombrearían entre ellos, estando todos a la
-    // misma altura. Y un filtro se rasteriza una vez, no quince.
-    filter: drop-shadow(0 6px 7px $board-shadow);
-    pointer-events: none;
-  }
-
-  &__soil-far {
-    stop-color: $arena-ground-far;
-  }
-
-  &__soil-mid {
-    stop-color: $arena-ground-mid;
-  }
-
-  &__soil-near {
-    stop-color: $arena-ground-near;
-  }
-
-  &__soil polygon {
-    // Un filete del mismo tono cierra las juntas: los polígonos se tocan exacto,
-    // pero el suavizado de bordes deja una hebra de un píxel por la que se vería
-    // la mesa.
-    stroke: $arena-ground-far;
-    stroke-width: 1;
-  }
-
-  &__mesh line {
-    stroke: $arena-grid;
-    stroke-width: 1;
-    stroke-linecap: round;
-    opacity: 0.28;
-  }
-
-  // El terreno que acepta la carta. Verde agua, el mismo que la arena usa para
-  // lo que alcanza una ficha al moverse ($arena-move): la pregunta es la misma
-  // —"aquí puedes soltar esto"— aunque detrás haya dos reglas distintas.
+  // --- El apilado del suelo -------------------------------------------------
   //
-  // SE LEVANTA EN ONDA, igual que en el banco de animación: cada hexágono sube
-  // unos píxeles y el retraso de cada uno lo escribe el componente según a
-  // cuántos pasos esté de la mano (`offerCell`, deploy-motion.ts). Encenderlos
-  // todos a la vez y encenderlos por orden no cuestan lo mismo de leer: en onda
-  // se ve que la oferta SALE de donde viene el gesto.
-  &__offer polygon {
-    fill: rgba($arena-move, 0.16);
-    stroke: rgba($arena-move, 0.5);
-    stroke-width: 1.5;
-    opacity: 0;
-    pointer-events: none;
-    // El levantarse se dibuja desde el CENTRO del hexágono y no desde la esquina
-    // del lienzo: sin esto, el `translateY` iría bien pero cualquier escalado
-    // futuro tiraría el polígono al otro lado del tablero.
-    transform-box: fill-box;
-    transform-origin: center;
-    transition:
-      opacity var(--offer-rise-ms) ease-out,
-      transform var(--offer-rise-ms) ease-out;
-
-    &[data-offered="true"] {
-      opacity: 1;
-    }
-
-    // El candidato: al que va a caer la carta si sueltas ahora. Sube de golpe y
-    // sin esperar a la onda —es respuesta al puntero, no parte de la oferta— y
-    // por eso se le quita el retraso con `!important`: el retraso escalonado lo
-    // escribe el componente en el estilo en línea, y aquí hay que ganarle.
-    &[data-candidate="true"] {
-      fill: rgba($arena-move, 0.34);
-      stroke: $arena-origin;
-      stroke-width: 2.5;
-      transition-delay: 0ms !important;
-    }
+  // Lo que se pinta está en _hex-patch.scss y es el mismo que el de
+  // /dev/animacion. Lo que se dice AQUÍ es a qué altura va cada capa, que es lo
+  // único que de verdad cambiaba entre las dos pantallas: aquí hay un Mazo, un
+  // velo y cartas por encima del suelo, y el banco no tiene ninguna de las tres.
+  .patch__ground {
+    z-index: 1;
   }
 
-  // --- El polvo y las sombras de suelo ---------------------------------------
-
-  &__dust {
-    position: absolute;
-    left: 0;
-    top: 0;
+  .patch__dust,
+  .patch__shadows {
     z-index: 2;
-    pointer-events: none;
   }
 
-  &__shadows {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  // El punto que se mueve. No se ve: mide 0×0 y solo lleva el `translate` que le
-  // escribe el componente. La mancha va dentro y se centra sobre él con su
-  // propio -50 %, así el tamaño puede depender del hexágono sin que ninguna de
-  // las dos transformaciones tenga que saber de la otra.
-  &__shadow {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 0;
-    height: 0;
+  // La mancha de una CARTA entra apagada: la carta nace sobre el Mazo, y una
+  // sombra puesta antes de que la carta exista se ve como un borrón en la mesa.
+  // La de una ficha puesta no —esa la enciende el componente al colocarla—.
+  .patch__shadow[data-for] {
     opacity: 0;
-    // Aquí sí va en fijo, y no es una incoherencia con la carta: lo que
-    // emborrona una capa permanente es el detalle fino, y esto es un degradado
-    // sin un solo borde duro. Remuestrear una mancha difusa no se ve.
-    will-change: transform, opacity;
-  }
-
-  // Un degradado radial y no un color plano con `blur`: el desenfoque es un
-  // filtro y se recalcularía en cada fotograma de la caída; el degradado se
-  // compone en la GPU y sale gratis.
-  &__blot {
-    position: absolute;
-    left: 0;
-    top: 0;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    background: radial-gradient(
-      ellipse at center,
-      rgba($board-shadow, 0.62) 0%,
-      rgba($board-shadow, 0.34) 45%,
-      rgba($board-shadow, 0) 72%
-    );
   }
 
   // La ficha puesta. El envoltorio existe para que el ALIENTO tenga dónde
@@ -417,6 +314,20 @@
     top: 0;
     display: block;
     pointer-events: none;
+    // SIN RECORTE, y esto es lo que hacía que posarse no se viera natural
+    // *(Dario, 11 de septiembre de 2026: «de repente se pone al completo y no
+    // hay transición»)*. La ficha viaja dibujada DENTRO de la carta, o sea en un
+    // `<svg>` del tamaño de la carta, y un `<svg>` recorta por su `viewBox` sin
+    // que nadie se lo pida —es la hoja del navegador—. La casilla iluminada, que
+    // es de la CASILLA y no de la ficha, mide 1,35 veces el ancho de la ficha y
+    // se salía por los dos lados: volaba con los costados cortados en recto y al
+    // aterrizar aparecía entera de golpe, porque la que se queda puesta se pinta
+    // en el lienzo de la arena, donde nada la corta.
+    //
+    // Que la luz VIAJE CON LA FICHA es la decisión de PieceToken («cuando la
+    // ficha se mueve, la luz se mueve con ella», su cabecera, paso 0): lo que
+    // faltaba era dejarla salir de la carta.
+    overflow: visible;
   }
 
   // Mientras vuela: la sombra se alarga y se separa —la carta está más alta— y

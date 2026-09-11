@@ -43,6 +43,12 @@ $deck-deal-stagger: 90ms;
 // Es OTRO número y no el mismo porque el lab de v2 reparte a la vez a
 // propósito y no se toca.
 $deck-deal-step: $deck-flight-duration + 90ms;
+// El acelerón del reparto a partir de la SEGUNDA carta: su turno y su vuelo
+// valen esta fracción de los de la primera, que es la única que sale entera
+// (Dario, 11-sep-2026: la segunda «tarda mucho en aparecer»). Mismo patrón que
+// los dos de arriba: el valor real vive en TS (DEAL_RUSH en
+// components/dev/BarajaModule.tsx), esto es la fuente documentada.
+$deck-deal-rush: 0.75;
 
 // --- Pantalla de carga (GameLoadingScreen) --------------------------------
 // Los 4 puntos rebotan en cascada, uno tras otro: el desfase entre puntos es
