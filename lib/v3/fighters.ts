@@ -5,9 +5,9 @@
 // `battle.ts` pelea con seis números y una posición (`Fighter`) A PROPÓSITO
 // —no quiere saber de tier ni de rasgos—. Hasta el 8-sep-2026 ese `Fighter`
 // se rellenaba a mano en un script de node porque no había ningún
-// `Character` real con las 8 Habilidades puestas; ahora que `/dev/razas`
-// arma las 24 de Humanos y Enanos (`races.ts` `charactersOfRace`), lo que
-// falta es esta conversión, no un motor nuevo.
+// `Character` real con las 8 Habilidades puestas; ahora que el roster arma
+// las 24 de Humanos y Enanos (`races.ts` `charactersOfRace`), lo que falta es
+// esta conversión, no un motor nuevo.
 //
 // `id` lleva el bando por delante: dos bandos pueden traer LA MISMA ficha
 // (un héroe contra sí mismo, para medir la paridad), y `battle.ts` identifica

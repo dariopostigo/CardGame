@@ -25,6 +25,7 @@
 // EL APILADO, de abajo arriba:
 //   1. la mesa (fondo de .baraja-lab__stage)
 //   2. el suelo, el terreno ofrecido y la rejilla (un SVG)
+//   2,5. el polvo del aterrizaje (un lienzo) y las sombras de suelo
 //   3. las fichas desplegadas (otro SVG: el de arriba lleva una sombra de
 //      silueta que no tiene que caerles encima)
 //   4. el Mazo
@@ -32,13 +33,13 @@
 //   30. el velo del Oteo
 //   45-60. las cartas del Oteo, la ampliada y la que se arrastra
 //   52+. el pie del velo y el rótulo, que tienen que leerse sobre todo
+//
+// Y TODO ESO CUELGA DE `__scene`, que es el nodo que TIEMBLA al aterrizar una
+// ficha (10 de septiembre de 2026). No tiembla el escenario porque el escenario
+// es lo que se mide y de él salen las coordenadas del puntero: moverlo
+// desplazaría el sistema de referencia del gesto. El rótulo se queda fuera, que
+// un texto que tiembla no se lee.
 // =========================================================================
-
-// Cuánto se nota el 3D del arrastre. Es la distancia del ojo a la carta, en el
-// espacio SIN escalar de la carta (300 × 420), así que se lee contra ese ancho:
-// cuanto menor, más brutal el escorzo. El pen original usa 400px y resulta casi
-// caricaturesco a este tamaño; 700 inclina de verdad sin deformar el retrato.
-$baraja-perspective: 700px;
 
 .baraja-lab {
   display: grid;
@@ -69,6 +70,13 @@ $baraja-perspective: 700px;
     &[data-dragging="true"] {
       cursor: grabbing;
     }
+  }
+
+  // La escena: todo lo que se mueve con la mesa. Sin tamaño propio —lo hereda
+  // del escenario— porque lo único que hace es poder trasladarse en bloque.
+  &__scene {
+    position: absolute;
+    inset: 0;
   }
 
   // --- Suelo, terreno y rejilla ---------------------------------------------
@@ -115,24 +123,101 @@ $baraja-perspective: 700px;
   // El terreno que acepta la carta. Verde agua, el mismo que la arena usa para
   // lo que alcanza una ficha al moverse ($arena-move): la pregunta es la misma
   // —"aquí puedes soltar esto"— aunque detrás haya dos reglas distintas.
+  //
+  // SE LEVANTA EN ONDA, igual que en el banco de animación: cada hexágono sube
+  // unos píxeles y el retraso de cada uno lo escribe el componente según a
+  // cuántos pasos esté de la mano (`offerCell`, deploy-motion.ts). Encenderlos
+  // todos a la vez y encenderlos por orden no cuestan lo mismo de leer: en onda
+  // se ve que la oferta SALE de donde viene el gesto.
   &__offer polygon {
     fill: rgba($arena-move, 0.16);
     stroke: rgba($arena-move, 0.5);
     stroke-width: 1.5;
     opacity: 0;
     pointer-events: none;
-    transition: opacity $duration-fast $ease;
+    // El levantarse se dibuja desde el CENTRO del hexágono y no desde la esquina
+    // del lienzo: sin esto, el `translateY` iría bien pero cualquier escalado
+    // futuro tiraría el polígono al otro lado del tablero.
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity var(--offer-rise-ms) ease-out,
+      transform var(--offer-rise-ms) ease-out;
 
     &[data-offered="true"] {
       opacity: 1;
     }
 
-    // El candidato: al que va a caer la carta si sueltas ahora.
+    // El candidato: al que va a caer la carta si sueltas ahora. Sube de golpe y
+    // sin esperar a la onda —es respuesta al puntero, no parte de la oferta— y
+    // por eso se le quita el retraso con `!important`: el retraso escalonado lo
+    // escribe el componente en el estilo en línea, y aquí hay que ganarle.
     &[data-candidate="true"] {
       fill: rgba($arena-move, 0.34);
       stroke: $arena-origin;
       stroke-width: 2.5;
+      transition-delay: 0ms !important;
     }
+  }
+
+  // --- El polvo y las sombras de suelo ---------------------------------------
+
+  &__dust {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  &__shadows {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  // El punto que se mueve. No se ve: mide 0×0 y solo lleva el `translate` que le
+  // escribe el componente. La mancha va dentro y se centra sobre él con su
+  // propio -50 %, así el tamaño puede depender del hexágono sin que ninguna de
+  // las dos transformaciones tenga que saber de la otra.
+  &__shadow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    // Aquí sí va en fijo, y no es una incoherencia con la carta: lo que
+    // emborrona una capa permanente es el detalle fino, y esto es un degradado
+    // sin un solo borde duro. Remuestrear una mancha difusa no se ve.
+    will-change: transform, opacity;
+  }
+
+  // Un degradado radial y no un color plano con `blur`: el desenfoque es un
+  // filtro y se recalcularía en cada fotograma de la caída; el degradado se
+  // compone en la GPU y sale gratis.
+  &__blot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba($board-shadow, 0.62) 0%,
+      rgba($board-shadow, 0.34) 45%,
+      rgba($board-shadow, 0) 72%
+    );
+  }
+
+  // La ficha puesta. El envoltorio existe para que el ALIENTO tenga dónde
+  // escribirse sin pelearse con PieceToken, que coloca sus hijos por
+  // coordenadas. `fill-box` es lo que hace que el `scale` del aliento gire
+  // alrededor de la ficha y no del origen del lienzo, que está en la esquina.
+  &__piece {
+    transform-box: fill-box;
+    transform-origin: center;
   }
 
   &__pieces {
@@ -245,13 +330,14 @@ $baraja-perspective: 700px;
   // `translate` que escribe el componente coloca su CENTRO, y el giro y la
   // escala pasan por ahí sin tener que corregir nada.
   //
-  // SON DOS CAPAS, y no es una por gusto. La de fuera se TRASLADA por el
-  // escenario y la de dentro se INCLINA en 3D mientras se arrastra (ver «La
-  // física del arrastre» en BarajaModule.tsx). En un solo elemento habría que
-  // meter el `perspective()` en la misma lista de transformaciones que el
-  // `translate`, y entonces la perspectiva deformaría también el traslado: una
-  // carta llevada a la esquina del escenario saldría estirada. Partido en dos,
-  // la perspectiva solo alcanza al giro, que es lo que tiene que proyectar.
+  // UNA SOLA CAPA desde el 10 de septiembre de 2026, y lo que la dejó en una es
+  // el cambio de gesto (ver «La física del arrastre» en BarajaModule.tsx).
+  // Mientras el arrastre inclinaba la carta en 3D hacían falta dos: en un solo
+  // elemento el `perspective()` entra en la misma lista de transformaciones que
+  // el `translate` y la perspectiva deforma también el traslado, así que una
+  // carta llevada a la esquina del escenario salía estirada. Con el ladeo plano
+  // no hay nada que proyectar, y el traslado, el giro y la escala son las tres
+  // funciones de una única postura.
   &__card {
     position: absolute;
     left: 0;
@@ -262,7 +348,6 @@ $baraja-perspective: 700px;
     margin-top: -($sketch-height * 0.5);
     transform-origin: center;
     touch-action: none;
-    perspective: $baraja-perspective;
     transition:
       transform $deck-flight-duration $deck-ease-out,
       opacity $deck-flight-duration $deck-ease-out;
@@ -291,26 +376,51 @@ $baraja-perspective: 700px;
     }
   }
 
-  // La capa que se inclina. La sombra vive aquí y no fuera para que se incline
-  // CON la carta: una sombra que se queda plana mientras el naipe se ladea es
-  // lo que delata que el 3D es de mentira. (Y de paso, un `filter` en el
-  // contenedor de fuera lo convertiría en un grupo aplanado y se llevaría por
-  // delante la perspectiva.)
-  &__card-tilt {
+  // LA CARA DE CARTA: lo que se apaga al desplegar, mientras el elemento de
+  // fuera sigue viajando. La sombra vive aquí y no fuera justamente por eso —se
+  // va con la carta—; si viviera en el contenedor, al cruzarse la carta con la
+  // ficha quedaría una sombra de naipe alrededor de una ficha, delatando que
+  // debajo hay una carta invisible.
+  //
+  // Y VA DE `box-shadow` Y NO DE `filter`, que esto es un arreglo y no una
+  // preferencia. Un `filter` obliga al navegador a dibujar la carta en una
+  // superficie aparte con transparencia, y dentro de una superficie así Chrome
+  // deja de suavizar el texto por subpíxeles y lo suaviza en gris. Con letra
+  // clara sobre carta oscura eso se ve: el texto adelgaza y parece desenfocado.
+  // Medido en Chrome sobre una réplica de esta misma estructura. La sombra en
+  // caja no necesita superficie: se pinta y ya está. Es el mismo pecado que
+  // `_animation-lab.scss` prohíbe con `will-change`, entrando por otra puerta.
+  &__card-face {
     width: 100%;
     height: 100%;
-    transform-origin: center;
-    filter: drop-shadow(0 8px 12px rgba($board-shadow, 0.55));
-    transition: transform $deck-flight-duration $deck-ease-out;
+    // Del tamaño de la carta, que es lo que hay dentro: sin esto la sombra
+    // saldría de un rectángulo de esquinas vivas y se vería asomar por ellas.
+    border-radius: $sketch-radius;
+    box-shadow: 0 8px 12px rgba($board-shadow, 0.55);
   }
 
-  // Mientras vuela: la sombra se alarga —está más alta— y se enciende el
-  // `will-change`, que aquí SÍ compensa porque la carta se está moviendo. En
-  // fijo no: promociona la carta a una textura y el texto sale lavado estando
-  // quieta, que es cuando se lee (el porqué largo, en _animation-lab.scss).
-  &__card[data-flying="true"] &__card-tilt {
+  // LA CARA DE FICHA, viajando dentro de la carta. Encima de la cara de carta y
+  // centrada en la misma caja: las dos ocupan el mismo sitio, que es lo que
+  // permite que el cruce sea solo un cambio de opacidad. La opacidad de partida
+  // la escribe el componente (0), y de ahí en adelante la animación.
+  &__card-token {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    pointer-events: none;
+  }
+
+  // Mientras vuela: la sombra se alarga y se separa —la carta está más alta— y
+  // se enciende el `will-change`, que aquí SÍ compensa porque se está moviendo.
+  // En fijo no: promociona la carta a una textura y el texto sale lavado en
+  // reposo, que es cuando se lee (el porqué largo, en _animation-lab.scss).
+  &__card[data-flying="true"] {
     will-change: transform;
-    filter: drop-shadow(0 26px 30px rgba($board-shadow, 0.72));
+  }
+
+  &__card[data-flying="true"] &__card-face {
+    box-shadow: 0 26px 30px rgba($board-shadow, 0.72);
   }
 
   // La chapa de sustituir, sobre la carta de la mano a la que apuntas.
@@ -403,19 +513,22 @@ $baraja-perspective: 700px;
 
   @include reduced-motion {
     &__card,
-    &__card-tilt,
     &__pile-trigger,
-    &__offer polygon,
     &__swap-hint {
       transition: none;
     }
 
-    // El cinturón. Quien pide que nada se mueva no quiere una carta cabeceando
-    // en 3D bajo el cursor, y de eso ya se encarga el componente: el bucle deja
-    // de perseguir y de inclinar (BarajaModule.tsx, `tick`). Esto es por si
-    // algún día alguien escribe grados desde otro sitio.
-    &__card {
-      perspective: none;
+    // La oferta NO se apaga, y es la única de la lista que se queda: es
+    // información sobre lo que se puede hacer, no un adorno. Lo que se le quita
+    // es el relieve y la onda —el componente ya pone `offerRise` y
+    // `offerRipple` a 0 con `reduced()`— y lo que queda es el color, que dice lo
+    // mismo sin mover nada. Esto es el cinturón para el encendido en sí.
+    &__offer polygon {
+      transition-property: opacity;
+    }
+
+    &__shadow {
+      transition: none !important;
     }
 
     &__veil {

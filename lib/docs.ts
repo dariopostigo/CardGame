@@ -136,6 +136,24 @@ const DESIGN_LAB_GROUP = `${DESIGN_LAB_VERSION}-cards`;
 // mudanzas.
 const SKETCH_LAB_GROUP = "v3-cards";
 
+// LAS DOS VISTAS DERIVADAS (10 de septiembre de 2026). Son las tablas que
+// construye lib/v3/ leyendo razas.md —el roster y las cartas de unidad—, y
+// vivían en /dev/razas y /dev/cartas hasta que Dario puso el dedo en lo que
+// eran: «el DEV lo quiero sobre todo para el desarrollo del videojuego en sí,
+// lo que es el gameplay». Las dos resultaron ser componentes de cliente sin un
+// solo `useState` ni un `onClick` —se leen, no se tocan—, así que su sitio es la
+// wiki, cada una junto al documento del que sale: el roster con las razas y el
+// catálogo con las cartas.
+//
+// No son documentos: no declaran estado y no cuentan para la norma del grupo,
+// igual que los laboratorios de diseño. Y no salen de la cadena de construcción
+// —siguen en lib/dev-registry.ts con `home` apuntando aquí—, que es el mismo
+// trato que tiene el marco de carta desde el 1 de septiembre.
+const ROSTER_VIEW_GROUP = "v3-razas";
+// El mismo grupo que el laboratorio del marco, y esa vecindad es la buena: una
+// enseña lo que la carta imprime y la otra con qué se imprime.
+const CATALOG_VIEW_GROUP = "v3-cards";
+
 // Metadatos por documento (etiqueta corta + icono + orden dentro del grupo).
 //
 // El ESTADO no está aquí: lo declara cada .md con `<!-- estado: … -->`, que es
@@ -322,10 +340,10 @@ export const getNavTree = cache((version?: DocsVersion): NavGroup[] => {
       })
       .sort((a, b) => a._order - b._order || a.label.localeCompare(b.label))
       .map(({ _order, ...item }) => item as NavItem);
-    // Páginas especiales (no-markdown): los dos laboratorios de diseño, uno por
-    // versión. Fueron TRES hasta el 3 de septiembre de 2026, cuando "Diseño
-    // baraja" (/docs/v3/cards/deck) se fundió con la de V3 al cerrarse la
-    // comparación de bocetos.
+    // Páginas especiales (no-markdown). Primero los dos laboratorios de diseño,
+    // uno por versión. Fueron TRES hasta el 3 de septiembre de 2026, cuando
+    // "Diseño baraja" (/docs/v3/cards/deck) se fundió con la de V3 al cerrarse
+    // la comparación de bocetos.
     if (g.key === DESIGN_LAB_GROUP) {
       items.push({
         label: "Diseño",
@@ -340,8 +358,23 @@ export const getNavTree = cache((version?: DocsVersion): NavGroup[] => {
         href: "/docs/v3/cards/design",
       });
     }
+    // Y las dos vistas derivadas, cada una en el grupo de su documento.
+    if (g.key === ROSTER_VIEW_GROUP) {
+      items.push({
+        label: "Roster en datos",
+        icon: "pi pi-database",
+        href: "/docs/v3/razas/roster",
+      });
+    }
+    if (g.key === CATALOG_VIEW_GROUP) {
+      items.push({
+        label: "Catálogo en datos",
+        icon: "pi pi-database",
+        href: "/docs/v3/cards/catalogo",
+      });
+    }
     // Las páginas especiales de arriba no declaran estado y tampoco cuentan
-    // para la norma del grupo: no son documentos, son laboratorios.
+    // para la norma del grupo: no son documentos, son laboratorios y tablas.
     return {
       key: g.key,
       label: g.label,

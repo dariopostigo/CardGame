@@ -51,8 +51,6 @@ import {
   deathDust,
   hitDust,
   idlePhase,
-  landingDust,
-  rippleDelay,
   stepDust,
   type Timings,
 } from "@/lib/v3/anim";
@@ -62,6 +60,22 @@ import { buildArena, type Side } from "@/lib/v3/arena";
 import { moveProblem, pathTo, reachable } from "@/lib/v3/movement";
 import { MOVEMENT_BAND } from "@/lib/v3/tempo";
 import { DustField } from "./dust";
+// El gesto de soltar una carta en un hexágono NO se escribe aquí: lo comparten
+// este banco y /dev/baraja, y tienen que hacer exactamente lo mismo (la
+// cabecera de deploy-motion.ts cuenta por qué y de qué fecha viene).
+import {
+  EASE_BACK,
+  flyAndLand,
+  moveShadow,
+  offerCell,
+  pickUp,
+  returnHome,
+  run,
+  settleAnimations,
+  shake,
+  transform,
+  wait,
+} from "./deploy-motion";
 import { buttonClass } from "@/components/ui/Button";
 
 /** La misma compresión medida en ArenaBoard sobre la referencia de arte. */
@@ -115,10 +129,8 @@ const HAND_BOTTOM = 100;
  */
 const QUEUE_GAP = 60;
 
-/** Curvas que no son diales porque no se discuten. */
-const EASE_FLIGHT: readonly [number, number, number, number] = [0.3, 0.1, 0.2, 1];
+/** La curva de la embestida. Las del vuelo y la vuelta viven en deploy-motion. */
 const EASE_LUNGE: readonly [number, number, number, number] = [0.4, 0, 0.2, 1];
-const EASE_BACK: readonly [number, number, number, number] = [0.3, 0, 0.3, 1];
 
 type Piece = {
   readonly id: string;
@@ -686,14 +698,14 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
       stopIdle(piece.id);
       const at = l.centers.get(Hex.key(piece.hex));
       drag.current = { id: piece.id, from: piece.hex, lastX: event.clientX, vx: 0, lift: [] };
-      if (at) drag.current.lift = pickUp(el, at, c.stepHop);
+      if (at) drag.current.lift = pickUp(el, shadowOf(el), at, c.stepHop);
       markCandidate(null);
       return;
     }
 
     drag.current = { id: piece.id, from: null, lastX: event.clientX, vx: 0, lift: [] };
     el.style.transform = transform(x, y, c.hover, c.cardScale);
-    moveShadow(el, l, x, y, c.hover);
+    moveShadow(shadowOf(el), x, y, c.hover);
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -720,7 +732,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     const tiltDeg = Math.max(-14, Math.min(14, state.vx * 1.6));
 
     el.style.transform = transform(x, y, t.current.hover, t.current.cardScale, undefined, tiltDeg);
-    moveShadow(el, l, x, y, t.current.hover);
+    moveShadow(shadowOf(el), x, y, t.current.hover);
   };
 
   const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -786,15 +798,14 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   // --- Las tres secuencias --------------------------------------------------
 
   /**
-   * DESPLIEGUE: la carta vuela, se convierte en ficha, cae y levanta polvo.
+   * DESPLIEGUE. La secuencia la ejecuta `flyAndLand` y es la MISMA que corre
+   * /dev/baraja: lo que queda aquí es lo que solo sabe el banco —quién vuela,
+   * dónde cae y qué se escribe debajo—.
    *
-   * Va en DOS animaciones y no en una: el vuelo y la caída son un solo
-   * movimiento continuo —una sola animación con un fotograma clave en medio,
-   * cada tramo con su curva— y el aplastado es otra que empieza cuando la
-   * primera acaba. Partirlo así tiene un motivo concreto: entre dos animaciones
-   * encadenadas puede colarse un fotograma de nada, y ese hueco se ve si cae en
-   * mitad de un desplazamiento, pero no se ve cuando la ficha ya está parada en
-   * el suelo. Justo en ese punto es donde se emite el polvo.
+   * La ficha se queda a escala 1 porque en este retal la ficha ES el tamaño de
+   * referencia y la carta se dibuja a `cardScale` de ella. En la baraja son la
+   * carta y la ficha de verdad, y las dos escalas salen de sus anchos: son los
+   * dos únicos números que cambian de un tablero al otro.
    */
   async function deploy(piece: Piece, hex: HexCoord, from: { x: number; y: number }) {
     const l = layoutRef.current;
@@ -805,95 +816,20 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     busyRef.current = true;
     setBusy(true);
     const c = t.current;
-    const face = el.querySelector<HTMLElement>(".anim__face");
-    const token = el.querySelector<HTMLElement>(".anim__token");
-    const shadow = shadowOf(el);
 
-    const total = Math.max(1, c.flight + c.fall);
-    const share = c.flight / total;
-    const parallel: Animation[] = [];
-
-    // La carta se cruza con la ficha durante el primer tercio del vuelo: si se
-    // cruzan al final, lo que se ve es una carta que aterriza y luego cambia.
-    if (face) {
-      parallel.push(
-        face.animate([{ opacity: 1 }, { opacity: 0 }], {
-          duration: Math.max(1, c.flight * 0.55),
-          easing: "ease-in",
-          fill: "forwards",
-        }),
-      );
-    }
-    if (token) {
-      parallel.push(
-        token.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: Math.max(1, c.flight * 0.7),
-          easing: "ease-out",
-          fill: "forwards",
-        }),
-      );
-    }
-
-    // La sombra: arranca grande y casi invisible —la ficha está alta— y acaba
-    // pequeña y marcada. Es lo único que dice que esto ha bajado.
-    if (shadow) {
-      parallel.push(
-        shadow.animate(
-          [
-            {
-              transform: `translate(${from.x}px, ${from.y}px) scale(${1.6 + c.hover / 90})`,
-              opacity: 0.12,
-            },
-            {
-              transform: `translate(${target.x}px, ${target.y}px) scale(${1 + c.hover / 140})`,
-              opacity: 0.3,
-              offset: share,
-            },
-            { transform: `translate(${target.x}px, ${target.y}px) scale(1)`, opacity: 0.55 },
-          ],
-          { duration: total, easing: "linear", fill: "forwards" },
-        ),
-      );
-    }
-
-    await run(el, [
+    await flyAndLand(
       {
-        transform: transform(from.x, from.y, c.hover, c.cardScale),
-        easing: cubic(EASE_FLIGHT),
-      },
-      {
-        transform: transform(target.x, target.y, c.hover, 1),
-        offset: share,
-        easing: cubic(CURVES[c.fallCurve].curve),
-      },
-      { transform: transform(target.x, target.y, 0, 1) },
-    ], total);
-
-    settleAnimations(parallel);
-
-    // El suelo. Aquí es donde se levanta el polvo y donde tiembla la cámara —un
-    // poco, que esto es dejar una ficha, no un meteorito.
-    //
-    // El reventón sale del BORDE DE ABAJO de la peana y no de su centro, y no es
-    // un matiz: la peana es un disco opaco de su mismo tamaño, así que un
-    // reventón centrado se queda entero detrás de ella y no se ve nada durante
-    // los primeros cien milisegundos, que son justo los que importan. Abajo es
-    // además donde la ficha toca el suelo, que es de donde se levanta el polvo.
-    dustRef.current?.emit(target.x, target.y + l.size * 0.42, landingDust(c));
-    shake(c.shake * 0.5, c.shakeTime * 0.6);
-
-    if (c.squash > 0) {
-      const s = c.squashAmount;
-      await run(
         el,
-        [
-          { transform: transform(target.x, target.y, 0, 1 + s, 1 - s), easing: "ease-out" },
-          { transform: transform(target.x, target.y, 0, 1 - s * 0.35, 1 + s * 0.35), offset: 0.55, easing: "ease-in-out" },
-          { transform: transform(target.x, target.y, 0, 1, 1) },
-        ],
-        c.squash,
-      );
-    }
+        face: el.querySelector<HTMLElement>(".anim__face"),
+        token: el.querySelector<HTMLElement>(".anim__token"),
+        shadow: shadowOf(el),
+      },
+      { scene: sceneRef.current, dust: dustRef.current, size: l.size },
+      from,
+      target,
+      { scale: c.cardScale, lift: c.hover, rested: 1 },
+      c,
+    );
 
     setPieces((prev) => prev.map((p) => (p.id === piece.id ? { ...p, hex } : p)));
     busyRef.current = false;
@@ -907,25 +843,12 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   async function returnToHand(piece: Piece, el: HTMLElement, l: Layout, from: { x: number; y: number }) {
     const hand = pieces.filter((p) => !p.hex);
     const slot = handSlot(l, hand.indexOf(piece), hand.length, t.current.cardScale);
-    const shadow = shadowOf(el);
-    const parallel = shadow
-      ? [
-          shadow.animate(
-            [{ transform: `translate(${slot.x}px, ${slot.y}px) scale(1.6)`, opacity: 0.18 }],
-            { duration: 240, easing: cubic(EASE_BACK), fill: "forwards" },
-          ),
-        ]
-      : [];
-    await run(
-      el,
-      [
-        { transform: transform(from.x, from.y, t.current.hover, t.current.cardScale) },
-        { transform: transform(slot.x, slot.y, 0, t.current.cardScale, undefined, slot.rotate) },
-      ],
-      240,
-      cubic(EASE_BACK),
+    await returnHome(
+      { el, face: null, token: null, shadow: shadowOf(el) },
+      from,
+      { x: slot.x, y: slot.y, scale: t.current.cardScale, rotate: slot.rotate },
+      { scale: t.current.cardScale, lift: t.current.hover },
     );
-    settleAnimations(parallel);
   }
 
   /** La ficha cogida que se vuelve a posar en su casilla, y respira otra vez. */
@@ -1189,7 +1112,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
       floatText(hit.x, hit.y, "Fallo", "fallo");
     } else {
       dustRef.current?.emit(hit.x, hit.y, crit ? critDust(c, angle) : hitDust(c, angle));
-      shake(c.shake * (crit ? c.critShake : 1), c.shakeTime);
+      shake(sceneRef.current, c.shake * (crit ? c.critShake : 1), c.shakeTime);
       flash(victim, c.flash * (crit ? c.critFlash : 1), crit ? 7 : 4);
       // El crítico dobla el daño (§4.2). La cifra sigue siendo de mentira hasta
       // que exista el motor, pero la RELACIÓN entre las dos no lo es: un
@@ -1400,7 +1323,7 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
     // El polvo sale cuando la ficha se rompe, no cuando empieza el fogonazo.
     window.setTimeout(() => {
       dustRef.current?.emit(c.x, c.y, deathDust(cfg));
-      shake(cfg.shake * 0.7, cfg.shakeTime);
+      shake(sceneRef.current, cfg.shake * 0.7, cfg.shakeTime);
     }, cfg.death * 0.34);
 
     await run(
@@ -1437,25 +1360,6 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
   }
 
   // --- Efectos sueltos ------------------------------------------------------
-
-  /** El temblor de cámara: una oscilación que se apaga. */
-  function shake(amount: number, duration: number) {
-    const scene = sceneRef.current;
-    if (!scene || amount <= 0 || duration <= 0) return;
-    const steps = 7;
-    const frames: Keyframe[] = [];
-    for (let i = 0; i <= steps; i++) {
-      const decay = 1 - i / steps;
-      const m = amount * decay;
-      frames.push({
-        transform:
-          i === steps
-            ? "translate(0px, 0px)"
-            : `translate(${(Math.random() * 2 - 1) * m}px, ${(Math.random() * 2 - 1) * m * 0.6}px)`,
-      });
-    }
-    scene.animate(frames, { duration, easing: "linear" });
-  }
 
   /**
    * El destello del que recibe: es lo que dice CUÁL de las dos se ha llevado el
@@ -1590,17 +1494,13 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
               <g className="anim__offer">
                 {layout.cells.map((c) => {
                   const steps = offer?.get(c.key);
-                  const on = steps !== undefined;
                   return (
                     <polygon
                       key={c.key}
                       ref={setCellNode(c.key)}
                       points={c.points}
-                      data-offered={on ? "true" : "false"}
-                      style={{
-                        transform: on ? `translateY(${-timings.offerRise}px)` : undefined,
-                        transitionDelay: on ? `${rippleDelay(steps, timings)}ms` : "0ms",
-                      }}
+                      data-offered={steps !== undefined ? "true" : "false"}
+                      style={offerCell(steps, timings)}
                     />
                   );
                 })}
@@ -1779,23 +1679,10 @@ export default function AnimationBench({ timings, odds, onNote, className = "" }
 }
 
 // --- Ayudas sin estado -------------------------------------------------------
-
-/**
- * El `transform` de una ficha. La ALTURA se resta de la `y` porque en un
- * tablero inclinado subir es ir hacia arriba en pantalla; lo que dice que es
- * altura y no profundidad es la sombra, que se queda en el suelo.
- */
-function transform(
-  x: number,
-  y: number,
-  height: number,
-  scaleX: number,
-  scaleY = scaleX,
-  rotate = 0,
-): string {
-  const r = rotate ? ` rotate(${rotate.toFixed(2)}deg)` : "";
-  return `translate(${x.toFixed(2)}px, ${(y - height).toFixed(2)}px) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})${r}`;
-}
+//
+// Las que no son de aquí —`transform`, `run`, `settleAnimations`, `wait`,
+// `pickUp`, `moveShadow` y `shake`— viven en deploy-motion.ts desde el 10 de
+// septiembre de 2026, porque /dev/baraja tiene que hacer lo mismo con ellas.
 
 /**
  * El centrado del disco sobre el punto de la ficha. Va aquí como cadena y no en
@@ -1826,97 +1713,11 @@ function tokenRest(moved: boolean, size: number, c: Timings): { transform: strin
   };
 }
 
-/** Coger una ficha sin sacarla de su casilla: sube a la altura de un salto. */
-function pickUp(el: HTMLElement, at: { x: number; y: number }, hop: number): Animation[] {
-  const options: KeyframeAnimationOptions = {
-    duration: 130,
-    easing: cubic(EASE_BACK),
-    fill: "forwards",
-  };
-  const list = [el.animate([{ transform: transform(at.x, at.y, hop, 1.05, 0.97) }], options)];
-  const shadow = shadowOf(el);
-  if (shadow) {
-    list.push(
-      shadow.animate(
-        [{ transform: `translate(${at.x}px, ${at.y}px) scale(${(1 + hop / 120).toFixed(3)})`, opacity: 0.4 }],
-        options,
-      ),
-    );
-  }
-  return list;
-}
-
 /** Cómo se nombra a quien ocupa un hexágono, para que el motor pueda explicarse. */
 function nameAt(pieces: readonly Piece[], hex: HexCoord): string | null {
   const piece = pieces.find((p) => p.hex && Hex.equals(p.hex, hex));
   if (!piece) return null;
   return `la ficha ${DAMAGE_TYPES[piece.damage].icon} ${piece.side === "propio" ? "tuya" : "enemiga"}`;
-}
-
-/**
- * Lanza una animación y espera a que acabe, dejando el estado final escrito.
- *
- * `fill: "forwards"` + `commitStyles()` + `cancel()` es el trío obligatorio: sin
- * el primero la ficha vuelve de un salto a donde estaba; sin el segundo, el
- * salto ocurre al cancelar; y sin el tercero cada animación se queda viva para
- * siempre y a las cien caídas el navegador está manteniendo cien.
- *
- * Además marca la ficha con `data-moving` mientras dura, y solo mientras dura:
- * es lo que le enciende el `will-change`. Dejarlo puesto en el CSS parecía
- * gratis y no lo era —la carta quieta salía emborronada—; el porqué está en
- * styles/components/_animation-lab.scss, junto a la regla.
- */
-async function run(
-  el: HTMLElement,
-  frames: Keyframe[],
-  duration: number,
-  easing = "linear",
-): Promise<void> {
-  el.dataset.moving = "true";
-  const anim = el.animate(frames, { duration: Math.max(1, duration), easing, fill: "forwards" });
-  try {
-    await anim.finished;
-    if (el.isConnected) {
-      try {
-        anim.commitStyles();
-      } catch {
-        // Firefox lanza si el elemento no está pintado. El fill ya lo sostiene.
-      }
-    }
-    anim.cancel();
-  } catch {
-    // Cancelada porque el componente se ha desmontado a mitad. No es un error.
-  } finally {
-    delete el.dataset.moving;
-  }
-}
-
-/**
- * Cierra las animaciones que corrieron EN PARALELO a la principal (la sombra,
- * el cruce de carta a ficha) con la misma disciplina que `run`.
- *
- * Sin esto se quedan vivas con su `fill: forwards`, y una animación rellenando
- * gana al `style` en línea: `settle()` escribiría la posición nueva de la
- * sombra al cambiar el tamaño de la ventana y la sombra no se movería, clavada
- * por una animación que terminó hace diez minutos. Además se acumulan —tres por
- * despliegue— y el navegador las mantiene todas.
- */
-function settleAnimations(list: readonly Animation[]): void {
-  for (const anim of list) {
-    const target = (anim.effect as KeyframeEffect | null)?.target ?? null;
-    if (target instanceof HTMLElement && target.isConnected) {
-      try {
-        anim.commitStyles();
-      } catch {
-        // El elemento ya no se pinta. No hay nada que fijar.
-      }
-    }
-    anim.cancel();
-  }
-}
-
-function wait(ms: number): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 /** La sombra de una ficha vive en la capa de sombras, emparejada por `data-for`. */
@@ -1927,13 +1728,6 @@ function shadowOf(el: HTMLElement): HTMLElement | null {
 
 function cssId(el: HTMLElement): string {
   return el.dataset.pieceId ?? "";
-}
-
-function moveShadow(el: HTMLElement, l: Layout, x: number, y: number, height: number) {
-  const shadow = shadowOf(el);
-  if (!shadow) return;
-  shadow.style.transform = `translate(${x}px, ${y}px) scale(${1.4 + height / 120})`;
-  shadow.style.opacity = "0.16";
 }
 
 /** El punto del puntero en coordenadas del escenario. */

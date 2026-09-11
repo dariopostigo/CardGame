@@ -30,6 +30,7 @@ import {
   RACE_BASES,
   STEP_NAMES,
   scaleByTier,
+  validate,
   type Character,
 } from "./character";
 import { DAMAGE_TYPE_IDS, DAMAGE_TYPES, type DamageTypeId } from "./damage";
@@ -194,4 +195,75 @@ export function charactersOfRace(
         traits: traitIdsFromCell(entry.traits, catalog),
       };
     });
+}
+
+/**
+ * Las dos razas piloto, tal y como las escribe razas.md — con su glifo, porque
+ * es la clave con la que se las busca en el roster.
+ *
+ * ESTUVO COPIADA EN CUATRO PÁGINAS hasta el 10 de septiembre de 2026, cada una
+ * con su comentario diciendo «igual que en la otra». Aguantaba mientras las
+ * cuatro vivían en `/dev`; el día que dos de ellas se mudaron a la wiki habrían
+ * sido cuatro copias repartidas en dos apartados, así que la lista baja a donde
+ * ya vivía la misma frontera: `RACE_BASES` (character.ts) solo trae estas dos, y
+ * `charactersOfRace` lanza si se le pide cualquier otra (status.md §4).
+ */
+export const PILOT_RACES: readonly string[] = ["👤 Humanos", "⛏️ Enanos"];
+
+/**
+ * Las 24 fichas de las razas piloto: 4 héroes y 8 unidades de cada una, en el
+ * orden en que están escritas.
+ */
+export function pilotCharacters(
+  roster: readonly RosterEntry[],
+  catalog: readonly Trait[],
+): readonly Character[] {
+  return PILOT_RACES.flatMap((race) => charactersOfRace(roster, catalog, race));
+}
+
+/**
+ * Lo que no cuadra hoy entre razas.md y la anatomía, en frases sueltas.
+ *
+ * ES LA COLUMNA «legal / N reglas rotas» SACADA DE SU PÁGINA. Hasta el 10 de
+ * septiembre de 2026 esa comprobación solo existía dibujada, en la tabla del
+ * roster y en la del catálogo de cartas; el día que esas dos vistas se mudaron a
+ * la wiki —son tablas, no instrumentos— la alarma se habría quedado en un rincón
+ * al que hay que acordarse de ir, y una alarma que hay que ir a ver no es una
+ * alarma. Así que la comprobación se separa del dibujo y la pinta el hub de
+ * `/dev`, en rojo, igual que `dependencyProblems()` (lib/dev-registry.ts) — de
+ * ahí que devuelva lo mismo que aquella: frases ya escritas para leerse.
+ *
+ * NO LANZA NUNCA, y eso es el punto: `charactersOfRace` sí lanza —una
+ * Característica que no está en el catálogo es un roster que miente, y ahí está
+ * bien que reviente—, pero si el hub reventara con ella dejaría de avisar justo
+ * cuando hay algo de lo que avisar. Aquí el fallo se atrapa y se cuenta.
+ */
+export function rosterProblems(
+  roster: readonly RosterEntry[],
+  catalog: readonly Trait[],
+): readonly string[] {
+  const problems: string[] = [];
+
+  for (const race of PILOT_RACES) {
+    let characters: readonly Character[];
+    try {
+      characters = charactersOfRace(roster, catalog, race);
+    } catch (err) {
+      problems.push(`«${race}» no se puede construir: ${(err as Error).message}`);
+      continue;
+    }
+
+    if (characters.length === 0) {
+      problems.push(`«${race}» no da ninguna ficha: razas.md no la lista, o la lista con otro nombre.`);
+      continue;
+    }
+
+    for (const c of characters) {
+      for (const p of validate(c, catalog)) {
+        problems.push(`${race} · ${c.name}: ${p.message}`);
+      }
+    }
+  }
+
+  return problems;
 }

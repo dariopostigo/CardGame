@@ -91,7 +91,7 @@ sitio la usa al tamaño que le toca:
 |---|---|---|
 | **~16 px** | Filtros de raza de [`/docs/v3/cards/design`](../../../components/design/v3/CardDesign.tsx) (hoy solo el emblema) | El **tinte**, y prácticamente nada más: a este tamaño la bandera *es* una mancha de color |
 | **34 × 78 px** | La carta — hoy la L, y antes los bocetos G, H y J | Tinte + **canto de abajo** + el emblema encima |
-| **~100 px** | Cabecera de raza en `/dev/razas` (planificado, [`lib/dev-registry.ts`](../../../lib/dev-registry.ts)) y fichas de la wiki | Aparecen la trama del paño, el fleco, el asta o la anilla de la que cuelga; el remiendo de Hombres rata deja de ser una mancha y se ve que es un remiendo |
+| **~100 px** | Cabecera de raza en el roster (`/docs/v3/razas/roster`, que hoy la pone en un título; [`lib/dev-registry.ts`](../../../lib/dev-registry.ts)) y fichas de la wiki | Aparecen la trama del paño, el fleco, el asta o la anilla de la que cuelga; el remiendo de Hombres rata deja de ser una mancha y se ve que es un remiendo |
 | **~350 px** | Ficha de raza o pantalla de reclutamiento, el día que existan | Aparecen el bordado del dobladillo, el desgaste, las costuras, la translucidez real de la membrana |
 
 Dos reglas salen de la escalera, y son las que gobiernan todo lo demás:
@@ -511,9 +511,10 @@ alto, y el peor caso es Elfos, al que le sobra **1 px**. Está anotado en
   se puede hacer todavía porque solo cuatro razas tienen cartas en la baraja de
   muestra. Ahí es donde un campo mate puede desaparecer contra un fondo del mismo
   tono, y eso no lo dice ninguna medida de contraste contra el emblema.
-- **Los sitios grandes de §3 no existen todavía.** `/dev/razas` está planificado
-  y bloqueado por la ficha de personaje, y la pantalla de reclutamiento no está
-  escrita. Que el archivo se dibuje a 1254 px es precisamente lo que hace que eso
+- **Los sitios grandes de §3 no existen todavía.** El roster
+  (`/docs/v3/razas/roster` desde el 10-sep-2026, antes `/dev/razas`) enseña la
+  raza en un título y no en un estandarte, y la pantalla de reclutamiento no
+  está escrita. Que el archivo se dibuje a 1254 px es precisamente lo que hace que eso
   no importe: la pieza está lista antes de que exista el sitio, igual que los
   pictogramas.
 - **El tinte va horneado en el archivo, así que revisarlo es regenerar.** Es la

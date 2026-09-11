@@ -109,7 +109,8 @@ function ModuleLink({
         }`}
       >
         {inner}
-        {/* Se construye fuera de /dev: el marco de carta cuelga de la wiki. */}
+        {/* Se mira fuera de /dev: el marco de carta y las dos tablas derivadas
+            —el roster y el catálogo— cuelgan de la wiki. */}
         {m.home && <i className="pi pi-external-link ml-auto text-[0.7rem] opacity-60" />}
         {!m.home && debts > 0 && (
           <i

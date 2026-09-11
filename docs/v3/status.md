@@ -16,7 +16,7 @@ Qué está decidido, qué falta y qué falta balancear. Es el documento que se m
 | Tipo de daño | **Definido** — 🗡️ · 🏹 · ✨, con su alcance y su 👢 ([dano.md](sistemas/dano.md)) |
 | Estados y efectos | **Escrito** — 9 estados con daño, duración y acumulación ([effects.md](sistemas/effects.md)). Sin balancear |
 | Tablero de batalla | **Escrito** y corregido con lo medido en [/dev/tablero](/dev/tablero) ([battle.md](board/battle.md)) |
-| Cartas | **A medias** — unidad de Humanos y Enanos construida ([/dev/cartas](/dev/cartas)); clase, item, maldición y encuentro por definir (clase, en StandBy) |
+| Cartas | **A medias** — unidad de Humanos y Enanos construida ([el catálogo en datos](/docs/v3/cards/catalogo)); clase, item, maldición y encuentro por definir (clase, en StandBy) |
 | Mazo y Oteo | **Diseño escrito, provisional** ([game-design.md](game-design.md) §6). La mecánica —barajar, otear, la mano, arrastrar hasta el tablero— ya tiene un prototipo de código ([/dev/baraja](/dev/baraja), 9-sep), con cartas de unidad de relleno: las de clase reales esperan a salir del StandBy |
 | Tablero de exploración | **Por definir** — esqueleto |
 | Balance | **Nada balanceado** |
@@ -29,7 +29,7 @@ Por orden. Cada uno depende del anterior:
 2. ~~**Catálogo de estados**~~ — escrito *(22-ago)*.
 3. ~~**Los valores del sistema de Habilidades**~~ — puestos *(8-sep)*: ❤️ 20 · ⚔️ 5 · héroe tier 5, y la lista de "por medir" vacía.
 4. **Los escalones de las doce fichas de Humanos** — 🛡️ 🔮 🎯 🍀 ⚡ a ojo, arrancando en *Normal* y escribiendo solo lo que se sale. No son del sistema: van con su catálogo, los héroes en [heroes.md](characters/heroes.md) y las unidades en [unidades.md](razas/unidades.md).
-5. ~~**Cartas de unidad de las dos razas piloto**: las 16~~ — construidas *(8-sep)*, [`/dev/cartas`](/dev/cartas). **Cartas de clase, las 8** (Guerrero, Mago, Sacerdote, Arquero × Humanos y Enanos) — anatomía y vocabulario del efecto ya cerrados ([cards/class.md](cards/class.md)); falta redactar las 40 cartas del piloto (5 por clase).
+5. ~~**Cartas de unidad de las dos razas piloto**: las 16~~ — construidas *(8-sep)*, [el catálogo en datos](/docs/v3/cards/catalogo). **Cartas de clase, las 8** (Guerrero, Mago, Sacerdote, Arquero × Humanos y Enanos) — anatomía y vocabulario del efecto ya cerrados ([cards/class.md](cards/class.md)); falta redactar las 40 cartas del piloto (5 por clase).
 6. **Primer pase de balance.**
 
 ## 3. Decisiones abiertas

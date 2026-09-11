@@ -12,6 +12,17 @@ import ThemeControls from "./ThemeControls";
 import Breadcrumb from "./Breadcrumb";
 import VersionSwitch from "./VersionSwitch";
 
+// La wiki lee a 48rem porque es prosa, y esa medida es de la prosa: una línea
+// más larga se pierde al volver al margen. Las páginas que NO son prosa piden
+// otra cosa —las dos vistas derivadas del 10 de septiembre de 2026 son tablas de
+// trece columnas, y dentro de 48rem solo se pueden leer arrastrándolas de lado—,
+// así que se les da la misma anchura que tenían en /dev.
+//
+// Va por ruta y no por una marca en el hijo porque la columna la pone este
+// marco: para que el hijo pudiera decidirla habría que pasarle un contexto a
+// todas las páginas, y son dos.
+const WIDE_ROUTES = new Set(["/docs/v3/razas/roster", "/docs/v3/cards/catalogo"]);
+
 export default function Shell({
   nav,
   children,
@@ -64,7 +75,7 @@ export default function Shell({
           <Sidebar nav={groups} />
         </aside>
         <main className="min-w-0 flex-1 px-5 py-8 lg:px-10">
-          <div className="mx-auto max-w-3xl">
+          <div className={`mx-auto ${WIDE_ROUTES.has(pathname) ? "max-w-6xl" : "max-w-3xl"}`}>
             <Breadcrumb nav={groups} />
             {children}
           </div>

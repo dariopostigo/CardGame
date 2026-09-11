@@ -6,7 +6,7 @@
 // lib/v3/combat.ts (la tirada del §4.1) y lib/v3/battle.ts `fight()` (el
 // golpe entero, §4.2 y §4.6, más los Estados desde el 7-sep) ya estaban
 // escritos y probados, pero con estadísticas INVENTADAS: no había ningún
-// `Character` real con las 8 Habilidades puestas. Con /dev/razas armando las
+// `Character` real con las 8 Habilidades puestas. Con el roster armando las
 // 24 fichas de las dos razas piloto (Humanos y Enanos, status.md §4), lo
 // único que faltaba era el puente —lib/v3/fighters.ts `fighterOf()`— y esta
 // pantalla, que enfrenta dos de esas 24 fichas de verdad —de la misma raza o
@@ -46,7 +46,7 @@ import RarityChip from "@/components/wiki/RarityChip";
 import Button from "@/components/ui/Button";
 
 export type CombatModuleProps = {
-  /** Las 24 fichas reales de las dos razas piloto —4 héroes y 8 unidades cada una—, de /dev/razas. */
+  /** Las 24 fichas reales de las dos razas piloto —4 héroes y 8 unidades cada una—, de lib/v3/races.ts. */
   characters: readonly Character[];
   /** El catálogo de Estados. Se le pasa a fight(), y a appliesOf() para saber cuál dispara cada ficha. */
   effects: readonly Effect[];
@@ -93,7 +93,7 @@ export default function CombatModule({ characters, effects, catalog }: CombatMod
     "rounded-md border border-[var(--wiki-border)] bg-[var(--wiki-bg)] px-2 py-1.5 text-sm text-[var(--wiki-text)]";
 
   // Una raza por optgroup, en el orden en que llegan (razas piloto: Humanos,
-  // luego Enanos) — mismo criterio que RaceModule y CardModule.
+  // luego Enanos) — mismo criterio que las dos tablas de la wiki.
   const races: string[] = [];
   for (const c of characters) {
     if (c.race && !races.includes(c.race)) races.push(c.race);
@@ -274,8 +274,8 @@ export default function CombatModule({ characters, effects, catalog }: CombatMod
           §4
         </Link>{" "}
         y el golpe entero, ya con fichas <b className="text-[var(--wiki-text)]">reales</b> de{" "}
-        <Link href="/dev/razas" className="text-[var(--wiki-accent)] hover:underline">
-          Razas y unidades
+        <Link href="/docs/v3/razas/roster" className="text-[var(--wiki-accent)] hover:underline">
+          el roster
         </Link>
         , no estadísticas inventadas. <b className="text-[var(--wiki-text)]">Un contra uno</b>, a
         propósito: un bando de cuatro es una composición que todavía no decide nadie —eso es el
@@ -286,7 +286,7 @@ export default function CombatModule({ characters, effects, catalog }: CombatMod
         {["defensa", "resistencia-magica", "precision", "suerte", "iniciativa"].map((id) =>
           ABILITIES[id as keyof typeof ABILITIES].icon,
         ).join(" ")}
-        ) siguen en su valor por defecto «normal», igual que en /dev/razas: no está decidido ficha a
+        ) siguen en su valor por defecto «normal», igual que en el roster: no está decidido ficha a
         ficha todavía. Lo que sí dispara cada ficha sale solo de lo que ya lleva en razas.md —quien
         no tenga ninguna Característica de las nueve de{" "}
         <Link href="/docs/v3/sistemas/effects" className="text-[var(--wiki-accent)] hover:underline">

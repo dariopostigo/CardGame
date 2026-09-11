@@ -159,6 +159,9 @@ v2 no declara estado en ningún archivo: está congelada entera y eso ya se dice
 - **El orden manda sobre el estado.** El hub es una sola columna descendente agrupada en cuatro alturas (sustrato → piezas → reglas → sensación) y el estado de construcción es un distintivo. Antes eran dos rejillas por estado, y con eso el último eslabón de la cadena salía arriba del todo.
 - **El sustituto se declara.** Un módulo se puede construir antes que sus dependencias inventándose un remiendo —`/dev/animacion` lo hizo con cuatro: el retal de hexágonos, el rectángulo por carta, los discos por fichas y las cartas sueltas sin mazo—, y eso es sano: ha permitido medir la caída sin esperar a las 132 fichas. Lo que no vale es que la deuda viva en un comentario. `DevDependency.standIn` la pone en el mapa.
 - **Un módulo puede construirse fuera de `/dev`.** El **marco de carta** vive en `components/design/v3/` y cuelga de la wiki (`/docs/v3/cards/design`). Se queda ahí —mudarlo movería páginas y componentes vivos por un beneficio de orden— pero entra en la cadena con `home` apuntando allí, porque la Animación y la Baraja dependen de él. Antes se estaba construyendo V3 en un sitio que el mapa no nombraba.
+- **`/dev` es para lo que se juega y se mide; una tabla de consulta es wiki** *(10 de septiembre de 2026)*. Las vistas derivadas de **razas** y **cartas** —el roster y el catálogo de unidad que `lib/v3/` construye leyendo `razas.md`— se mudaron a `/docs/v3/razas/roster` y `/docs/v3/cards/catalogo`, cada una junto al documento del que sale. El criterio no es el tema sino **si la pantalla contesta algo cuando la tocas**: las dos eran componentes de cliente **sin un solo `useState` ni un `onClick`** (10 KB y 9 KB, contra los 62 de la baraja y los 78 del banco de animación), mientras que `/dev/personaje` sí es un instrumento —mueves un dial y se rompe una de las 14 comprobaciones—. Los dos módulos siguen enteros en la cadena con `home`: son la raíz de la que cuelgan el combate, la ficha y la baraja. Dos consecuencias que no son de mudanza:
+  - **La comprobación no se muda con el dibujo.** La columna *«legal / N reglas rotas»* de esas tablas era la única alarma de que `razas.md` sigue produciendo fichas legales, y en la wiki habría dejado de sonar. Se separó a `rosterProblems()` ([`lib/v3/races.ts`](lib/v3/races.ts)) y la pinta en rojo el hub de `/dev`, al lado de `dependencyProblems()`. No lanza nunca: un hub que revienta deja de avisar justo cuando hay algo de lo que avisar.
+  - **Queda una tercera actividad sin casa.** Lo que le falta a **personaje** es la mesa donde asignar a ojo los escalones de las 132 fichas: eso no es consulta —tiene mandos— ni es gameplay. Es un **taller de datos**, y hasta que se decida dónde vive se queda en `/dev`.
 
 Los dos repositorios salen los dos de [`lib/repository.ts`](lib/repository.ts) y comparten marco (`RepoShell`), porque son **el mismo instrumento con dos pieles**. Tres decisiones que sostienen esto:
 
@@ -183,10 +186,14 @@ app/
 ├── docs/                   # LA WIKI, con v2 y v3 dentro (server components)
 │   ├── [[...slug]]/        #   catch-all: resuelve v2/… y v3/…; /docs → /docs/v3
 │   ├── search-index/       #   índice de búsqueda, filtrado por versión en cliente
-│   └── v2/cards/design/    #   lab de diseño de carta (sigue a DESIGN_LAB_VERSION)
-├── dev/                    # CONSTRUCCIÓN DE V3 — hoy solo el hub
+│   ├── v2/cards/design/    #   lab de diseño de carta (sigue a DESIGN_LAB_VERSION)
+│   └── v3/                 #   páginas de wiki que NO son .md, y entran al menú
+│       ├── cards/design/   #     el marco de carta (módulo «marco»)
+│       ├── cards/catalogo/ #     el catálogo en datos (módulo «cartas»)
+│       └── razas/roster/   #     el roster en datos (módulo «razas»)
+├── dev/                    # CONSTRUCCIÓN DE V3 — el hub y un módulo por carpeta
 │   ├── layout.tsx          #   DevShell: cabecera + menú de módulos
-│   └── page.tsx            #   hub, sale de lib/dev-registry.ts
+│   └── page.tsx            #   hub + las dos alarmas (cadena y roster)
 ├── lab/                    # LABORATORIOS del motor v2
 │   ├── layout.tsx          #   LabShell: cabecera + menú de labs
 │   ├── page.tsx            #   hub, sale de lib/lab-registry.ts

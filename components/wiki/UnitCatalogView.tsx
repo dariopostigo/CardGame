@@ -1,27 +1,34 @@
-"use client";
-
 // =========================================================================
-// Módulo «Catálogo de cartas» de /dev — las cartas de unidad de las razas piloto
+// El catálogo en datos — las cartas de unidad de las razas piloto
 //
-// Depende de /dev/razas (lib/dev-registry.ts): el roster ya daba un
-// `Character` legal por ficha, y una carta de unidad no le pide nada más que
-// una ILUSTRACIÓN (lib/v3/cards.ts `unitCardsOfRace`) — los otros 12 datos ya
-// estaban.
+// VIVÍA EN /dev/cartas HASTA EL 10 DE SEPTIEMBRE DE 2026 y se mudó con su
+// hermana el roster, por el mismo motivo y con la misma prueba: era un
+// `"use client"` sin estado ni manejadores. Se lee y ya está, así que es wiki.
+// El porqué entero está en la cabecera de RosterView.tsx; aquí basta con la
+// consecuencia: `/dev` se queda con lo que se juega y lo que se mide, y las dos
+// tablas derivadas se miran donde se mira el documento del que salen.
 //
-// SOLO UNIDADES. Las cartas de clase de Humanos (Guerrero, Mago, Sacerdote,
-// Arquero) no están aquí: esperan a que se decida cómo se expresa un efecto
-// (docs/v3/cards/class.md), que es diseño de juego y no algo que se pueda
-// derivar. Se eligió así explícitamente al empezar este módulo.
+// SIGUE EN LA CADENA DE /dev con `home` (lib/dev-registry.ts, módulo «cartas»):
+// de aquí come la baraja, y el orden de construcción no cambia porque cambie la
+// puerta.
 //
 // ES UNA TABLA DE DATOS, NO EL OBJETO-CARTA. El marco (L·Lámina) ya existe
-// aparte, en components/design/v3/ y /docs/v3/cards/design, y no se
-// reconstruye aquí: lib/dev-registry.ts ya distingue "cartas" (lo que el
-// objeto imprime) de "marco" (el objeto). Las cinco Habilidades de escalón
-// siguen atenuadas por el mismo motivo que en /dev/razas: no están decididas
-// ficha a ficha, y esta pantalla no debe fingir que sí.
+// aparte, en components/design/v3/ y en /docs/v3/cards/design, y no se
+// reconstruye aquí: lib/dev-registry.ts distingue «cartas» —lo que el objeto
+// imprime— de «marco» —el objeto—. Son dos páginas vecinas del mismo grupo de la
+// wiki y esa vecindad es la buena: una enseña lo que se pinta y la otra con qué
+// se pinta.
 //
-// No decide nada: recibe las UnitCard ya construidas y las pinta
-// (ARCHITECTURE.md §6).
+// SOLO UNIDADES. Las cartas de clase (Guerrero, Mago, Sacerdote, Arquero) no
+// están: esperan a que se redacten las 40 del piloto (docs/v3/cards/class.md),
+// que es contenido de juego y no algo que se pueda derivar de un documento.
+//
+// Las cinco Habilidades de escalón siguen atenuadas por el mismo motivo que en
+// el roster: no están decididas ficha a ficha, y esta página no debe fingir que
+// sí.
+//
+// No decide nada y no tiene estado: recibe las UnitCard ya construidas y las
+// pinta (ARCHITECTURE.md §6).
 // =========================================================================
 
 import Link from "next/link";
@@ -38,7 +45,7 @@ import { rarityForTier } from "@/lib/v3/rarity";
 import type { Trait } from "@/lib/v3/traits";
 import RarityChip from "@/components/wiki/RarityChip";
 
-export type CardModuleProps = {
+export type UnitCatalogViewProps = {
   /** Las cartas de unidad de las razas piloto, ya construidas por lib/v3/cards.ts. */
   cards: readonly UnitCard[];
   /** Las 41 Características, para pintar el glifo y el nombre de cada rasgo. */
@@ -47,31 +54,34 @@ export type CardModuleProps = {
 
 const PENDING = new Set(ABILITIES_WITHOUT_VALUES);
 
-export default function CardModule({ cards, catalog }: CardModuleProps) {
+export default function UnitCatalogView({ cards, catalog }: UnitCatalogViewProps) {
   const label = "text-xs font-semibold uppercase tracking-wide text-[var(--wiki-muted)]";
   const card = "rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3";
 
   // Una raza por sección, en el orden en que llegan (razas piloto: Humanos,
-  // luego Enanos) — mismo criterio que RaceModule.
+  // luego Enanos) — mismo criterio que RosterView.
   const races: string[] = [];
   for (const c of cards) {
     if (c.character.race && !races.includes(c.character.race)) races.push(c.character.race);
   }
 
   return (
-    <div className="mx-auto max-w-6xl">
-      <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">Catálogo de cartas</h1>
+    <div>
+      <h1 className="mb-1 text-2xl font-bold text-[var(--wiki-text)]">El catálogo en datos</h1>
       <p className="mb-3 max-w-3xl text-sm text-[var(--wiki-muted)]">
-        Las cartas de V3 como <b className="text-[var(--wiki-text)]">datos</b>, no como el objeto —
-        eso es el marco, ya elegido en{" "}
+        Lo que una carta de unidad lleva escrito, derivado en vivo del{" "}
+        <Link
+          href="/docs/v3/razas/roster"
+          className="text-[var(--wiki-accent)] hover:underline"
+        >
+          roster
+        </Link>{" "}
+        — no el objeto, que es el marco ya elegido en{" "}
         <Link href="/docs/v3/cards/design" className="text-[var(--wiki-accent)] hover:underline">
           Diseño de cartas
         </Link>
-        —: aquí se ve lo que ese objeto imprime, leído en vivo del roster de{" "}
-        <Link href="/dev/razas" className="text-[var(--wiki-accent)] hover:underline">
-          Razas y unidades
-        </Link>
-        .
+        . Cada ficha de rol «unidad» más su ilustración, y nada escrito a mano: la ruta del archivo
+        se deriva del nombre con el mismo criterio que usó el arte.
       </p>
       <p className="mb-5 max-w-3xl rounded-lg border border-[var(--wiki-border)] bg-[var(--wiki-surface)] p-3 text-sm text-[var(--wiki-muted)]">
         <b className="text-[var(--wiki-text)]">Cartas de unidad de Humanos y Enanos</b>, las 8 de
@@ -81,9 +91,12 @@ export default function CardModule({ cards, catalog }: CardModuleProps) {
           Character
         </Link>{" "}
         de cada ficha más su ilustración—. Las cartas de{" "}
-        <b className="text-[var(--wiki-text)]">clase</b> (Guerrero, Mago, Sacerdote, Arquero...) no
-        están: esperan a que se decida cómo se expresa un efecto, que es diseño de juego y no algo
-        que este módulo pueda derivar. Las cinco Habilidades atenuadas (
+        <b className="text-[var(--wiki-text)]">clase</b> (
+        <Link href="/docs/v3/cards/class" className="text-[var(--wiki-accent)] hover:underline">
+          Guerrero, Mago, Sacerdote, Arquero...
+        </Link>
+        ) no están: falta redactar las 40 del piloto, que es contenido de juego y no algo que esta
+        página pueda derivar. Las cinco Habilidades atenuadas (
         {ABILITIES_WITHOUT_VALUES.map((id) => ABILITIES[id].icon).join(" ")}) siguen en su valor
         por defecto, como en el roster: no decidido todavía.
       </p>
